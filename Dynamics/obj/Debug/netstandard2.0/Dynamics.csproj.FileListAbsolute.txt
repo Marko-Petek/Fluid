@@ -1,0 +1,4 @@
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netstandard2.0/Dynamics.csprojAssemblyReference.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netstandard2.0/Dynamics.csproj.CoreCompileInputs.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netstandard2.0/Dynamics.AssemblyInfoInputs.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netstandard2.0/Dynamics.AssemblyInfo.cs

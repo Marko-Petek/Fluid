@@ -1,0 +1,14 @@
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.deps.json
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.runtimeconfig.json
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.runtimeconfig.dev.json
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.dll
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.pdb
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/Dynamics.dll
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/bin/Debug/netcoreapp2.1/Dynamics.pdb
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.csprojAssemblyReference.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.csproj.CoreCompileInputs.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.AssemblyInfoInputs.cache
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.AssemblyInfo.cs
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.csproj.CopyComplete
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.dll
+/home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/obj/Debug/netcoreapp2.1/ChannelFlow.pdb
