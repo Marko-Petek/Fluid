@@ -4,6 +4,7 @@ using Fluid.Dynamics.Internals;
 using Fluid.Dynamics.Meshing;
 using Fluid.Dynamics.Numerics;
 using static System.Math;
+using static Fluid.Dynamics.Internals.AppReporter;
 
 namespace Fluid.ChannelFlow
 {
@@ -101,15 +102,21 @@ namespace Fluid.ChannelFlow
                 _width, _width
             );
             _nodes = new Node[15620];
+            Report($"Created global array of nodes of length {_nodes.Length}.");
+            Report("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.");
             _southBlock = new SouthBlock(this, channelFlow);
+            Report("Constructing WestBlock.");
             _westBlock = new WestBlock(this, channelFlow, _southBlock);
+            Report("Constructing NorthBlock.");
             _northBlock = new NorthBlock(this, channelFlow, _westBlock);                        // Integral values get imported with static constructor of ObstructionBlock.
+            Report("Constructing EastBlock.");
             _eastBlock = new EastBlock(this, channelFlow, _northBlock, _southBlock);
+            Report("Constructing RightBlock.");
             _rightBlock = new RightBlock(this, channelFlow, _eastBlock,
                 _rightRect._lL._x, _rightRect._lL._y,
                 _rightRect._uR._x, _rightRect._uR._y,
                 20, 60);
-            
+            Report("Write corner node positions of elements for the purpose of drawing a mesh.");
             WriteCornerPositionsOfRectElement();
         }
 
