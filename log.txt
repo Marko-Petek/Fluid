@@ -384,3 +384,381 @@ Assembling stiffness matrix from node data.
                                                                 ch rows have to be swapped to bring boundary n                                                         (0.832 s)
          Solving for a single time step and writing solution to NodeArray.  (0.834 s)
          Assembling stiffness matrix from node data.
+11/8/18
+12:45 PM  Program started.  (0.0189 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0198 s)
+          Integration step dt = 0.05.  (0.0198 s)
+          Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0224 s)
+          Created global array of nodes of length 15620.  (0.0224 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.802 s)
+          Constructing WestBlock.  (0.811 s)
+          Constructing NorthBlock.  (0.817 s)
+          Constructing EastBlock.  (0.822 s)
+          Constructing RightBlock.  (0.836 s)
+          Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+12:46 PM  Program started.  (0.0445 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0454 s)
+          Integration step dt = 0.05.  (0.0455 s)
+          Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0489 s)
+          Created global array of nodes of length 15620.  (0.049 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.885 s)
+          Constructing WestBlock.  (0.894 s)
+          Constructing NorthBlock.  (0.899 s)
+          Constructing EastBlock.  (0.904 s)
+          Constructing RightBlock.  (0.914 s)
+          Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+12:52 PM  Program started.  (0.0184 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0192 s)
+          Integration step dt = 0.05.  (0.0193 s)
+          Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0221 s)
+          Created global array of nodes of length 15620.  (0.0223 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.956 s)
+          Constructing WestBlock.  (0.965 s)
+          Constructing NorthBlock.  (0.972 s)
+          Constructing EastBlock.  (0.978 s)
+          Constructing RightBlock.  (0.989 s)
+          Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+12:53 PM  Program started.  (0.0436 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0446 s)
+          Integration step dt = 0.05.  (0.0447 s)
+          Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0491 s)
+          Created global array of nodes of length 15620.  (0.0492 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.936 s)
+          Constructing WestBlock.  (0.945 s)
+          Constructing NorthBlock.  (0.951 s)
+          Constructing EastBlock.  (0.956 s)
+          Constructing RightBlock.  (0.966 s)
+          Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+1:05 PM  Program started.  (0.0156 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0164 s)
+         Integration step dt = 0.05.  (0.0164 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.019 s)
+         Created global array of nodes of length 15620.  (0.0191 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.75 s)
+         Constructing WestBlock.  (0.759 s)
+         Constructing NorthBlock.  (0.765 s)
+         Constructing EastBlock.  (0.77 s)
+         Constructing RightBlock.  (0.781 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+1:08 PM  Program started.  (0.0159 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0167 s)
+         Integration step dt = 0.05.  (0.0167 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0194 s)
+         Created global array of nodes of length 15620.  (0.0194 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.73 s)
+         Constructing WestBlock.  (0.739 s)
+         Constructing NorthBlock.  (0.746 s)
+         Constructing EastBlock.  (0.751 s)
+         Constructing RightBlock.  (0.762 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.
+11/8/18
+1:10 PM  Program started.  (0.0157 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0165 s)
+         Integration step dt = 0.05.  (0.0165 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0191 s)
+         Created global array of nodes of length 15620.  (0.0192 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.748 s)
+         Constructing WestBlock.  (0.758 s)
+         Constructing NorthBlock.  (0.764 s)
+         Constructing EastBlock.  (0.77 s)
+         Constructing RightBlock.  (0.781 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.783 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+tructed. Boundar  (0.814 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+h rows have to be swapped to bring boundary no  (0.836 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.838 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:13 PM  Program started.  (0.0182 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0194 s)
+         Integration step dt = 0.05.  (0.0194 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0234 s)
+         Created global array of nodes of length 15620.  (0.0235 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.74 s)
+         Constructing WestBlock.  (0.748 s)
+         Constructing NorthBlock.  (0.755 s)
+         Constructing EastBlock.  (0.76 s)
+         Constructing RightBlock.  (0.771 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.774 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         tructed. Boundar  (0.808 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         h rows have to be swapped to bring boundary no  (0.832 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.834 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:15 PM  Program started.  (0.0157 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0167 s)
+         Integration step dt = 0.05.  (0.0168 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0213 s)
+         Created global array of nodes of length 15620.  (0.0214 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.717 s)
+         Constructing WestBlock.  (0.728 s)
+         Constructing NorthBlock.  (0.737 s)
+         Constructing EastBlock.  (0.744 s)
+         Constructing RightBlock.  (0.76 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.764 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         tructed. Boundar  (0.801 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         h rows have to be swapped to bring boundary no  (0.825 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.828 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:16 PM  Program started.  (0.0187 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0198 s)
+         Integration step dt = 0.05.  (0.0199 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0233 s)
+         Created global array of nodes of length 15620.  (0.0234 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.756 s)
+         Constructing WestBlock.  (0.764 s)
+         Constructing NorthBlock.  (0.77 s)
+         Constructing EastBlock.  (0.776 s)
+         Constructing RightBlock.  (0.787 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.789 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         tructed. Boundar  (0.818 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         h rows have to be swapped to bring boundary no  (0.839 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.842 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:17 PM  Program started.  (0.0157 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0165 s)
+         Integration step dt = 0.05.  (0.0166 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0193 s)
+         Created global array of nodes of length 15620.  (0.0193 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.723 s)
+         Constructing WestBlock.  (0.732 s)
+         Constructing NorthBlock.  (0.739 s)
+         Constructing EastBlock.  (0.744 s)
+         Constructing RightBlock.  (0.756 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.758 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         tructed. Boundar  (0.79 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         h rows have to be swapped to bring boundary no  (0.827 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.829 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:18 PM  Program started.  (0.0158 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0166 s)
+         Integration step dt = 0.05.  (0.0167 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0193 s)
+         Created global array of nodes of length 15620.  (0.0194 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.737 s)
+         Constructing WestBlock.  (0.746 s)
+         Constructing NorthBlock.  (0.752 s)
+         Constructing EastBlock.  (0.757 s)
+         Constructing RightBlock.  (0.768 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.77 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         tructed. Boundar  (0.803 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         h rows have to be swapped to bring boundary no  (0.823 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.826 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:23 PM  Program started.  (0.0159 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosit
+          Channel  (0.0167 s)
+         Integration step dt = 0.05.  (0.0168 s)
+         Passing freshly created ChannelFlow to ChannelMesh construct
+         sin  (0.0194 s)
+         Created global array of nodes of length 15620.  (0.0195 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow
+         outhBlock. Pas  (0.744 s)
+         Constructing WestBlock.  (0.756 s)
+         Constructing NorthBlock.  (0.763 s)
+         Constructing EastBlock.  (0.769 s)
+         Constructing RightBlock.  (0.781 s)
+         Write corner node positions of elements for the purpose of d
+         ode positions   (0.783 s)
+         ChannelMesh constructed. Boundary conditions applied to each
+         each SubMesh. Merging all SubMeshes into a single Sparse  (0.813 s)
+         Creating a swap matrix which will specify which rows have to
+          be swapped to bring boundary nodes towards end of SparseRow
+         ch will specify which rows  (0.837 s)
+         Solving for a single time step and writing solution to NodeA
+         ng fo  (0.84 s)
+         Assembling stiffness matrix from node data.
+11/8/18
+1:28 PM  Program started.
+11/8/18
+1:32 PM  Program started.
+11/8/18
+1:35 PM  Program started.
+11/8/18
+1:36 PM  Program started.  (0.0157 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosit
+         y 0.001.  (0.0165 s)
+         Integration step dt = 0.05.  (0.0165 s)
+         Passing freshly created ChannelFlow to ChannelMesh construct
+         or.  (0.0192 s)
+         Created global array of nodes of length 15620.  (0.0192 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow
+          as arguments.  (0.753 s)
+         Constructing WestBlock.  (0.762 s)
+         Constructing NorthBlock.  (0.768 s)
+         Constructing EastBlock.  (0.774 s)
+         Constructing RightBlock.  (0.785 s)
+         Write corner node positions of elements for the purpose of d
+         rawing a mesh.  (0.787 s)
+         ChannelMesh constructed. Boundary conditions applied to each
+          SubMesh. Merging all SubMeshes into a single SparseRow.  (0.823 s)
+         Creating a swap matrix which will specify which rows have to
+          be swapped to bring boundary nodes towards end of SparseRow
+          which we will be solving.  (0.841 s)
+         Solving for a single time step and writing solution to NodeA
+         rray.  (0.843 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+1:38 PM  Program started.  (0.0157 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0165 s)
+         Integration step dt = 0.05.  (0.0165 s)
+         Passing freshly created ChannelFlow to ChannelMesh constructor.  (0.0192 s)
+         Created global array of nodes of length 15620.  (0.0192 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.718 s)
+         Constructing WestBlock.  (0.729 s)
+         Constructing NorthBlock.  (0.737 s)
+         Constructing EastBlock.  (0.744 s)
+         Constructing RightBlock.  (0.758 s)
+         Write corner node positions of elements for the purpose of drawing a mesh.  (0.761 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.8 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.819 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.82 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+1:47 PM  Program started.  (0.786 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.846 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.848 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:07 PM  Program started.  (0.0158 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0167 s)
+         Integration step dt = 0.05.  (0.0167 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0194 s)
+         Created global array of nodes of length 15620.  (0.0195 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.731 s)
+         Constructing WestBlock.  (0.74 s)
+         Constructing NorthBlock.  (0.746 s)
+         Constructing EastBlock.  (0.752 s)
+         Constructing RightBlock.  (0.762 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.764 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.798 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.822 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.824 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:10 PM  Program started.  (0.0168 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0176 s)
+         Integration step dt = 0.05.  (0.0177 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0204 s)
+         Created global array of nodes of length 15620.  (0.0205 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.729 s)
+         Constructing WestBlock.  (0.738 s)
+         Constructing NorthBlock.  (0.744 s)
+         Constructing EastBlock.  (0.75 s)
+         Constructing RightBlock.  (0.763 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.794 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.821 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.823 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:12 PM  Program started.  (0.0156 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0164 s)
+         Integration step dt = 0.05.  (0.0165 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0191 s)
+         Created global array of nodes of length 15620.  (0.0191 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.725 s)
+         Constructing WestBlock.  (0.734 s)
+         Constructing NorthBlock.  (0.74 s)
+         Constructing EastBlock.  (0.745 s)
+         Constructing RightBlock.  (0.756 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.759 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.794 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.817 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.82 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:14 PM  Program started.  (0.0161 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.017 s)
+         Integration step dt = 0.05.  (0.0171 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0202 s)
+         Created global array of nodes of length 15620.  (0.0203 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.732 s)
+         Constructing WestBlock.  (0.743 s)
+         Constructing NorthBlock.  (0.752 s)
+         Constructing EastBlock.  (0.761 s)
+         Constructing RightBlock.  (0.78 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.783 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.818 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.842 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.844 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:15 PM  Program started.  (0.0207 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0217 s)
+         Integration step dt = 0.05.  (0.0218 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0263 s)
+         Created global array of nodes of length 15620.  (0.0265 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.727 s)
+         Constructing WestBlock.  (0.736 s)
+         Constructing NorthBlock.  (0.741 s)
+         Constructing EastBlock.  (0.747 s)
+         Constructing RightBlock.  (0.758 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.76 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.793 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.811 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.813 s)
+         Assembling stiffness matrix from node data.
+
+11/8/18
+2:16 PM  Program started.  (0.0181 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  (0.0192 s)
+         Integration step dt = 0.05.  (0.0192 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  (0.0227 s)
+         Created global array of nodes of length 15620.  (0.0228 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  (0.748 s)
+         Constructing WestBlock.  (0.757 s)
+         Constructing NorthBlock.  (0.764 s)
+         Constructing EastBlock.  (0.769 s)
+         Constructing RightBlock.  (0.78 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  (0.782 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  (0.817 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  (0.836 s)
+         Solving for a single time step and writing solution to NodeArray.  (0.837 s)
+         Assembling stiffness matrix from node data.

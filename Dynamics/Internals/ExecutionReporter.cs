@@ -1,13 +1,14 @@
 using System;
 using System.IO;
 using static System.Console;
-using static Fluid.Dynamics.Internals.AppReporter.OutputSettingsEnum;
-using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
+using static System.Math;
+using static Fluid.Dynamics.Internals.ExecutionReporter.OutputSettingsEnum;
+using static Fluid.Dynamics.Internals.ExecutionReporter.VerbositySettings;
 
 namespace Fluid.Dynamics.Internals
 {
     /// <summary>Writes program's progression either to a file, to console or both.</summary>
-    public static class AppReporter
+    public static class ExecutionReporter
     {
         [Flags]
         public enum OutputSettingsEnum
@@ -23,7 +24,7 @@ namespace Fluid.Dynamics.Internals
         }
 
         /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-        static AppReporter() {
+        static ExecutionReporter() {
             OutputSettings = new OutputSettingsEnum();
             OutputSettings |= WriteToConsole;
             OutputSettings |= WriteToFile;
@@ -47,14 +48,14 @@ namespace Fluid.Dynamics.Internals
             WriteLine($"\n{TimeOfLastReport.ToShortDateString()}");
             Write($"{TimeOfLastReport.ToShortTimeString()}  Program started.");
 
-            Writer.WriteLine($"\n{TimeOfLastReport.ToShortDateString()}");
+            Writer.WriteLine($"\n\n{TimeOfLastReport.ToShortDateString()}");
             Writer.Write($"{TimeOfLastReport.ToShortTimeString()}  Program started.");
             Writer.Flush();
 
         }
 
         /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="str">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
-        public static void Report(string str, VerbositySettings verbosity) {
+        public static void Report(string str, VerbositySettings verbosity = Moderate) {
 
             if(verbosity <= VerbositySetting) {                                             // Only display message if verbosity is below threshold.
                 bool dateChanged = false;
@@ -75,7 +76,7 @@ namespace Fluid.Dynamics.Internals
                     else {
                         Write(new string(' ', dateStr.Length + 2));                         // Write empty space the length of time stamp.
                     }
-                    Write(str.EnforceMaxWidth(100));
+                    Write(str.Wrap());
                 }
                 
                 if((OutputSettings & WriteToFile) == WriteToFile) {
@@ -87,52 +88,50 @@ namespace Fluid.Dynamics.Internals
                     else {
                         Writer.Write(new string(' ', dateStr.Length + 2));                  // Write empty space the length of time stamp.
                     }
-                    Writer.Write(str.EnforceMaxWidth(100));
+                    Writer.Write(str.Wrap());
                     Writer.Flush();
                 }
             }
         }
 
-        public static void Report(string str) {
-            Report(str, Moderate);
-        }
+        /// <summary>Wraps a single line string (no new lines within) to a multi-line string of specified width.</summary><param name="sourceString">Single line string.</param><param name="wrapLength">Maximum character count inside a single line.</param><param name="firstLineIndent">N spaces prepended to first line.</param><param name="subsequentIndents">N spaces prepended to all subsequent lines.</param>
+        static string Wrap(this string sourceString, int wrapLength = 75, int firstLineIndent = 0, int subsequentIndents = 9) {
+            double nLinesFloat = (double)sourceString.Length / wrapLength;                              // How many times source string fits into wrapWidth.
+            int nLines = (int)Ceiling(nLinesFloat);                                                     // How many lines there actually are.
 
-        public static void ReportToConsole(string str) {
-            WriteLine(str);
-        }
+            if(sourceString.Length > wrapLength) {
+                char[] chars = new char[firstLineIndent + sourceString.Length + (nLines-1)*(1 + subsequentIndents)];                // Length of original + space for new lines and leading spaces.                                                                                                  
 
-        public static void ReportToFile(string str) {
-            Writer.WriteLine(str);
-        }
+                for(int i = 0; i < firstLineIndent; ++i) {                                                              // Add leading spaces to first line.
+                    chars[i] = ' ';
+                }
+                sourceString.CopyTo(0, chars, firstLineIndent, wrapLength - firstLineIndent);
+                int charIndex = wrapLength;                                                                         // Character in chars array which we are currently modifying. Next is zeroth character on second line.
 
-        /// <summary>Makes provided string viable for display within a screen of specified width.</summary><param name="str">Provided string.</param><param name="maxWidth">Width of screen area.</param>
-        static string EnforceMaxWidth(this string str, int maxWidth) {
-            int length = str.Length;
-            double relativeWidth = (double)length / maxWidth;
+                for(int i = 1; i < nLines - 1; ++i) {                                                               // Fill subsequent lines, save for last.
+                    chars[charIndex] = '\n';                                                                        // Add new line.
+                    ++charIndex;
 
-            if(relativeWidth > 1) {
-                char[] wrappedStr = new char[length + (int)relativeWidth * 10];              // Length of original + space for new lines and leading spaces.
-                int newDestinationIndex = 0;
-
-                for(int i = 1; i < (int)relativeWidth; ++i) {                            // Insert new lines. (except last)
-                    str.CopyTo(i * maxWidth, wrappedStr, newDestinationIndex, maxWidth);
-                    newDestinationIndex += maxWidth;
-                    wrappedStr[newDestinationIndex] = '\n';
-                    ++newDestinationIndex;
-
-                    for(int j = 0; j < 9; ++j) {                         // Add leading space.
-                        wrappedStr[newDestinationIndex] = ' ';
-                        ++newDestinationIndex;
+                    for(int j = 0; j < subsequentIndents; ++j) {                                                    // Add indent.
+                        chars[charIndex] = ' ';
+                        ++charIndex;
                     }
-                }                                                       // TODO: Fix this method. It is overwriting things.
-
+                    sourceString.CopyTo(i * wrapLength, chars, charIndex, wrapLength);                              // Add characters from source string.
+                    charIndex += wrapLength;
+                }
                 // Take care of last line.
-                int lastLineCount = length - (int)relativeWidth * maxWidth;
-                str.CopyTo(length - maxWidth - 1, wrappedStr, wrappedStr.Length - maxWidth - 1, lastLineCount);
+                chars[charIndex] = '\n';                                                                        // Add new line.
+                ++charIndex;
 
-                return new string(wrappedStr);
+                for(int j = 0; j < subsequentIndents; ++j) {                                                    // Add indent.
+                    chars[charIndex] = ' ';
+                    ++charIndex;
+                }
+                sourceString.CopyTo((wrapLength)*(nLines-1), chars, charIndex, sourceString.Length - (nLines - 1)*wrapLength);
+
+                return new string(chars);
             }
-            else return str;
+            else return sourceString;
         }
     }
 

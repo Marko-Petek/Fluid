@@ -2,7 +2,8 @@ using System;
 using Fluid.Dynamics.Internals;
 using Fluid.Dynamics.Numerics;
 using Fluid.Dynamics.Meshing;
-using static Fluid.Dynamics.Internals.AppReporter;
+using static Fluid.Dynamics.Internals.ExecutionReporter;
+using static Fluid.Dynamics.Internals.ExecutionReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow
 {
@@ -33,17 +34,17 @@ namespace Fluid.ChannelFlow
 
         /// <summary>Create a channel flow to solve.</summary><param name="peakInletVelocity">Peak velocity of fluid at inlet. Profile is parabolic, so peak velocity is situated in the middle.</param><param name="dt">Time step.</param>
         public ChannelFlow(double peakInletVelocity, double dt, double viscosity) {
-            Report($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.");
+            Report($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.", Verbose);
             _peakInletVelocity = peakInletVelocity;
-            Report($"Integration step dt = {dt}.");
+            Report($"Integration step dt = {dt}.", Verbose);
             _dt = dt;
             _viscosity = viscosity;
-            Report("Passing freshly created ChannelFlow to ChannelMesh constructor.");
+            Report("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
             _channelMesh = new ChannelMesh(this);                                   // Initial setup is now already present on _nodes list.
             _width = _channelMesh.GetWidth();
-            Report("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.");
+            Report("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
             _solution = _channelMesh.NodesArrayToSparseRow();               // Take 0 field as initial solution.
-            Report("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.");
+            Report("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
             _swapMatrix = CreateSwapMatrix();
         }
 
@@ -82,7 +83,7 @@ namespace Fluid.ChannelFlow
             var solutionLower = _solution.SplitAt(stiffnessMatrixWidth - nConstraints);                     // Split also previos solution vector. Remeber lower part.
             Report("Splitting forcing vector.");
             forcingVector.SplitAt(stiffnessMatrixWidth - nConstraints);                                     // Also split forcing vector.
-            Report("Construct modified forcig vector.");
+            Report("Constructing modified forcing vector.");
             forcingVector = forcingVector - stiffnessMatrixRight * solutionLower;                           // Construct modified forcing vector which we will need to solve linear system.
 
             Report("Initiating ConjugateGradients solver.");
