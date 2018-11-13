@@ -1,9 +1,0 @@
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/bin/Debug/netcoreapp2.1/Dynamics.deps.json
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/bin/Debug/netcoreapp2.1/Dynamics.dll
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/bin/Debug/netcoreapp2.1/Dynamics.pdb
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.csprojAssemblyReference.cache
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.csproj.CoreCompileInputs.cache
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.AssemblyInfoInputs.cache
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.AssemblyInfo.cs
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.dll
-/home/marko/Dokumenti/FizikalneAplikacije/Fluid/Dynamics/obj/Debug/netcoreapp2.1/Dynamics.pdb
