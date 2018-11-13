@@ -7,7 +7,21 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
+                "/p:DefineConstants=REPORT"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "testBuild",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "/p:DefineConstants=TEST"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -21,8 +35,8 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/Dynamics.Tests/Dynamics.Tests.csproj",
-                "/p:DefineConstants=TEST"
+                "/p:DefineConstants=TEST",
+                "${workspaceFolder}/Dynamics.Tests/Dynamics.Tests.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -39,6 +53,9 @@
                 "--project",
                 "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
             ],
+            "options": {
+                "cwd": "./ChannelFlow"
+            },
             "problemMatcher": "$msCompile",
             "group": "none"
         }

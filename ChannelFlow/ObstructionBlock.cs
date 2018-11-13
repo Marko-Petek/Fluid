@@ -37,8 +37,8 @@ namespace Fluid.ChannelFlow
             _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("../../../../ChannelFlow/Input/obstructionStiffnessIntegrals.txt");
             _forcingIntegrals = ReadObstructionForcingIntegrals("../../../../ChannelFlow/Input/obstructionForcingIntegrals.txt");
             #else
-            _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("ChannelFlow/Input/obstructionStiffnessIntegrals.txt");
-            _forcingIntegrals = ReadObstructionForcingIntegrals("ChannelFlow/Input/obstructionForcingIntegrals.txt");
+            _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("./Input/obstructionStiffnessIntegrals.txt");
+            _forcingIntegrals = ReadObstructionForcingIntegrals("./Input/obstructionForcingIntegrals.txt");
             #endif
         }
 

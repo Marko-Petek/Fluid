@@ -761,4 +761,25 @@ h rows have to be swapped to bring boundary no  (0.836 s)
          Creating a swap matrix which will specify which rows have to be swapped to 
          bring boundary nodes towards end of SparseRow which we will be solving.  (0.836 s)
          Solving for a single time step and writing solution to NodeArray.  (0.837 s)
-         Assembling stiffness matrix from node data.
+         Assembling stiffness matrix from node data.  (0.804 s)
+         Assembling stiffness matrix from node data.  (0.765 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.798 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.76 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.748 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.754 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.779 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.759 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.765 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.75 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray  (0.785 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray

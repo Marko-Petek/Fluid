@@ -18,8 +18,8 @@ namespace Fluid.ChannelFlow
         public static double[][] _rectForcingIntegrals;
 
         static RightBlock() {
-            _rectStiffnessIntegrals = ReadRectStiffnessIntegrals("ChannelFlow/Input/rectElementStiffnessIntegrals.txt");
-            _rectForcingIntegrals = ReadRectForcingIntegrals("ChannelFlow/Input/rectElementForcingIntegrals.txt");
+            _rectStiffnessIntegrals = ReadRectStiffnessIntegrals("./Input/rectElementStiffnessIntegrals.txt");
+            _rectForcingIntegrals = ReadRectForcingIntegrals("./Input/rectElementForcingIntegrals.txt");
         }
 
         /// <summary>Create a Cartesian mesh block.</summary><param name="channelMesh">Mesh block's owner.</param><param name="lowerLeftX">Lower left corner x coordinate.</param><param name="lowerLeftY">Lower left corner y coordinate.</param><param name="upperRightX">Upper right corner x coordinate.</param><param name="upperRightY">Upper right corner y coordinate.</param><param name="rowCount">Number of elements in y direction.</param><param name="columnCount">Number of elements in x direction.</param>

@@ -2,8 +2,8 @@ using System;
 using Fluid.Dynamics.Internals;
 using Fluid.Dynamics.Numerics;
 using Fluid.Dynamics.Meshing;
-using static Fluid.Dynamics.Internals.ExecutionReporter;
-using static Fluid.Dynamics.Internals.ExecutionReporter.VerbositySettings;
+using static Fluid.Dynamics.Internals.AppReporter;
+using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow
 {

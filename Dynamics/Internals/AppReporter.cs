@@ -1,14 +1,15 @@
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using static System.Console;
 using static System.Math;
-using static Fluid.Dynamics.Internals.ExecutionReporter.OutputSettingsEnum;
-using static Fluid.Dynamics.Internals.ExecutionReporter.VerbositySettings;
+using static Fluid.Dynamics.Internals.AppReporter.OutputSettingsEnum;
+using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
 
 namespace Fluid.Dynamics.Internals
 {
     /// <summary>Writes program's progression either to a file, to console or both.</summary>
-    public static class ExecutionReporter
+    public static class AppReporter
     {
         [Flags]
         public enum OutputSettingsEnum
@@ -24,7 +25,7 @@ namespace Fluid.Dynamics.Internals
         }
 
         /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-        static ExecutionReporter() {
+        static AppReporter() {
             OutputSettings = new OutputSettingsEnum();
             OutputSettings |= WriteToConsole;
             OutputSettings |= WriteToFile;
@@ -55,7 +56,9 @@ namespace Fluid.Dynamics.Internals
         }
 
         /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="str">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
-        public static void Report(string str, VerbositySettings verbosity = Moderate) {
+        public static void Report(string str, VerbositySettings verbosity = Moderate,
+            [CallerMemberName] string callerName = null, [CallerLineNumber] int lineNumber = 0
+            ) {
 
             if(verbosity <= VerbositySetting) {                                             // Only display message if verbosity is below threshold.
                 bool dateChanged = false;
@@ -66,6 +69,7 @@ namespace Fluid.Dynamics.Internals
                     dateChanged = true;
                 }
                 string dateStr = TimeOfLastReport.ToShortTimeString();
+                str = $"{str} {lineNumber} {callerName}";
 
                 if((OutputSettings & WriteToConsole) == WriteToConsole) {
                     WriteLine($"  ({elapsedFromLastReport.TotalSeconds.ToString("G3")} s)");
@@ -88,6 +92,7 @@ namespace Fluid.Dynamics.Internals
                     else {
                         Writer.Write(new string(' ', dateStr.Length + 2));                  // Write empty space the length of time stamp.
                     }
+                    str = $"{str} {lineNumber} {callerName}";
                     Writer.Write(str.Wrap());
                     Writer.Flush();
                 }

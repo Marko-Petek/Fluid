@@ -4,8 +4,8 @@ using Fluid.Dynamics.Internals;
 using Fluid.Dynamics.Meshing;
 using Fluid.Dynamics.Numerics;
 using static System.Math;
-using static Fluid.Dynamics.Internals.ExecutionReporter;
-using static Fluid.Dynamics.Internals.ExecutionReporter.VerbositySettings;
+using static Fluid.Dynamics.Internals.AppReporter;
+using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow
 {
@@ -157,7 +157,7 @@ namespace Fluid.ChannelFlow
             var node7 = _rightBlock.GetNodeStd(1,1,6).GetPos();
             var node10 = _rightBlock.GetNodeStd(1,1,9).GetPos();
 
-            var fileInfo = new FileInfo("ChannelFlow/Results/rectElement.txt");
+            var fileInfo = new FileInfo("./Results/rectElement.txt");
 
             using(var sw = new StreamWriter(fileInfo.FullName)) {
                 sw.WriteLine($"{{{node1},");

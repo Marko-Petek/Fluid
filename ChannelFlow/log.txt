@@ -1,0 +1,70 @@
+
+
+11/12/18
+5:14 PM  Program started.  (0.0169 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.0178 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.0178 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0205 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0205 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor
+
+11/12/18
+5:17 PM  Program started.  (0.0161 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.017 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.017 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0197 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0198 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.735 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.744 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.75 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.756 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor
+
+11/12/18
+5:19 PM  Program started.  (0.0177 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.0188 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.0189 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0229 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.023 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.749 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.758 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.764 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.77 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.786 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor
+
+11/12/18
+5:21 PM  Program started.  (0.0158 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.0167 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.0167 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0194 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0194 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.719 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.728 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.734 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.739 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.753 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.757 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.789 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.81 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.813 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
