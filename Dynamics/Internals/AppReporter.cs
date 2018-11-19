@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using static System.Console;
 using static System.Math;
 using static Fluid.Dynamics.Internals.AppReporter.OutputSettingsEnum;
@@ -14,8 +15,11 @@ namespace Fluid.Dynamics.Internals
         [Flags]
         public enum OutputSettingsEnum
         {
-            WriteToConsole = 1 << 0,
-            WriteToFile    = 1 << 1
+            WriteToConsole  = 1 << 0,
+            WriteToFile     = 1 << 1,
+            WriteFilePath   = 1 << 2,
+            WriteCallerName = 1 << 3,
+            WriteLineNumber = 1 << 4
         }
 
         /// <summary>Determines which messages will be displayed by Reporter..</summary>
@@ -24,12 +28,14 @@ namespace Fluid.Dynamics.Internals
             Silent, Scarce, Moderate, Verbose, Obnoxious
         }
 
+        static StringBuilder StrBuilder { get; }
+
         /// <summary>Initialize AppReporter as set to write to console and file.</summary>
         static AppReporter() {
             OutputSettings = new OutputSettingsEnum();
-            OutputSettings |= WriteToConsole;
-            OutputSettings |= WriteToFile;
-            Writer = new StreamWriter(path: new FileInfo("log.txt").FullName, append: true);
+            OutputSettings |= WriteToConsole | WriteToFile; // | WriteFilePath | WriteCallerName | WriteLineNumber;
+            StrBuilder = new StringBuilder(500);
+            Writer = new StreamWriter(new FileInfo("log.txt").FullName, true);
             TimeOfLastReport = DateTime.Now;
             VerbositySetting = Moderate;
         }
@@ -56,7 +62,7 @@ namespace Fluid.Dynamics.Internals
         }
 
         /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="str">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
-        public static void Report(string str, VerbositySettings verbosity = Moderate,
+        public static void Report(string str, VerbositySettings verbosity = Moderate, [CallerFilePath] string filePath = null,
             [CallerMemberName] string callerName = null, [CallerLineNumber] int lineNumber = 0
             ) {
 
@@ -69,7 +75,21 @@ namespace Fluid.Dynamics.Internals
                     dateChanged = true;
                 }
                 string dateStr = TimeOfLastReport.ToShortTimeString();
-                str = $"{str} {lineNumber} {callerName}";
+                StrBuilder.Clear();
+                StrBuilder.Append(str);                                                     // Append string we wish to report.
+
+                if((OutputSettings & WriteFilePath) == WriteFilePath) {
+                    StrBuilder.Append($"  File: {filePath}");
+                }
+
+                if((OutputSettings & WriteCallerName) == WriteCallerName) {
+                    StrBuilder.Append($"  Caller: {callerName}");
+                }
+
+                if((OutputSettings & WriteLineNumber) == WriteLineNumber) {
+                    StrBuilder.Append($"  Line: {lineNumber}");
+                }
+                str = StrBuilder.ToString();
 
                 if((OutputSettings & WriteToConsole) == WriteToConsole) {
                     WriteLine($"  ({elapsedFromLastReport.TotalSeconds.ToString("G3")} s)");

@@ -25,7 +25,8 @@ namespace Fluid.ChannelFlow
                 Report("Writing solution to file.");
             #endif
             flow.WriteSolution(5);
-            // TODO: Implement logging (and console messages) to view progression of calculations.
         }
+        // TODO: Set verbosity of unnecessary reports to Verbose or Obnoxious.
+        // TODO: Lear Regular Expressions to parse better.
     }
 }

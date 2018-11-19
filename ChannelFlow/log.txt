@@ -463,3 +463,466 @@
          0 Main  (0.37 s)
          Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
          0 SolveNextAndAddToNodeArray
+
+11/19/18
+12:30 PM  Program started.  (0.0219 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.0229 s)
+          Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.023 s)
+          Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.027 s)
+          Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.0271 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.746 s)
+          Constructing WestBlock. 114 .ctor 114 .ctor  (0.755 s)
+          Constructing NorthBlock. 119 .ctor 119 .ctor  (0.761 s)
+          Constructing EastBlock. 124 .ctor 124 .ctor  (0.766 s)
+          Constructing RightBlock. 129 .ctor 129 .ctor  (0.782 s)
+          Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.788 s)
+          ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.821 s)
+          Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.844 s)
+          Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.846 s)
+          Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/19/18
+12:41 PM  Program started.  (0.0171 s)
+          Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. /home/
+         marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs 38 .ct
+         or 38 .ctor  (0.018 s)
+          Integration step dt = 0.05. /home/marko/Dokumenti/FizikalneAplikacije/Fluid
+         /ChannelFlow/ChannelFlow.cs 43 .ctor 43 .ctor  (0.0181 s)
+          Passing freshly created ChannelFlow to ChannelMesh'es constructor. /home/ma
+         rko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs 49 .ctor
+          49 .ctor  (0.0209 s)
+          Created global array of nodes of length 15620. /home/marko/Dokumenti/Fizika
+         lneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs 108 .ctor 108 .ctor  (0.021 s)
+          Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs 
+         109 .ctor 109 .ctor  (0.726 s)
+          Constructing WestBlock. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs 114 .ctor 114 .ctor  (0.738 s)
+          Constructing NorthBlock. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Ch
+         annelFlow/ChannelMesh.cs 119 .ctor 119 .ctor  (0.747 s)
+          Constructing EastBlock. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs 124 .ctor 124 .ctor  (0.753 s)
+          Constructing RightBlock. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Ch
+         annelFlow/ChannelMesh.cs 129 .ctor 129 .ctor  (0.768 s)
+          Writing corner node positions of elements for the purpose of drawing a mesh
+         . /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.c
+         s 138 .ctor 138 .ctor  (0.77 s)
+          ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. /home/marko/Dokumenti/FizikalneAp
+         likacije/Fluid/ChannelFlow/ChannelFlow.cs 55 .ctor 55 .ctor  (0.805 s)
+          Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. /ho
+         me/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs 60 
+         .ctor 60 .ctor  (0.825 s)
+          Solving for a single time step and writing solution to NodeArray. /home/mar
+         ko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Program.cs 20 Main 20 Ma
+         in  (0.828 s)
+          Assembling stiffness matrix from node data. /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelFlow.cs 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray  (465 s)
+12:48 PM  Assemblingforcing vector from node data. /home/marko/Dokumenti/FizikalneApl
+         ikacije/Fluid/ChannelFlow/ChannelFlow.cs 85 SolveNextAndAddToNodeArray 85 S
+         olveNextAndAddToNodeArray  (2.61 s)
+          Applying column swaps to stiffnes matrix to bring constrained nodes to bott
+         om. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow
+         .cs 90 SolveNextAndAddToNodeArray 90 SolveNextAndAddToNodeArray  (979 s)
+1:05 PM  Applying column swaps to forcing vector to bring constrained nodes to botto
+         m. /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.
+         cs 96 SolveNextAndAddToNodeArray 96 SolveNextAndAddToNodeArray
+
+11/19/18
+2:28 PM  Program started.  (0.0164 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38 38 .ctor  (0.0174 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43 43 .ctor  (0.0175 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49 49 .ctor  (0.0203 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108 108 .ctor  (0.0204 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109 109 .c
+         tor  (0.774 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114 114 .ctor  (0.783 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119 119 .ctor  (0.793 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124 124 .ctor  (0.8 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129 129 .
+         ctor  (0.812 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129Writin
+         g corner node positions of elements for the purpose of drawing a mesh.  Fil
+         e: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.
+         cs  Caller: .ctor  Line: 138 138 .ctor  (0.814 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129Writin
+         g corner node positions of elements for the purpose of drawing a mesh.  Fil
+         e: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.
+         cs  Caller: .ctor  Line: 138ChannelMesh constructed. Boundary conditions ap
+         plied to each SubMesh. Merging all SubMeshes into a single SparseRow.  File
+         : /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.c
+         s  Caller: .ctor  Line: 55 55 .ctor  (0.85 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129Writin
+         g corner node positions of elements for the purpose of drawing a mesh.  Fil
+         e: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.
+         cs  Caller: .ctor  Line: 138ChannelMesh constructed. Boundary conditions ap
+         plied to each SubMesh. Merging all SubMeshes into a single SparseRow.  File
+         : /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.c
+         s  Caller: .ctor  Line: 55Creating a swap matrix which will specify which r
+         ows have to be swapped to bring boundary nodes towards end of SparseRow whi
+         ch we will be solving.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flu
+         id/ChannelFlow/ChannelFlow.cs  Caller: .ctor  Line: 60 60 .ctor  (0.868 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129Writin
+         g corner node positions of elements for the purpose of drawing a mesh.  Fil
+         e: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.
+         cs  Caller: .ctor  Line: 138ChannelMesh constructed. Boundary conditions ap
+         plied to each SubMesh. Merging all SubMeshes into a single SparseRow.  File
+         : /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.c
+         s  Caller: .ctor  Line: 55Creating a swap matrix which will specify which r
+         ows have to be swapped to bring boundary nodes towards end of SparseRow whi
+         ch we will be solving.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flu
+         id/ChannelFlow/ChannelFlow.cs  Caller: .ctor  Line: 60Solving for a single 
+         time step and writing solution to NodeArray.  File: /home/marko/Dokumenti/F
+         izikalneAplikacije/Fluid/ChannelFlow/Program.cs  Caller: Main  Line: 20 20 
+         Main  (0.87 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38Integration step dt = 0.05.  File: /home/marko/Dok
+         umenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor 
+          Line: 43Passing freshly created ChannelFlow to ChannelMesh'es constructor.
+           File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channel
+         Flow.cs  Caller: .ctor  Line: 49Created global array of nodes of length 156
+         20.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chan
+         nelMesh.cs  Caller: .ctor  Line: 108Constructing SouthBlock. Passing Channe
+         lMesh and ChannelFlow as arguments.  File: /home/marko/Dokumenti/FizikalneA
+         plikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 109Constru
+         cting WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Cha
+         nnelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114Constructing NorthBlock.  
+         File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Caller: .ctor  Line: 119Constructing EastBlock.  File: /home/marko/D
+         okumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .cto
+         r  Line: 124Constructing RightBlock.  File: /home/marko/Dokumenti/Fizikalne
+         Aplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129Writin
+         g corner node positions of elements for the purpose of drawing a mesh.  Fil
+         e: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.
+         cs  Caller: .ctor  Line: 138ChannelMesh constructed. Boundary conditions ap
+         plied to each SubMesh. Merging all SubMeshes into a single SparseRow.  File
+         : /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.c
+         s  Caller: .ctor  Line: 55Creating a swap matrix which will specify which r
+         ows have to be swapped to bring boundary nodes towards end of SparseRow whi
+         ch we will be solving.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flu
+         id/ChannelFlow/ChannelFlow.cs  Caller: .ctor  Line: 60Solving for a single 
+         time step and writing solution to NodeArray.  File: /home/marko/Dokumenti/F
+         izikalneAplikacije/Fluid/ChannelFlow/Program.cs  Caller: Main  Line: 20Asse
+         mbling stiffness matrix from node data.  File: /home/marko/Dokumenti/Fizika
+         lneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: SolveNextAndAddToNo
+         deArray  Line: 80 80 SolveNextAndAddToNodeArray
+
+11/19/18
+2:31 PM  Program started.  (0.0161 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or  (0.018 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05. 43 .ctor  (0.0182 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor. 49 .ctor  (0.0224 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620. 108 .ctor  (0.0225 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments. 109 .ctor  (0.741 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock. 114 .ctor  (0.754 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock. 119 .ctor  (0.764 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock. 124 .ctor  (0.771 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+          129 .ctor  (0.787 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor  (0.791 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merg
+         ing all SubMeshes into a single SparseRow. 55 .ctor  (0.826 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merg
+         ing all SubMeshes into a single SparseRow.Creating a swap matrix which will
+          specify which rows have to be swapped to bring boundary nodes towards end 
+         of SparseRow which we will be solving. 60 .ctor  (0.842 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merg
+         ing all SubMeshes into a single SparseRow.Creating a swap matrix which will
+          specify which rows have to be swapped to bring boundary nodes towards end 
+         of SparseRow which we will be solving.Solving for a single time step and wr
+         iting solution to NodeArray. 20 Main  (0.844 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.Integra
+         tion step dt = 0.05.Passing freshly created ChannelFlow to ChannelMesh'es c
+         onstructor.Created global array of nodes of length 15620.Constructing South
+         Block. Passing ChannelMesh and ChannelFlow as arguments.Constructing WestBl
+         ock.Constructing NorthBlock.Constructing EastBlock.Constructing RightBlock.
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merg
+         ing all SubMeshes into a single SparseRow.Creating a swap matrix which will
+          specify which rows have to be swapped to bring boundary nodes towards end 
+         of SparseRow which we will be solving.Solving for a single time step and wr
+         iting solution to NodeArray.Assembling stiffness matrix from node data. 80 
+         SolveNextAndAddToNodeArray
+
+11/19/18
+2:33 PM  Program started.  (0.0219 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Caller: .ctor  Line: 38 38 .ctor  (0.0235 s)
+         Integration step dt = 0.05.  File: /home/marko/Dokumenti/FizikalneAplikacij
+         e/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor  Line: 43 43 .ctor  (0.0235 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  File: /
+         home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  
+         Caller: .ctor  Line: 49 49 .ctor  (0.0266 s)
+         Created global array of nodes of length 15620.  File: /home/marko/Dokumenti
+         /FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line:
+          108 108 .ctor  (0.0267 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+          File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Caller: .ctor  Line: 109 109 .ctor  (0.769 s)
+         Constructing WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fl
+         uid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 114 114 .ctor  (0.778 s)
+         Constructing NorthBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/F
+         luid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 119 119 .ctor  (0.784 s)
+         Constructing EastBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fl
+         uid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 124 124 .ctor  (0.79 s)
+         Constructing RightBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/F
+         luid/ChannelFlow/ChannelMesh.cs  Caller: .ctor  Line: 129 129 .ctor  (0.803 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channe
+         lMesh.cs  Caller: .ctor  Line: 138 138 .ctor  (0.807 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  File: /home/marko/Dokumenti/Fizi
+         kalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: .ctor  Line: 55 5
+         5 .ctor  (0.845 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  Fi
+         le: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow
+         .cs  Caller: .ctor  Line: 60 60 .ctor  (0.873 s)
+         Solving for a single time step and writing solution to NodeArray.  File: /h
+         ome/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Program.cs  Calle
+         r: Main  Line: 20 20 Main  (0.875 s)
+         Assembling stiffness matrix from node data.  File: /home/marko/Dokumenti/Fi
+         zikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Caller: SolveNextAndAdd
+         ToNodeArray  Line: 80 80 SolveNextAndAddToNodeArray
+
+11/19/18
+2:34 PM  Program started.  (0.0173 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or  (0.0183 s)
+         Integration step dt = 0.05. 43 .ctor  (0.0183 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor  (0.0211 s)
+         Created global array of nodes of length 15620. 108 .ctor  (0.0211 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor  (0.741 s)
+         Constructing WestBlock. 114 .ctor  (0.752 s)
+         Constructing NorthBlock. 119 .ctor  (0.76 s)
+         Constructing EastBlock. 124 .ctor  (0.766 s)
+         Constructing RightBlock. 129 .ctor  (0.785 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor  (0.789 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor  (0.824 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor  (0.852 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main  (0.855 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray
