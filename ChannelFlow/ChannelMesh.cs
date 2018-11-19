@@ -103,21 +103,37 @@ namespace Fluid.ChannelFlow
                 _width, _width
             );
             _nodes = new Node[15620];
+
+            #if REPORT
             Report($"Created global array of nodes of length {_nodes.Length}.", Verbose);
             Report("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+            #endif
             _southBlock = new SouthBlock(this, channelFlow);
+
+            #if REPORT
             Report("Constructing WestBlock.", Verbose);
+            #endif
             _westBlock = new WestBlock(this, channelFlow, _southBlock);
+
+            #if REPORT
             Report("Constructing NorthBlock.", Verbose);
+            #endif
             _northBlock = new NorthBlock(this, channelFlow, _westBlock);                        // Integral values get imported with static constructor of ObstructionBlock.
+            
+            #if REPORT
             Report("Constructing EastBlock.", Verbose);
+            #endif
             _eastBlock = new EastBlock(this, channelFlow, _northBlock, _southBlock);
+            
+            #if REPORT
             Report("Constructing RightBlock.", Verbose);
+            #endif
             _rightBlock = new RightBlock(this, channelFlow, _eastBlock,
                 _rightRect._lL._x, _rightRect._lL._y,
                 _rightRect._uR._x, _rightRect._uR._y,
                 20, 60
             );
+            
             #if REPORT
             Report("Writing corner node positions of elements for the purpose of drawing a mesh.");
             #endif

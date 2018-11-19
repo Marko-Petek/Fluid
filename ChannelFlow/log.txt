@@ -68,3 +68,398 @@
          0 Main  (0.813 s)
          Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
          5 SolveNextAndAddToNodeArray
+
+11/18/18
+4:46 PM  Program started.  (0.0279 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.0283 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.0283 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0295 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0296 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.361 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.365 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.368 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.371 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.387 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.388 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.4 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.408 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.409 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
+
+11/18/18
+4:49 PM  Program started.  (0.00754 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.00798 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.008 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.00918 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0092 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.339 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.343 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.345 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.348 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.353 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.355 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.367 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.375 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.376 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
+
+11/18/18
+4:50 PM  Program started.  (0.00825 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.00878 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.0088 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0101 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0101 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.331 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.335 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.338 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.34 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.346 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.347 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.36 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.368 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.369 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
+
+11/18/18
+4:51 PM  Program started.  (0.00783 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.00832 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.00833 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.0095 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.00955 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.332 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.336 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.339 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.341 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.347 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.349 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.361 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.368 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.37 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
+
+11/18/18
+4:54 PM  Program started.  (0.00777 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 37 .ct
+         or 37 .ctor  (0.00821 s)
+         Integration step dt = 0.05. 39 .ctor 39 .ctor  (0.00823 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 42 .ctor
+          42 .ctor  (0.00936 s)
+         Created global array of nodes of length 15620. 106 .ctor 106 .ctor  (0.0094 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         107 .ctor 107 .ctor  (0.331 s)
+         Constructing WestBlock. 109 .ctor 109 .ctor  (0.336 s)
+         Constructing NorthBlock. 111 .ctor 111 .ctor  (0.338 s)
+         Constructing EastBlock. 113 .ctor 113 .ctor  (0.341 s)
+         Constructing RightBlock. 115 .ctor 115 .ctor  (0.347 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 122 .ctor 122 .ctor  (0.348 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 45 .ctor 45 .ctor  (0.361 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 47 
+         .ctor 47 .ctor  (0.368 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.369 s)
+         Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
+         5 SolveNextAndAddToNodeArray
+
+11/18/18
+5:17 PM  Program started.  (0.00749 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00795 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00797 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00912 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00916 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.331 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.335 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.337 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.34 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.346 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.347 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.36 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.367 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.368 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+5:19 PM  Program started.  (0.00748 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00792 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00794 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00909 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00912 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.33 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.334 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.337 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.34 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.345 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.346 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.359 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.366 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.367 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+5:20 PM  Program started.  (0.00774 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00819 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00823 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00934 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00937 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.33 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.334 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.337 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.34 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.346 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.347 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.359 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.367 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.368 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+5:21 PM  Program started.  (0.0077 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00818 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00819 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00934 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00938 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.329 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.333 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.336 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.339 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.344 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.345 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.358 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.365 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.366 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+5:22 PM  Program started.  (0.00789 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00837 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.0084 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00952 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00956 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.331 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.335 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.338 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.341 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.346 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.347 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.36 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.368 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.369 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+5:29 PM  Program started.  (0.00754 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00801 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00804 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00958 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00962 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.327 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.332 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.335 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.338 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.343 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.344 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.357 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.364 s)
+         Solving for a single time step and writing solution to NodeArray. 21 Main 2
+         1 Main  (0.365 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+6:08 PM  Program started.  (0.362 s)
+         Solving for a single time step and writing solution to NodeArray. 22 Main 2
+         2 Main
+
+11/18/18
+8:30 PM  Program started.  (0.0214 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.0218 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.0219 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.0232 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.0232 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.343 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.348 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.351 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.353 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.358 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.359 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.372 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.38 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.381 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+8:36 PM  Program started.  (0.00763 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00809 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.0081 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00924 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00928 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.329 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.333 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.335 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.338 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.344 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.345 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.357 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.365 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.366 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/18/18
+8:51 PM  Program started.  (0.00766 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00813 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00816 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00928 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00934 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.336 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.34 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.343 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.346 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.352 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.353 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.366 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.375 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.376 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
+
+11/19/18
+5:26 AM  Program started.  (0.00757 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001. 38 .ct
+         or 38 .ctor  (0.00806 s)
+         Integration step dt = 0.05. 43 .ctor 43 .ctor  (0.00807 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor. 49 .ctor
+          49 .ctor  (0.00924 s)
+         Created global array of nodes of length 15620. 108 .ctor 108 .ctor  (0.00927 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+         109 .ctor 109 .ctor  (0.332 s)
+         Constructing WestBlock. 114 .ctor 114 .ctor  (0.336 s)
+         Constructing NorthBlock. 119 .ctor 119 .ctor  (0.339 s)
+         Constructing EastBlock. 124 .ctor 124 .ctor  (0.342 s)
+         Constructing RightBlock. 129 .ctor 129 .ctor  (0.348 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         . 138 .ctor 138 .ctor  (0.349 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow. 55 .ctor 55 .ctor  (0.362 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving. 60 
+         .ctor 60 .ctor  (0.369 s)
+         Solving for a single time step and writing solution to NodeArray. 20 Main 2
+         0 Main  (0.37 s)
+         Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray 8
+         0 SolveNextAndAddToNodeArray
