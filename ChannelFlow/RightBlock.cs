@@ -1,10 +1,12 @@
 using System;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
-using static Fluid.Dynamics.Internals.IOHelper;
-using static Fluid.Dynamics.Internals.GeneralHelper;
 using static System.Math;
-using static Fluid.Dynamics.Numerics.Matrix;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.IO;
+using static Fluid.Internals.Operations;
+using static Fluid.Internals.Numerics.MatrixOperations;
 
 namespace Fluid.ChannelFlow
 {

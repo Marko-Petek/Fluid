@@ -1,11 +1,12 @@
 using System;
 using System.IO;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Meshing;
-using Fluid.Dynamics.Numerics;
 using static System.Math;
-using static Fluid.Dynamics.Internals.AppReporter;
-using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow
 {

@@ -1,15 +1,17 @@
 using System;
 using System.IO;
 using System.Text;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
 using System.Linq;
-using static Fluid.Dynamics.Internals.GeneralHelper;
-using static Fluid.Dynamics.Numerics.Matrix;
-using static Fluid.Dynamics.Internals.IOHelper;
 using static System.Math;
 using static System.Char;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.Operations;
+using static Fluid.Internals.Numerics.MatrixOperations;
+using static Fluid.Internals.IO;
+
 
 namespace Fluid.ChannelFlow
 {   

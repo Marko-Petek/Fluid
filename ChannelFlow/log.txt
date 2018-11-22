@@ -926,3 +926,142 @@
          .ctor  (0.852 s)
          Solving for a single time step and writing solution to NodeArray. 20 Main  (0.855 s)
          Assembling stiffness matrix from node data. 80 SolveNextAndAddToNodeArray
+
+11/19/18
+4:22 PM  Program started.  (0.0248 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File:
+          /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs
+           Line: 38 38 .ctor  (0.0261 s)
+         Integration step dt = 0.05.  File: /home/marko/Dokumenti/FizikalneAplikacij
+         e/Fluid/ChannelFlow/ChannelFlow.cs  Line: 43 43 .ctor  (0.0262 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  File: /
+         home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  
+         Line: 49 49 .ctor  (0.0299 s)
+         Created global array of nodes of length 15620.  File: /home/marko/Dokumenti
+         /FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 108 108 .ctor  (0.03 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments. 
+          File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Line: 109 109 .ctor  (0.8 s)
+         Constructing WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fl
+         uid/ChannelFlow/ChannelMesh.cs  Line: 114 114 .ctor  (0.81 s)
+         Constructing NorthBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/F
+         luid/ChannelFlow/ChannelMesh.cs  Line: 119 119 .ctor  (0.816 s)
+         Constructing EastBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fl
+         uid/ChannelFlow/ChannelMesh.cs  Line: 124 124 .ctor  (0.821 s)
+         Constructing RightBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/F
+         luid/ChannelFlow/ChannelMesh.cs  Line: 129 129 .ctor  (0.835 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh
+         .  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Channe
+         lMesh.cs  Line: 138 138 .ctor  (0.839 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Mergi
+         ng all SubMeshes into a single SparseRow.  File: /home/marko/Dokumenti/Fizi
+         kalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 55 55 .ctor  (0.88 s)
+         Creating a swap matrix which will specify which rows have to be swapped to 
+         bring boundary nodes towards end of SparseRow which we will be solving.  Fi
+         le: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow
+         .cs  Line: 60 60 .ctor  (0.901 s)
+         Solving for a single time step and writing solution to NodeArray.  File: /h
+         ome/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Program.cs  Line:
+          22 22 Main  (0.903 s)
+         Assembling stiffness matrix from node data.  File: /home/marko/Dokumenti/Fi
+         zikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 80 80 SolveNextAn
+         dAddToNodeArray
+
+11/19/18
+4:38 PM  Program started.  (0.0191 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File: /home/marko/Dokumenti/Fi
+         zikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 38  (0.0201 s)
+         Integration step dt = 0.05.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chann
+         elFlow.cs  Line: 43  (0.0201 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  File: /home/marko/Dokumenti/Fizi
+         kalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 49  (0.023 s)
+         Created global array of nodes of length 15620.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flui
+         d/ChannelFlow/ChannelMesh.cs  Line: 108  (0.0232 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  File: /home/marko/Dokume
+         nti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 109  (0.865 s)
+         Constructing WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Line: 114  (0.88 s)
+         Constructing NorthBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Line: 119  (0.888 s)
+         Constructing EastBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Line: 124  (0.896 s)
+         Constructing RightBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Line: 129  (0.912 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh.  File: /home/marko/Doku
+         menti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 138  (0.914 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         ingle SparseRow.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  
+         Line: 55  (0.957 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         rds end of SparseRow which we will be solving.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flui
+         d/ChannelFlow/ChannelFlow.cs  Line: 60  (0.982 s)
+         Solving for a single time step and writing solution to NodeArray.  File: /home/marko/Dokumenti/Fizik
+         alneAplikacije/Fluid/ChannelFlow/Program.cs  Line: 22  (0.984 s)
+         Assembling stiffness matrix from node data.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/C
+         hannelFlow/ChannelFlow.cs  Line: 80
+
+11/19/18
+4:39 PM  Program started.  (0.019 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File: /home/marko/Dokumenti/Fi
+         zikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 38  (0.0202 s)
+         Integration step dt = 0.05.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/Chann
+         elFlow.cs  Line: 43  (0.0203 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  File: /home/marko/Dokumenti/Fizi
+         kalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 49  (0.0239 s)
+         Created global array of nodes of length 15620.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flui
+         d/ChannelFlow/ChannelMesh.cs  Line: 108  (0.024 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  File: /home/marko/Dokume
+         nti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 109  (0.758 s)
+         Constructing WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Line: 114  (0.767 s)
+         Constructing NorthBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Line: 119  (0.774 s)
+         Constructing EastBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMe
+         sh.cs  Line: 124  (0.779 s)
+         Constructing RightBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelM
+         esh.cs  Line: 129  (0.79 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh.  File: /home/marko/Doku
+         menti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 138  (0.792 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a s
+         ingle SparseRow.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  
+         Line: 55  (0.826 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towa
+         rds end of SparseRow which we will be solving.  File: /home/marko/Dokumenti/FizikalneAplikacije/Flui
+         d/ChannelFlow/ChannelFlow.cs  Line: 60  (0.843 s)
+         Solving for a single time step and writing solution to NodeArray.  File: /home/marko/Dokumenti/Fizik
+         alneAplikacije/Fluid/ChannelFlow/Program.cs  Line: 22  (0.845 s)
+         Assembling stiffness matrix from node data.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/C
+         hannelFlow/ChannelFlow.cs  Line: 80
+
+11/19/18
+4:40 PM  Program started.  (0.0162 s)
+         Creating ChannelFlow with peak inlet velocity 1 and viscosity 0.001.  File: /home/marko/Do
+         kumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 38  (0.0171 s)
+         Integration step dt = 0.05.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/Channel
+         Flow/ChannelFlow.cs  Line: 43  (0.0172 s)
+         Passing freshly created ChannelFlow to ChannelMesh'es constructor.  File: /home/marko/Doku
+         menti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 49  (0.0199 s)
+         Created global array of nodes of length 15620.  File: /home/marko/Dokumenti/FizikalneAplik
+         acije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 108  (0.02 s)
+         Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.  File: /home/ma
+         rko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 109  (0.737 s)
+         Constructing WestBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow
+         /ChannelMesh.cs  Line: 114  (0.746 s)
+         Constructing NorthBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlo
+         w/ChannelMesh.cs  Line: 119  (0.752 s)
+         Constructing EastBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow
+         /ChannelMesh.cs  Line: 124  (0.757 s)
+         Constructing RightBlock.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlo
+         w/ChannelMesh.cs  Line: 129  (0.77 s)
+         Writing corner node positions of elements for the purpose of drawing a mesh.  File: /home/
+         marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelFlow/ChannelMesh.cs  Line: 138  (0.774 s)
+         ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshe
+         s into a single SparseRow.  File: /home/marko/Dokumenti/FizikalneAplikacije/Fluid/ChannelF
+         low/ChannelFlow.cs  Line: 55  (0.81 s)
+         Creating a swap matrix which will specify which rows have to be swapped to bring boundary 
+         nodes towards end of SparseRow which we will be solving.  File: /home/marko/Dokumenti/Fizi
+         kalneAplikacije/Fluid/ChannelFlow/ChannelFlow.cs  Line: 60  (0.835 s)
+         Solving for a single time step and writing solution to NodeArray.  File: /home/marko/Dokum
+         enti/FizikalneAplikacije/Fluid/ChannelFlow/Program.cs  Line: 22  (0.838 s)
+         Assembling stiffness matrix from node data.  File: /home/marko/Dokumenti/FizikalneAplikaci
+         je/Fluid/ChannelFlow/ChannelFlow.cs  Line: 80

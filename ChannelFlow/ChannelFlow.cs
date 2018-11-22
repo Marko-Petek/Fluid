@@ -1,9 +1,9 @@
 using System;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
-using static Fluid.Dynamics.Internals.AppReporter;
-using static Fluid.Dynamics.Internals.AppReporter.VerbositySettings;
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow
 {
@@ -82,7 +82,7 @@ namespace Fluid.ChannelFlow
             var stiffnessMatrix = _channelMesh.AssembleStiffnessMatrix(this);                               // Acquire stiffness matrix from existing values.
             
             #if REPORT
-            Report("Assemblingforcing vector from node data.");
+            Report("Assembling forcing vector from node data.");
             #endif
             var forcingVector = _channelMesh.AssembleForcingVector(this);                                   // Acquire forcing vector.
             
