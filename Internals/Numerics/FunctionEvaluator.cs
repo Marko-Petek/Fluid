@@ -7,6 +7,8 @@ namespace Fluid.Internals.Numerics
     public class FunctionEvaluator
     {
         int _NVars;
+        int _NPoints;
+        int 
 
         public FunctionEvaluator(int nVars) {
             
