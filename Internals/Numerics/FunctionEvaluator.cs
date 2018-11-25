@@ -10,11 +10,10 @@ namespace Fluid.Internals.Numerics
         int _NVars;
         /// <summary>Initial number of points along the side of grid.</summary>
         int _NPoints;
-        int 
 
-        public FunctionEvaluator(int nVars) {
+        // public FunctionEvaluator(int nVars) {
             
-        }
+        // }
 
 
     }

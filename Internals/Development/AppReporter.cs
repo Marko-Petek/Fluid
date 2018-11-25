@@ -91,17 +91,18 @@ namespace Fluid.Internals.Development
                 StrBuilder.Clear();
                 StrBuilder.Append(str);                                                     // Append string we wish to report.
 
-                if((OutputSettings & WriteFilePath) == WriteFilePath) {
-                    StrBuilder.Append($"  File: {filePath}");
-                }
+                // TODO: Append file path, caller name and line number.
+                // if((OutputSettings & WriteFilePath) == WriteFilePath) {
+                //     StrBuilder.Append($"  File: {filePath}");
+                // }
 
-                if((OutputSettings & WriteCallerName) == WriteCallerName) {
-                    StrBuilder.Append($"  Caller: {callerName}");
-                }
+                // if((OutputSettings & WriteCallerName) == WriteCallerName) {
+                //     StrBuilder.Append($"  Caller: {callerName}");
+                // }
 
-                if((OutputSettings & WriteLineNumber) == WriteLineNumber) {
-                    StrBuilder.Append($"  Line: {lineNumber}");
-                }
+                // if((OutputSettings & WriteLineNumber) == WriteLineNumber) {
+                //     StrBuilder.Append($"  Line: {lineNumber}");
+                // }
                 str = StrBuilder.ToString();
 
                 if((OutputSettings & WriteToConsole) == WriteToConsole) {
