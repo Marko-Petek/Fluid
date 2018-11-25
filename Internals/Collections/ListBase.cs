@@ -6,21 +6,24 @@ namespace Fluid.Internals.Collections
 {
     public abstract class ListBase<T> : SCG.IList<T>
     {
-        protected static SCG.EqualityComparer<T> _comparer;
+        protected static SCG.EqualityComparer<T> _Comparer;
 
-        protected T[] _elements;
-        protected int _count;
-        public int Count => _count;
+        /// <summary>Internal storage array.</summary>
+        protected T[] _E;
+        /// <summary>Number of elements inside internal storage array.</summary>
+        protected int _Count;
+        /// <summary>Number of elements inside internal storage array.</summary>
+        public int Count => _Count;
         public bool IsReadOnly => false;
 
 
         static ListBase() {
-            _comparer = SCG.EqualityComparer<T>.Default;
+            _Comparer = SCG.EqualityComparer<T>.Default;
         }
 
         public ListBase(int capacity) {
-            _elements = new T[capacity];
-            _count = 0;
+            _E = new T[capacity];
+            _Count = 0;
         }
 
         public ListBase() : this(4) { }
@@ -34,15 +37,15 @@ namespace Fluid.Internals.Collections
         public abstract void Clear();
 
         public int IndexOf(T element) {
-            for (int i = 0; i < _count; i++) {
-                if (_comparer.Equals(_elements[i], element)) return i;
+            for (int i = 0; i < _Count; i++) {
+                if (_Comparer.Equals(_E[i], element)) return i;
             }
             return -1;
         }
         /// <summary>Searches for an element and returns true if it is found.</summary>
         public bool Contains(T element) {
-            for (int i = 0; i < _count; i++) {
-                if (_comparer.Equals(_elements[i], element)) return true;
+            for (int i = 0; i < _Count; i++) {
+                if (_Comparer.Equals(_E[i], element)) return true;
             }
             return false;
         }
@@ -51,17 +54,17 @@ namespace Fluid.Internals.Collections
             if (destinationArray == null) throw new ArgumentNullException("The passed in array is null.");
 
             if (arrayStartIndex < 0) throw new IndexOutOfRangeException("Negative arrayStartIndex.");
-            else if (destinationArray.Length - arrayStartIndex + 1 > _count) {
-                for (int i = 0; i < _count; i++) {
-                    destinationArray[arrayStartIndex + i] = _elements[i];
+            else if (destinationArray.Length - arrayStartIndex + 1 > _Count) {
+                for (int i = 0; i < _Count; i++) {
+                    destinationArray[arrayStartIndex + i] = _E[i];
                 }
             }
             else throw new ArgumentException("arrayStartIndex too large.");
         }
 
         public SCG.IEnumerator<T> GetEnumerator() {
-            for (int i = 0; i < _count; i++)
-                yield return _elements[i];
+            for (int i = 0; i < _Count; i++)
+                yield return _E[i];
         }
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() {

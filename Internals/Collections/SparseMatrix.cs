@@ -3,7 +3,7 @@ using System.Text;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Development.ExceptionHelper;
+using static Fluid.Internals.Development.Assert;
 
 namespace Fluid.Internals.Collections
 {
@@ -11,19 +11,19 @@ namespace Fluid.Internals.Collections
     where T : struct, IEquatable<T>
     {
         protected override void AfterElementEntry(int index) {
-            _elements[index].SetIndex(index);
-            _elements[index].SetSparseMatrix(this);
+            _E[index].SetIndex(index);
+            _E[index].SetSparseMatrix(this);
 
             for(int i = index + 1; i < Count; ++i) {
-                _elements[i].SetIndex(i + 1);
+                _E[i].SetIndex(i + 1);
             }
         }
         protected override void BeforeElementExit(int index) {
-            _elements[index].SetIndex(-1);                       // Signal that SparseMatrixRow is no longer part of any SparseMatrix.
-            _elements[index].SetSparseMatrix(null);
+            _E[index].SetIndex(-1);                       // Signal that SparseMatrixRow is no longer part of any SparseMatrix.
+            _E[index].SetSparseMatrix(null);
 
             for(int i = index + 1; i < Count; ++i) {
-                _elements[i].SetIndex(i - 1);
+                _E[i].SetIndex(i - 1);
             }
         }
 
@@ -42,7 +42,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Height (length of columns) that matrix would have in its explicit form.</summary>
         public int                  GetHeight()             =>  _height;
         /// <summary>Rows, each with its own index.</summary>
-        public SparseMatrixRow<T>[] GetSparseMatrixRows()   =>  _elements;
+        public SparseMatrixRow<T>[] GetSparseMatrixRows()   =>  _E;
         /// <summary>Represents a non-existent row with specific matrix index (negative to convey it's a dummy).</summary>
         public SparseMatrixRow<T>   GetDummyMatrixRow()     =>  _dummyMatrixRow;
         #endregion
@@ -63,11 +63,11 @@ namespace Fluid.Internals.Collections
         public SparseMatrix(SparseMatrix<T> sourceToCopy) {
             _width = sourceToCopy._width;
             _height = sourceToCopy._height;
-            _count = sourceToCopy._count;
+            _Count = sourceToCopy._Count;
             _dummyMatrixRow = new SparseMatrixRow<T>(sourceToCopy._dummyMatrixRow);
             _dummyMatrixRow.SetSparseMatrix(this);
-            _elements = new SparseMatrixRow<T>[_height];
-            Array.Copy(sourceToCopy._elements, _elements, _count);
+            _E = new SparseMatrixRow<T>[_height];
+            Array.Copy(sourceToCopy._E, _E, _Count);
             _recentIndex = sourceToCopy._recentIndex;
         }
 
@@ -87,15 +87,15 @@ namespace Fluid.Internals.Collections
 
         /// <summary>Check whether a row with specified explicit index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such explicitIndex).</summary><param name="explicitIndex">Explicit index to check.</param>
         public (bool,int) GetRowIndex(int explicitIndex) {
-            if(_count != 0) {
+            if(_Count != 0) {
                 PutIndexInRange(ref _recentIndex);
                 int index = _recentIndex;
-                int recentExplicitIndex = _elements[index].GetExplicitIndex();
+                int recentExplicitIndex = _E[index].GetExplicitIndex();
                 
                 if(recentExplicitIndex <= explicitIndex) {              // Move forward until you reach end.
-                    while(index < _count && _elements[index].GetExplicitIndex() <= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
+                    while(index < _Count && _E[index].GetExplicitIndex() <= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
                         
-                        if(_elements[index].GetExplicitIndex() == explicitIndex) {
+                        if(_E[index].GetExplicitIndex() == explicitIndex) {
                             _recentIndex = index;
                             return (true,index);
                         }
@@ -104,9 +104,9 @@ namespace Fluid.Internals.Collections
                     return (false, --index);
                 }
                 else {
-                    while(index > -1 && _elements[index].GetExplicitIndex() >= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
+                    while(index > -1 && _E[index].GetExplicitIndex() >= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
                         
-                        if(_elements[index].GetExplicitIndex() == explicitIndex) {
+                        if(_E[index].GetExplicitIndex() == explicitIndex) {
                             _recentIndex = index;
                             return (true,index);
                         }
@@ -123,17 +123,17 @@ namespace Fluid.Internals.Collections
             get{
                 int dummyIndex = 0;
 
-                if(_count != 0) {
+                if(_Count != 0) {
                     PutIndexInRange(ref _recentIndex);
                     int index = _recentIndex;
-                    int recentExplicitIndex = _elements[index].GetExplicitIndex();
+                    int recentExplicitIndex = _E[index].GetExplicitIndex();
                     
                     if(recentExplicitIndex <= explicitIndex) {              // Move forward until you reach end.
-                        while(index < _count && _elements[index].GetExplicitIndex() <= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
+                        while(index < _Count && _E[index].GetExplicitIndex() <= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
                             
-                            if(_elements[index].GetExplicitIndex() == explicitIndex) {
+                            if(_E[index].GetExplicitIndex() == explicitIndex) {
                                 _recentIndex = index;
-                                return _elements[index];
+                                return _E[index];
                             }
                             ++index;
                         }
@@ -141,11 +141,11 @@ namespace Fluid.Internals.Collections
                         _recentIndex = index;
                     }
                     else {
-                        while(index > -1 && _elements[index].GetExplicitIndex() >= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
+                        while(index > -1 && _E[index].GetExplicitIndex() >= explicitIndex) {           // when second condition false, row with requested explicit index does not exist.
                             
-                            if(_elements[index].GetExplicitIndex() == explicitIndex) {
+                            if(_E[index].GetExplicitIndex() == explicitIndex) {
                                 _recentIndex = index;
-                                return _elements[index];
+                                return _E[index];
                             }
                             --index;
                         }
@@ -167,17 +167,17 @@ namespace Fluid.Internals.Collections
             if(index1Exists) {                                          // Row with first explicit index exists.
 
                 if(index2Exists) {                                          // Row with second explicit index exists. Simply swap indices and explicit indices of rows.
-                    SparseMatrixRow<T> temp = _elements[index2];
-                    _elements[index2] = _elements[index1];
-                    _elements[index2].SetIndex(index2);
-                    _elements[index2].SetExplicitIndex(explicitIndex2);
-                    _elements[index1] = temp;
-                    _elements[index1].SetIndex(index1);
-                    _elements[index1].SetExplicitIndex(explicitIndex1);
+                    SparseMatrixRow<T> temp = _E[index2];
+                    _E[index2] = _E[index1];
+                    _E[index2].SetIndex(index2);
+                    _E[index2].SetExplicitIndex(explicitIndex2);
+                    _E[index1] = temp;
+                    _E[index1].SetIndex(index1);
+                    _E[index1].SetExplicitIndex(explicitIndex1);
                 }
                 else {                                                      // Row with second explicit index does not exist.
-                    _elements[index1].SetExplicitIndex(explicitIndex2);
-                    Insert(index2, _elements[index1]);
+                    _E[index1].SetExplicitIndex(explicitIndex2);
+                    Insert(index2, _E[index1]);
 
                     if(index1 >= index2) {                                  // Insertion has moved our existing element.
                         RemoveAt(index1 + 1);
@@ -189,8 +189,8 @@ namespace Fluid.Internals.Collections
             }
             else {                                                      // Row with first explicit index does not exist.
                 if(index2Exists) {                                         // Row with second explicit index exists.
-                    _elements[index2].SetExplicitIndex(explicitIndex1);
-                    Insert(index1, _elements[index2]);
+                    _E[index2].SetExplicitIndex(explicitIndex1);
+                    Insert(index1, _E[index2]);
 
                     if(index2 >= index1) {                                  // Insertion has moved our existing element.
                         RemoveAt(index2 + 1);
@@ -206,19 +206,19 @@ namespace Fluid.Internals.Collections
         public void SwapColumns(int explicitIndex1, int explicitIndex2) {
 
             for(int i = 0; i < Count; ++i) {
-                _elements[i].SwapElementsExplicit(explicitIndex1, explicitIndex2);
+                _E[i].SwapElementsExplicit(explicitIndex1, explicitIndex2);
             }
         }
 
         public void ApplyColumnSwaps(SparseMatrix<int> swapMatrix) {
-            CheckEquality<int>(swapMatrix.GetWidth(), _width, SCG.EqualityComparer<int>.Default);          // Check that swap matrix dimensions are appropriate for this SparseRow.
-            CheckEquality<int>(swapMatrix.GetHeight(), _width, SCG.EqualityComparer<int>.Default);
+            AreEqual<int>(swapMatrix.GetWidth(), _width, SCG.EqualityComparer<int>.Default);          // Check that swap matrix dimensions are appropriate for this SparseRow.
+            AreEqual<int>(swapMatrix.GetHeight(), _width, SCG.EqualityComparer<int>.Default);
             int swapCount = swapMatrix.Count;                                                                   // Actual number of elements (SparseMatrixRows) in swapMatrix.
 
             for(int i = 0; i < swapCount; ++i) {
-                ref var row = ref swapMatrix.Get(i);                            // In-memory row i.
+                ref var row = ref swapMatrix.E(i);                            // In-memory row i.
                 int element1 = row.GetExplicitIndex();                          // Find its explicit row index. That is then index of first element to be swapped.
-                int element2 = row.Get(0).GetExplicitIndex();                   // Each row is expected to have one element. That is index of second element to be swapped.
+                int element2 = row.E(0).ImagIndex();                   // Each row is expected to have one element. That is index of second element to be swapped.
                 SwapColumns(element1, element2);
             }
         }
@@ -226,22 +226,22 @@ namespace Fluid.Internals.Collections
         /// <summary>Creates a SparseMatrix that is a sum of two operand SparseMatrices.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param>
         public static SparseMatrix<T> operator + (SparseMatrix<T> left, SparseMatrix<T> right) {
             
-            CheckEquality(left._width, right._width, IntComparer);             // Check that width and height of operands match.
-            CheckEquality(left._height, right._height, IntComparer);
+            AreEqual(left._width, right._width);             // Check that width and height of operands match.
+            AreEqual(left._height, right._height);
             SparseMatrix<T>[] operands;
             int[] rowIndex = new int[] {0, 0};                                                              // Current true row indices of operands.
             int[] explicitRowIndex;
             int[] count;
 
-            if(left._elements[0].GetExplicitIndex() <= right._elements[0].GetExplicitIndex()) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
+            if(left._E[0].GetExplicitIndex() <= right._E[0].GetExplicitIndex()) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
                 operands = new SparseMatrix<T>[2] {left, right};
-                explicitRowIndex = new int[] {left._elements[0].GetExplicitIndex(), right._elements[0].GetExplicitIndex()};
-                count = new int[] {left._count, right._count};
+                explicitRowIndex = new int[] {left._E[0].GetExplicitIndex(), right._E[0].GetExplicitIndex()};
+                count = new int[] {left._Count, right._Count};
             }
             else {
                 operands = new SparseMatrix<T>[2] {right, left};
-                explicitRowIndex = new int[] {right._elements[0].GetExplicitIndex(), left._elements[0].GetExplicitIndex()};
-                count = new int[] {right._count, left._count};
+                explicitRowIndex = new int[] {right._E[0].GetExplicitIndex(), left._E[0].GetExplicitIndex()};
+                count = new int[] {right._Count, left._Count};
             }
             var resultMatrix = new SparseMatrix<T>(left._width, left._height, (count[0] > count[1]) ? count[0] : count[1]);    // Result matrix starts with capacity of larger operand.
             
@@ -253,21 +253,21 @@ namespace Fluid.Internals.Collections
                         
                         if(rowIndex[j] < count[j]) {
                             if(explicitRowIndex[i] < explicitRowIndex[j]) {
-                                resultMatrix.Add(new SparseMatrixRow<T>(operands[i]._elements[rowIndex[i]]));
+                                resultMatrix.Add(new SparseMatrixRow<T>(operands[i]._E[rowIndex[i]]));
                             }
                             else if(explicitRowIndex[i] == explicitRowIndex[j]){
-                                var sparseMatrixRow = operands[i]._elements[rowIndex[i]] + operands[j]._elements[rowIndex[j]];
+                                var sparseMatrixRow = operands[i]._E[rowIndex[i]] + operands[j]._E[rowIndex[j]];
                                 resultMatrix.Add(sparseMatrixRow);
                                 ++rowIndex[j];
 
                                 if(rowIndex[j] < count[j]) {
-                                    explicitRowIndex[j] = operands[j]._elements[rowIndex[j]].GetExplicitIndex();
+                                    explicitRowIndex[j] = operands[j]._E[rowIndex[j]].GetExplicitIndex();
                                 }
                             }
                         }
                         else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
                             while(rowIndex[i] < count[i]) {
-                                resultMatrix.Add(new SparseMatrixRow<T>(operands[i]._elements[rowIndex[i]]));
+                                resultMatrix.Add(new SparseMatrixRow<T>(operands[i]._E[rowIndex[i]]));
                                 ++rowIndex[i];
                             }
                             return resultMatrix;
@@ -275,12 +275,12 @@ namespace Fluid.Internals.Collections
                         ++rowIndex[i];
 
                         if(rowIndex[i] < count[i]) {
-                            explicitRowIndex[i] = operands[i]._elements[rowIndex[i]].GetExplicitIndex();
+                            explicitRowIndex[i] = operands[i]._E[rowIndex[i]].GetExplicitIndex();
                         }
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
                         while(rowIndex[j] < count[j]) {
-                            resultMatrix.Add(new SparseMatrixRow<T>(operands[j]._elements[rowIndex[j]]));
+                            resultMatrix.Add(new SparseMatrixRow<T>(operands[j]._E[rowIndex[j]]));
                             ++rowIndex[j];
                         }
                         return resultMatrix;
@@ -293,7 +293,7 @@ namespace Fluid.Internals.Collections
         }
 
         public static SparseRow<T> operator * (SparseMatrix<T> matrix, SparseRow<T> vector) {
-            CheckEquality(matrix._width, vector.GetWidth(), IntComparer);                 // Check that matrix and row can be multiplied.
+            AreEqual(matrix._width, vector.Width);                 // Check that matrix and row can be multiplied.
 
             // 1) Go through each row in left matrix. Rows that do not exist, create no entries in result row.
             // 2) Move over each element in row i, check its explicit index, then search for an element with
@@ -304,20 +304,20 @@ namespace Fluid.Internals.Collections
             int matrixRowCount = matrix.Count;                                      // Number of occupied (non-zero) rows.
             var resultRow = new SparseRow<T>(matrix.GetHeight(), matrixRowCount);
             int matrixColCount;                                                  // Number of occupied columns in a matrix row. Different for each row.
-            SparseMatrixRow<T> matrixRow = matrix._elements[0];
+            SparseMatrixRow<T> matrixRow = matrix._E[0];
             T resultValue;
             int explicitRowIndex;
             int explicitColIndex;
 
             for(int i = 0; i < matrixRowCount; ++i) {            // Loop over rows.
-                matrixRow = matrix._elements[i];
+                matrixRow = matrix._E[i];
                 matrixColCount = matrixRow.Count;
                 explicitRowIndex = matrixRow.GetExplicitIndex();
                 resultValue = default(T);
 
                 for(int j = 0; j < matrixColCount; ++j) {
-                    explicitColIndex = matrixRow.Get(j).GetExplicitIndex();
-                    resultValue += (dynamic) matrixRow.Get(j).GetValue() * vector[explicitColIndex];                      // No worries compiler, types are ok.
+                    explicitColIndex = matrixRow.E(j).ImagIndex();
+                    resultValue += (dynamic) matrixRow.E(j).Value * vector[explicitColIndex];                      // No worries compiler, types are ok.
                 }
                 resultRow[explicitRowIndex] = resultValue;
             }
@@ -325,24 +325,24 @@ namespace Fluid.Internals.Collections
         }
 
         public static SparseRow<T> operator * (SparseRow<T> vector, SparseMatrix<T> matrix) {
-            CheckEquality(vector.GetWidth(), matrix._height, IntComparer);
+            AreEqual(vector.Width, matrix._height);
 
             int vectorColCount = vector.Count;
-            int matrixRowCount = matrix._count;
+            int matrixRowCount = matrix._Count;
             var resultRow = new SparseRow<T>(matrix._width);        // Result row has width of input matrix.
-            ref SparseMatrixRow<T> matrixRow = ref matrix._elements[0];
+            ref SparseMatrixRow<T> matrixRow = ref matrix._E[0];
             int matrixColCount;                                             // Different for each row.
             int explicitRowIndex;
             int explicitColIndex;
 
             for(int i = 0; i < matrixRowCount; ++i) {               // Over each row of matrix.
-                matrixRow = matrix._elements[i];
+                matrixRow = matrix._E[i];
                 explicitRowIndex = matrixRow.GetExplicitIndex();
                 matrixColCount = matrixRow.Count;
                 
                 for(int j = 0; j < matrixColCount; ++j) {
-                    explicitColIndex = matrixRow.Get(j).GetExplicitIndex();
-                    resultRow[explicitColIndex] += (dynamic) matrixRow.Get(j).GetValue() * vector[explicitRowIndex];
+                    explicitColIndex = matrixRow.E(j).ImagIndex();
+                    resultRow[explicitColIndex] += (dynamic) matrixRow.E(j).Value * vector[explicitRowIndex];
                 }
             }
             return resultRow;
@@ -354,8 +354,8 @@ namespace Fluid.Internals.Collections
             var removedMatrix = new SparseMatrix<T>(removedWidth, _height);
             _width = explicitCol;                                               // Adjust width of this Matrix.
 
-            for(int i = 0; i < _count; ++i) {                                   // Split each SparseRow separately.
-                var removedRow = _elements[i].SplitAt(explicitCol);
+            for(int i = 0; i < _Count; ++i) {                                   // Split each SparseRow separately.
+                var removedRow = _E[i].SplitAt(explicitCol);
                 removedMatrix.Add(removedRow);
             }
             return removedMatrix;
@@ -368,7 +368,7 @@ namespace Fluid.Internals.Collections
             SparseMatrix<T> removedMatrix;
 
             if(splitSuccessfull) {                                          // Some elements can be trimmed.
-                removedMatrix = RemoveRange(_recentIndex, _count - 1);
+                removedMatrix = RemoveRange(_recentIndex, _Count - 1);
                 TrimExcessSpace();
             }
             else {                                                          // No elements to trim.
@@ -385,31 +385,31 @@ namespace Fluid.Internals.Collections
 
             for(int i = 0; i < removedCount; ++i) {                         // Construct Matrix that we will return.
                 BeforeElementExit(i);
-                removed[i] = _elements[j + i];
+                removed[i] = _E[j + i];
             }
-            for(int i = k + 1; i < _count; ++i) {                           // Refill hole. Shift elements remaining on right side of hole (removed range) to right.
+            for(int i = k + 1; i < _Count; ++i) {                           // Refill hole. Shift elements remaining on right side of hole (removed range) to right.
                 BeforeElementExit(i);
-                _elements[i - removedCount] = _elements[i];
+                _E[i - removedCount] = _E[i];
                 AfterElementEntry(i - removedCount);
             }
-            _count = _count - removedCount;                                 // Changing count, no need to zero elements at end.
-            _height = _elements[_count].GetExplicitIndex() + 1;
+            _Count = _Count - removedCount;                                 // Changing count, no need to zero elements at end.
+            _height = _E[_Count].GetExplicitIndex() + 1;
             return removed;
         }
 
         /// <summary>Sets recent index to element with given explicit index. If element with specified explicit index does not exist but elements ahead exist, it sets recent index to first element ahead of specified explicit index. If specified element does not exist and end is reached, it returns false.</summary><param name="explicitIndex">Explicit index of desired element.</param>
         protected bool SetRecentIndexToOrAheadOf(int explicitIndex) {
-            CheckIndexValidity(explicitIndex, 0, _width);
+            IndexInRange(explicitIndex, 0, _width);
                 
-            if(_count != 0) {
+            if(_Count != 0) {
                 PutIndexInRange(ref _recentIndex);
                 int index = _recentIndex;
-                int recentExplicitIndex = Get(index).GetExplicitIndex();
+                int recentExplicitIndex = E(index).GetExplicitIndex();
 
                 if(recentExplicitIndex <= explicitIndex) {              // Move forward until you reach end.
-                    while(index < _count && Get(index).GetExplicitIndex() <= explicitIndex) {
+                    while(index < _Count && E(index).GetExplicitIndex() <= explicitIndex) {
 
-                        if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
+                        if(E(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
                             _recentIndex = index;
                             return true;
                         }
@@ -419,9 +419,9 @@ namespace Fluid.Internals.Collections
                     return false;
                 }
                 else {                                                  // Move backward until you reach end.
-                    while(index > -1 && Get(index).GetExplicitIndex() >= explicitIndex) {
+                    while(index > -1 && E(index).GetExplicitIndex() >= explicitIndex) {
 
-                        if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
+                        if(E(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
                             _recentIndex = index;
                             return true;
                         }
@@ -440,10 +440,10 @@ namespace Fluid.Internals.Collections
             var sb = new StringBuilder(360);
             sb.Append("{\n");
 
-            for(int i = 0; i < _count - 1; ++i) {
-                sb.Append($"{_elements[i].ToString()},\n");
+            for(int i = 0; i < _Count - 1; ++i) {
+                sb.Append($"{_E[i].ToString()},\n");
             }
-            sb.Append($"{_elements[_count - 1].ToString()}\n}}");
+            sb.Append($"{_E[_Count - 1].ToString()}\n}}");
             return sb.ToString();
         } 
     }

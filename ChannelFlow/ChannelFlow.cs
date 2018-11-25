@@ -96,7 +96,7 @@ namespace Fluid.ChannelFlow
                 Report("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
             #endif
             forcingVector.ApplySwaps(_swapMatrix);                                                          // Swap elements so that constrained elements end up at end.
-            int forcingVectorWidth = forcingVector.GetWidth();
+            int forcingVectorWidth = forcingVector.Width;
             int nConstraints = _channelMesh.GetConstraintCount();
             
             #if REPORT

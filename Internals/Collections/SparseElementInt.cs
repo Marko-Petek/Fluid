@@ -7,10 +7,10 @@ using Fluid.Internals.Development;
 namespace Fluid.Internals.Collections
 {
     /// <summary>A member of SparseRow.</summary>
-    public struct SparseElement<T> : IEquatable<SparseElement<T>> where T : struct, IEquatable<T>
+    public struct SparseElementInt : IEquatable<SparseElementInt>
     {
-        /// <summary>Comparer to check equality of two values of type T.</summary>
-        public static SCG.EqualityComparer<T> _EqualityComparer = SCG.EqualityComparer<T>.Default;
+        // /// <summary>Comparer to check equality of two values of type T.</summary>
+        // public static SCG.EqualityComparer<T> _EqualityComparer = SCG.EqualityComparer<T>.Default;
 
         /// <summary>True index inside SparseRow list.</summary>
         int _RealIndex;
@@ -19,56 +19,54 @@ namespace Fluid.Internals.Collections
         /// <summary>Index of column where element would be situated inside explicitly written out row.</summary>
         int _ImagIndex;
         /// <summary>Index of column where element would be situated inside explicitly written out row.</summary>
-        public int  ImagIndex()  =>  _ImagIndex;
+        public int ImagIndex  =>  _ImagIndex;
         /// <summary>Value of SparseElement.</summary>
-        T _Value;
+        public int _Value;
         /// <summary>Value of SparseElement.</summary>
-        public T Value { get => _Value; set => _Value = value; } 
+        public int Value { get => _Value; set => _Value = value; } 
 
 
         /// <summary>Create a SparseElement with a specified explicit index and value.</summary><param name="imagIndex">Explicit index of SparseElement in sparse row.</param><param name="value">Value of SparseElement.</param>
-        public SparseElement(int imagIndex, T value) {
+        public SparseElementInt(int imagIndex, int value) {
             _RealIndex = 0;
             _ImagIndex = imagIndex;
             _Value = value;
         }
 
         /// <summary>Create a SparseElement with specified explicit column index and specified value.</summary><param name="imagIndex">Explicit column index.</param><param name="value">Specified value.</param>
-        public SparseElement(int realIndex, int imagIndex, T value) {
+        public SparseElementInt(int realIndex, int imagIndex, int value) {
             _RealIndex = realIndex;
             _ImagIndex = imagIndex;
             _Value = value;
         }
 
-        /// <summary>Create a copy of specified SparseElement with index -1, since it does not reside inside a SparseRow.</summary><param name="sourceElement">Source element to copy.</param>
-        public SparseElement(SparseElement<T> sourceElement) : this(sourceElement._RealIndex, sourceElement._ImagIndex, sourceElement._Value) {
+        /// <summary>Create a copy of specified SparseElement with index -1, since it does not reside inside a SparseRow.</summary><param name="source">Source element to copy.</param>
+        public SparseElementInt(SparseElementInt source) : this(source.RealIndex, source.ImagIndex, source.Value) {
         }
 
         /// <summary>Create a new SparseElement with identical explicit index and index -1.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
-        public static SparseElement<T> operator + (SparseElement<T> left, SparseElement<T> right) {
-            Assert.AreEqual(left._ImagIndex, right._ImagIndex);        // Check that the indices match.
-            return new SparseElement<T>(-1, left._ImagIndex, (dynamic)left._Value + right._Value);     // Hackjob: dynamic orders compiler not to complain.
+        public static SparseElementInt operator + (SparseElementInt left, SparseElementInt right) {
+            Assert.AreEqual(left.ImagIndex, right.ImagIndex);                           // Check that the indices match.
+            return new SparseElementInt(-1, left.ImagIndex, left.Value + right.Value);
         }
 
-        public static SparseElement<T> operator - (SparseElement<T> left, SparseElement<T> right) {
-            Assert.AreEqual(left.ImagIndex(), right.ImagIndex());        // Check that the indices match.
-            return new SparseElement<T>(-1, left._ImagIndex, (dynamic)left._Value - right._Value);     // Hackjob: dynamic orders compiler not to complain.
+        public static SparseElementInt operator - (SparseElementInt left, SparseElementInt right) {
+            Assert.AreEqual(left.ImagIndex, right.ImagIndex);                           // Check that the indices match.
+            return new SparseElementInt(-1, left.ImagIndex, left.Value - right.Value);
         }
 
         /// <summary>Create a new SparseElement with identical explicit index and index -1.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
-        public static SparseElement<T> operator * (SparseElement<T> left, SparseElement<T> right) {
-            Assert.AreEqual(left.ImagIndex(), right.ImagIndex());        // Check that the indices match.
-            return new SparseElement<T>(-1, left._ImagIndex, (dynamic)left._Value * right._Value);     // Hackjob: dynamic orders compiler not to complain.
+        public static SparseElementInt operator * (SparseElementInt left, SparseElementInt right) {
+            Assert.AreEqual(left.ImagIndex, right.ImagIndex);                           // Check that the indices match.
+            return new SparseElementInt(-1, left.ImagIndex, left.Value * right.Value);
         }
 
         /// <summary>Returns true if two values match, otherwise returns false.</summary><param name="other">SparseElement to compare to.</param>
-        public bool Equals(SparseElement<T> other) {
-            if(_Value.Equals(other._Value)) {
+        public bool Equals(SparseElementInt other) {
+            if(_Value == other._Value)
                 return true;
-            }
-            else {
+            else 
                 return false;
-            }
         }
 
         public override string ToString() {

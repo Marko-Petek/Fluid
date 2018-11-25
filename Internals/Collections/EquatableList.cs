@@ -14,7 +14,7 @@ namespace Fluid.Internals.Collections
 
         /// <summary>Create a copy of specified source list.</summary><param name="sourceList">Source list to copy from.</param>
         public EquatableList(EquatableList<T> sourceList) : base(sourceList.Count) {
-            Array.Copy(sourceList._elements, _elements, sourceList.Count);
+            Array.Copy(sourceList._E, _E, sourceList.Count);
         }
 
 

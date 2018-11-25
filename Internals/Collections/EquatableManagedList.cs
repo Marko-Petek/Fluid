@@ -20,11 +20,11 @@ namespace Fluid.Internals.Collections
         public bool Equals(EquatableManagedList<T> other) {
 
             if(other != null) {
-                if(other.Count == _count) {
+                if(other.Count == _Count) {
 
-                    for(int i = 0; i < _count; ++i) {
+                    for(int i = 0; i < _Count; ++i) {
                         
-                        if(!_elements[i].Equals(other._elements[i])) {
+                        if(!_E[i].Equals(other._E[i])) {
                             return false;
                         }
                     }

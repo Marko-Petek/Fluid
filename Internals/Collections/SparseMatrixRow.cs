@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Development.ExceptionHelper;
+using static Fluid.Internals.Development.Assert;
 
 namespace Fluid.Internals.Collections
 {
@@ -48,19 +48,19 @@ namespace Fluid.Internals.Collections
         }
         /// <summary>Create a copy of SparseMatrixRow with identical owner.</summary><param name="sourceRow">SparseMatrixRow whose owner will also be assigned as owner of new SparseMatrixRow.</param>
         public SparseMatrixRow(SparseMatrixRow<T> sourceMatrixRow) :
-        this(sourceMatrixRow._width, sourceMatrixRow._explicitIndex) {
+        this(sourceMatrixRow._Width, sourceMatrixRow._explicitIndex) {
             _sparseMatrix = sourceMatrixRow._sparseMatrix;                  // Set same owner.
             AddRange(sourceMatrixRow);
         }
         /// <summary>Create a SparseMatrixRow out of a regular SparseRow. It has null owner and negative explicitIndex.</summary><param name="sourceRow">Source SparseRow to copy elements from.</param><param name="ownerMatrix">SparseMatrix which will be specified as owner of SparseMatrixRow.</param><param name="explicitIndex">Index that row would have in a writen-out matrix.</param>
-        public SparseMatrixRow(SparseRow<T> sourceRow, int explicitIndex) : this(sourceRow.GetWidth(), explicitIndex) {
+        public SparseMatrixRow(SparseRow<T> sourceRow, int explicitIndex) : this(sourceRow.Width, explicitIndex) {
             AddRange(sourceRow);
         }
 
         /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
         new public SparseMatrixRow<T> CreateFromArray(SparseElement<T>[] source) {
             var row = new SparseMatrixRow<T>(source.Length);
-            row._elements = source;
+            row._E = source;
             
             for(int i = 0; i < source.Length; ++i) {                            // Remember to reset indices.
                 AfterElementEntry(i);
@@ -72,32 +72,32 @@ namespace Fluid.Internals.Collections
         /// <summary>Retrieves an element with given matrix index (0 if not present), or sets it (creates if not present).</summary>
         public override T this[int explicitIndex] {
             get {
-                if(_count != 0) {
-                    PutIndexInRange(ref _recentIndex);
-                    int index = _recentIndex;
-                    int recentExplicitIndex = Get(index).GetExplicitIndex();
+                if(_Count != 0) {
+                    PutIndexInRange(ref _RecentIndex);
+                    int index = _RecentIndex;
+                    int recentExplicitIndex = E(index).ImagIndex();
                 
                     if(recentExplicitIndex <= explicitIndex) {              // Move forward until you reach end.
-                        while(index < _count && Get(index).GetExplicitIndex() <= explicitIndex) {
+                        while(index < _Count && E(index).ImagIndex() <= explicitIndex) {
 
-                            if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
-                                _recentIndex = index;
-                                return Get(index).GetValue();
+                            if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to return.
+                                _RecentIndex = index;
+                                return E(index).Value;
                             }
                             ++index;
                         }
-                        _recentIndex = (index < _count) ? index : (_count-1);
+                        _RecentIndex = (index < _Count) ? index : (_Count-1);
                     }
                     else {                                                  // Move backward until you reach end.
-                        while(index > -1 && Get(index).GetExplicitIndex() >= explicitIndex) {
+                        while(index > -1 && E(index).ImagIndex() >= explicitIndex) {
 
-                            if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to return.
-                                _recentIndex = index;
-                                return Get(index).GetValue();
+                            if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to return.
+                                _RecentIndex = index;
+                                return E(index).Value;
                             }
                             --index;
                         }
-                        _recentIndex = index + 1;
+                        _RecentIndex = index + 1;
                     }
                 }
                 return default(T);
@@ -106,61 +106,61 @@ namespace Fluid.Internals.Collections
                 var sparseMatrixRow = this;                                 
                 
                 if(_isDummy) {                                                                // Indicates that this row is not part of a matrix. (Indexer of SparseMatrix returns a static SparseMatrixRow with index -1 if row does not exist in matrix.)
-                    if(!SparseElement<T>.EqualityComparer.Equals(value, default(T))) {      // Create new row only if provided value is not zero.  
+                    if(!SparseElement<T>._EqualityComparer.Equals(value, default(T))) {      // Create new row only if provided value is not zero.  
                         sparseMatrixRow = new SparseMatrixRow<T>(this);     // Create an actual row from static dummy.
-                        _recentIndex = _index;
+                        _RecentIndex = _index;
                         _sparseMatrix.Insert(_index, sparseMatrixRow);                           // Insertion index has been passed from the getter on SparseMatrix.
                     }
                     else {          // Row does not exist anyway, job done.
-                        _recentIndex = _index;
+                        _RecentIndex = _index;
                         return;
                     }
                 }
                 int insertIndex = sparseMatrixRow.Count;                   // If dummy has been inserted, it is empty. Next if loop will not execute, insertIndex has to be accurate here.
                 
-                if(_count != 0) {
-                    PutIndexInRange(ref _recentIndex);
-                    int index = _recentIndex;
-                    int recentExplicitIndex = Get(index).GetExplicitIndex();
+                if(_Count != 0) {
+                    PutIndexInRange(ref _RecentIndex);
+                    int index = _RecentIndex;
+                    int recentExplicitIndex = E(index).ImagIndex();
 
                     if(recentExplicitIndex <= explicitIndex) {              // Move forward until you reach end.
-                        while(index < _count && Get(index).GetExplicitIndex() <= explicitIndex) {          // Find element, delete if value provided is zero.
+                        while(index < _Count && E(index).ImagIndex() <= explicitIndex) {          // Find element, delete if value provided is zero.
 
-                            if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>.EqualityComparer.Equals(value, default(T))) {
+                            if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
+                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);                                                // If zero is provided, simply remove SparseElement.
                                 }
                                 else {
-                                    Get(index).SetValue(value);
+                                    E(index).Value = value;
                                 }
-                                _recentIndex = index;
+                                _RecentIndex = index;
                                 return;
                             }
                             ++index;
                         }
                         insertIndex = index;
-                        _recentIndex = index;
+                        _RecentIndex = index;
                     }
                     else {                                                  // Move backward until you reach end.
-                        while(index > -1 && Get(index).GetExplicitIndex() >= explicitIndex) {
+                        while(index > -1 && E(index).ImagIndex() >= explicitIndex) {
 
-                            if(Get(index).GetExplicitIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>.EqualityComparer.Equals(value, default(T))) {
+                            if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
+                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);                                                // If zero is provided, simply remove SparseElement.
                                 }
                                 else {
-                                    Get(index).SetValue(value);
+                                    E(index).Value = value;
                                 }
-                                _recentIndex = index;
+                                _RecentIndex = index;
                                 return;
                             }
                             --index;
                         }
                         insertIndex = index + 1;
-                        _recentIndex = insertIndex;
+                        _RecentIndex = insertIndex;
                     }
                 }
-                if(!SparseElement<T>.EqualityComparer.Equals(value, default(T))) {
+                if(!SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
                         sparseMatrixRow.Insert(insertIndex, new SparseElement<T>(insertIndex, explicitIndex, value));  // Count = 0, end has been reached or SparseElement at index now has explicit index above the desired one. Insert a freshly created element.
                 }
             }
@@ -183,7 +183,7 @@ namespace Fluid.Internals.Collections
         new public SparseMatrixRow<T> SplitAt(int explicitIndex) {
             SetRecentIndexToOrAheadOf(explicitIndex);
             TrimExcessSpace();
-            return RemoveRange(_recentIndex, _elements.Length - 1);      // Remove every element from specified point onwards.
+            return RemoveRange(_RecentIndex, _E.Length - 1);      // Remove every element from specified point onwards.
         }
 
         /// <summary>Removes specified range from List and returns it.</summary><param name="j">Inclusive starting index.</param><param name="k">Inclusive ending index.</param>
@@ -193,15 +193,15 @@ namespace Fluid.Internals.Collections
             
             for(int i = 0; i < removedCount; ++i) {             // Construct array that we will return.
                 BeforeElementExit(i);
-                removed[i] = _elements[j + i];
+                removed[i] = _E[j + i];
             }
-            for(int i = k + 1; i < _count; ++i) {               // Refill hole. Shift elements remaining on right side of hole (removed range) to right.
+            for(int i = k + 1; i < _Count; ++i) {               // Refill hole. Shift elements remaining on right side of hole (removed range) to right.
                 BeforeElementExit(i);
-                _elements[i - removedCount] = _elements[i];
+                _E[i - removedCount] = _E[i];
                 AfterElementEntry(i - removedCount);
             }
-            _count = _count - removedCount;                     // Changing count, no need to zero elements at end.
-            _width = _elements[_count].GetExplicitIndex() + 1;
+            _Count = _Count - removedCount;                     // Changing count, no need to zero elements at end.
+            _Width = _E[_Count].ImagIndex() + 1;
             return CreateFromArray(removed);
         }
 
@@ -210,10 +210,10 @@ namespace Fluid.Internals.Collections
             StringBuilder sb = new StringBuilder(72);
             sb.Append($"{{{_explicitIndex}: ");
 
-            for(int i = 0; i < _count - 1; ++i) {
-                sb.Append($"{_elements[i].ToString()}, ");
+            for(int i = 0; i < _Count - 1; ++i) {
+                sb.Append($"{_E[i].ToString()}, ");
             }
-            sb.Append($"{_elements[_count - 1].ToString()}}}");
+            sb.Append($"{_E[_Count - 1].ToString()}}}");
             return sb.ToString();
         }
     }
