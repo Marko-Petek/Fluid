@@ -1,7 +1,7 @@
 using System;
 using Fluid.ChannelFlow;
-using Fluid.Dynamics.Meshing;
-using Fluid.Dynamics.Numerics;
+using Fluid.Internals.Meshing;
+using Fluid.Internals.Numerics;
 
 namespace Fluid.Tests
 {

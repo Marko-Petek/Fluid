@@ -1,7 +1,7 @@
 using System;
 using Xunit;
-using Fluid.Dynamics;
-using Fluid.Dynamics.Numerics;
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
 
 namespace Fluid.Tests
 {
