@@ -7,7 +7,7 @@ using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
-    public class SparseMatrixInt : EquatableManagedList<SparseMatrixRowInt>
+    public class SparseMatrixInt : EquatableManagedList<SparseMatrixRowInt>             // TODO: Remove the "managed" mechanism.
     {
         /// <summary>Default value of an element (e.g. 0).</summary>
         readonly int _DefaultValue;
