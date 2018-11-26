@@ -12,6 +12,8 @@ namespace Fluid.Internals.Collections
         SparseMatrixInt _SparseMatrix;
         /// <summary>SparseMatrix that contains SparseMatrixRow.</summary>
         public SparseMatrixInt SparseMatrix {set => _SparseMatrix = value; }
+        /// <summary>Default value of an element.</summary>
+        public int DefaultValue => _SparseMatrix.DefaultValue;
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
         int _RealIndex;
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
@@ -26,7 +28,7 @@ namespace Fluid.Internals.Collections
         public bool IsDummy { get => _IsDummy; set => _IsDummy = value; }
 
         
-
+        // TODO: Check that DefaultValue mechanism is implemented accross all Sparse classes.
         /// <summary>Create SparseMatrixRow with unspecified matrix index (negative).</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index.</param>
         public SparseMatrixRowInt(int width) : base(width) {
             _RealIndex = -1;
@@ -68,10 +70,11 @@ namespace Fluid.Internals.Collections
         public override int this[int imagIndex] {
             get {
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentRealIndex);
+                    ValidateIndex(ref _RecentRealIndex);
                     int realIndex = RecentRealIndex;
                 
                     if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
+                        
                         while(realIndex < Count && _E[realIndex].ImagIndex <= imagIndex) {
 
                             if(_E[realIndex].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
@@ -83,6 +86,7 @@ namespace Fluid.Internals.Collections
                         RecentRealIndex = (realIndex < Count) ? realIndex : (Count-1);
                     }
                     else {                                                  // Move backward until you reach end.
+                        
                         while(realIndex > -1 && _E[realIndex].ImagIndex >= imagIndex) {
 
                             if(_E[realIndex].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
@@ -94,13 +98,13 @@ namespace Fluid.Internals.Collections
                         RecentRealIndex = realIndex + 1;
                     }
                 }
-                return 0;
+                return DefaultValue;
             }
             set {
                 var sparseMatrixRowInt = this;                                 
                 
                 if(IsDummy) {                                                               // Indicates that this row is not part of a matrix. (Indexer of SparseMatrix returns a static SparseMatrixRow with index -1 if row does not exist in matrix.)
-                    if(value != 0) {                                                        // Create new row only if provided value is not zero.  
+                    if(value != DefaultValue) {                                                        // Create new row only if provided value is not zero.  
                         sparseMatrixRowInt = new SparseMatrixRowInt(this);     // Create an actual row from static dummy.
                         RecentRealIndex = _RealIndex;
                         _SparseMatrix.Insert(_RealIndex, sparseMatrixRowInt);                           // Insertion index has been passed from the getter on SparseMatrix.
@@ -113,19 +117,20 @@ namespace Fluid.Internals.Collections
                 int insertIndex = sparseMatrixRowInt.Count;                                         // If dummy has been inserted, it is empty. Next if loop will not execute, insertIndex has to be accurate here.
                 
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentRealIndex);
+                    ValidateIndex(ref _RecentRealIndex);
                     int realIndex = RecentRealIndex;
 
                     if(RecentImagIndex <= imagIndex) {                                              // Move forward until you reach end.
+                        
                         while(realIndex < Count && _E[realIndex].ImagIndex <= imagIndex) {        // Find element, delete if value provided is zero.
 
                             if(_E[realIndex].ImagIndex == imagIndex) {                             // Try to find an existing entry to modify.
-                                if(value == 0) {
+                                
+                                if(value == DefaultValue)
                                     RemoveAt(realIndex);                                                // If zero is provided, simply remove SparseElement.
-                                }
-                                else {
+                                else
                                     _E[realIndex].Value = value;
-                                }
+
                                 RecentRealIndex = realIndex;
                                 return;
                             }
@@ -138,12 +143,12 @@ namespace Fluid.Internals.Collections
                         while(realIndex > -1 && _E[realIndex].ImagIndex >= imagIndex) {
 
                             if(_E[realIndex].ImagIndex == imagIndex) {                        // Try to find an existing entry to modify.
-                                if(value == 0) {
+                                
+                                if(value == DefaultValue)
                                     RemoveAt(realIndex);                                                // If zero is provided, simply remove SparseElement.
-                                }
-                                else {
+                                else
                                     _E[realIndex].Value = value;
-                                }
+
                                 RecentRealIndex = realIndex;
                                 return;
                             }
@@ -153,9 +158,9 @@ namespace Fluid.Internals.Collections
                         RecentRealIndex = insertIndex;
                     }
                 }
-                if(value != 0) {
-                        sparseMatrixRowInt.Insert(insertIndex, new SparseElementInt(insertIndex, imagIndex, value));  // Count = 0, end has been reached or SparseElement at index now has explicit index above the desired one. Insert a freshly created element.
-                }
+
+                if(value != DefaultValue)
+                    sparseMatrixRowInt.Insert(insertIndex, new SparseElementInt(insertIndex, imagIndex, value));  // Count = 0, end has been reached or SparseElement at index now has explicit index above the desired one. Insert a freshly created element.
             }
         }
 

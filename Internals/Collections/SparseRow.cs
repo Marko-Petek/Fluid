@@ -84,7 +84,7 @@ namespace Fluid.Internals.Collections
                 Assert.IndexInRange(explicitIndex, 0, Width);
                 
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentIndex);
+                    ValidateIndex(ref _RecentIndex);
                     int index = _RecentIndex;
                     int recentExplicitIndex = E(index).ImagIndex();
 
@@ -118,7 +118,7 @@ namespace Fluid.Internals.Collections
                 int insertIndex = 0;
 
                 if(_Count != 0) {
-                    PutIndexInRange(ref _RecentIndex);
+                    ValidateIndex(ref _RecentIndex);
                     int index = _RecentIndex;
                     int recentExplicitIndex = E(index).ImagIndex();
 
@@ -423,7 +423,7 @@ namespace Fluid.Internals.Collections
             Assert.IndexInRange(explicitIndex, 0, Width);
                 
             if(_Count != 0) {
-                PutIndexInRange(ref _RecentIndex);
+                ValidateIndex(ref _RecentIndex);
                 int index = _RecentIndex;
                 int recentExplicitIndex = E(index).ImagIndex();
 

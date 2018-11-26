@@ -1,19 +1,16 @@
 using System;
-using System.Collections;
+
+using Fluid.Internals.Collections;
 
 namespace L03_Percolation
 {
     public class Grid
     {
         /// <summary>Array that specifies which elements are conductive.</summary>
-        BitArray[] _Rows;
+        SparseMatrixInt _SparseMatrix;
 
         public Grid(int nRows, int nCols) {
-            _Rows = new BitArray[nRows];
-
-            for(int i = 0; i < nRows; ++i) {
-                _Rows[i] = new BitArray(nCols);
-            }
+            _SparseMatrix = new SparseMatrixInt(nCols, nRows, 10_000);
         }
     }
 }

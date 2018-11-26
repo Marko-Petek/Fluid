@@ -88,7 +88,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Check whether a row with specified explicit index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such explicitIndex).</summary><param name="explicitIndex">Explicit index to check.</param>
         public (bool,int) GetRowIndex(int explicitIndex) {
             if(_Count != 0) {
-                PutIndexInRange(ref _recentIndex);
+                ValidateIndex(ref _recentIndex);
                 int index = _recentIndex;
                 int recentExplicitIndex = _E[index].GetExplicitIndex();
                 
@@ -124,7 +124,7 @@ namespace Fluid.Internals.Collections
                 int dummyIndex = 0;
 
                 if(_Count != 0) {
-                    PutIndexInRange(ref _recentIndex);
+                    ValidateIndex(ref _recentIndex);
                     int index = _recentIndex;
                     int recentExplicitIndex = _E[index].GetExplicitIndex();
                     
@@ -402,7 +402,7 @@ namespace Fluid.Internals.Collections
             IndexInRange(explicitIndex, 0, _width);
                 
             if(_Count != 0) {
-                PutIndexInRange(ref _recentIndex);
+                ValidateIndex(ref _recentIndex);
                 int index = _recentIndex;
                 int recentExplicitIndex = E(index).GetExplicitIndex();
 

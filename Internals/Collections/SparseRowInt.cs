@@ -13,6 +13,10 @@ namespace Fluid.Internals.Collections
     /// <summary>A memeber of SparseArray.</summary><remarks>Concrete class for Int32 was created for speed because a statically typed mechanism for arithmetic inside generics did not exist at the time of writing.</remarks>
     public class SparseRowInt : EquatableManagedList<SparseElementInt>
     {
+        /// <summary>Default value of an element.</summary>
+        readonly int _DefaultValue;
+        /// <summary>Default value of an element.</summary>
+        public int DefaultValue => _DefaultValue;
         /// <summary>Width of row if written out explicitly.</summary>
         protected int _Width;
         /// <summary>Width of row if written out explicitly.</summary>
@@ -25,16 +29,20 @@ namespace Fluid.Internals.Collections
         protected int RecentImagIndex => E(_RecentRealIndex).ImagIndex;
 
 
-
-        /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public SparseRowInt(int width, int capacity) : base(capacity) {
+        /// <summary>Create a SparseRow with specified width it would have in explicit form, specified default value and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
+        public SparseRowInt(int width, int defaultValue, int capacity) : base(capacity) {
+            _DefaultValue = defaultValue;
             _Width = width;
+        }
+        /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
+        public SparseRowInt(int width, int capacity) : this(width, 0, capacity) {
         }
         /// <summary>Create a SparseRow with specified width it would have in explicit form and default initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
         public SparseRowInt(int width) : this(width, 6) {
         }
         /// <summary>Create a copy of specified SparseRow.</summary><param name="source">Source SparseRow to copy.</param>
         public SparseRowInt(SparseRowInt source) : base(source) {
+            _DefaultValue = source._DefaultValue;
             _Width = source._Width;
         }
 
@@ -89,7 +97,7 @@ namespace Fluid.Internals.Collections
                 Assert.IndexInRange(imagIndex, 0, Width);
                 
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentRealIndex);
+                    ValidateIndex(ref _RecentRealIndex);
                     int i = RecentRealIndex;
 
                     if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
@@ -122,7 +130,7 @@ namespace Fluid.Internals.Collections
                 int insertIndex = 0;
 
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentRealIndex);
+                    ValidateIndex(ref _RecentRealIndex);
                     int i = RecentRealIndex;
 
                     if(RecentImagIndex <= imagIndex) {
@@ -426,7 +434,7 @@ namespace Fluid.Internals.Collections
             Assert.IndexInRange(imagIndex, 0, Width);
                 
             if(Count != 0) {
-                PutIndexInRange(ref _RecentRealIndex);
+                ValidateIndex(ref _RecentRealIndex);
                 int realIndex = _RecentRealIndex;
 
                 if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.

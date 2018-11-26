@@ -73,7 +73,7 @@ namespace Fluid.Internals.Collections
         public override T this[int explicitIndex] {
             get {
                 if(_Count != 0) {
-                    PutIndexInRange(ref _RecentIndex);
+                    ValidateIndex(ref _RecentIndex);
                     int index = _RecentIndex;
                     int recentExplicitIndex = E(index).ImagIndex();
                 
@@ -119,7 +119,7 @@ namespace Fluid.Internals.Collections
                 int insertIndex = sparseMatrixRow.Count;                   // If dummy has been inserted, it is empty. Next if loop will not execute, insertIndex has to be accurate here.
                 
                 if(_Count != 0) {
-                    PutIndexInRange(ref _RecentIndex);
+                    ValidateIndex(ref _RecentIndex);
                     int index = _RecentIndex;
                     int recentExplicitIndex = E(index).ImagIndex();
 

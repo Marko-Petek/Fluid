@@ -2,8 +2,8 @@
 /ChannelFlow/obj
 /Dynamics/bin
 /Dynamics/obj
-/Dynamics.Tests/bin
-/Dynamics.Tests/obj
+/Tests/bin
+/Tests/obj
 /Internals/bin
 /Internals/obj
 /L02_SolarFlux/bin

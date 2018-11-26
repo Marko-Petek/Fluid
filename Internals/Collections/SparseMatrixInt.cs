@@ -3,13 +3,16 @@ using System.Text;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals;
-using Fluid.Internals.Collections;
 using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
     public class SparseMatrixInt : EquatableManagedList<SparseMatrixRowInt>
     {
+        /// <summary>Default value of an element (e.g. 0).</summary>
+        readonly int _DefaultValue;
+        /// <summary>Default value of an element (e.g. 0).</summary>
+        public int DefaultValue => _DefaultValue;
         /// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
         int _Width;
         /// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
@@ -28,13 +31,20 @@ namespace Fluid.Internals.Collections
         SparseMatrixRowInt _DummyMatrixRowInt;
         /// <summary>Represents a non-existent row with specific matrix index (negative to convey it's a dummy).</summary>
         public SparseMatrixRowInt DummyMatrixRowInt => _DummyMatrixRowInt;
-        
-        // /// <summary>Rows, each with its own index.</summary>
-        // public SparseMatrixRow<T>[] GetSparseMatrixRows()   =>  _E;
 
 
+        /// <summary>Create a SparseMatrix with given width, height, default value and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
+        public SparseMatrixInt(int width, int height, int defaultValue, int capacity) : base(capacity) {
+            _DefaultValue = defaultValue;
+            _Width = width;
+            _Height = height;
+            _DummyMatrixRowInt = new SparseMatrixRowInt(_Width, -1);             // Empty row.
+            _DummyMatrixRowInt.IsDummy = true;
+            _DummyMatrixRowInt.SparseMatrix = this;
+        }
         /// <summary>Create a SparseMatrix with given width, height and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
         public SparseMatrixInt(int width, int height, int capacity) : base(capacity) {
+            _DefaultValue = 0;
             _Width = width;
             _Height = height;
             _DummyMatrixRowInt = new SparseMatrixRowInt(_Width, -1);             // Empty row.
@@ -47,10 +57,11 @@ namespace Fluid.Internals.Collections
 
         /// <summary>Create a copy of specified SparseMatrix.</summary><param name="source">Source SparseMatrix to copy.</param>
         public SparseMatrixInt(SparseMatrixInt source) {
+            _DefaultValue = source.DefaultValue;
             _Width = source.Width;
             _Height = source.Height;
             _Count = source.Count;
-            _DummyMatrixRowInt = new SparseMatrixRowInt(source.DummyMatrixRowInt);
+            _DummyMatrixRowInt = new SparseMatrixRowInt(source.DummyMatrixRowInt);      // FIXME: Set default value.
             _DummyMatrixRowInt.SparseMatrix = this;
             _E = new SparseMatrixRowInt[Height];
             Array.Copy(source._E, _E, Count);
@@ -58,7 +69,7 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Creates a SparseMatrix from an array.</summary><param name="source">Source array.</param>
-        public SparseMatrixInt(int[][] source) {
+        public SparseMatrixInt(int[][] source) {                // TODO: Finish method that creates SparseMatrix from array.
             int length0 = source.Length;
 
             for(int i = 0; i < length0; ++i) {
@@ -89,17 +100,17 @@ namespace Fluid.Internals.Collections
             }
         }
 
-        /// <summary>Check whether a row with specified explicit index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such explicitIndex).</summary><param name="imagIndex">Explicit index to check.</param>
-        public (bool,int) GetRealRowIndex(int imagIndex) {
+        /// <summary>Check whether a row with specified explicit index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such explicitIndex).</summary><param name="imagRowIndex">Explicit index to check.</param>
+        public (bool,int) GetRealRowIndex(int imagRowIndex) {
             if(Count != 0) {
-                PutIndexInRange(ref _RecentRealIndex);
+                ValidateIndex(ref _RecentRealIndex);
                 int realIndex = RecentRealIndex;
                 
-                if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
+                if(RecentImagIndex <= imagRowIndex) {              // Move forward until you reach end.
                     
-                    while(realIndex < Count && _E[realIndex].ImagIndex <= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
+                    while(realIndex < Count && _E[realIndex].ImagIndex <= imagRowIndex) {           // when second condition false, row with requested explicit index does not exist.
                         
-                        if(_E[realIndex].ImagIndex == imagIndex) {
+                        if(_E[realIndex].ImagIndex == imagRowIndex) {
                             _RecentRealIndex = realIndex;
                             return (true,realIndex);
                         }
@@ -108,9 +119,9 @@ namespace Fluid.Internals.Collections
                     return (false, --realIndex);
                 }
                 else {
-                    while(realIndex > -1 && _E[realIndex].ImagIndex >= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
+                    while(realIndex > -1 && _E[realIndex].ImagIndex >= imagRowIndex) {           // when second condition false, row with requested explicit index does not exist.
                         
-                        if(_E[realIndex].ImagIndex == imagIndex) {
+                        if(_E[realIndex].ImagIndex == imagRowIndex) {
                             _RecentRealIndex = realIndex;
                             return (true,realIndex);
                         }
@@ -128,7 +139,7 @@ namespace Fluid.Internals.Collections
                 int dummyIndex = 0;
 
                 if(Count != 0) {
-                    PutIndexInRange(ref _RecentRealIndex);
+                    ValidateIndex(ref _RecentRealIndex);
                     int realIndex = RecentRealIndex;
                     
                     if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
@@ -402,7 +413,7 @@ namespace Fluid.Internals.Collections
             Assert.IndexInRange(imagIndex, 0, _Width);
                 
             if(Count != 0) {
-                PutIndexInRange(ref _RecentRealIndex);
+                ValidateIndex(ref _RecentRealIndex);
                 int realIndex = _RecentRealIndex;
 
                 if(RecentImagIndex <= imagIndex) {                                                      // Move forward until you reach end.

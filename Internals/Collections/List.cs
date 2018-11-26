@@ -119,7 +119,7 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>If specified index is out of range of internal array, we put it inside range.</summary><param name="index">Index which we want to conform.</param>
-        protected void PutIndexInRange(ref int index) {
+        protected void ValidateIndex(ref int index) {
 
             if(index <= 0) {
                 index = 0;
