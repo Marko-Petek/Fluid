@@ -699,13 +699,13 @@
       "projectName": "L02_SolarFlux",
       "projectPath": "/home/marko/Dokumenti/FizikalneAplikacije/Fluid/L02_SolarFlux/L02_SolarFlux.csproj",
       "packagesPath": "/home/marko/.nuget/packages/",
-      "outputPath": "/home/marko/Dokumenti/FizikalneAplikacije/Fluid/L02_SolarFlux/obj/",
+      "outputPath": "/home/marko/Dokumenti/FizikalneAplikacije/Fluid/L02_SolarFlux/obj",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/marko/.nuget/NuGet/NuGet.Config"
+        "/home/marko/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
@@ -728,8 +728,9 @@
       "netcoreapp2.1": {
         "dependencies": {
           "Microsoft.NETCore.App": {
+            "suppressParent": "All",
             "target": "Package",
-            "version": "[2.1.0, )",
+            "version": "2.1",
             "autoReferenced": true
           }
         },

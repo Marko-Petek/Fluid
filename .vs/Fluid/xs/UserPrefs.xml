@@ -1,0 +1,14 @@
+﻿<Properties StartupConfiguration="{A8A7F1D4-7482-4F6E-802E-4BDEF87BFABA}|Default">
+  <MonoDevelop.Ide.ItemProperties.ChannelFlow PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Internals/Collections/List.cs">
+    <Files>
+      <File FileName="Internals/Collections/List.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
