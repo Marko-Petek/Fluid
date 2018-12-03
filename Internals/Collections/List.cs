@@ -13,23 +13,29 @@ namespace Fluid.Internals.Collections
         public List() : base() { }
 
         /// <summary>Create list with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array</param>
-        public List(int capacity) : base(capacity) { }
+        public List(int capacity = 6) : base(capacity) { }
 
-        /// <summary>Create a copy of specified source list.</summary><param name="sourceList">Source list to copy from.</param>
-        public List(List<T> sourceList) : base(sourceList.Count) {
-            Array.Copy(sourceList._E, _E, sourceList.Count);
+        /// <summary>Create a copy of specified source list.</summary><param name="source">Source list to copy.</param>
+        public List(List<T> source) : base(source.Count != 0 ? source.Count : 6) {
+            Array.Copy(source._E, _E, source.Count);
         }
 
-        /// <summary>Create a new list by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
-        public List<T> CreateFromArray(T[] source) {
+        /// <summary>Create a copy of specified source array as a list (convert to list).</summary><param name="source">Source array to copy from.</param>
+        public List(T[] source) : base(source.Length) {
+            Array.Copy(source, _E, source.Length);
+        }
+
+        /// <summary>Create a new list by absorbing in it a specified source array.</summary><param name="source">Source array to adopt.</param>
+        public static List<T> CreateFromArray(T[] source) {
             var list = new List<T>(0);
             list._E = source;
             return list;
         }
 
-        /// <summary>Create a copy of specified source array, but as a list.</summary><param name="sourceArray">Source array to copy from.</param>
-        public List(T[] sourceArray) : base(sourceArray.Length) {
-            Array.Copy(sourceArray, _E, sourceArray.Length);
+        /// <summary>Absorb a specified source array as internal array.</summary><param name="source">Source array to absorb.</param>
+        public void AbsorbArray(T[] source) {
+            _E = source;
+            _RecentIndex = 0;
         }
 
         /// <summary>Get a reference to element at specified index.</summary><param name="index">Element index.</param><returns>Element in list at specified index.</returns>
@@ -61,7 +67,6 @@ namespace Fluid.Internals.Collections
         public override void Add(T element) {
             EnsureArrayCapacity(ref _E, _Count + 1);
             _E[_Count] = element;
-            _Count++;
         }
 
         public override void AddRange(SCG.IList<T> elements) {

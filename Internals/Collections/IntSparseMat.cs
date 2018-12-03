@@ -26,7 +26,7 @@ namespace Fluid.Internals.Collections
 		/// <summary>RealIndex of most recently fetched (get or set) SparseMatrixRow.</summary>
 		public int RecentRealIndex => _RecentRealIndex;
 		/// <summary>ImagIndex of most recently fetched (get or set) SparseMatrixRow.</summary>
-		public int RecentImagIndex => _E[_RecentRealIndex].VirtIndex;
+		public int RecentVirtIndex => _E[_RecentRealIndex].VirtIndex;
 		/// <summary>Represents a non-existent row with negative matrix index to convey it's a dummy.</summary>
 		IntSparseMatRow _DummyMatrixRowInt;
 		/// <summary>Represents a non-existent row with specific matrix index (negative to convey it's a dummy).</summary>
@@ -106,7 +106,7 @@ namespace Fluid.Internals.Collections
 				ValidateIndex(ref _RecentRealIndex);
 				int realIndex = RecentRealIndex;
 
-				if(RecentImagIndex <= imagRowIndex) {              // Move forward until you reach end.
+				if(RecentVirtIndex <= imagRowIndex) {              // Move forward until you reach end.
 
 					while(realIndex < Count && _E[realIndex].VirtIndex <= imagRowIndex) {           // when second condition false, row with requested explicit index does not exist.
 
@@ -142,7 +142,7 @@ namespace Fluid.Internals.Collections
 					ValidateIndex(ref _RecentRealIndex);
 					int realIndex = RecentRealIndex;
 
-					if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
+					if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
 						while(realIndex < Count && _E[realIndex].VirtIndex <= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
 
 							if(_E[realIndex].VirtIndex == imagIndex) {
@@ -424,7 +424,7 @@ namespace Fluid.Internals.Collections
 				ValidateIndex(ref _RecentRealIndex);
 				int realIndex = _RecentRealIndex;
 
-				if(RecentImagIndex <= imagIndex) {                                                      // Move forward until you reach end.
+				if(RecentVirtIndex <= imagIndex) {                                                      // Move forward until you reach end.
 					while(realIndex < Count && _E[realIndex].VirtIndex <= imagIndex) {
 
 						if(_E[realIndex].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.

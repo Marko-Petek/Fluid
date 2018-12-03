@@ -4,13 +4,9 @@ namespace Fluid.Internals.Collections
 {
     public class EquatableList<T> : List<T>, IEquatable<EquatableList<T>>
     where T : IEquatable<T> {
-
-
-        /// <summary>Create list with default initial capacity of internal array.</summary>
-        public EquatableList() : base() { }
-
+        
         /// <summary>Create list with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array</param>
-        public EquatableList(int capacity) : base(capacity) { }
+        public EquatableList(int capacity = 6) : base(capacity) { }
 
         /// <summary>Create a copy of specified source list.</summary><param name="sourceList">Source list to copy from.</param>
         public EquatableList(EquatableList<T> sourceList) : base(sourceList.Count) {

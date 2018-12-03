@@ -7,220 +7,218 @@ using static Fluid.Internals.Operations;
 
 namespace Fluid.Internals.Collections
 {
-    /// <summary>A memeber of SparseArray.</summary><remarks>Concrete class for Int32 was created for speed because a statically typed mechanism for arithmetic inside generics did not exist at the time of writing.</remarks>
-    public class IntSparseRow : EquatableManagedList<IntSparseElm>
+    /// <summary>A collection of indexed elements representing entries of a (big) matrix.</summary><remarks>Integer implementation of generic SparseRow(T), written to avoid dynamically typed code. Statically typed mechanism for arithmetic inside generics did not exist at the time of writing.</remarks>
+    public class IntSparseRow : EquatableList<IntSparseElm>
     {
-        /// <summary>Default value of an element.</summary>
-        protected readonly int _DefaultValue;
-        /// <summary>Default value of an element.</summary>
-        public int DefaultValue => _DefaultValue;
+        
         /// <summary>Width of row if written out explicitly.</summary>
         protected int _Width;
         /// <summary>Width of row if written out explicitly.</summary>
         public int Width => _Width;
-        /// <summary>Real index of most recently manipulated (get or set) SparseElement value.</summary>
-        protected int _RecentRealIndex = 0;
-        /// <summary>Real index of most recently manipulated (get or set) SparseElement value.</summary>
-        public int RecentRealIndex { get => _RecentRealIndex; protected set => _RecentRealIndex = value; }
-        /// <summary>Imaginary index of most recently manipulated (get or set) SparseElement value.</summary>
-        protected int RecentVirtIndex => E(_RecentRealIndex).VirtIndex;
+        protected int RecentVirtIndex => E(RecentIndex).VirtIndex;
 
 
-        /// <summary>Create a SparseRow with specified width it would have in explicit form, specified default value and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public IntSparseRow(int width, int defaultValue, int capacity) : base(capacity) {
-            _DefaultValue = defaultValue;
+        /// <summary>Create a SparseRow with specified width it would have in explicit form, specified default value and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param><param name="capacity">Capacity of internal array. If <= 0 internal array is not created.</param>
+        public IntSparseRow(int width, int capacity = 6) : base(capacity) {
             _Width = width;
         }
-        /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public IntSparseRow(int width, int capacity) : this(width, 0, capacity) {
-        }
-        /// <summary>Create a SparseRow with specified width it would have in explicit form and default initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public IntSparseRow(int width) : this(width, 6) {
-        }
-        /// <summary>Create a copy of specified SparseRow.</summary><param name="source">Source SparseRow to copy.</param>
+
+        /// <summary>Create a copy of specified IntSparseRow.</summary><param name="source">Source IntSparseRow to copy.</param>
         public IntSparseRow(IntSparseRow source) : base(source) {
-            _DefaultValue = source._DefaultValue;
             _Width = source._Width;
         }
 
-
-
-        /// <summary>Marks SparseElement as part of a SparseRow by letting it know its own index inside SparseRow.</summary><param name="index">True index inside SparseRow list.</param>
-        protected override void AfterElementEntry(int index) {
-            _E[index].RealIndex = index;
-
-            for(int i = index + 1; i < Count; ++i) {    // Update indices of all elements ahead.
-                E(i).RealIndex = i + 1;
-            }
-        }
-        /// <summary>Marks SparseElement as not being part of a SparseRow anymore.</summary><param name="index">True index inside SparseRow list.</param>
-        protected override void BeforeElementExit(int index) {
-           _E[index].RealIndex = -1;
-
-           for(int i = index + 1; i < Count; ++i) {    // Update indices of all elements ahead.
-                E(i).RealIndex = i - 1;
-            }
+        /// <summary>Create a new SparseRow by absorbing specified source array.</summary><param name="source">Source array to adopt.</param>
+        public static IntSparseRow CreateFromArray(IntSparseElm[] source, int defaultValue = 1) {
+            int count = source.Length;
+            IntSparseElm lastElm = source[count - 1];
+            int width = lastElm.VirtIndex + 1;                                   // Take smallest possible width.
+            var intSparseRow = new IntSparseRow(width, -1);
+            intSparseRow._E = source;                                                    // Absorb provided array.
+            return intSparseRow;
         }
 
-        /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
-<<<<<<< HEAD:Internals/Collections/IntSparseRow.cs
-        new public IntSparseRow CreateFromArray(IntSparseElm[] source) {
-            int lastImagIndex = source[source.Length - 1].VirtIndex;
-            var row = new IntSparseRow(lastImagIndex + 1);
-            row._E = source;
-=======
-        new public SparseRowInt CreateFromArray(SparseElementInt[] source) {
-            int lastElmIndex = source.Length - 1;
-            int lastElmImagIndex = source[lastElmIndex].ImagIndex;
-            int width = lastElmImagIndex + 1;                                   // Take smallest possible width.
-            var row = new SparseRowInt(width);
-            row._E = source;                                                    // Embed source array.
->>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf:Internals/Collections/SparseRowInt.cs
-            
-            for(int i = 0; i < source.Length; ++i) {                            // Remember to set indices.
-                AfterElementEntry(i);
-            }
-            return row;
-        }
-
-        /// <summary>Add an element to end of SparseRow and return its explicit index.</summary><param name="element">Element to be added.</param>
-        public int Add(int element) {
+        /// <summary>Add an element beyond last non-zero value element IntSparseRow and return its virtual index.</summary><param name="val">Integer to add.</param>
+        public int Add(int val) {
             if(Count == 0) {
-                Add(new IntSparseElm(0, 0, element));
-                _RecentRealIndex = 0;
+                Add(new IntSparseElm(0, val));
                 return 0;
             }
             else {
-                int newImagIndex =  E(Count - 1).VirtIndex + 1;
-                Add(new IntSparseElm(Count, newImagIndex, element));
-                return newImagIndex;
+                int virtIndex =  E(Count - 1).VirtIndex + 1;
+                Add(new IntSparseElm(virtIndex, val));
+                return virtIndex;
             }
         }
 
         /// <summary>Retrieves an element with given matrix index (0 if not present), or sets it (creates if not present).</summary>
-        new public virtual int this[int imagIndex] {
+        new public virtual int this[int virtIndex] {
             get {
-                Assert.IndexInRange(imagIndex, 0, Width);
+                Assert.IndexInRange(virtIndex, 0, Width);
                 
                 if(Count != 0) {
-                    ValidateIndex(ref _RecentRealIndex);
-                    int i = RecentRealIndex;
+                    ValidateIndex(ref _RecentIndex);
+                    int i = RecentIndex;
 
-                    if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
-                        while(i < Count && _E[i].VirtIndex <= imagIndex) {
+                    if(RecentVirtIndex <= virtIndex) {              // Move forward until you reach end.
+                        while(i < Count && _E[i].VirtIndex <= virtIndex) {
 
-                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
-                                RecentRealIndex = i;
+                            if(_E[i].VirtIndex == virtIndex) {                        // Try to find an existing entry to return.
+                                _RecentIndex = i;
                                 return _E[i].Value;
                             }
                             ++i;
                         }
-                        RecentRealIndex = i - 1;
+                        _RecentIndex = i - 1;
                     }
                     else {                                                  // Move backward until you reach end.
-                        while(i > -1 && _E[i].VirtIndex >= imagIndex) {
+                        while(i > -1 && _E[i].VirtIndex >= virtIndex) {
 
-                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
-                                RecentRealIndex = i;
+                            if(_E[i].VirtIndex == virtIndex) {                        // Try to find an existing entry to return.
+                                _RecentIndex = i;
                                 return _E[i].Value;
                             }
                             --i;
                         }
-                        RecentRealIndex = i + 1;
+                        _RecentIndex = i + 1;
                     }
                 }
                 return 0;
             }
             set {
-                Assert.IndexInRange(imagIndex, 0, Width);
+                Assert.IndexInRange(virtIndex, 0, Width);
                 int insertIndex = 0;
 
                 if(Count != 0) {
-                    ValidateIndex(ref _RecentRealIndex);
-                    int i = RecentRealIndex;
+                    ValidateIndex(ref _RecentIndex);
+                    int i = RecentIndex;
 
-                    if(RecentVirtIndex <= imagIndex) {
-                        while(i < Count && _E[i].VirtIndex <= imagIndex) {
+                    if(RecentVirtIndex <= virtIndex) {
+                        while(i < Count && _E[i].VirtIndex <= virtIndex) {
 
-                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to modify.
+                            if(_E[i].VirtIndex == virtIndex) {                        // Try to find an existing entry to modify.
                                 if(value == 0)
                                     RemoveAt(i);
                                 else
                                     _E[i].Value = value;
 
-                                RecentRealIndex = i;
+                                _RecentIndex = i;
                                 return;
                             }
                             ++i;
                         }
                         insertIndex = i;
-                        RecentRealIndex = i - 1;
+                        _RecentIndex = i - 1;
                     }
                     else {
-                        while(i > -1 && _E[i].VirtIndex >= imagIndex) {
+                        while(i > -1 && _E[i].VirtIndex >= virtIndex) {
 
-                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to modify.
+                            if(_E[i].VirtIndex == virtIndex) {                        // Try to find an existing entry to modify.
                                 if(value == 0)
                                     RemoveAt(i);
                                 else
                                     _E[i].Value = value;
 
-                                _RecentRealIndex = i;
+                                _RecentIndex = i;
                                 return;
                             }
                             --i;
                         }
                         insertIndex = i + 1;
-                        _RecentRealIndex = insertIndex;
+                        _RecentIndex = insertIndex;
                     }
                 }
 
                 if(value != 0) {
-                    Insert(insertIndex, new IntSparseElm(insertIndex, imagIndex, value));                // Count = 0 or end has been reached, add fresh element.
+                    Insert(insertIndex, new IntSparseElm(virtIndex, value));                // Count = 0 or end has been reached, add fresh element.
                 }
             }
         }
 
-        /// <summary>Creates a SparseRow that is a sum of two operand SparseRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param><returns>SparseRow that is sum of two operands.</returns>
+        /// <summary>Returns an element nSteps away from recent position and keeps cursor at current position.</summary>
+        /// <param name="nSteps">Number of steps to take (can be negative).</param>
+        /// <returns>Return value if element exists: (true, element), else: (false, first or last element in internal array).</returns>
+        public (bool exists, IntSparseElm) Peek(int nSteps = 0) {
+            int peekIndex = RecentIndex + nSteps;
+
+            if(peekIndex >= 0)
+            {
+                if(peekIndex < Count)
+                    return (true, _E[peekIndex]);
+                else
+                    return (false, _E[Count - 1]);
+            }  
+            else
+                return (false, _E[0]);
+        }
+
+        /// <summary>Returns an element nSteps away from recent position and moves cursor to its position.</summary><param name="nSteps">Number of steps to take (can be negative).</param><returns>Return value if element exists: (true, element), else: (false, first or last element in internal array).</returns>
+        public (bool, IntSparseElm) Move(int nSteps = 0) {
+            int moveIndex = RecentIndex + nSteps;
+
+            if(moveIndex >= 0)
+            {
+                if(moveIndex < Count) {
+                    _RecentIndex = moveIndex;
+                    return (true, _E[moveIndex]);
+                }
+                else {
+                    _RecentIndex = Count - 1;
+                    return (false, _E[Count - 1]);
+                }
+            }  
+            else {
+                _RecentIndex = 0;
+                return (false, _E[0]);
+            }
+        }
+
+        // TODO: 3.XII.  Finish + operator implementation.
+        /// <summary>Creates an IntSparseRow that is a sum of two IntSparseRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param>
         public static IntSparseRow operator + (IntSparseRow left, IntSparseRow right) {
-            
             Assert.AreEqual(left.Width, right.Width, Comparers.Int);                     // Check that rows are the same width.
-            IntSparseRow[] operands;
-            int[] realColIndex = new int[] {0, 0};                                                              // Current true column indices (inside _sparseRows) of operands.
-            int[] imagColIndex;
-            int[] count;
+            //IntSparseRow[] operands;
+            IntSparseRow op1, op2;
+            // int[] realColIndex = new int[] {0, 0};                                                              // Current true column indices (inside _sparseRows) of operands.
+            // int[] virtColIndex;
+            // int[] count;
 
             if(left._E[0].VirtIndex <= right._E[0].VirtIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
-                operands = new IntSparseRow[2] {left, right};
-                imagColIndex = new int[] {left._E[0].VirtIndex, right._E[0].VirtIndex};
-                count = new int[] {left.Count, right.Count};
+                op1 = left;
+                op2 = right;
+                // operands = new IntSparseRow[2] {left, right};
+                // virtColIndex = new int[] {left._E[0].VirtIndex, right._E[0].VirtIndex};
+                // count = new int[] {left.Count, right.Count};
             }
             else {
-                operands = new IntSparseRow[2] {right, left};
-                imagColIndex = new int[] {right._E[0].VirtIndex, left._E[0].VirtIndex};
-                count = new int[] {right.Count, left.Count};
+                op1 = right;
+                op2 = left;
+                // operands = new IntSparseRow[2] {right, left};
+                // virtColIndex = new int[] {right._E[0].VirtIndex, left._E[0].VirtIndex};
+                // count = new int[] {right.Count, left.Count};
             }
-            var resultRow = new IntSparseRow(left.Width, (count[0] > count[1]) ? count[0] : count[1]);    // Result row starts with capacity of larger operand.
-            int i = 0;
-            int j = 1;
+            var resultRow = new IntSparseRow(left.Width, (op1.Count > op2.Count) ? op1.Count : op2.Count);    // Result row starts with capacity of larger operand.
+            // int i = 0;
+            // int j = 1;
+            int i = 0;          // Counts elements in op1 (cols).
 
             while(true) {
                 
-                while(imagColIndex[i] <= imagColIndex[j]) {   // Set index where next iteration will kick off. At start of this loop it must hold: colIndex[j] = colIndex[i].
+                while(op1.E(i).VirtIndex <= virtColIndex[j]) {   // Set index where next iteration will kick off. At start of this loop it must hold: colIndex[j] = colIndex[i].
                     
                     if(realColIndex[i] < count[i]) {    // Check that we haven't reached the end of any of internal arrays.
 
                         if(realColIndex[j] < count[j]) {
                             
-                            if(imagColIndex[i] < imagColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
+                            if(virtColIndex[i] < virtColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
                                 resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
                             }
-                            else if(imagColIndex[i] == imagColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
+                            else if(virtColIndex[i] == virtColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(operands[i]._E[realColIndex[i]] + operands[j]._E[realColIndex[j]]);
                                 ++realColIndex[j];
 
                                 if(realColIndex[j] < count[j]) {
-                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
+                                    virtColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
                                 }
                             }
                         }
@@ -234,7 +232,7 @@ namespace Fluid.Internals.Collections
                         ++realColIndex[i];
 
                         if(realColIndex[i] < count[i]) {
-                            imagColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
+                            virtColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
                         }
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.

@@ -5,7 +5,7 @@ using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
-    /// <summary>A member of SparseRow.</summary>
+    /// <summary>A member of IntSparseRow.</summary>
     public struct IntSparseElm : IEquatable<IntSparseElm>
     {
         /// <summary>Index of column where element would be situated inside explicitly written out row.</summary>
@@ -24,31 +24,23 @@ namespace Fluid.Internals.Collections
             _Value = value;
         }
 
-        /// <summary>Create a SparseElement with specified explicit column index and specified value.</summary><param name="virtIndex">Explicit column index.</param><param name="value">Specified value.</param>
-		public IntSparseElm(int realIndex, int virtIndex, int value) {
-            _VirtIndex = virtIndex;
-            _Value = value;
-        }
-
-        /// <summary>Create a copy of specified SparseElement with index -1, since it does not reside inside a SparseRow.</summary><param name="source">Source element to copy.</param>
+        /// <summary>Create a copy of specified SparseElement with VirtIndex -1, since it does not reside inside a SparseRow.</summary><param name="source">Source element to copy.</param>
         public IntSparseElm(IntSparseElm source) : this(source.VirtIndex, source.Value) {
         }
 
-        /// <summary>Create a new SparseElement with identical explicit index and index -1.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
+        /// <summary>Create a new SparseElement as a sum of two other SparseElements, with VirtIndex of left operand.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
         public static IntSparseElm operator + (IntSparseElm left, IntSparseElm right) {
-            Assert.AreEqual(left.VirtIndex, right.VirtIndex);                           // Check that the indices match.
-            return new IntSparseElm(-1, left.VirtIndex, left.Value + right.Value);
+            return new IntSparseElm(left.VirtIndex, left.Value + right.Value);
         }
 
+        /// <summary>Create a new SparseElement as a difference of two other SparseElements, with VirtIndex of left operand.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
         public static IntSparseElm operator - (IntSparseElm left, IntSparseElm right) {
-            Assert.AreEqual(left.VirtIndex, right.VirtIndex);                           // Check that the indices match.
-            return new IntSparseElm(-1, left.VirtIndex, left.Value - right.Value);
+            return new IntSparseElm(left.VirtIndex, left.Value - right.Value);
         }
 
-        /// <summary>Create a new SparseElement with identical explicit index and index -1.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
+        /// <summary>Create a new SparseElement as a product of two other SparseElements, with VirtIndex of left operand.</summary><param name="left">Left SparseElement operand.</param><param name="right">Right SparseElement operand.</param>
         public static IntSparseElm operator * (IntSparseElm left, IntSparseElm right) {
-            Assert.AreEqual(left.VirtIndex, right.VirtIndex);                           // Check that the indices match.
-            return new IntSparseElm(-1, left.VirtIndex, left.Value * right.Value);
+            return new IntSparseElm(left.VirtIndex, left.Value * right.Value);
         }
 
         /// <summary>Returns true if two values match, otherwise returns false.</summary><param name="other">SparseElement to compare to.</param>
@@ -59,8 +51,9 @@ namespace Fluid.Internals.Collections
                 return false;
         }
 
+        /// <summary>Writes out SparseElm in form: {VirtIndex, Value}</summary>
         public override string ToString() {
-            return $"{{{_VirtIndex}: {_Value}}}";
+            return $"{{{_VirtIndex}, {_Value}}}";
         }
     }
 }

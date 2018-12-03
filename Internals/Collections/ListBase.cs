@@ -28,13 +28,14 @@ namespace Fluid.Internals.Collections
             _Comparer = SCG.EqualityComparer<T>.Default;
         }
 
-        public ListBase(int capacity) {
-            _E = new T[capacity];
+        /// <summary>Create a ListBase with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array. If < 0 then internal array is not constructed.</param>
+        public ListBase(int capacity = 6) {
             _Count = 0;
             _RecentIndex = 0;
-        }
 
-        public ListBase() : this(4) { }
+            if(capacity > 0)
+                _E = new T[capacity];
+        }
 
         public abstract T this[int index] { get; set; }
         public abstract void Add(T element);
