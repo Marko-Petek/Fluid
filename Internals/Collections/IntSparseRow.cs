@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections
     public class IntSparseRow : EquatableManagedList<IntSparseElm>
     {
         /// <summary>Default value of an element.</summary>
-        readonly int _DefaultValue;
+        protected readonly int _DefaultValue;
         /// <summary>Default value of an element.</summary>
         public int DefaultValue => _DefaultValue;
         /// <summary>Width of row if written out explicitly.</summary>
@@ -63,12 +63,21 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
+<<<<<<< HEAD:Internals/Collections/IntSparseRow.cs
         new public IntSparseRow CreateFromArray(IntSparseElm[] source) {
             int lastImagIndex = source[source.Length - 1].VirtIndex;
             var row = new IntSparseRow(lastImagIndex + 1);
             row._E = source;
+=======
+        new public SparseRowInt CreateFromArray(SparseElementInt[] source) {
+            int lastElmIndex = source.Length - 1;
+            int lastElmImagIndex = source[lastElmIndex].ImagIndex;
+            int width = lastElmImagIndex + 1;                                   // Take smallest possible width.
+            var row = new SparseRowInt(width);
+            row._E = source;                                                    // Embed source array.
+>>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf:Internals/Collections/SparseRowInt.cs
             
-            for(int i = 0; i < source.Length; ++i) {                            // Remember to reset indices.
+            for(int i = 0; i < source.Length; ++i) {                            // Remember to set indices.
                 AfterElementEntry(i);
             }
             return row;

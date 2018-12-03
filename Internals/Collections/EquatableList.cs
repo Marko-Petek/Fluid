@@ -2,7 +2,7 @@ using System;
 
 namespace Fluid.Internals.Collections
 {
-    public class EquatableList<T> : List<T>, IEquatable<List<T>>
+    public class EquatableList<T> : List<T>, IEquatable<EquatableList<T>>
     where T : IEquatable<T> {
 
 
@@ -17,11 +17,20 @@ namespace Fluid.Internals.Collections
             Array.Copy(sourceList._E, _E, sourceList.Count);
         }
 
+        /// <summary>Compares contents of two EquatableLists element by element and returns true only if all elements match.</summary><param name="other">List to compare to.</param>
+        public bool Equals(EquatableList<T> other) {
+            
+            if(Count == other.Count) {
 
-        public bool Equals(List<T> other) {
-            var thisList = (ListBase<T>) this;
-            var otherList = (ListBase<T>) other;
-            return thisList.Equals(other);
+                for(int i = 0; i < Count; ++i) {
+
+                    if(!this[i].Equals(other[i]))
+                        return false;                   // If one of the elements is different. Lists are not equal.
+                }
+                return true;                            // Looped through all elements, all were equal. Lists are equal.
+            }
+            else
+                return false;
         }
     }
 }

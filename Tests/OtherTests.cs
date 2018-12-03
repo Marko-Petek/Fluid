@@ -1,11 +1,13 @@
 using System;
-using Xunit;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
-using Fluid.ChannelFlow;
 using static System.Console;
-using static Fluid.Dynamics.Internals.IOHelper;
+using Xunit;
+
+using Fluid.Internals;
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using Fluid.ChannelFlow;
+using static Fluid.Internals.IO;
 
 namespace Fluid.Tests
 {
@@ -24,7 +26,7 @@ namespace Fluid.Tests
                 new double[3] {    0.0, 0.5, 0.0   },
                 new double[3] {    0.0, 0.0, 0.125 }
             };
-            Assert.True(ArrayHelper.Equals(matrix, expectedResult, epsilon));
+            Assert.True(ArrayOperations.Equals(matrix, expectedResult, epsilon));
         }
 
         [Fact] public void InvertMatrix2() {
@@ -40,7 +42,7 @@ namespace Fluid.Tests
                 new double[3] { 3.0/7, 4.0/21, -5.0/21},
                 new double[3] { 1.0/7, -3.0/14, 1.0/7}
             };
-            Assert.True(ArrayHelper.Equals(matrix2, expectedResult2, epsilon));
+            Assert.True(ArrayOperations.Equals(matrix2, expectedResult2, epsilon));
         }
 
         /// <summary>Test transformation from standard block indices to compact block indices.</summary>

@@ -11,9 +11,13 @@ namespace Fluid.Internals.Collections
         /// <summary>SparseMatrix that contains SparseMatrixRow.</summary>
         IntSparseMat _SparseMatrix;
         /// <summary>SparseMatrix that contains SparseMatrixRow.</summary>
+<<<<<<< HEAD:Internals/Collections/IntSparseMatRow.cs
         public IntSparseMat SparseMatrix {set => _SparseMatrix = value; }
         /// <summary>Default value of an element.</summary>
         public int DefaultValue => _SparseMatrix.DefaultValue;
+=======
+        public SparseMatrixInt SparseMatrix {set => _SparseMatrix = value; }
+>>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf:Internals/Collections/SparseMatrixRowInt.cs
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
         int _RealIndex;
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
@@ -30,16 +34,28 @@ namespace Fluid.Internals.Collections
         
         // TODO: Check that DefaultValue mechanism is implemented accross all Sparse classes.
         /// <summary>Create SparseMatrixRow with unspecified matrix index (negative).</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index.</param>
+<<<<<<< HEAD:Internals/Collections/IntSparseMatRow.cs
         public IntSparseMatRow(int width) : base(width) {
+=======
+        public SparseMatrixRowInt(int width) : base(width, 6, 0) {
+>>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf:Internals/Collections/SparseMatrixRowInt.cs
             _RealIndex = -1;
             _VirtIndex = -1;
         }
         /// <summary>Create SparseMatrixRow with specified matrix index.</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="imagIndex">Row index.</param>
+<<<<<<< HEAD:Internals/Collections/IntSparseMatRow.cs
         public IntSparseMatRow(int width, int imagIndex) : base(width) {
             _VirtIndex = imagIndex;
         }
         /// <summary>Create SparseRow with specified index and add a specified element to it.</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="imagIndex">Row index inside matrix.</param><param name="firstElement">Initial SparseElement.</param>
         public IntSparseMatRow(int width, int imagIndex, IntSparseElm firstElement) :
+=======
+        public SparseMatrixRowInt(int width, int imagIndex, int defaultValue = 0, int capacity = 6) : base(width, defaultValue, capacity) {
+            _ImagIndex = imagIndex;
+        }
+        /// <summary>Create SparseRow with specified index and add a specified element to it.</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="imagIndex">Row index inside matrix.</param><param name="firstElement">Initial SparseElement.</param>
+        public SparseMatrixRowInt(int width, int imagIndex, SparseElementInt firstElement, int defaultValue = 0) :
+>>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf:Internals/Collections/SparseMatrixRowInt.cs
         this(width, imagIndex) {
             Add(firstElement);
         }
