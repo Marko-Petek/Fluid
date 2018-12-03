@@ -1,16 +1,15 @@
 using System;
 using System.Text;
 
-using Fluid.Internals.Collections;
-using static Fluid.Internals.Development.Assert;
+using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
-    public class SparseMatrixRow<T> : SparseRow<T>, IEquatable<SparseMatrixRow<T>>
+    public class SparseMatRow<T> : SparseRow<T>, IEquatable<SparseMatRow<T>>
     where T : struct, IEquatable<T>
     {
         /// <summary>Array that contains SparseRow.</summary>
-        SparseMatrix<T> _sparseMatrix;
+        SparseMat<T> _sparseMatrix;
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
         int             _index;
         /// <summary>Row index at which row would be situated at in a matrix. Is -1 if this instance doesn't belong to any matrix.</summary>
@@ -18,7 +17,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Signals whether this is an existing SparseMatrixRow or just a static dummy representing a zero row.</summary>
         bool _isDummy = false;
 
-        public void SetSparseMatrix(SparseMatrix<T> sparseMatrix) => _sparseMatrix = sparseMatrix;
+        public void SetSparseMatrix(SparseMat<T> sparseMatrix) => _sparseMatrix = sparseMatrix;
         /// <summary>Index of SparseMatrixRow inside internal list of SparseMatrix.</summary>
         public int GetIndex()                           =>  _index;
         /// <summary>Set index of SparseMatrixRow inside internal list of SparseMatrix.</summary><param name="index">Index of SparseMatrixRow inside internal list of SparseMatrix.</param>
@@ -33,33 +32,33 @@ namespace Fluid.Internals.Collections
         public void SetIsDummy(bool isDummy) => _isDummy = isDummy;
 
         /// <summary>Create SparseMatrixRow with unspecified matrix index (negative).</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index.</param>
-        public SparseMatrixRow(int width) : base(width) {
+        public SparseMatRow(int width) : base(width) {
             _index = -1;
             _explicitIndex = -1;
         }
         /// <summary>Create SparseMatrixRow with specified matrix index.</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index.</param>
-        public SparseMatrixRow(int width, int explicitIndex) : base(width) {
+        public SparseMatRow(int width, int explicitIndex) : base(width) {
             _explicitIndex = explicitIndex;
         }
         /// <summary>Create SparseRow with specified index and add a specified element to it.</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index inside matrix.</param><param name="firstElement">Initial SparseElement.</param>
-        public SparseMatrixRow(int width, int explicitIndex, SparseElement<T> firstElement) :
+        public SparseMatRow(int width, int explicitIndex, SparseElm<T> firstElement) :
         this(width, explicitIndex) {
             Add(firstElement);
         }
         /// <summary>Create a copy of SparseMatrixRow with identical owner.</summary><param name="sourceRow">SparseMatrixRow whose owner will also be assigned as owner of new SparseMatrixRow.</param>
-        public SparseMatrixRow(SparseMatrixRow<T> sourceMatrixRow) :
+        public SparseMatRow(SparseMatRow<T> sourceMatrixRow) :
         this(sourceMatrixRow._Width, sourceMatrixRow._explicitIndex) {
             _sparseMatrix = sourceMatrixRow._sparseMatrix;                  // Set same owner.
             AddRange(sourceMatrixRow);
         }
         /// <summary>Create a SparseMatrixRow out of a regular SparseRow. It has null owner and negative explicitIndex.</summary><param name="sourceRow">Source SparseRow to copy elements from.</param><param name="ownerMatrix">SparseMatrix which will be specified as owner of SparseMatrixRow.</param><param name="explicitIndex">Index that row would have in a writen-out matrix.</param>
-        public SparseMatrixRow(SparseRow<T> sourceRow, int explicitIndex) : this(sourceRow.Width, explicitIndex) {
+        public SparseMatRow(SparseRow<T> sourceRow, int explicitIndex) : this(sourceRow.Width, explicitIndex) {
             AddRange(sourceRow);
         }
 
         /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
-        new public SparseMatrixRow<T> CreateFromArray(SparseElement<T>[] source) {
-            var row = new SparseMatrixRow<T>(source.Length);
+        new public SparseMatRow<T> CreateFromArray(SparseElm<T>[] source) {
+            var row = new SparseMatRow<T>(source.Length);
             row._E = source;
             
             for(int i = 0; i < source.Length; ++i) {                            // Remember to reset indices.
@@ -106,8 +105,8 @@ namespace Fluid.Internals.Collections
                 var sparseMatrixRow = this;                                 
                 
                 if(_isDummy) {                                                                // Indicates that this row is not part of a matrix. (Indexer of SparseMatrix returns a static SparseMatrixRow with index -1 if row does not exist in matrix.)
-                    if(!SparseElement<T>._EqualityComparer.Equals(value, default(T))) {      // Create new row only if provided value is not zero.  
-                        sparseMatrixRow = new SparseMatrixRow<T>(this);     // Create an actual row from static dummy.
+                    if(!SparseElm<T>._EqualityComparer.Equals(value, default(T))) {      // Create new row only if provided value is not zero.  
+                        sparseMatrixRow = new SparseMatRow<T>(this);     // Create an actual row from static dummy.
                         _RecentIndex = _index;
                         _sparseMatrix.Insert(_index, sparseMatrixRow);                           // Insertion index has been passed from the getter on SparseMatrix.
                     }
@@ -127,7 +126,7 @@ namespace Fluid.Internals.Collections
                         while(index < _Count && E(index).ImagIndex() <= explicitIndex) {          // Find element, delete if value provided is zero.
 
                             if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
+                                if(SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);                                                // If zero is provided, simply remove SparseElement.
                                 }
                                 else {
@@ -145,7 +144,7 @@ namespace Fluid.Internals.Collections
                         while(index > -1 && E(index).ImagIndex() >= explicitIndex) {
 
                             if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
+                                if(SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);                                                // If zero is provided, simply remove SparseElement.
                                 }
                                 else {
@@ -160,36 +159,36 @@ namespace Fluid.Internals.Collections
                         _RecentIndex = insertIndex;
                     }
                 }
-                if(!SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
-                        sparseMatrixRow.Insert(insertIndex, new SparseElement<T>(insertIndex, explicitIndex, value));  // Count = 0, end has been reached or SparseElement at index now has explicit index above the desired one. Insert a freshly created element.
+                if(!SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
+                        sparseMatrixRow.Insert(insertIndex, new SparseElm<T>(insertIndex, explicitIndex, value));  // Count = 0, end has been reached or SparseElement at index now has explicit index above the desired one. Insert a freshly created element.
                 }
             }
         }
 
         /// <summary>Creates a SparseMatrixRow that is a sum of two operand SparseMatrixRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param>
-        public static SparseMatrixRow<T> operator + (SparseMatrixRow<T> left, SparseMatrixRow<T> right) {
+        public static SparseMatRow<T> operator + (SparseMatRow<T> left, SparseMatRow<T> right) {
             
             var resultRow = (SparseRow<T>)left + (SparseRow<T>)right;
-            return new SparseMatrixRow<T>(resultRow, left._explicitIndex);     // Owner null = unknown.
+            return new SparseMatRow<T>(resultRow, left._explicitIndex);     // Owner null = unknown.
         }
 
-        public bool Equals(SparseMatrixRow<T> other) {
+        public bool Equals(SparseMatRow<T> other) {
             var thisRow = (SparseRow<T>)this;
             var otherRow = (SparseRow<T>)other;
             return (thisRow.Equals(otherRow));
         }
 
         /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified to be left remainder, while right remainder is returned as result.</summary><param name="explicitIndex">Index at which to split. Element at this index will be part of right remainder.</param>
-        new public SparseMatrixRow<T> SplitAt(int explicitIndex) {
+        new public SparseMatRow<T> SplitAt(int explicitIndex) {
             SetRecentIndexToOrAheadOf(explicitIndex);
             TrimExcessSpace();
             return RemoveRange(_RecentIndex, _E.Length - 1);      // Remove every element from specified point onwards.
         }
 
         /// <summary>Removes specified range from List and returns it.</summary><param name="j">Inclusive starting index.</param><param name="k">Inclusive ending index.</param>
-        new public SparseMatrixRow<T> RemoveRange(int j, int k) {
+        new public SparseMatRow<T> RemoveRange(int j, int k) {
             int removedCount = k - j + 1;
-            SparseElement<T>[] removed = new SparseElement<T>[removedCount];
+            SparseElm<T>[] removed = new SparseElm<T>[removedCount];
             
             for(int i = 0; i < removedCount; ++i) {             // Construct array that we will return.
                 BeforeElementExit(i);

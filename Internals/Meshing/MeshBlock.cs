@@ -145,7 +145,7 @@ namespace Fluid.Internals.Meshing
         protected abstract int ApplyConstraints();
 
         /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        public abstract void AddContributionsToStiffnessMatrix(SparseMatrix<double> A, double dt, double ni);
+        public abstract void AddContributionsToStiffnessMatrix(SparseMat<double> A, double dt, double ni);
 
         public abstract void AddContributionsToForcingVector(SparseRow<double> b, double dt, double ni);
 

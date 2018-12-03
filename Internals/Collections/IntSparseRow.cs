@@ -1,17 +1,14 @@
 using System;
 using System.Text;
-using SCG = System.Collections.Generic;
 using static System.Math;
 
-using Fluid.Internals;
-using Fluid.Internals.Collections;
 using Fluid.Internals.Development;
 using static Fluid.Internals.Operations;
 
 namespace Fluid.Internals.Collections
 {
     /// <summary>A memeber of SparseArray.</summary><remarks>Concrete class for Int32 was created for speed because a statically typed mechanism for arithmetic inside generics did not exist at the time of writing.</remarks>
-    public class SparseRowInt : EquatableManagedList<SparseElementInt>
+    public class IntSparseRow : EquatableManagedList<IntSparseElm>
     {
         /// <summary>Default value of an element.</summary>
         readonly int _DefaultValue;
@@ -26,22 +23,22 @@ namespace Fluid.Internals.Collections
         /// <summary>Real index of most recently manipulated (get or set) SparseElement value.</summary>
         public int RecentRealIndex { get => _RecentRealIndex; protected set => _RecentRealIndex = value; }
         /// <summary>Imaginary index of most recently manipulated (get or set) SparseElement value.</summary>
-        protected int RecentImagIndex => E(_RecentRealIndex).ImagIndex;
+        protected int RecentVirtIndex => E(_RecentRealIndex).VirtIndex;
 
 
         /// <summary>Create a SparseRow with specified width it would have in explicit form, specified default value and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public SparseRowInt(int width, int defaultValue, int capacity) : base(capacity) {
+        public IntSparseRow(int width, int defaultValue, int capacity) : base(capacity) {
             _DefaultValue = defaultValue;
             _Width = width;
         }
         /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public SparseRowInt(int width, int capacity) : this(width, 0, capacity) {
+        public IntSparseRow(int width, int capacity) : this(width, 0, capacity) {
         }
         /// <summary>Create a SparseRow with specified width it would have in explicit form and default initial capacity.</summary><param name="width">Width it would have in explicit form.</param>
-        public SparseRowInt(int width) : this(width, 6) {
+        public IntSparseRow(int width) : this(width, 6) {
         }
         /// <summary>Create a copy of specified SparseRow.</summary><param name="source">Source SparseRow to copy.</param>
-        public SparseRowInt(SparseRowInt source) : base(source) {
+        public IntSparseRow(IntSparseRow source) : base(source) {
             _DefaultValue = source._DefaultValue;
             _Width = source._Width;
         }
@@ -66,9 +63,9 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
-        new public SparseRowInt CreateFromArray(SparseElementInt[] source) {
-            int lastImagIndex = source[source.Length - 1].ImagIndex;
-            var row = new SparseRowInt(lastImagIndex + 1);
+        new public IntSparseRow CreateFromArray(IntSparseElm[] source) {
+            int lastImagIndex = source[source.Length - 1].VirtIndex;
+            var row = new IntSparseRow(lastImagIndex + 1);
             row._E = source;
             
             for(int i = 0; i < source.Length; ++i) {                            // Remember to reset indices.
@@ -80,13 +77,13 @@ namespace Fluid.Internals.Collections
         /// <summary>Add an element to end of SparseRow and return its explicit index.</summary><param name="element">Element to be added.</param>
         public int Add(int element) {
             if(Count == 0) {
-                Add(new SparseElementInt(0, 0, element));
+                Add(new IntSparseElm(0, 0, element));
                 _RecentRealIndex = 0;
                 return 0;
             }
             else {
-                int newImagIndex =  E(Count - 1).ImagIndex + 1;
-                Add(new SparseElementInt(Count, newImagIndex, element));
+                int newImagIndex =  E(Count - 1).VirtIndex + 1;
+                Add(new IntSparseElm(Count, newImagIndex, element));
                 return newImagIndex;
             }
         }
@@ -100,10 +97,10 @@ namespace Fluid.Internals.Collections
                     ValidateIndex(ref _RecentRealIndex);
                     int i = RecentRealIndex;
 
-                    if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
-                        while(i < Count && _E[i].ImagIndex <= imagIndex) {
+                    if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
+                        while(i < Count && _E[i].VirtIndex <= imagIndex) {
 
-                            if(_E[i].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
+                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
                                 RecentRealIndex = i;
                                 return _E[i].Value;
                             }
@@ -112,9 +109,9 @@ namespace Fluid.Internals.Collections
                         RecentRealIndex = i - 1;
                     }
                     else {                                                  // Move backward until you reach end.
-                        while(i > -1 && _E[i].ImagIndex >= imagIndex) {
+                        while(i > -1 && _E[i].VirtIndex >= imagIndex) {
 
-                            if(_E[i].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
+                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
                                 RecentRealIndex = i;
                                 return _E[i].Value;
                             }
@@ -133,10 +130,10 @@ namespace Fluid.Internals.Collections
                     ValidateIndex(ref _RecentRealIndex);
                     int i = RecentRealIndex;
 
-                    if(RecentImagIndex <= imagIndex) {
-                        while(i < Count && _E[i].ImagIndex <= imagIndex) {
+                    if(RecentVirtIndex <= imagIndex) {
+                        while(i < Count && _E[i].VirtIndex <= imagIndex) {
 
-                            if(_E[i].ImagIndex == imagIndex) {                        // Try to find an existing entry to modify.
+                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to modify.
                                 if(value == 0)
                                     RemoveAt(i);
                                 else
@@ -151,9 +148,9 @@ namespace Fluid.Internals.Collections
                         RecentRealIndex = i - 1;
                     }
                     else {
-                        while(i > -1 && _E[i].ImagIndex >= imagIndex) {
+                        while(i > -1 && _E[i].VirtIndex >= imagIndex) {
 
-                            if(_E[i].ImagIndex == imagIndex) {                        // Try to find an existing entry to modify.
+                            if(_E[i].VirtIndex == imagIndex) {                        // Try to find an existing entry to modify.
                                 if(value == 0)
                                     RemoveAt(i);
                                 else
@@ -170,31 +167,31 @@ namespace Fluid.Internals.Collections
                 }
 
                 if(value != 0) {
-                    Insert(insertIndex, new SparseElementInt(insertIndex, imagIndex, value));                // Count = 0 or end has been reached, add fresh element.
+                    Insert(insertIndex, new IntSparseElm(insertIndex, imagIndex, value));                // Count = 0 or end has been reached, add fresh element.
                 }
             }
         }
 
         /// <summary>Creates a SparseRow that is a sum of two operand SparseRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param><returns>SparseRow that is sum of two operands.</returns>
-        public static SparseRowInt operator + (SparseRowInt left, SparseRowInt right) {
+        public static IntSparseRow operator + (IntSparseRow left, IntSparseRow right) {
             
             Assert.AreEqual(left.Width, right.Width, Comparers.Int);                     // Check that rows are the same width.
-            SparseRowInt[] operands;
+            IntSparseRow[] operands;
             int[] realColIndex = new int[] {0, 0};                                                              // Current true column indices (inside _sparseRows) of operands.
             int[] imagColIndex;
             int[] count;
 
-            if(left._E[0].ImagIndex <= right._E[0].ImagIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
-                operands = new SparseRowInt[2] {left, right};
-                imagColIndex = new int[] {left._E[0].ImagIndex, right._E[0].ImagIndex};
+            if(left._E[0].VirtIndex <= right._E[0].VirtIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
+                operands = new IntSparseRow[2] {left, right};
+                imagColIndex = new int[] {left._E[0].VirtIndex, right._E[0].VirtIndex};
                 count = new int[] {left.Count, right.Count};
             }
             else {
-                operands = new SparseRowInt[2] {right, left};
-                imagColIndex = new int[] {right._E[0].ImagIndex, left._E[0].ImagIndex};
+                operands = new IntSparseRow[2] {right, left};
+                imagColIndex = new int[] {right._E[0].VirtIndex, left._E[0].VirtIndex};
                 count = new int[] {right.Count, left.Count};
             }
-            var resultRow = new SparseRowInt(left.Width, (count[0] > count[1]) ? count[0] : count[1]);    // Result row starts with capacity of larger operand.
+            var resultRow = new IntSparseRow(left.Width, (count[0] > count[1]) ? count[0] : count[1]);    // Result row starts with capacity of larger operand.
             int i = 0;
             int j = 1;
 
@@ -207,20 +204,20 @@ namespace Fluid.Internals.Collections
                         if(realColIndex[j] < count[j]) {
                             
                             if(imagColIndex[i] < imagColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
-                                resultRow.Add(new SparseElementInt(operands[i]._E[realColIndex[i]]));
+                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
                             }
                             else if(imagColIndex[i] == imagColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(operands[i]._E[realColIndex[i]] + operands[j]._E[realColIndex[j]]);
                                 ++realColIndex[j];
 
                                 if(realColIndex[j] < count[j]) {
-                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].ImagIndex;
+                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
                                 }
                             }
                         }
                         else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
                             while(realColIndex[i] < count[i]) {
-                                resultRow.Add(new SparseElementInt(operands[i]._E[realColIndex[i]]));
+                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
                                 ++realColIndex[i];
                             }
                             return resultRow;
@@ -228,12 +225,12 @@ namespace Fluid.Internals.Collections
                         ++realColIndex[i];
 
                         if(realColIndex[i] < count[i]) {
-                            imagColIndex[i] = operands[i]._E[realColIndex[i]].ImagIndex;        // Explicit index of SparseElement.
+                            imagColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
                         }
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
                         while(realColIndex[j] < count[j]) {
-                            resultRow.Add(new SparseElementInt(operands[j]._E[realColIndex[j]]));
+                            resultRow.Add(new IntSparseElm(operands[j]._E[realColIndex[j]]));
                             ++realColIndex[j];
                         }
                         return resultRow;
@@ -245,24 +242,24 @@ namespace Fluid.Internals.Collections
             throw new ArithmeticException("Method which sums two SparseRows has reached an invalid state.");
         }
 
-        public static SparseRowInt operator - (SparseRowInt left, SparseRowInt right) {
+        public static IntSparseRow operator - (IntSparseRow left, IntSparseRow right) {
             Assert.AreEqual(left.Width, right.Width, Comparers.Int);                     // Check that rows are the same width.
-            SparseRowInt[] operands;
+            IntSparseRow[] operands;
             int[] realColIndex = new int[] {0, 0};                                                              // Current true column indices (inside _sparseRows) of operands.
             int[] imagColIndex;
             int[] count;
 
-            if(left._E[0].ImagIndex <= right._E[0].ImagIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
-                operands = new SparseRowInt[2] {left, right};
-                imagColIndex = new int[] {left._E[0].ImagIndex, right._E[0].ImagIndex};
+            if(left._E[0].VirtIndex <= right._E[0].VirtIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
+                operands = new IntSparseRow[2] {left, right};
+                imagColIndex = new int[] {left._E[0].VirtIndex, right._E[0].VirtIndex};
                 count = new int[] {left.Count, right.Count};
             }
             else {
-                operands = new SparseRowInt[2] {right, left};
-                imagColIndex = new int[] {right._E[0].ImagIndex, left._E[0].ImagIndex};
+                operands = new IntSparseRow[2] {right, left};
+                imagColIndex = new int[] {right._E[0].VirtIndex, left._E[0].VirtIndex};
                 count = new int[] {right.Count, left.Count};
             }
-            var resultRow = new SparseRowInt(left.Width, (count[0] > count[1]) ? count[0] : count[1]);    // Result row starts with capacity of larger operand.
+            var resultRow = new IntSparseRow(left.Width, (count[0] > count[1]) ? count[0] : count[1]);    // Result row starts with capacity of larger operand.
             int i = 0;
             int j = 1;
 
@@ -275,20 +272,20 @@ namespace Fluid.Internals.Collections
                         if(realColIndex[j] < count[j]) {
                             
                             if(imagColIndex[i] < imagColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
-                                resultRow.Add(new SparseElementInt(operands[i]._E[realColIndex[i]]));
+                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
                             }
                             else if(imagColIndex[i] == imagColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(operands[i]._E[realColIndex[i]] - operands[j]._E[realColIndex[j]]);
                                 ++realColIndex[j];
 
                                 if(realColIndex[j] < count[j]) {
-                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].ImagIndex;
+                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
                                 }
                             }
                         }
                         else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
                             while(realColIndex[i] < count[i]) {
-                                resultRow.Add(new SparseElementInt(operands[i]._E[realColIndex[i]]));
+                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
                                 ++realColIndex[i];
                             }
                             return resultRow;
@@ -296,12 +293,12 @@ namespace Fluid.Internals.Collections
                         ++realColIndex[i];
 
                         if(realColIndex[i] < count[i]) {
-                            imagColIndex[i] = operands[i]._E[realColIndex[i]].ImagIndex;        // Explicit index of SparseElement.
+                            imagColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
                         }
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
                         while(realColIndex[j] < count[j]) {
-                            resultRow.Add(new SparseElementInt(operands[j]._E[realColIndex[j]]));
+                            resultRow.Add(new IntSparseElm(operands[j]._E[realColIndex[j]]));
                             ++realColIndex[j];
                         }
                         return resultRow;
@@ -314,22 +311,22 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Creates a SparseRow that is a dot product of two operand SparseRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param><returns>SparseRow that is sum of two operands.</returns>
-        public static double operator * (SparseRowInt left, SparseRowInt right) {
+        public static double operator * (IntSparseRow left, IntSparseRow right) {
             
             Assert.AreEqual(left.Width, right.Width, Comparers.Int);                     // Check that rows are the same width.
-            SparseRowInt[] operands;
+            IntSparseRow[] operands;
             int[] realColIndex = new int[] {0, 0};                                                              // Current true column indices (inside _sparseRows) of operands.
             int[] imagColIndex;
             int[] count;
 
-            if(left._E[0].ImagIndex <= right._E[0].ImagIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
-                operands = new SparseRowInt[2] {left, right};
-                imagColIndex = new int[] {left._E[0].ImagIndex, right._E[0].ImagIndex};
+            if(left._E[0].VirtIndex <= right._E[0].VirtIndex) {                                   // Pack operands in correct order for manipulation. One with smaller first row matrix index comes first.
+                operands = new IntSparseRow[2] {left, right};
+                imagColIndex = new int[] {left._E[0].VirtIndex, right._E[0].VirtIndex};
                 count = new int[] {left.Count, right.Count};
             }
             else {
-                operands = new SparseRowInt[2] {right, left};
-                imagColIndex = new int[] {right._E[0].ImagIndex, left._E[0].ImagIndex};
+                operands = new IntSparseRow[2] {right, left};
+                imagColIndex = new int[] {right._E[0].VirtIndex, left._E[0].VirtIndex};
                 count = new int[] {right.Count, left.Count};
             }
             double result = 0;
@@ -349,7 +346,7 @@ namespace Fluid.Internals.Collections
                                 ++realColIndex[j];
 
                                 if(realColIndex[j] < count[j]) {
-                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].ImagIndex;
+                                    imagColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
                                 }
                             }
                         }
@@ -359,7 +356,7 @@ namespace Fluid.Internals.Collections
                         ++realColIndex[i];
 
                         if(realColIndex[i] < count[i]) {
-                            imagColIndex[i] = operands[i]._E[realColIndex[i]].ImagIndex;        // Explicit index of SparseElement.
+                            imagColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
                         }
                     }
                     else {                      // When we reach end of one of columns, stop.
@@ -372,9 +369,9 @@ namespace Fluid.Internals.Collections
             throw new ArithmeticException("Method which sums two SparseRows has reached an invalid state.");
         }
 
-        public static SparseRowInt operator * (int left, SparseRowInt right) {
+        public static IntSparseRow operator * (int left, IntSparseRow right) {
 
-            var resultRow = new SparseRowInt(right);
+            var resultRow = new IntSparseRow(right);
 
             for(int i = 0; i < right.Count; ++i) {
                 resultRow.E(i).Value = left * right._E[i].Value;
@@ -402,29 +399,29 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
-        public void ApplySwaps(SparseMatrixInt swapMatrix) {
+        public void ApplySwaps(IntSparseMat swapMatrix) {
             Assert.AreEqual(swapMatrix.Width, Width);          // Check that swap matrix dimensions are appropriate for this SparseRow.
             Assert.AreEqual(swapMatrix.Height, Width);
             int swapCount = swapMatrix.Count;                                                                   // Actual number of elements (SparseMatrixRows) in swapMatrix.
 
             for(int i = 0; i < swapCount; ++i) {
-                int element1 = swapMatrix[i].ImagIndex;
-                int element2 = swapMatrix[i]._E[0].ImagIndex;                                         // Each row is expected to have one element.
+                int element1 = swapMatrix[i].VirtIndex;
+                int element2 = swapMatrix[i]._E[0].VirtIndex;                                         // Each row is expected to have one element.
                 SwapImagElements(element1, element2);
             }
         }
 
         /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified to be left remainder, while right remainder is returned as result.</summary><param name="imagIndex">Index at which to split. Element at this index will be part of right remainder.</param>
-        public SparseRowInt SplitAt(int imagIndex) {
+        public IntSparseRow SplitAt(int imagIndex) {
             var splitSuccess = SetRecentIndexToOrAheadOf(imagIndex);
-            SparseRowInt removedCols;
+            IntSparseRow removedCols;
             if(splitSuccess) {
                 removedCols = RemoveRange(RecentRealIndex, _E.Length - 1);      // Remove every element from specified point onwards.
                 TrimExcessSpace();
             }
             else {                                                                      // No elements to trim away.
                 _Width = imagIndex;                                                 // Readjust width.
-                removedCols = new SparseRowInt(Width - imagIndex, 6);          // Return an empty SparseRow with width of trimming.
+                removedCols = new IntSparseRow(Width - imagIndex, 6);          // Return an empty SparseRow with width of trimming.
             }
             return removedCols;
         }
@@ -437,10 +434,10 @@ namespace Fluid.Internals.Collections
                 ValidateIndex(ref _RecentRealIndex);
                 int realIndex = _RecentRealIndex;
 
-                if(RecentImagIndex <= imagIndex) {              // Move forward until you reach end.
-                    while(realIndex < _Count && _E[realIndex].ImagIndex <= imagIndex) {
+                if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
+                    while(realIndex < _Count && _E[realIndex].VirtIndex <= imagIndex) {
 
-                        if(_E[realIndex].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
+                        if(_E[realIndex].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
                             RecentRealIndex = realIndex;
                             return true;
                         }
@@ -450,9 +447,9 @@ namespace Fluid.Internals.Collections
                     return false;
                 }
                 else {                                                  // Move backward until you reach end.
-                    while(realIndex > -1 && _E[realIndex].ImagIndex >= imagIndex) {
+                    while(realIndex > -1 && _E[realIndex].VirtIndex >= imagIndex) {
 
-                        if(_E[realIndex].ImagIndex == imagIndex) {                        // Try to find an existing entry to return.
+                        if(_E[realIndex].VirtIndex == imagIndex) {                        // Try to find an existing entry to return.
                             RecentRealIndex = realIndex;
                             return true;
                         }
@@ -468,9 +465,9 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Removes specified range from SparseRow and returns it. Correctly adjusts width. Range is specified in terms of internal indices, not explicit ones.</summary><param name="j">Inclusive starting index.</param><param name="k">Inclusive ending index.</param>
-        new public SparseRowInt RemoveRange(int j, int k) {
+        new public IntSparseRow RemoveRange(int j, int k) {
             int removedCount = k - j + 1;
-            SparseElementInt[] removed = new SparseElementInt[removedCount];
+            IntSparseElm[] removed = new IntSparseElm[removedCount];
             
             for(int i = 0; i < removedCount; ++i) {             // Construct array that we will return.
                 BeforeElementExit(i);                           // FIXME: Return and check whether this is needed.
@@ -482,12 +479,12 @@ namespace Fluid.Internals.Collections
                 AfterElementEntry(i - removedCount);
             }
             _Count = _Count - removedCount;                     // Changing count, no need to zero elements at end.
-            _Width = _E[Count].ImagIndex + 1;
+            _Width = _E[Count].VirtIndex + 1;
             return CreateFromArray(removed);
         }
 
         /// <summary>Append specified SparseRow to this one.</summary><param name="rightCols">Append this SparseRow.</param>
-        public void MergeWith(SparseRowInt rightCols) {
+        public void MergeWith(IntSparseRow rightCols) {
             _Width += rightCols.Width;                         // Readjust width.
             AddRange(rightCols);
         }

@@ -23,7 +23,7 @@ namespace Fluid.ChannelFlow
         /// <summary>Channel width.</summary>
         double _width;
         /// <summary>Swaps that have to be made in solution vector and forcing vector to move constrained nodes to bottom most rows. These same swaps have to occurr also to columns of StiffnessMatrix.</summary>
-        SparseMatrix<int> _swapMatrix;
+        SparseMat<int> _swapMatrix;
         /// <summary>FlowSolver's step length for marching in time.</summary>
         public double GetDt() => _dt;
         /// <summary>Fluid's viscosity.</summary>
@@ -156,11 +156,11 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Creates a matrix whose entries indicate which solution vector rows should be swapped with one another.</summary>
-        SparseMatrix<int> CreateSwapMatrix() {
+        SparseMat<int> CreateSwapMatrix() {
             int posCount = _channelMesh.GetPositionCount();
             int nVars = _channelMesh.GetVariableCount();
             int width = posCount * nVars;
-            var matrix = new SparseMatrix<int>(width, width, 2000);
+            var matrix = new SparseMat<int>(width, width, 2000);
 
             for(int front = 0, back = width - 1; front <= back; ++front) {
                 int frontPosIndex = front / nVars;                                  // Is rounded down.

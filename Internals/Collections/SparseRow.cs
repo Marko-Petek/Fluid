@@ -9,7 +9,7 @@ using Fluid.Internals.Development;
 namespace Fluid.Internals.Collections
 {
     /// <summary>A memeber of SparseArray.</summary>
-    public class SparseRow<T> : EquatableManagedList<SparseElement<T>>
+    public class SparseRow<T> : EquatableManagedList<SparseElm<T>>
     where T : struct, IEquatable<T>
     {
         /// <summary>Width of row if written out explicitly.</summary>
@@ -53,7 +53,7 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Create a new SparseRow by adopting specified source array.</summary><param name="source">Source array to adopt.</param>
-        new public SparseRow<T> CreateFromArray(SparseElement<T>[] source) {
+        new public SparseRow<T> CreateFromArray(SparseElm<T>[] source) {
             int lastExplicitIndex = source[source.Length - 1].ImagIndex();
             var row = new SparseRow<T>(lastExplicitIndex + 1);
             row._E = source;
@@ -67,13 +67,13 @@ namespace Fluid.Internals.Collections
         /// <summary>Add an element to end of SparseRow and return its explicit index.</summary><param name="element">Element to be added.</param>
         public int AddElement(T element) {
             if(_Count == 0) {
-                Add(new SparseElement<T>(0, 0, element));
+                Add(new SparseElm<T>(0, 0, element));
                 _RecentIndex = 0;
                 return 0;
             }
             else {
                 int newExplicitIndex =  E(_Count - 1).ImagIndex() + 1;
-                Add(new SparseElement<T>(_Count, newExplicitIndex, element));
+                Add(new SparseElm<T>(_Count, newExplicitIndex, element));
                 return newExplicitIndex;
             }
         }
@@ -126,7 +126,7 @@ namespace Fluid.Internals.Collections
                         while(index < _Count && _E[index].ImagIndex() <= explicitIndex) {
 
                             if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
+                                if(SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);
                                 }
                                 else {
@@ -144,7 +144,7 @@ namespace Fluid.Internals.Collections
                         while(index > -1 && _E[index].ImagIndex() >= explicitIndex) {
 
                             if(E(index).ImagIndex() == explicitIndex) {                        // Try to find an existing entry to modify.
-                                if(SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
+                                if(SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
                                     RemoveAt(index);
                                 }
                                 else {
@@ -159,8 +159,8 @@ namespace Fluid.Internals.Collections
                         _RecentIndex = insertIndex;
                     }
                 }
-                if(!SparseElement<T>._EqualityComparer.Equals(value, default(T))) {
-                    Insert(insertIndex, new SparseElement<T>(insertIndex, explicitIndex, value));                // Count = 0 or end has been reached, add fresh element.
+                if(!SparseElm<T>._EqualityComparer.Equals(value, default(T))) {
+                    Insert(insertIndex, new SparseElm<T>(insertIndex, explicitIndex, value));                // Count = 0 or end has been reached, add fresh element.
                 }
             }
         }
@@ -195,7 +195,7 @@ namespace Fluid.Internals.Collections
                         if(colIndex[j] < count[j]) {
                             
                             if(explicitColIndex[i] < explicitColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
-                                resultRow.Add(new SparseElement<T>(operands[i]._E[colIndex[i]]));
+                                resultRow.Add(new SparseElm<T>(operands[i]._E[colIndex[i]]));
                             }
                             else if(explicitColIndex[i] == explicitColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(operands[i]._E[colIndex[i]] + operands[j]._E[colIndex[j]]);
@@ -208,7 +208,7 @@ namespace Fluid.Internals.Collections
                         }
                         else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
                             while(colIndex[i] < count[i]) {
-                                resultRow.Add(new SparseElement<T>(operands[i]._E[colIndex[i]]));
+                                resultRow.Add(new SparseElm<T>(operands[i]._E[colIndex[i]]));
                                 ++colIndex[i];
                             }
                             return resultRow;
@@ -221,7 +221,7 @@ namespace Fluid.Internals.Collections
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
                         while(colIndex[j] < count[j]) {
-                            resultRow.Add(new SparseElement<T>(operands[j]._E[colIndex[j]]));
+                            resultRow.Add(new SparseElm<T>(operands[j]._E[colIndex[j]]));
                             ++colIndex[j];
                         }
                         return resultRow;
@@ -259,7 +259,7 @@ namespace Fluid.Internals.Collections
                         if(colIndex[j] < count[j]) {
                             
                             if(explicitColIndex[i] < explicitColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
-                                resultRow.Add(new SparseElement<T>(operands[i]._E[colIndex[i]]));
+                                resultRow.Add(new SparseElm<T>(operands[i]._E[colIndex[i]]));
                             }
                             else if(explicitColIndex[i] == explicitColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(operands[i]._E[colIndex[i]] - operands[j]._E[colIndex[j]]);
@@ -272,7 +272,7 @@ namespace Fluid.Internals.Collections
                         }
                         else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
                             while(colIndex[i] < count[i]) {
-                                resultRow.Add(new SparseElement<T>(operands[i]._E[colIndex[i]]));
+                                resultRow.Add(new SparseElm<T>(operands[i]._E[colIndex[i]]));
                                 ++colIndex[i];
                             }
                             return resultRow;
@@ -285,7 +285,7 @@ namespace Fluid.Internals.Collections
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
                         while(colIndex[j] < count[j]) {
-                            resultRow.Add(new SparseElement<T>(operands[j]._E[colIndex[j]]));
+                            resultRow.Add(new SparseElm<T>(operands[j]._E[colIndex[j]]));
                             ++colIndex[j];
                         }
                         return resultRow;
@@ -381,17 +381,17 @@ namespace Fluid.Internals.Collections
             T firstValue = this[explIndex1];
             T secondValue = this[explIndex2];
 
-            if(!SparseElement<T>._EqualityComparer.Equals(secondValue, default(T))) {         // If not zero.
+            if(!SparseElm<T>._EqualityComparer.Equals(secondValue, default(T))) {         // If not zero.
                 this[explIndex1] = secondValue;
             }
 
-            if(!SparseElement<T>._EqualityComparer.Equals(firstValue, default(T))) {
+            if(!SparseElm<T>._EqualityComparer.Equals(firstValue, default(T))) {
                 this[explIndex2] = firstValue;
             }
         }
 
         /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
-        public void ApplySwaps(SparseMatrix<int> swapMatrix) {
+        public void ApplySwaps(SparseMat<int> swapMatrix) {
             Assert.AreEqual(swapMatrix.GetWidth(), Width, SCG.EqualityComparer<int>.Default);          // Check that swap matrix dimensions are appropriate for this SparseRow.
             Assert.AreEqual(swapMatrix.GetHeight(), Width, SCG.EqualityComparer<int>.Default);
             int swapCount = swapMatrix.Count;                                                                   // Actual number of elements (SparseMatrixRows) in swapMatrix.
@@ -460,7 +460,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Removes specified range from SparseRow and returns it. Correctly adjusts width. Range is specified in terms of internal indices, not explicit ones.</summary><param name="j">Inclusive starting index.</param><param name="k">Inclusive ending index.</param>
         new public SparseRow<T> RemoveRange(int j, int k) {
             int removedCount = k - j + 1;
-            SparseElement<T>[] removed = new SparseElement<T>[removedCount];
+            SparseElm<T>[] removed = new SparseElm<T>[removedCount];
             
             for(int i = 0; i < removedCount; ++i) {             // Construct array that we will return.
                 BeforeElementExit(i);

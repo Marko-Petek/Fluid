@@ -6,12 +6,12 @@ namespace Fluid.Internals.Numerics
     /// <summary>Solves linear systems of form Ax=b.</summary>
     public class ConjugateGradients
     {
-        readonly SparseMatrix<double> _A;
+        readonly SparseMat<double> _A;
         readonly SparseRow<double> _b;
         //SparseRow<double> _x;
 
         /// <summary>Create an iterative linear system solver that uses method of conjugate gradients. Systems are of form: A x = b, where solution sought after is x.</summary><param name="A">Stiffness matrix.</param><param name="b">Forcing vector.</param>
-        public ConjugateGradients(SparseMatrix<double> A, SparseRow<double> b) {
+        public ConjugateGradients(SparseMat<double> A, SparseRow<double> b) {
             _A = A;
             _b = b;
         }

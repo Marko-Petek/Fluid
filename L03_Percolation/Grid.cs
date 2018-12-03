@@ -7,10 +7,10 @@ namespace L03_Percolation
     public class Grid
     {
         /// <summary>Array that specifies which elements are conductive.</summary>
-        SparseMatrixInt _SparseMatrix;
+        IntSparseMat _SparseMatrix;
 
         public Grid(int nRows, int nCols) {
-            _SparseMatrix = new SparseMatrixInt(nCols, nRows, 10_000);
+            _SparseMatrix = new IntSparseMat(nCols, nRows, 10_000);
         }
     }
 }

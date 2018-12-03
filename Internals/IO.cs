@@ -17,7 +17,7 @@ namespace Fluid.Internals
             WriteLine(sparseRow.ToString());
         }
 
-        public static void Print<T>(this SparseMatrix<T> sparseMatrix)
+        public static void Print<T>(this SparseMat<T> sparseMatrix)
         where T : struct, IEquatable<T> {
             WriteLine(sparseMatrix.ToString());
         }

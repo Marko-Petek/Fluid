@@ -142,8 +142,8 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-        public SparseMatrix<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {
-            var stiffnessMatrix = new SparseMatrix<double>(15_620 * 8, 15_620 * 8, 10_000);
+        public SparseMat<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {
+            var stiffnessMatrix = new SparseMat<double>(15_620 * 8, 15_620 * 8, 10_000);
             double dt = channelFlow.GetDt();
             double viscosity = channelFlow.GetViscosity();
             _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
