@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Index of column where element would be situated inside explicitly written out row.</summary>
 		int _VirtIndex;
         /// <summary>Index of column where element would be situated inside explicitly written out row.</summary>
-        public int VirtIndex  =>  _VirtIndex;
+        public int VirtIndex  { get => _VirtIndex; set => _VirtIndex = value; }
         /// <summary>Value of SparseElement.</summary>
         public int _Value;
         /// <summary>Value of SparseElement.</summary>

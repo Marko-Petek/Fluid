@@ -200,51 +200,52 @@ namespace Fluid.Internals.Collections
             var resultRow = new IntSparseRow(left.Width, (op1.Count > op2.Count) ? op1.Count : op2.Count);    // Result row starts with capacity of larger operand.
             // int i = 0;
             // int j = 1;
-            int i = 0;          // Counts elements in op1 (cols).
+            int i = 0;          // Counts cols in op1.
+            int j = 0;          // Counts cols in op2.
 
             while(true) {
                 
-                while(op1.E(i).VirtIndex <= virtColIndex[j]) {   // Set index where next iteration will kick off. At start of this loop it must hold: colIndex[j] = colIndex[i].
+                while(op1._E[i].VirtIndex <= op2._E[j].VirtIndex) {   // Set index where next iteration will kick off. At start of this loop it must hold: colIndex[j] = colIndex[i].
                     
-                    if(realColIndex[i] < count[i]) {    // Check that we haven't reached the end of any of internal arrays.
+                    if(i < op1.Count) {    // Check that we haven't reached the end of any of internal arrays.
 
-                        if(realColIndex[j] < count[j]) {
+                        if(j < op2.Count) {
                             
-                            if(virtColIndex[i] < virtColIndex[j]) {                                     // Element with explicitColIndex[i] not present in operand j.
-                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
+                            if(op1._E[i].VirtIndex < op2._E[j].VirtIndex) {                              // Element with explicitColIndex[i] not present in operand j.
+                                resultRow.Add(new IntSparseElm(op1._E[i]));
                             }
-                            else if(virtColIndex[i] == virtColIndex[j]){                                // Matching element with explicitColIndex[i] found in operand j.
-                                resultRow.Add(operands[i]._E[realColIndex[i]] + operands[j]._E[realColIndex[j]]);
-                                ++realColIndex[j];
-
-                                if(realColIndex[j] < count[j]) {
-                                    virtColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
-                                }
+                            else if(op1._E[i].VirtIndex == op2._E[i].VirtIndex){                         // Matching element with explicitColIndex[i] found in operand j.
+                                resultRow.Add(op1._E[i] + op2._E[j]);
+                                ++j;
+                                // TODO: 4.XII. Make sure i < count ... probably: if(++i < Count)
+                                // if(j < op2.Count) {
+                                //     virtColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
+                                // }
                             }
                         }
-                        else {              // We have reached end of j-th internal array. Write the rest of i-th elements to result.
-                            while(realColIndex[i] < count[i]) {
-                                resultRow.Add(new IntSparseElm(operands[i]._E[realColIndex[i]]));
-                                ++realColIndex[i];
+                        else {                                                                          // We have reached end of j-th internal array. Write the rest of i-th elements to result.
+                            while(i < op1.Count) {
+                                resultRow.Add(new IntSparseElm(op1._E[i]));
+                                ++i;
                             }
                             return resultRow;
                         }
-                        ++realColIndex[i];
+                        ++i;
 
-                        if(realColIndex[i] < count[i]) {
-                            virtColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
-                        }
+                        // if(realColIndex[i] < count[i]) {
+                        //     virtColIndex[i] = operands[i]._E[realColIndex[i]].VirtIndex;        // Explicit index of SparseElement.
+                        // }
                     }
                     else {                  // We have reached end of i-th internal array. Write the rest of j-th elements to result.
-                        while(realColIndex[j] < count[j]) {
-                            resultRow.Add(new IntSparseElm(operands[j]._E[realColIndex[j]]));
-                            ++realColIndex[j];
+                        while(j < op2.Count) {
+                            resultRow.Add(new IntSparseElm(op2._E[j]));
+                            ++j;
                         }
                         return resultRow;
                     }
                 }
-                i = (i+1) % 2;                                      // Exchange processed operand in each new iteration.
-                j = (j+1) % 2;
+                Swap(ref i, ref j);         // Exchange roles in each new iteration.
+                Swap(ref op1, ref op2);
             }
             throw new ArithmeticException("Method which sums two SparseRows has reached an invalid state.");
         }
