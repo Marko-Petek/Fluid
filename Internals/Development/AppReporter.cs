@@ -13,19 +13,6 @@ namespace Fluid.Internals.Development
     /// <summary>Writes program's progression either to a file, to console or both.</summary>
     public static class AppReporter
     {
-        [Flags]
-        public enum OutputSettingsEnum
-        {
-            WriteToConsole  = 1 << 0,
-            WriteToFile     = 1 << 1
-        }
-
-        /// <summary>Determines which messages will be displayed by Reporter..</summary>
-        public enum VerbositySettings
-        {
-            Silent, Scarce, Moderate, Verbose, Obnoxious
-        }
-
         /// <summary>Width of table where reports are written (time, message, call site info).</summary>
         const int TableWidth = 200;
         /// <summary>Char column at which time column starts.</summary>
@@ -74,22 +61,21 @@ namespace Fluid.Internals.Development
 
         }
 
-        /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="str">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
-        public static void Report(string str, VerbositySettings verbosity = Moderate, [CallerFilePath] string filePath = null,
-            [CallerMemberName] string callerName = null, [CallerLineNumber] int lineNumber = 0
+        /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="msg">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
+        public static void Report(string msg, VerbositySettings verbosity = Moderate, [CallerFilePath] string path = null,
+            [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0
             ) {
 
-            if(verbosity <= VerbositySetting) {                                             // Only display message if verbosity is below threshold.
-                bool dateChanged = false;
-                TimeSpan elapsedFromLastReport = DateTimeOffset.Now - TimeOfLastReport;     // We wish to write time elapsed from last report at end of report.
+            if(verbosity <= VerbositySetting) {                                             // Only report if verbosity is below threshold.
+                TimeSpan elapsed = DateTimeOffset.Now - TimeOfLastReport;     // We wish to write time elapsed from last report at end of report.
 
-                if(elapsedFromLastReport > TimeSpan.FromMinutes(1.0)) {                     // We do not wish to write two identical time stamps in a row. Set a flag (dateChanged) which signals that at least a minute has passed from last report and we should write a new time stamp.
+                if(elapsed > TimeSpan.FromMinutes(1.0)) {                     // We do not wish to write two identical time stamps in a row. Set a flag (dateChanged) which signals that at least a minute has passed from last report and we should write a new time stamp.
                     TimeOfLastReport = DateTime.Now;
                     dateChanged = true;
                 }
                 string dateStr = TimeOfLastReport.ToShortTimeString();
                 StrBuilder.Clear();
-                StrBuilder.Append(str);                                                     // Append string we wish to report.
+                StrBuilder.Append(msg);                                                     // Append string we wish to report.
 
                 // TODO: Append file path, caller name and line number.
                 // if((OutputSettings & WriteFilePath) == WriteFilePath) {
@@ -103,10 +89,10 @@ namespace Fluid.Internals.Development
                 // if((OutputSettings & WriteLineNumber) == WriteLineNumber) {
                 //     StrBuilder.Append($"  Line: {lineNumber}");
                 // }
-                str = StrBuilder.ToString();
+                msg = StrBuilder.ToString();
 
                 if((OutputSettings & WriteToConsole) == WriteToConsole) {
-                    WriteLine($"  ({elapsedFromLastReport.TotalSeconds.ToString("G3")} s)");
+                    WriteLine($"  ({elapsed.TotalSeconds.ToString("G3")} s)");
 
                     if(dateChanged) {                                                       // Write time stamp.
                         Write(dateStr.PadRight(dateStr.Length + 2));
@@ -114,11 +100,11 @@ namespace Fluid.Internals.Development
                     else {
                         Write(new string(' ', dateStr.Length + 2));                         // Write empty space the length of time stamp.
                     }
-                    Write(str.Wrap());
+                    Write(msg.Wrap());
                 }
                 
                 if((OutputSettings & WriteToFile) == WriteToFile) {
-                    Writer.WriteLine($"  ({elapsedFromLastReport.TotalSeconds.ToString("G3")} s)");
+                    Writer.WriteLine($"  ({elapsed.TotalSeconds.ToString("G3")} s)");
 
                     if(dateChanged) {                                                       // Write time stamp.
                         Writer.Write(dateStr.PadRight(dateStr.Length + 2));
@@ -126,7 +112,7 @@ namespace Fluid.Internals.Development
                     else {
                         Writer.Write(new string(' ', dateStr.Length + 2));                  // Write empty space the length of time stamp.
                     }
-                    Writer.Write(str.Wrap());
+                    Writer.Write(msg.Wrap());
                     Writer.Flush();
                 }
             }
@@ -170,6 +156,20 @@ namespace Fluid.Internals.Development
                 return new string(chars);
             }
             else return sourceString;
+        }
+
+        [Flags]
+        /// <summary>Determines where output is written to.</summary>
+        public enum OutputSettingsEnum
+        {
+            WriteToConsole  = 1 << 0,
+            WriteToFile     = 1 << 1
+        }
+
+        /// <summary>Determines which messages will be displayed by Reporter..</summary>
+        public enum VerbositySettings
+        {
+            Silent, Scarce, Moderate, Verbose, Obnoxious
         }
     }
 
