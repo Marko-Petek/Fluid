@@ -5,53 +5,35 @@ using System.Text;
 using static System.Console;
 using static System.Math;
 
-using static Fluid.Internals.Development.AppReporter.OutputSettingsEnum;
+using static Fluid.Internals.Development.AppReporter.OutputSettings;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
+using static Fluid.Internals.Operations;
 
 namespace Fluid.Internals.Development
 {
     /// <summary>Writes program's progression either to a file, to console or both.</summary>
-    public static class AppReporter
+    public class AppReporter
     {
-        /// <summary>Width of table where reports are written (time, message, call site info).</summary>
-        const int TableWidth = 200;
-        /// <summary>Char column at which time column starts.</summary>
-        static int TimeColStart { get; } = 0;
-        /// <summary>Width (number of chars) of time column.</summary>
-        static int TimeColWidth { get; } = 8;
-        /// <summary>Char column at which message column starts.</summary>
-        static int MessageColStart { get; } = TimeColStart + TimeColWidth + 1;
-        /// <summary>Width (number of chars) of time column.</summary>
-        static int MessageColWidth { get; } = 85;
-        /// <summary>Char column at which call site info column starts.</summary>
-        static int CallSiteInfoColStart { get; } = MessageColStart + MessageColWidth + 1;
-        /// <summary>Width (number of chars) of call site info column.</summary>
-        static int CallSiteInfoColWidth { get; } = TableWidth - MessageColWidth - TimeColWidth;
-        /// <summary>Concatenates strings based on OutputSettings.</summary>
-        static StringBuilder StrBuilder { get; } = new StringBuilder(500);                       // TODO: After you're done with this class, check if this is needed at all.
+        /// <summary>Determines AppReporter's output channel: console or file or both.</summary>
+        public OutputSettings Output { get; set; }
+        /// <summary>Determines which messages get displayed by AppReporter.</summary>
+        public VerbositySettings Verbosity { get; set; }
+        /// <summary>Can write aesthetically pleasing output to console or file.</summary>
+        ReportWriter ReportWriter { get; set; }
 
-        /// <summary>Width of column inside report table where message is displayed.</summary>
-        const int DefaultMessageWidth = 90;
 
         /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-        static AppReporter() {
-            OutputSettings = new OutputSettingsEnum();
-            OutputSettings |= WriteToConsole | WriteToFile; // | WriteFilePath | WriteCallerName | WriteLineNumber;
+        public AppReporter(VerbositySettings verbosity) {
+            Output = new OutputSettings();
+            Output |= WriteToConsole | WriteToFile;
+            Verbosity = verbosity;
+            ReportWriter = new ReportWriter()
         }
-
-
-        /// <summary>Determines Reporter's output channel: console or file or both.</summary>
-        public static OutputSettingsEnum OutputSettings { get; set; }
-        /// <summary>Determines which messages get displayed by Reporter.</summary>
-        public static VerbositySettings VerbositySetting { get; set; } = Moderate;
-
-        static StreamWriter Writer { get; } = new StreamWriter(new FileInfo("log.txt").FullName, true);
-
-        /// <summary>Time of most recently displayed message.</summary>
-        static DateTime TimeOfLastReport { get; set; } = DateTime.Now;
+        
 
         /// <summary>Marks time of program start. Needs to be called inside Main().</summary>
         public static void Start() {
+            // Move to constructor.
             WriteLine($"\n{TimeOfLastReport.ToShortDateString()}");
             Write($"{TimeOfLastReport.ToShortTimeString()}  Program started.");
 
@@ -66,7 +48,7 @@ namespace Fluid.Internals.Development
             [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0
             ) {
 
-            if(verbosity <= VerbositySetting) {                                             // Only report if verbosity is below threshold.
+            if(verbosity <= Verbosity) {                                             // Only report if verbosity is below threshold.
                 TimeSpan elapsed = DateTimeOffset.Now - TimeOfLastReport;     // We wish to write time elapsed from last report at end of report.
 
                 if(elapsed > TimeSpan.FromMinutes(1.0)) {                     // We do not wish to write two identical time stamps in a row. Set a flag (dateChanged) which signals that at least a minute has passed from last report and we should write a new time stamp.
@@ -91,7 +73,7 @@ namespace Fluid.Internals.Development
                 // }
                 msg = StrBuilder.ToString();
 
-                if((OutputSettings & WriteToConsole) == WriteToConsole) {
+                if((Output & WriteToConsole) == WriteToConsole) {
                     WriteLine($"  ({elapsed.TotalSeconds.ToString("G3")} s)");
 
                     if(dateChanged) {                                                       // Write time stamp.
@@ -103,7 +85,7 @@ namespace Fluid.Internals.Development
                     Write(msg.Wrap());
                 }
                 
-                if((OutputSettings & WriteToFile) == WriteToFile) {
+                if((Output & WriteToFile) == WriteToFile) {
                     Writer.WriteLine($"  ({elapsed.TotalSeconds.ToString("G3")} s)");
 
                     if(dateChanged) {                                                       // Write time stamp.
@@ -118,49 +100,12 @@ namespace Fluid.Internals.Development
             }
         }
 
-        /// <summary>Wraps a single line string (no new lines within) to a multi-line string of specified width.</summary><param name="sourceString">Single line string.</param><param name="wrapLength">Maximum character count inside a single line.</param><param name="firstLineIndent">N spaces prepended to first line.</param><param name="subsequentIndents">N spaces prepended to all subsequent lines.</param>
-        static string Wrap(this string sourceString, int wrapLength = DefaultMessageWidth, int firstLineIndent = 0, int subsequentIndents = 9) {
-            double nLinesFloat = (double)sourceString.Length / wrapLength;                              // How many times source string fits into wrapWidth.
-            int nLines = (int)Ceiling(nLinesFloat);                                                     // How many lines there actually are.
 
-            if(sourceString.Length > wrapLength) {
-                char[] chars = new char[firstLineIndent + sourceString.Length + (nLines-1)*(1 + subsequentIndents)];                // Length of original + space for new lines and leading spaces.                                                                                                  
 
-                for(int i = 0; i < firstLineIndent; ++i) {                                                              // Add leading spaces to first line.
-                    chars[i] = ' ';
-                }
-                sourceString.CopyTo(0, chars, firstLineIndent, wrapLength - firstLineIndent);
-                int charIndex = wrapLength;                                                                         // Character in chars array which we are currently modifying. Next is zeroth character on second line.
-
-                for(int i = 1; i < nLines - 1; ++i) {                                                               // Fill subsequent lines, save for last.
-                    chars[charIndex] = '\n';                                                                        // Add new line.
-                    ++charIndex;
-
-                    for(int j = 0; j < subsequentIndents; ++j) {                                                    // Add indent.
-                        chars[charIndex] = ' ';
-                        ++charIndex;
-                    }
-                    sourceString.CopyTo(i * wrapLength, chars, charIndex, wrapLength);                              // Add characters from source string.
-                    charIndex += wrapLength;
-                }
-                // Take care of last line.
-                chars[charIndex] = '\n';                                                                        // Add new line.
-                ++charIndex;
-
-                for(int j = 0; j < subsequentIndents; ++j) {                                                    // Add indent.
-                    chars[charIndex] = ' ';
-                    ++charIndex;
-                }
-                sourceString.CopyTo((wrapLength)*(nLines-1), chars, charIndex, sourceString.Length - (nLines - 1)*wrapLength);
-
-                return new string(chars);
-            }
-            else return sourceString;
-        }
 
         [Flags]
         /// <summary>Determines where output is written to.</summary>
-        public enum OutputSettingsEnum
+        public enum OutputSettings
         {
             WriteToConsole  = 1 << 0,
             WriteToFile     = 1 << 1
@@ -172,6 +117,4 @@ namespace Fluid.Internals.Development
             Silent, Scarce, Moderate, Verbose, Obnoxious
         }
     }
-
-    // TODO: Redesign AppReporter (Report method) so that it reports in table format. Date string, Message string, CallerInfo
 }
