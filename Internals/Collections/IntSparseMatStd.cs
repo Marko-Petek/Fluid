@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FALSE
+using System;
 
 namespace Fluid.Internals.Collections
 {
@@ -8,3 +9,4 @@ namespace Fluid.Internals.Collections
 		}
 	}
 }
+#endif

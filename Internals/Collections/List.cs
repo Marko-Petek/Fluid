@@ -67,6 +67,7 @@ namespace Fluid.Internals.Collections
         public override void Add(T element) {
             EnsureArrayCapacity(ref _E, _Count + 1);
             _E[_Count] = element;
+            ++_Count;
         }
 
         public override void AddRange(SCG.IList<T> elements) {

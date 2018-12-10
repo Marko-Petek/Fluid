@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 
 using Fluid.Internals.Collections;
@@ -14,3 +15,4 @@ namespace L03_Percolation
         }
     }
 }
+#endif

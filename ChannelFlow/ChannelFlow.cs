@@ -1,9 +1,11 @@
 using System;
+
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
 using static Fluid.Internals.Development.AppReporter;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
+using static Fluid.ChannelFlow.Program;
 
 namespace Fluid.ChannelFlow
 {
@@ -34,31 +36,13 @@ namespace Fluid.ChannelFlow
 
         /// <summary>Create a channel flow to solve.</summary><param name="peakInletVelocity">Peak velocity of fluid at inlet. Profile is parabolic, so peak velocity is situated in the middle.</param><param name="dt">Time step.</param>
         public ChannelFlow(double peakInletVelocity, double dt, double viscosity) {
-            #if REPORT
-                Report($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.", Verbose);
-            #endif
-            _peakInletVelocity = peakInletVelocity;
-
-            #if REPORT
-            Report($"Integration step dt = {dt}.", Verbose);
-            #endif
+                                                                                                Reporter.Write($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.", Verbose);
+            _peakInletVelocity = peakInletVelocity;                                             Reporter.Write($"Integration step dt = {dt}.", Verbose);
             _dt = dt;
-            _viscosity = viscosity;
-
-            #if REPORT
-                Report("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
-            #endif
-            _channelMesh = new ChannelMesh(this);                                   // Initial setup is now already present on _nodes list.
-            _width = _channelMesh.GetWidth();
-
-            #if REPORT
-                Report("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
-            #endif
-            _solution = _channelMesh.NodesArrayToSparseRow();               // Take 0 field as initial solution.
-
-            #if REPORT
-                Report("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
-            #endif
+            _viscosity = viscosity;                                                             Reporter.Write("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
+            _channelMesh = new ChannelMesh(this);                                               // Initial setup is now already present on _nodes list.
+            _width = _channelMesh.GetWidth();                                                   Reporter.Write("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
+            _solution = _channelMesh.NodesArrayToSparseRow();                                   /* Take 0 field as initial solution. */  Reporter.Write("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
             _swapMatrix = CreateSwapMatrix();
         }
 
@@ -76,82 +60,24 @@ namespace Fluid.ChannelFlow
 
         /// <summary>Solves for field changes in time step dt and adds changes to Node[] array on _channelMesh.</summary>
         public void SolveNextAndAddToNodeArray() {
-            #if REPORT
-                Report("Assembling stiffness matrix from node data.");
-            #endif
-            var stiffnessMatrix = _channelMesh.AssembleStiffnessMatrix(this);                               // Acquire stiffness matrix from existing values.
-            
-            #if REPORT
-            Report("Assembling forcing vector from node data.");
-            #endif
-            var forcingVector = _channelMesh.AssembleForcingVector(this);                                   // Acquire forcing vector.
-            
-            #if REPORT
-                Report("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
-            #endif
+                                                                                                            Reporter.Write("Assembling stiffness matrix from node data.");
+            var stiffnessMatrix = _channelMesh.AssembleStiffnessMatrix(this);                               /* Acquire stiffness matrix from existing values. */ Reporter.Write("Assembling forcing vector from node data.");
+            var forcingVector = _channelMesh.AssembleForcingVector(this);                                   /* Acquire forcing vector. */ Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
             stiffnessMatrix.ApplyColumnSwaps(_swapMatrix);                                                  // Swap columns so that constrained variables end up at right side.
-            int stiffnessMatrixWidth = stiffnessMatrix.GetWidth();
-            
-            #if REPORT
-                Report("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
-            #endif
+            int stiffnessMatrixWidth = stiffnessMatrix.GetWidth();                                          Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
             forcingVector.ApplySwaps(_swapMatrix);                                                          // Swap elements so that constrained elements end up at end.
             int forcingVectorWidth = forcingVector.Width;
-            int nConstraints = _channelMesh.GetConstraintCount();
-            
-            #if REPORT
-                Report("Splitting stiffness matrix along connstrained nodes column.");
-            #endif
-            var stiffnessMatrixRight = stiffnessMatrix.SplitAtColumn(stiffnessMatrixWidth - nConstraints);  // Split stiffness matrix vertically. Remember right part.
-            
-            #if REPORT
-            Report("Splitting stiffness matrix along connstrained nodes row.");
-            #endif
-            stiffnessMatrix.SplitAtRow(stiffnessMatrixWidth - nConstraints);                                // Further split stiffness matrix horizontally.
-            
-            #if REPORT
-            Report("Applying swaps to solution SparseRow.");
-            #endif
-            _solution.ApplySwaps(_swapMatrix);                                                              // Apply swaps, do not forget to unswap after done.
-            
-            #if REPORT
-            Report("Splitting previous solution SparseRow.");
-            #endif
-            var solutionLower = _solution.SplitAt(stiffnessMatrixWidth - nConstraints);                     // Split also previos solution vector. Remeber lower part.
-            
-            #if REPORT
-            Report("Splitting forcing vector.");
-            #endif
-            forcingVector.SplitAt(stiffnessMatrixWidth - nConstraints);                                     // Also split forcing vector.
-            
-            #if REPORT
-            Report("Constructing modified forcing vector.");
-            #endif
-            forcingVector = forcingVector - stiffnessMatrixRight * solutionLower;                           // Construct modified forcing vector which we will need to solve linear system.
-
-            #if REPORT
-            Report("Initiating ConjugateGradients solver.");
-            #endif
-            var solver = new ConjugateGradients(stiffnessMatrix, forcingVector);
-            
-            #if REPORT
-            Report("Solving.");
-            #endif
-            _solution = solver.GetSolution(_solution, 0.0001);
-            
-            #if REPORT
-            Report("Merging solution with previously split values.");
-            #endif
-            _solution.MergeWith(solutionLower);                                                             // 1) Merge solution with solutionLower.
-            
-            #if REPORT
-            Report("Unswapping solution.");
-            #endif
-            _solution.ApplySwaps(_swapMatrix);                                                              // 2) Unswap solution.
-            
-            #if REPORT
-            Report("Adding changes to node array on channel mesh.");
-            #endif
+            int nConstraints = _channelMesh.GetConstraintCount();                                           Reporter.Write("Splitting stiffness matrix along connstrained nodes column.");
+            var stiffnessMatrixRight = stiffnessMatrix.SplitAtColumn(stiffnessMatrixWidth - nConstraints);  /* Split stiffness matrix vertically. Remember right part. */ Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
+            stiffnessMatrix.SplitAtRow(stiffnessMatrixWidth - nConstraints);                                /* Further split stiffness matrix horizontally. */ Reporter.Write("Applying swaps to solution SparseRow.");
+            _solution.ApplySwaps(_swapMatrix);                                                              /* Apply swaps, do not forget to unswap after done. */ Reporter.Write("Splitting previous solution SparseRow.");
+            var solutionLower = _solution.SplitAt(stiffnessMatrixWidth - nConstraints);                     /* Split also previos solution vector. Remeber lower part. */ Reporter.Write("Splitting forcing vector.");
+            forcingVector.SplitAt(stiffnessMatrixWidth - nConstraints);                                     /* Also split forcing vector. */ Reporter.Write("Constructing modified forcing vector.");
+            forcingVector = forcingVector - stiffnessMatrixRight * solutionLower;                           /* Construct modified forcing vector which we will need to solve linear system. */ Reporter.Write("Initiating ConjugateGradients solver.");
+            var solver = new ConjugateGradients(stiffnessMatrix, forcingVector);                            Reporter.Write("Solving.");
+            _solution = solver.GetSolution(_solution, 0.0001);                                              Reporter.Write("Merging solution with previously split values.");
+            _solution.MergeWith(solutionLower);                                                             /* 1) Merge solution with solutionLower. */ Reporter.Write("Unswapping solution.");
+            _solution.ApplySwaps(_swapMatrix);                                                              /* 2) Unswap solution. */ Reporter.Write("Adding changes to node array on channel mesh.");
             _solution.UpdateNodeArray(_channelMesh.Nodes);                                                  // 3) Add changes to Node[] array on _channelMesh.
         }
 

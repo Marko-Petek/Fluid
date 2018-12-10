@@ -3,7 +3,7 @@ using System;
 namespace Fluid.Internals.Development
 {
     /// <summary>A report message together with time stamp and call site info.</summary>
-    internal class Message
+    public class Message
     {
         /// <summary>Time passed since application started.</summary>
         TimeSpan _DT;

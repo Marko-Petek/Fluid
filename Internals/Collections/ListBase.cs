@@ -94,8 +94,8 @@ namespace Fluid.Internals.Collections
         }
 
         public SCG.IEnumerator<T> GetEnumerator() {
-            for (int i = 0; i < _Count; i++)
-                yield return _E[i];
+            foreach(T element in _E)
+                yield return element;
         }
 
         SC.IEnumerator SC.IEnumerable.GetEnumerator() {
