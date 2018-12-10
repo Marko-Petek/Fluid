@@ -1,6 +1,5 @@
-/ChannelFlow/bin
-/ChannelFlow/obj
-/Dynamics/bin
-/Dynamics/obj
-/Dynamics.Tests/bin
-/Dynamics.Tests/obj
+**/bin/
+**/bin/Debug/
+**/obj/
+**/obj/Debug/
+.vs
