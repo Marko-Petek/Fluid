@@ -1,0 +1,12 @@
+Code that I've scrapped due to its complexity so I can stay within project's time constraints.
+Certain segments may be useful if I decide to further develop this project.
+
+#obkrožajočihTočk = #oglišč + #stranic + #ploskev + #prostor ...
+0D (točka):     1
+1D (daljica):   2  +  1  =  3
+2D (kvadrat):   4  +  4  +  1  =  9
+3D (kocka):     8  + 12  +  6  +  1 =  27          // popravi = 2(meji v 1D)^3(dimenzije) + 4(oglišča v 2D)*3(dimenzije) + 2(meji za 1 dimenzijo)*3(dimenzije)
+4D (???):       
+
+nSosedov2 = 2^n + n*2^(n-1)
+nSosedov3 = 2^n + n*2^(n-1) + n*2^(n-2)

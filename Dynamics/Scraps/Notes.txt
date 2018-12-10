@@ -1,2 +1,0 @@
-Code that I've scrapped due to its complexity so I can stay within project's time constraints.
-Certain segments may be useful if I decide to further develop this project.

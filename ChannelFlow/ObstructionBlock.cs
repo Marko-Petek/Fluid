@@ -1,15 +1,18 @@
 using System;
 using System.IO;
 using System.Text;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
 using System.Linq;
-using static Fluid.Dynamics.Internals.GeneralHelper;
-using static Fluid.Dynamics.Numerics.Matrix;
-using static Fluid.Dynamics.Internals.IOHelper;
 using static System.Math;
 using static System.Char;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.ChannelFlow.Program;
+using static Fluid.Internals.Operations;
+using static Fluid.Internals.Numerics.MatrixOperations;
+using static Fluid.Internals.IO;
+
 
 namespace Fluid.ChannelFlow
 {   
@@ -37,8 +40,8 @@ namespace Fluid.ChannelFlow
             _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("../../../../ChannelFlow/Input/obstructionStiffnessIntegrals.txt");
             _forcingIntegrals = ReadObstructionForcingIntegrals("../../../../ChannelFlow/Input/obstructionForcingIntegrals.txt");
             #else
-            _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("ChannelFlow/Input/obstructionStiffnessIntegrals.txt");
-            _forcingIntegrals = ReadObstructionForcingIntegrals("ChannelFlow/Input/obstructionForcingIntegrals.txt");
+            _stiffnessIntegrals = ReadObstructionStiffnessIntegrals("./Input/obstructionStiffnessIntegrals.txt");
+            _forcingIntegrals = ReadObstructionForcingIntegrals("./Input/obstructionForcingIntegrals.txt");
             #endif
         }
 
@@ -268,28 +271,28 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        public override void AddContributionsToStiffnessMatrix(SparseMatrix<double> A, double dt, double ni) {
+        public override void AddContributionsToStiffnessMatrix(SparseMat<double> A, double dt, double ni) {
 
             for(int row = 0; row < 23; ++row) {
-                for(int col = 0; col < 20; ++col) {
+                for(int col = 0; col < 20; ++col) {                                     Reporter.Write($"Element ({row},{col}).");
                     AddElementContributionToStiffnessMatrix(A, row, col, dt, ni);
                 }
             }
         }
 
         /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        void AddElementContributionToStiffnessMatrix(SparseMatrix<double> A, int row, int col, double dt, double ni) {
+        void AddElementContributionToStiffnessMatrix(SparseMat<double> A, int row, int col, double dt, double ni) {
             double[][] subResult;
-            int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
+            int globalRowBelt;                                              // Starting index of an octuple of rows which represent variable values at a single position.
             int globalColBelt;
 
-            for(int j = 0; j < 12; ++j) {                               // Over first basis function.
+            for(int j = 0; j < 12; ++j) {                                   // Over first basis function.
 
-                for(int k = j; k < 12; ++k) {                           // Over second basis function.
-                    subResult = SubMatrix(row, col, j, k, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
+                for(int k = j; k < 12; ++k) {                               // Over second basis function.
+                    subResult = SubMatrix(row, col, j, k, dt, ni);          // 8 x 8 matrix which has to be added to global stiffness matrix.
                     globalRowBelt = GlobalPositionIndexStd(row, col, j);
                     globalColBelt = GlobalPositionIndexStd(row, col, k);
-
+                                                                                        if(this is WestBlock && ((row == 0 && col == 0) || (row == 0 && col == 1))) Reporter.Write("Writing from element matrix to global matrix.");
                     for(int subResultRow = 0; subResultRow < 8; ++subResultRow) {
                         
                         for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.

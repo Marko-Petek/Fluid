@@ -1,8 +1,9 @@
 using System;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Meshing;
-using Fluid.Dynamics.Numerics;
 using static System.Math;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Meshing;
+using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow
 {   

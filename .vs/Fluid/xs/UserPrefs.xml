@@ -1,0 +1,28 @@
+﻿<Properties StartupConfiguration="{A8A7F1D4-7482-4F6E-802E-4BDEF87BFABA}|Default">
+  <MonoDevelop.Ide.ItemProperties.ChannelFlow PreferredExecutionTarget="MonoDevelop.Default" />
+<<<<<<< HEAD
+  <MonoDevelop.Ide.Workbench ActiveDocument="Internals/Collections/IntSparseMat.cs">
+    <Files>
+      <File FileName="Internals/Collections/IntSparseMat.cs" Line="288" Column="26" />
+      <File FileName="Internals/Collections/IntSparseMatRow.cs" Line="9" Column="33" />
+      <File FileName="Internals/Collections/IntSparseMatRowStd.cs" Line="5" Column="33" />
+      <File FileName="Internals/Collections/IntSparseRow.cs" Line="6" Column="41" />
+      <File FileName="Internals/Collections/IntSparseRowStd.cs" Line="5" Column="45" />
+      <File FileName="Internals/Collections/IntSparseElm.cs" Line="9" Column="31" />
+      <File FileName="Internals/Collections/IntSparseMatStd.cs" Line="5" Column="24" />
+      <File FileName="Internals/Collections/SparseMatRow.cs" Line="4" Column="35" />
+      <File FileName="Internals/Collections/SparseRow.cs" Line="1" Column="1" />
+=======
+  <MonoDevelop.Ide.Workbench ActiveDocument="Internals/Collections/List.cs">
+    <Files>
+      <File FileName="Internals/Collections/List.cs" Line="1" Column="1" />
+>>>>>>> 6c8637650b1435c58d4385216c44e1c2a3d4b4bf
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

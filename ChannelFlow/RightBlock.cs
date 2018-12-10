@@ -1,10 +1,12 @@
 using System;
-using Fluid.Dynamics.Numerics;
-using Fluid.Dynamics.Meshing;
-using static Fluid.Dynamics.Internals.IOHelper;
-using static Fluid.Dynamics.Internals.GeneralHelper;
 using static System.Math;
-using static Fluid.Dynamics.Numerics.Matrix;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.IO;
+using static Fluid.Internals.Operations;
+using static Fluid.Internals.Numerics.MatrixOperations;
 
 namespace Fluid.ChannelFlow
 {
@@ -18,8 +20,8 @@ namespace Fluid.ChannelFlow
         public static double[][] _rectForcingIntegrals;
 
         static RightBlock() {
-            _rectStiffnessIntegrals = ReadRectStiffnessIntegrals("ChannelFlow/Input/rectElementStiffnessIntegrals.txt");
-            _rectForcingIntegrals = ReadRectForcingIntegrals("ChannelFlow/Input/rectElementForcingIntegrals.txt");
+            _rectStiffnessIntegrals = ReadRectStiffnessIntegrals("./Input/rectElementStiffnessIntegrals.txt");
+            _rectForcingIntegrals = ReadRectForcingIntegrals("./Input/rectElementForcingIntegrals.txt");
         }
 
         /// <summary>Create a Cartesian mesh block.</summary><param name="channelMesh">Mesh block's owner.</param><param name="lowerLeftX">Lower left corner x coordinate.</param><param name="lowerLeftY">Lower left corner y coordinate.</param><param name="upperRightX">Upper right corner x coordinate.</param><param name="upperRightY">Upper right corner y coordinate.</param><param name="rowCount">Number of elements in y direction.</param><param name="columnCount">Number of elements in x direction.</param>
@@ -168,7 +170,7 @@ namespace Fluid.ChannelFlow
             return _rectForcingIntegrals[j][n];
         }
 
-        public override void AddContributionsToStiffnessMatrix(SparseMatrix<double> A, double dt, double ni) {
+        public override void AddContributionsToStiffnessMatrix(SparseMat<double> A, double dt, double ni) {
             for(int row = 0; row < 20; ++row) {
                 for(int col = 0; col < 60; ++col) {
                     AddElementContributionToStiffnessMatrix(A, row, col, dt, ni);
@@ -177,7 +179,7 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        void AddElementContributionToStiffnessMatrix(SparseMatrix<double> A, int row, int col, double dt, double ni) {
+        void AddElementContributionToStiffnessMatrix(SparseMat<double> A, int row, int col, double dt, double ni) {
             double[][] subResult;
             int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
             int globalColBelt;

@@ -1,9 +1,13 @@
 using System;
 using System.IO;
-using Fluid.Dynamics.Internals;
-using Fluid.Dynamics.Meshing;
-using Fluid.Dynamics.Numerics;
 using static System.Math;
+
+using Fluid.Internals.Collections;
+using Fluid.Internals.Numerics;
+using Fluid.Internals.Meshing;
+using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.AppReporter.VerbositySettings;
+using static Fluid.ChannelFlow.Program;
 
 namespace Fluid.ChannelFlow
 {
@@ -81,47 +85,47 @@ namespace Fluid.ChannelFlow
             _width = width;
             _relObstructionDiameter = relObstructionDiameter;
             _elementDensity = elementDensity;
-            _leftSquare = new Quadrilateral(                                            // Fixed.
+            _leftSquare = new Quadrilateral(                                                // Fixed.
                 0.0, 0.0,
                 _width, 0.0, 
                 _width, _width,
                 0.0, _width
             );
-            double tiltedRadiusX = 0.5 * Sqrt(2.0) * GetObstructionRadius();                                                   // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
-            _obstructionRect = new Quadrilateral(                                       // Fixed.
+            double tiltedRadiusX = 0.5 * Sqrt(2.0) * GetObstructionRadius();                // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
+            _obstructionRect = new Quadrilateral(                                           // Fixed.
                 GetObstructionX() - tiltedRadiusX, GetObstructionY() - tiltedRadiusX,
                 GetObstructionX() + tiltedRadiusX, GetObstructionY() - tiltedRadiusX,
                 GetObstructionX() + tiltedRadiusX, GetObstructionY() + tiltedRadiusX,
                 GetObstructionX() - tiltedRadiusX, GetObstructionY() + tiltedRadiusX
             );
-            _rightRect = new Quadrilateral(                                             // Fixed.
+            _rightRect = new Quadrilateral(                                                 // Fixed.
                 _width, 0.0,
                 4 * _width, 0.0,
                 4 * _width, _width,
                 _width, _width
             );
-            _nodes = new Node[15620];
-            _southBlock = new SouthBlock(this, channelFlow);
-            _westBlock = new WestBlock(this, channelFlow, _southBlock);
-            _northBlock = new NorthBlock(this, channelFlow, _westBlock);                        // Integral values get imported with static constructor of ObstructionBlock.
-            _eastBlock = new EastBlock(this, channelFlow, _northBlock, _southBlock);
+            _nodes = new Node[15620];                                                       Reporter.Write($"Created global array of nodes of length {_nodes.Length}.", Verbose); Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+            _southBlock = new SouthBlock(this, channelFlow);                                Reporter.Write("Constructing WestBlock.", Verbose);
+            _westBlock = new WestBlock(this, channelFlow, _southBlock);                     Reporter.Write("Constructing NorthBlock.", Verbose);
+            _northBlock = new NorthBlock(this, channelFlow, _westBlock);                    /* Integral values get imported with static constructor of ObstructionBlock. */  Reporter.Write("Constructing EastBlock.", Verbose);
+            _eastBlock = new EastBlock(this, channelFlow, _northBlock, _southBlock);        Reporter.Write("Constructing RightBlock.", Verbose);
             _rightBlock = new RightBlock(this, channelFlow, _eastBlock,
                 _rightRect._lL._x, _rightRect._lL._y,
                 _rightRect._uR._x, _rightRect._uR._y,
-                20, 60);
-            
+                20, 60
+            );                                                                              Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
             WriteCornerPositionsOfRectElement();
         }
 
         /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-        public SparseMatrix<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {
-            var stiffnessMatrix = new SparseMatrix<double>(15_620 * 8, 15_620 * 8, 10_000);
+        public SparseMat<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {             Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+            var stiffnessMatrix = new SparseMat<double>(15_620 * 8, 15_620 * 8, 10_000);
             double dt = channelFlow.GetDt();
-            double viscosity = channelFlow.GetViscosity();
-            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _westBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _eastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
+            double viscosity = channelFlow.GetViscosity();                                      Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
+            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
+            _westBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
+            _northBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
+            _eastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
             _rightBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
 
             return stiffnessMatrix;
@@ -146,7 +150,7 @@ namespace Fluid.ChannelFlow
             var node7 = _rightBlock.GetNodeStd(1,1,6).GetPos();
             var node10 = _rightBlock.GetNodeStd(1,1,9).GetPos();
 
-            var fileInfo = new FileInfo("ChannelFlow/Results/rectElement.txt");
+            var fileInfo = new FileInfo("./Results/rectElement.txt");
 
             using(var sw = new StreamWriter(fileInfo.FullName)) {
                 sw.WriteLine($"{{{node1},");

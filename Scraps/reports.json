@@ -1,0 +1,39 @@
+{
+"Run1": [{
+    "Date": "5.XII.2018",
+    "Time": "12:32:23",
+    "Reports": [{
+        "dT": "+0.1s",
+        "Msg": "Application start.",
+        "File": "./ChannelFlow/Program.cs",
+        "Caller": "CreateSwapMatrix",
+        "Line": "24"
+    },{
+        "dT": "+3s",
+        "Msg": "Solving.",
+        "File": "./ChannelFlow/Program.cs",
+        "Caller": "Solve",
+        "Line": "55"
+    }]
+}],
+"Run2": [{
+    "Date": "5.XII.2018",
+    "Time": "12:34:44",
+    "Reports": [{
+        "dT": "+0.1s",
+        "Msg": "Application start.",
+        "File": "./ChannelFlow/Program.cs",
+        "Caller": "CreateSwapMatrix",
+        "Line": "24"
+    },{
+        "dT": "+3s",
+        "Msg": "Solving.",
+        "File": "./ChannelFlow/Program.cs",
+        "Caller": "Solve",
+        "Line": "55"
+    }]
+}],
+"Run3": [
+
+]
+}

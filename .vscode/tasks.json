@@ -2,12 +2,59 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build",
+            "label": "Rebuild: REPORT directive",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "build",
-                "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
+                "msbuild",
+                "Fluid.sln",
+                "/p:DefineConstants=REPORT",
+                "/t:Rebuild"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Rebuild: TEST directive",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "msbuild",
+                "Fluid.sln",
+                "/p:DefineConstants=TEST",
+                "/t:Rebuild"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Rebuild: No directives",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "msbuild",
+                "Fluid.sln",
+                "/p:DefineConstants=",
+                "/t:Rebuild"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -21,8 +68,7 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/Dynamics.Tests/Dynamics.Tests.csproj",
-                "/p:DefineConstants=TEST"
+                "${workspaceFolder}/Dynamics.Tests/Dynamics.Tests.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": {
@@ -31,7 +77,7 @@
             },
         },
         {
-            "label": "run",
+            "label": "Run",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -39,6 +85,9 @@
                 "--project",
                 "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
             ],
+            "options": {
+                "cwd": "./ChannelFlow"
+            },
             "problemMatcher": "$msCompile",
             "group": "none"
         }
