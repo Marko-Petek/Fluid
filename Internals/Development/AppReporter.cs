@@ -40,9 +40,10 @@ namespace Fluid.Internals.Development
             _Report = new Report(StartTime);
             ReportWriter = new ReportWriter(this);
 
-            var initMessage = new Message(TimeSpan.Zero, $"Program started, {StartTime.ToShortTimeString()}", path, caller, line);            // Write initial message.
-            Report.Messages.Add(initMessage);
-            ReportWriter.WriteMessage(initMessage);             // Write initial message (Program started, etc.)
+            var initMessage = new Message(StartTime, "Program started.", path, caller, line);            // Write initial message.
+            Report.AddMessage(initMessage);
+            ReportWriter.WriteMessage(0);   
+                      // Write initial message (Program started, etc.)
         }
 
         /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="text">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
@@ -51,13 +52,10 @@ namespace Fluid.Internals.Development
         [CallerFilePath] string path = null, [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
 
             if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.
-                var dtThisMessage = DateTime.Now - StartTime;
-                var dtLastMessage = Report.Messages.Last().DT;
-                var elapsed = dtThisMessage - dtLastMessage;                                // Time passed since last message.
-                var message = new Message(elapsed, text, path, caller, line);               // Construct message.
-            
-                Report.Messages.Add(message);
-                ReportWriter.WriteMessage(message);
+                var message = new Message(DateTime.Now, text, path, caller, line);          // Construct message.
+                int newMessageIndex = Report.Messages.Count;                                // New message index will equal count.
+                Report.AddMessage(message);
+                ReportWriter.WriteMessage(newMessageIndex);
             }
         }
 

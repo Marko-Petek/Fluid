@@ -55,8 +55,8 @@ namespace Fluid.Internals.Collections
             }
             return -1;
         }
-        /// <summary>Searches for an element using type T's comparer and returns its index. Returns -1 if element not found.</summary><param name="elm">Element to find.</param><param name="stopAfter">Number of elements after which the search stops.</param><param name="start">Index at which to start searching.</param><param name="srchDir">Direction in which to start searching (either -1 or +1).</param>
-        public int IndexOf(T elm, int stopAfter, int start = 0, int srchDir = 1) {
+        /// <summary>Searches for an element using type T's comparer and returns its index. Starts searching at specified index and searches in a specified direction. Returns -1 if element not found.</summary><param name="elm">Element to find.</param><param name="stopAfter">Number of elements after which the search stops.</param><param name="start">Index at which to start searching.</param><param name="srchDir">Direction in which to start searching (either -1 or +1).</param>
+        public int IndexOf(T elm, int start, int stopAfter, int srchDir = 1) {
             int modIndex;                                                           // Wrapped around index.
             int modStart = Count - 1 + start;                                         // Additive constant used when calculating modIndex. Add Count-1 to operand so we don't get negative numbers.
             
@@ -68,10 +68,9 @@ namespace Fluid.Internals.Collections
             }
             return -1;
         }
-        /// <summary>Searches for an element using type T's comparer and returns its index. Returns -1 if element not found.</summary><param name="elm">Element to find.</param><param name="start">Index at which to start searching.</param><param name="srchDir">Direction in which to start searching (either -1 or +1).</param>
-        public int IndexOf(T elm, int start = 0, int srchDir = 1) => IndexOf(elm, Count, start, srchDir);
+
         /// <summary>Searches for an element using type T's comparer and returns its index. Returns -1 if element not found.</summary><param name="elm">Element to find.</param><param name="srchDir">Direction in which to start searching (either -1 or +1).</param>
-        public int IndexOf(T elm, int srchDir) => IndexOf(elm, Count, RecentIndex, srchDir);            // TODO: Comment arguments' effects in summary.
+        public int IndexOf(T elm, int srchDir) => IndexOf(elm, RecentIndex, Count, srchDir);
 
         /// <summary>Searches for an element and returns true if it is found.</summary>
         public bool Contains(T element) {

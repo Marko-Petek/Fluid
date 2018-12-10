@@ -96,7 +96,7 @@ namespace Fluid.Internals
         }
         
         /// <summary>Wraps a one line string to multiple lines and returns result as a list of strings (one element is one line).</summary><param name="source">Source string.</param><param name="wrapLength">Wrap length.</param>
-        public static List<string> WrapToLines(this string source, int wrapLength = 85) {
+        public static List<string> WrapToLines(this string source, int wrapLength = 60) {
             double nLinesFloat = (double)source.Length / wrapLength;                            // How many times source string fits into wrapWidth.
             int nLines = (int)Ceiling(nLinesFloat);                                             // How many lines there actually are.
             var lines = new List<string>(nLines);

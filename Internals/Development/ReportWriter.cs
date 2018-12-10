@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using SCG = System.Collections.Generic;
@@ -15,18 +16,16 @@ namespace Fluid.Internals.Development
     /// <summary>Writes out messages to console or file as an aesthetic output table.</summary>
     internal class ReportWriter
     {
-        /// <summary>Width of column inside report table where message is displayed.</summary>
-        const int DefaultMessageWidth = 90;
-        /// <summary>Maps column names to their indices.</summary><typeparam name="string">Column name.</typeparam><typeparam name="int">Column index.</typeparam>
-        readonly SCG.Dictionary<string, int> _ColPositions;
-        /// <summary>Default column widths</summary>
-        readonly int[] _DefaultColWidths = new int[] {8, 85, 60, 25, 4};
+        /// <summary>Number of columns (deduced from DefaultColWidths).</summary>
+        readonly int _NCols;
         /// <summary>Widths of columns</summary>
         int[] _ColWidths;
+        /// <summary>Previously (most recently) reported time.</summary>
+        DateTime _PrevReportedTime;
 
 
         /// <summary>StringBuilder.</summary>
-        StringBuilder StrBuilder { get; } = new StringBuilder(500);                       // TODO: After you're done with this class, check if this is needed at all.
+        StringBuilder StrBuilder { get; } = new StringBuilder(500);
         /// <summary>Writes messages to file.</summary><param name="FileInfo("log.txt"">Log file.</param>
         StreamWriter Writer { get; }
 
@@ -36,46 +35,54 @@ namespace Fluid.Internals.Development
 
         /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
         public ReportWriter(AppReporter appReporter) {
-            _ColWidths = _DefaultColWidths;
-            _ColPositions = new SCG.Dictionary<string, int>(5);
-            int pos = 0;
-            _ColPositions["DT"] = pos;
-            pos += _ColWidths[0] + 2;
-            _ColPositions["Msg"] = pos;
-            pos += _ColWidths[1] + 2;
-            _ColPositions["Path"] = pos;
-            pos += _ColWidths[2] + 2;
-            _ColPositions["Caller"] = pos;
-            pos += _ColWidths[3] + 2;
-            _ColPositions["Line"] = pos;
+            int buffer = Console.BufferWidth - _NCols * 2 - 12;              // spaces, some slack
+            int remainder = buffer - 8 - 8 - 16 - 4;
+            int textWidth = (int)(0.66*remainder);
+            int pathWidth = remainder - textWidth;
 
+            _ColWidths = new int[] {8, textWidth, 8, pathWidth, 16, 4};
+            _NCols = _ColWidths.Length;
             Writer = new StreamWriter(new FileInfo("log.txt").FullName, true);
             AppReporter = appReporter;
+            _PrevReportedTime = AppReporter.StartTime;
         }
 
         /// <summary>Take a Message and return formatted lines.</summary><param name="message">Message to format.</param>
-        List<string> FormatMessage(Message message) {
-            var wrappedDT = message.DT.TotalSeconds.ToString("G3").WrapToLines(_ColWidths[0]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
-            var wrappedMsg = message.Msg.WrapToLines(_ColWidths[1]);
-            var wrappedPath = message.Path.WrapToLines(_ColWidths[2]);
-            var wrappedCaller = message.Caller.WrapToLines(_ColWidths[3]);
-            var wrappedLine = message.Line.ToString().WrapToLines(_ColWidths[4]);
+        List<string> FormatMessage(int i) {
+            var message = AppReporter.Report.Messages[i];
+            var prevMessageTime = (i != 0) ? AppReporter.Report.Messages[i-1].Time : message.Time;
+            List<string> wrappedTime;
+
+            if(i == 0 || message.Time - _PrevReportedTime > TimeSpan.FromMinutes(1))                       // Only display time if it differs from previous time.
+                wrappedTime = message.Time.ToShortTimeString().WrapToLines(_ColWidths[0]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
+            else
+                wrappedTime = new List<string> { " " };
+
+            _PrevReportedTime = message.Time;
+            var wrappedText = message.Text.WrapToLines(_ColWidths[1]);
+            TimeSpan dt = (message.Time - prevMessageTime);
+            var wrappedDT = dt.TotalSeconds.ToString("G3").WrapToLines(_ColWidths[2]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
+            var relPath = Regex.Match(message.Path, @"/Fluid/.*").ToString();
+            relPath = relPath.Remove(0, 7);
+            var wrappedPath = relPath.WrapToLines(_ColWidths[3]);
+            var wrappedCaller = message.Caller.WrapToLines(_ColWidths[4]);
+            var wrappedLine = message.Line.ToString().WrapToLines(_ColWidths[5]);
             
-            var listOfLists = new List<List<string>>(5) { wrappedDT, wrappedMsg, wrappedPath, wrappedCaller, wrappedLine };     // Find how many lines has the element with most lines.
-            var listOfLengths = listOfLists.Select((element) => element.Count);
+            var listOfLists = new List<List<string>>(_NCols) { wrappedTime, wrappedText, wrappedDT, wrappedPath, wrappedCaller, wrappedLine };     // Find how many lines has the element with most lines.
+            var listOfLengths = listOfLists.Select(elm => elm.Count);
             int maxNLines = listOfLengths.Max();
             var formattedLines = new List<string>(maxNLines);                                                                   // Result is going to appear here.
 
-            for(int i = 0; i < maxNLines; ++i) {                                            // Over all lines.
+            for(int j = 0; j < maxNLines; ++j) {                                            // Over all lines.
                 StrBuilder.Clear();
 
-                for(int j = 0; j < 5; ++j) {                                                // Over all columns.
+                for(int k = 0; k < _NCols; ++k) {                                                // Over all columns.
                     
-                    if(listOfLists[j].Count > i) {                                          // List<string> j has an element to output at line i.
-                        StrBuilder.Append(listOfLists[j][i].PadRight(_ColWidths[j] + 2));
+                    if(listOfLists[k].Count > j) {                                          // List<string> j has an element to output at line i.
+                        StrBuilder.Append(listOfLists[k][j].PadRight(_ColWidths[k] + 2));
                     }
                     else {
-                        StrBuilder.Append(new string(' ', _ColWidths[j] + 2));                 // Add empty space
+                        StrBuilder.Append(new string(' ', _ColWidths[k] + 2));                 // Add empty space
                     }
                 }
                 formattedLines.Add(StrBuilder.ToString());
@@ -83,9 +90,9 @@ namespace Fluid.Internals.Development
             return formattedLines;
         }
 
-        /// <summary>Write a message to all outputs. Used by AppReporter.</summary><param name="message">Message.</param>
-        public void WriteMessage(Message message) {
-            var formattedLines = FormatMessage(message);
+        /// <summary>Write a message to all outputs. Used by AppReporter.</summary><param name="i">Index of message inside Report.</param>
+        public void WriteMessage(int i) {
+            var formattedLines = FormatMessage(i);
 
             if((AppReporter.Output & OutputSettings.Console) == OutputSettings.Console) {
                 foreach(var line in formattedLines)

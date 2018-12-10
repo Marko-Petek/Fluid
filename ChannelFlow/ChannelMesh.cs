@@ -113,19 +113,19 @@ namespace Fluid.ChannelFlow
                 _rightRect._lL._x, _rightRect._lL._y,
                 _rightRect._uR._x, _rightRect._uR._y,
                 20, 60
-            );                                                                              Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.");
+            );                                                                              Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
             WriteCornerPositionsOfRectElement();
         }
 
         /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-        public SparseMat<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {
+        public SparseMat<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {             Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
             var stiffnessMatrix = new SparseMat<double>(15_620 * 8, 15_620 * 8, 10_000);
             double dt = channelFlow.GetDt();
-            double viscosity = channelFlow.GetViscosity();
-            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _westBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
-            _eastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
+            double viscosity = channelFlow.GetViscosity();                                      Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
+            _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
+            _westBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
+            _northBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
+            _eastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
             _rightBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
 
             return stiffnessMatrix;

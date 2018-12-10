@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using static System.Console;
 
 using Fluid.Internals.Collections;
@@ -18,7 +19,8 @@ namespace Fluid.ChannelFlow
         static void Main(string[] args)
         {
             try {
-                _Reporter = new AppReporter(VerbositySettings.Obnoxious);
+                Console.OutputEncoding = Encoding.UTF8;
+                _Reporter = new AppReporter(VerbositySettings.Moderate);
                 var flow = new ChannelFlow(1.0, 0.05, 0.001);    // Start with velocity 1.0.
                 Reporter.Write("Solving for a single time step and writing solution to NodeArray.");
                 flow.SolveNextAndAddToNodeArray();
@@ -31,6 +33,5 @@ namespace Fluid.ChannelFlow
                 throw exc;                                          // Rethrow.
             }
         }
-        // TODO: Set verbosity of unnecessary reports to Verbose or Obnoxious.
     }
 }
