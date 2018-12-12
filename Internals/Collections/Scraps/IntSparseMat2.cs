@@ -1,4 +1,3 @@
-#if FALSE
 using System;
 using System.Text;
 using SCG = System.Collections.Generic;
@@ -8,12 +7,10 @@ using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
-	public class IntSparseMat : EquatableManagedList<IntSparseMatRow>
+
+	// TODO: Make sure erasure or splitting correctly adjust RecentRealIndex.
+	public class IntSparseMat : EquatableList<IntSparseMatRow>
 	{
-		/// <summary>Default value of an element (e.g. 0).</summary>
-		readonly int _DefaultValue;
-		/// <summary>Default value of an element (e.g. 0).</summary>
-		public int DefaultValue => _DefaultValue;
 		/// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
 		int _Width;
 		/// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
@@ -26,44 +23,30 @@ namespace Fluid.Internals.Collections
 		int _RecentRealIndex;
 		/// <summary>RealIndex of most recently fetched (get or set) SparseMatrixRow.</summary>
 		public int RecentRealIndex => _RecentRealIndex;
-		/// <summary>ImagIndex of most recently fetched (get or set) SparseMatrixRow.</summary>
+		/// <summary>VirtIndex of most recently fetched (get or set) SparseMatrixRow.</summary>
 		public int RecentVirtIndex => _E[_RecentRealIndex].VirtIndex;
-		/// <summary>Represents a non-existent row with negative matrix index to convey it's a dummy.</summary>
-		IntSparseMatRow _DummyMatrixRowInt;
-		/// <summary>Represents a non-existent row with specific matrix index (negative to convey it's a dummy).</summary>
-		public IntSparseMatRow DummyMatrixRowInt => _DummyMatrixRowInt;
+		/// <summary>Represents an unattached row, not in matrix. Negative virtual index conveys it's a dummy.</summary>
+		IntSparseMatRow _DummyMatRow;
+		/// <summary>Represents an unattached row, not in matrix. Negative virtual index conveys it's a dummy.</summary>
+		public IntSparseMatRow DummyMatRow => _DummyMatRow;
 
 
 		/// <summary>Create a SparseMatrix with given width, height, default value and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
-		public IntSparseMat(int width, int height, int defaultValue, int capacity) : base(capacity) {
-			_DefaultValue = defaultValue;
+		public IntSparseMat(int width, int height, int capacity = 10) : base(capacity) {
 			_Width = width;
 			_Height = height;
-			_DummyMatrixRowInt = new IntSparseMatRow(_Width, -1);             // Empty row.
-			_DummyMatrixRowInt.IsDummy = true;
-			_DummyMatrixRowInt.SparseMatrix = this;
-		}
-		/// <summary>Create a SparseMatrix with given width, height and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
-		public IntSparseMat(int width, int height, int capacity) : base(capacity) {
-			_DefaultValue = 0;
-			_Width = width;
-			_Height = height;
-			_DummyMatrixRowInt = new IntSparseMatRow(_Width, -1);             // Empty row.
-			_DummyMatrixRowInt.IsDummy = true;
-			_DummyMatrixRowInt.SparseMatrix = this;
-		}
-		/// <summary>Create a SparseMatrix with given width, height and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param>
-		public IntSparseMat(int width, int height) : this(width, height, 10) {
+			_DummyMatRow = new IntSparseMatRow(_Width, -1);             // Empty row.
+			_DummyMatRow.IsDummy = true;
+			_DummyMatRow.SparseMatrix = this;
 		}
 
 		/// <summary>Create a copy of specified SparseMatrix.</summary><param name="source">Source SparseMatrix to copy.</param>
 		public IntSparseMat(IntSparseMat source) {
-			_DefaultValue = source.DefaultValue;
 			_Width = source.Width;
 			_Height = source.Height;
 			_Count = source.Count;
-			_DummyMatrixRowInt = new IntSparseMatRow(source.DummyMatrixRowInt);      // FIXME: Set default value.
-			_DummyMatrixRowInt.SparseMatrix = this;
+			_DummyMatRow = new IntSparseMatRow(source.DummyMatRow);      // FIXME: Set default value.
+			_DummyMatRow.SparseMatrix = this;
 			_E = new IntSparseMatRow[Height];
 			Array.Copy(source._E, _E, Count);
 			_RecentRealIndex = source.RecentRealIndex;
@@ -71,128 +54,114 @@ namespace Fluid.Internals.Collections
 
 		/// <summary>Creates a SparseMatrix from an array.</summary><param name="source">Source array.</param>
 		public IntSparseMat(int[][] source) {                // TODO: Finish method that creates SparseMatrix from array.
-			int length0 = source.Length;
+			int nRows = source.Length;
 
-			for(int i = 0; i < length0; ++i) {
-				int length1 = source[i].Length;
+			for(int i = 0; i < nRows; ++i) {
+				int nCols = source[i].Length;
 
-				for(int j = 0; j < length1; ++j) {
-					this[i][j] = source[i][j];
+				for(int j = 0; j < nCols; ++j) {
+					this[i][j] = source[i][j];				// Copy array items to matrix using indexer.
 				}
 			}
 		}
 
-
-
-		protected override void AfterElementEntry(int index) {
-			_E[index].RealIndex = index;
-			_E[index].SparseMatrix = this;
-
-			for(int i = index + 1; i < Count; ++i) {
-				_E[i].RealIndex = i + 1;
-			}
-		}
-		protected override void BeforeElementExit(int index) {
-			_E[index].RealIndex = -1;                       // Signal that SparseMatrixRow is no longer part of any SparseMatrix.
-			_E[index].SparseMatrix = null;
-
-			for(int i = index + 1; i < Count; ++i) {
-				_E[i].RealIndex = i - 1;
-			}
-		}
-
-		/// <summary>Check whether a row with specified explicit index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such explicitIndex).</summary><param name="imagRowIndex">Explicit index to check.</param>
-		public (bool, int) GetRealRowIndex(int imagRowIndex) {
+		/// <summary>Check whether a row with specified virtual index exists. Returns (true, internal index of row) if it exists and (false, insertion index if we wish to have row with such VirtIndex).</summary><param name="virtRowIndex">Explicit index to check.</param>
+		public (bool, int) GetRealRowIndex(int virtRowIndex, int searchDir = 1) {					// Assumes elements in rows are ordered by VirtIndex.
 			if(Count != 0) {
-				ValidateIndex(ref _RecentRealIndex);
 				int realIndex = RecentRealIndex;
+				bool found = false;
 
-				if(RecentVirtIndex <= imagRowIndex) {              // Move forward until you reach end.
+				if(RecentVirtIndex <= virtRowIndex) {              									// Move forward until you reach end.
 
-					while(realIndex < Count && _E[realIndex].VirtIndex <= imagRowIndex) {           // when second condition false, row with requested explicit index does not exist.
-
-						if(_E[realIndex].VirtIndex == imagRowIndex) {
-							_RecentRealIndex = realIndex;
-							return (true, realIndex);
-						}
+					while(realIndex < Count && _E[realIndex].VirtIndex < virtRowIndex)           	// when second condition false, row with requested explicit index either does not exist or is the sought after row.
 						++realIndex;
+
+					if(_E[realIndex].VirtIndex == virtRowIndex) {									// This should be our sought after element, if it exists.
+						_RecentRealIndex = realIndex;
+						found = true;
 					}
-					return (false, --realIndex);
+					return (found, realIndex);
 				}
 				else {
-					while(realIndex > -1 && _E[realIndex].VirtIndex >= imagRowIndex) {           // when second condition false, row with requested explicit index does not exist.
-
-						if(_E[realIndex].VirtIndex == imagRowIndex) {
-							_RecentRealIndex = realIndex;
-							return (true, realIndex);
-						}
+					while(realIndex > -1 && _E[realIndex].VirtIndex > virtRowIndex)           		// when second condition false, row with requested explicit index either does not exist or is the sought after row..
 						--realIndex;
+
+					if(_E[realIndex].VirtIndex == virtRowIndex) {
+						_RecentRealIndex = realIndex;
+						found = true;
 					}
-					return (false, ++realIndex);
+					return (found, ++realIndex);
 				}
 			}
 			return (false, 0);
 		}
 
-		/// <summary>Retrieves row with specified explicit index.</summary>
-		public override IntSparseMatRow this[int imagIndex] {
+		/// <summary>Retrieves row with specified VirtIndex.</summary>
+		public override IntSparseMatRow this[int virtRowIndex] {
 			get {
-				int dummyIndex = 0;
+				(bool exists, int realRowIndex) = GetRealRowIndex(virtRowIndex);			// If exists = false, RealRowIndex signifies where it has to be inserted.
 
-				if(Count != 0) {
-					ValidateIndex(ref _RecentRealIndex);
-					int realIndex = RecentRealIndex;
-
-					if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
-						while(realIndex < Count && _E[realIndex].VirtIndex <= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
-
-							if(_E[realIndex].VirtIndex == imagIndex) {
-								_RecentRealIndex = realIndex;
-								return _E[realIndex];
-							}
-							++realIndex;
-						}
-						dummyIndex = realIndex;
-						_RecentRealIndex = realIndex;
-					}
-					else {
-						while(realIndex > -1 && _E[realIndex].VirtIndex >= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
-
-							if(_E[realIndex].VirtIndex == imagIndex) {
-								_RecentRealIndex = realIndex;
-								return _E[realIndex];
-							}
-							--realIndex;
-						}
-						dummyIndex = realIndex + 1;
-						_RecentRealIndex = dummyIndex;
-					}
+				if(exists)
+					return _E[realRowIndex];
+				else {
+					DummyMatRow.VirtIndex = virtRowIndex;
+					return DummyMatRow;
 				}
-				DummyMatrixRowInt.RealIndex = dummyIndex;                                // Inform the setter of SparseMatrixRow where in a SparseMatrix a row has to be inserted.
-				DummyMatrixRowInt.VirtIndex = imagIndex;
-				return DummyMatrixRowInt;                                         // Let the setter of SparseRow indexer create a new row if needed.
+
+
+				// if(Count != 0) {
+				// 	ValidateIndex(ref _RecentRealIndex);
+				// 	int realIndex = RecentRealIndex;
+
+				// 	if(RecentVirtIndex <= imagIndex) {              // Move forward until you reach end.
+				// 		while(realIndex < Count && _E[realIndex].VirtIndex <= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
+
+				// 			if(_E[realIndex].VirtIndex == imagIndex) {
+				// 				_RecentRealIndex = realIndex;
+				// 				return _E[realIndex];
+				// 			}
+				// 			++realIndex;
+				// 		}
+				// 		dummyIndex = realIndex;
+				// 		_RecentRealIndex = realIndex;
+				// 	}
+				// 	else {
+				// 		while(realIndex > -1 && _E[realIndex].VirtIndex >= imagIndex) {           // when second condition false, row with requested explicit index does not exist.
+
+				// 			if(_E[realIndex].VirtIndex == imagIndex) {
+				// 				_RecentRealIndex = realIndex;
+				// 				return _E[realIndex];
+				// 			}
+				// 			--realIndex;
+				// 		}
+				// 		dummyIndex = realIndex + 1;
+				// 		_RecentRealIndex = dummyIndex;
+				// 	}
+				// }
+				// DummyMatrixRowInt.RealIndex = dummyIndex;                                // Inform the setter of SparseMatrixRow where in a SparseMatrix a row has to be inserted.
+				// DummyMatrixRowInt.VirtIndex = imagIndex;
+				// return DummyMatrixRowInt;                                         // Let the setter of SparseRow indexer create a new row if needed.
 			}
 		}
 
-		/// <summary>Swap rows with specified explicit indices. Correctly handles cases with non-existent rows.</summary><param name="imagIndex1">Explicit index of first row to swap.</param><param name="imagIndex2">Explicit index of second row to swap.</param>
-		public void SwapRows(int imagIndex1, int imagIndex2) {
-			(bool imagIndex1Exists, int realIndex1) = GetRealRowIndex(imagIndex1);
-			(bool imagIndex2Exists, int realIndex2) = GetRealRowIndex(imagIndex2);
+		/// <summary>Swap rows with specified explicit indices. Correctly handles cases with non-existent rows.</summary><param name="virtIndex1">Explicit index of first row to swap.</param><param name="virtIndex2">Explicit index of second row to swap.</param>
+		public void SwapRows(int virtIndex1, int virtIndex2) {
+			(bool row1Exists, int realIndex1) = GetRealRowIndex(virtIndex1);
+			(bool row2Exists, int realIndex2) = GetRealRowIndex(virtIndex2);
 
-			if(imagIndex1Exists) {                                          // Row with first explicit index exists.
+			if(row1Exists) {                                          // Row with first VirtIndex exists.
 
-				if(imagIndex2Exists) {                                          // Row with second explicit index exists. Simply swap indices and explicit indices of rows.
+				if(row2Exists) {                                          // Row with second VirtIndex exists. Simply swap real indices and virt indices of rows.
 					IntSparseMatRow temp = _E[realIndex2];
 					_E[realIndex2] = _E[realIndex1];
-					_E[realIndex2].RealIndex = realIndex2;
-					_E[realIndex2].VirtIndex = imagIndex2;
+					_E[realIndex2].VirtIndex = virtIndex2;
+					
 					_E[realIndex1] = temp;
-					_E[realIndex1].RealIndex = realIndex1;
-					_E[realIndex1].VirtIndex = imagIndex1;
+					_E[realIndex1].VirtIndex = virtIndex1;
 				}
-				else {                                                      // Row with second explicit index does not exist.
-					_E[realIndex1].VirtIndex = imagIndex2;
-					Insert(realIndex2, _E[realIndex1]);
+				else {                                                      // Row with second VirtIndex does not exist.
+					_E[realIndex1].VirtIndex = virtIndex2;
+					Insert(realIndex2, _E[realIndex1]);							// Insert non-existing row 2.
 
 					if(realIndex1 >= realIndex2)                                  // Insertion has moved our existing element.
 						RemoveAt(realIndex1 + 1);
@@ -201,8 +170,8 @@ namespace Fluid.Internals.Collections
 				}
 			}
 			else {                                                      // Row with first explicit index does not exist.
-				if(imagIndex2Exists) {                                         // Row with second explicit index exists.
-					_E[realIndex2].VirtIndex = imagIndex1;
+				if(row2Exists) {                                         // Row with second explicit index exists.
+					_E[realIndex2].VirtIndex = virtIndex1;
 					Insert(realIndex1, _E[realIndex2]);
 
 					if(realIndex2 >= realIndex1)                                  // Insertion has moved our existing element.
@@ -467,4 +436,5 @@ namespace Fluid.Internals.Collections
 		}
 	}
 }
-#endif
+
+// TODO: Maybe try to implement SparseMatrix as Dictionary.
