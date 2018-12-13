@@ -15,10 +15,13 @@ namespace Fluid.Internals.Collections
         protected T[] _E;
         /// <summary>Number of elements inside internal storage array.</summary>
         protected int _Count;
-        /// <summary>Number of elements inside internal storage array.</summary>
-        public int Count => _Count;
         /// <summary>Index of element at which most recent operation took place.</summary>
         protected int _RecentIndex;
+
+        /// <summary>Number of elements inside internal storage array.</summary>
+        public int Count => _Count;
+        /// <summary>Length of internal array.</summary>
+        public int Capacity => _E.Length;
         /// <summary>Index of element at which most recent operation took place.</summary>
         public int RecentIndex => _RecentIndex;
         public bool IsReadOnly => false;

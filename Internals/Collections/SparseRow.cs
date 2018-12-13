@@ -20,6 +20,13 @@ namespace Fluid.Internals.Collections
             _Width = width;
         }
 
+        /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
+        public SparseRow(SparseRow<T> source) : base(source.Count) {
+            foreach(var pair in source) {
+                Add(pair.Key, pair.Value);
+            }
+        }
+
         /// <summary>Create a SparseRow by copying specified source array.</summary><param name="source">Source array to adopt.</param>
         public static SparseRow<T> CreateFromArray(T[] source) {
             int length = source.Length;

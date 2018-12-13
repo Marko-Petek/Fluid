@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 using System.Text;
 
@@ -217,3 +218,4 @@ namespace Fluid.Internals.Collections
         }
     }
 }
+#endif
