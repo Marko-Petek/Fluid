@@ -63,7 +63,7 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Swap two elements specified by virtual indices.</summary><param name="virtIndex1">Explicit index of first element.</param><param name="virtIndex2">Explicit index of second element.</param><remarks>Useful for swapping columns.</remarks>
-        public void SwapElements(int virtIndex1, int virtIndex2) {
+        public void SwapElms(int virtIndex1, int virtIndex2) {
             bool firstExists = TryGetValue(virtIndex1, out T val1);
             bool secondExists = TryGetValue(virtIndex2, out T val2);
 
@@ -88,10 +88,10 @@ namespace Fluid.Internals.Collections
         }
 
         /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
-        public void ApplySwaps(List<(int,int)> swapMatrix) {
+        public void ApplySwaps(List<(int,int)> swapMatrix) {        // TODO: Change parameter to SparseMatInt.
 
             foreach(var pair in swapMatrix) {
-                SwapElements(pair.Item1, pair.Item2);
+                SwapElms(pair.Item1, pair.Item2);
             }
         }
 

@@ -68,7 +68,7 @@ namespace Fluid.ChannelFlow
             forcingVector.ApplySwaps(_swapMatrix);                                                          // Swap elements so that constrained elements end up at end.
             int forcingVectorWidth = forcingVector.Width;
             int nConstraints = _channelMesh.GetConstraintCount();                                           Reporter.Write("Splitting stiffness matrix along connstrained nodes column.");
-            var stiffnessMatrixRight = stiffnessMatrix.SplitAtColumn(stiffnessMatrixWidth - nConstraints);  /* Split stiffness matrix vertically. Remember right part. */ Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
+            var stiffnessMatrixRight = stiffnessMatrix.SplitAtCol(stiffnessMatrixWidth - nConstraints);  /* Split stiffness matrix vertically. Remember right part. */ Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
             stiffnessMatrix.SplitAtRow(stiffnessMatrixWidth - nConstraints);                                /* Further split stiffness matrix horizontally. */ Reporter.Write("Applying swaps to solution SparseRow.");
             _solution.ApplySwaps(_swapMatrix);                                                              /* Apply swaps, do not forget to unswap after done. */ Reporter.Write("Splitting previous solution SparseRow.");
             var solutionLower = _solution.SplitAt(stiffnessMatrixWidth - nConstraints);                     /* Split also previos solution vector. Remeber lower part. */ Reporter.Write("Splitting forcing vector.");
