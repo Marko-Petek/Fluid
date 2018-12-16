@@ -6,24 +6,24 @@ namespace Fluid.Internals.Numerics
     /// <summary>Solves linear systems of form Ax=b.</summary>
     public class ConjugateGradients
     {
-        readonly SparseMat<double> _A;
-        readonly SparseRow<double> _b;
+        readonly SparseMatDouble _A;
+        readonly SparseRowDouble _b;
         //SparseRow<double> _x;
 
         /// <summary>Create an iterative linear system solver that uses method of conjugate gradients. Systems are of form: A x = b, where solution sought after is x.</summary><param name="A">Stiffness matrix.</param><param name="b">Forcing vector.</param>
-        public ConjugateGradients(SparseMat<double> A, SparseRow<double> b) {
+        public ConjugateGradients(SparseMatDouble A, SparseRowDouble b) {
             _A = A;
             _b = b;
         }
 
         /// <summary>Finds and returns solution of system as a SparseRow.</summary><param name="initialGuess">A SparseRow with same width as solution. Provides starting point in phase space.</param><param name="maximumResidual">Value of residual at which iterative solution process stops.</param>
-        public SparseRow<double> GetSolution(SparseRow<double> initialGuess, double maximumResidual) {
-            var d = new SparseRow<double>[2] {_b - _A * initialGuess, new SparseRow<double>(_b.Width, 10)};
-            var r = new SparseRow<double>[2] {d[0], new SparseRow<double>(_b.Width, 10)};
-            var x = new SparseRow<double>[2] {new SparseRow<double>(d[0]), new SparseRow<double>(_b.Width, 10)};
+        public SparseRowDouble GetSolution(SparseRowDouble initialGuess, double maximumResidual) {
+            var d = new SparseRowDouble[2] {_b - _A * initialGuess, new SparseRowDouble(_b.Width, 10)};
+            var r = new SparseRowDouble[2] {d[0], new SparseRowDouble(_b.Width, 10)};
+            var x = new SparseRowDouble[2] {new SparseRowDouble(d[0]), new SparseRowDouble(_b.Width, 10)};
             double alfa;
             double beta;
-            SparseRow<double> ADotDi;
+            SparseRowDouble ADotDi;
             double riDotRi;
 
             int i = 0;
@@ -41,7 +41,7 @@ namespace Fluid.Internals.Numerics
                 i = (i + 1) % 2;
                 j = (j + 1) % 2;
             }
-            while(r[i].CalcNorm() > maximumResidual);
+            while(r[i].NormSqr() > maximumResidual);
 
             return x[i];
         }

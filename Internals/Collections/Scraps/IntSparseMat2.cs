@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 using System.Text;
 using SCG = System.Collections.Generic;
@@ -7,8 +8,6 @@ using Fluid.Internals.Development;
 
 namespace Fluid.Internals.Collections
 {
-
-	// TODO: Make sure erasure or splitting correctly adjust RecentRealIndex.
 	public class IntSparseMat : EquatableList<IntSparseMatRow>
 	{
 		/// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
@@ -45,7 +44,7 @@ namespace Fluid.Internals.Collections
 			_Width = source.Width;
 			_Height = source.Height;
 			_Count = source.Count;
-			_DummyMatRow = new IntSparseMatRow(source.DummyMatRow);      // FIXME: Set default value.
+			_DummyMatRow = new IntSparseMatRow(source.DummyMatRow);
 			_DummyMatRow.SparseMatrix = this;
 			_E = new IntSparseMatRow[Height];
 			Array.Copy(source._E, _E, Count);
@@ -53,7 +52,7 @@ namespace Fluid.Internals.Collections
 		}
 
 		/// <summary>Creates a SparseMatrix from an array.</summary><param name="source">Source array.</param>
-		public IntSparseMat(int[][] source) {                // TODO: Finish method that creates SparseMatrix from array.
+		public IntSparseMat(int[][] source) {
 			int nRows = source.Length;
 
 			for(int i = 0; i < nRows; ++i) {
@@ -436,5 +435,4 @@ namespace Fluid.Internals.Collections
 		}
 	}
 }
-
-// TODO: Maybe try to implement SparseMatrix as Dictionary.
+#endif

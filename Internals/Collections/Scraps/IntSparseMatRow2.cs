@@ -1,3 +1,4 @@
+#if FALSE
 using System;
 using System.Text;
 
@@ -32,7 +33,6 @@ namespace Fluid.Internals.Collections
         public bool IsDummy { get => _IsDummy; set => _IsDummy = value; }
 
         
-        // TODO: Check that DefaultValue mechanism is implemented accross all Sparse classes.
         /// <summary>Create SparseMatrixRow with unspecified matrix index (negative).</summary><param name="sparseMatrix">SparseRow's owner.</param><param name="explicitIndex">Row index.</param>
 <<<<<<< HEAD:Internals/Collections/IntSparseMatRow.cs
         public IntSparseMatRow(int width) : base(width) {
@@ -232,3 +232,4 @@ namespace Fluid.Internals.Collections
         }
     }
 }
+#endif

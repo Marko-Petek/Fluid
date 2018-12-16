@@ -118,8 +118,8 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-        public SparseMat<double> AssembleStiffnessMatrix(ChannelFlow channelFlow) {             Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
-            var stiffnessMatrix = new SparseMat<double>(15_620 * 8, 15_620 * 8, 10_000);
+        public SparseMatDouble AssembleStiffnessMatrix(ChannelFlow channelFlow) {             Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+            var stiffnessMatrix = new SparseMatDouble(15_620 * 8, 15_620 * 8, 10_000);
             double dt = channelFlow.GetDt();
             double viscosity = channelFlow.GetViscosity();                                      Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
             _southBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
@@ -131,8 +131,8 @@ namespace Fluid.ChannelFlow
             return stiffnessMatrix;
         }
 
-        public SparseRow<double> AssembleForcingVector(ChannelFlow channelFlow) {
-            var forcingVector = new SparseRow<double>(15_620 * 8, 10_000);
+        public SparseRowDouble AssembleForcingVector(ChannelFlow channelFlow) {
+            var forcingVector = new SparseRowDouble(15_620 * 8, 10_000);
             double dt = channelFlow.GetDt();
             double viscosity = channelFlow.GetViscosity();
             _southBlock.AddContributionsToForcingVector(forcingVector, dt, viscosity);

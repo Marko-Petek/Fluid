@@ -1,4 +1,3 @@
-#if FALSE
 using System;
 using static System.Console;
 using Xunit;
@@ -93,36 +92,36 @@ namespace Fluid.Tests
                          8.0, 7.0, 6.0, 5.0,
                          4.0, 3.0, 2.0, 1.0)]
         [Theory] public void SparseMatrixColumnSwaps(int width, int height, params double[] matrix) {
-            var inputMatrix = new SparseMatrix<double>(width, height, 4);
+            var inputMatrix = new SparseMatDouble(width, height, 4);
 
             for(int i = 0; i < width; ++i) {
                 for(int j = 0; j < height; ++j) {
                     inputMatrix[i][j] = matrix[width*i + j];
                 }
             }
-            var transformedMatrix = new SparseMatrix<double>(inputMatrix);
+            var transformedMatrix = new SparseMatDouble(inputMatrix);
 
             for(int i = 0; i < width/2; ++i) {
-                transformedMatrix.SwapColumns(i, width - 1 - i);
+                transformedMatrix.SwapCols(i, width - 1 - i);                   // We swap two columns.
             }
-            Assert.All(transformedMatrix, row => {
+            Assert.All(transformedMatrix, rowPair => {                      // TODO: Correct all tests!!!
 
                 for(int i = 0; i < width/2; ++i) {
-                    row[i].Equals(row[width - 1 - i]);
+                    rowPair.Value.Equals(rowPair.Value[width - 1 - i]);      // Therefore 
                 }
             });
         }
 
         [InlineData(6,  1.0, 2.0, 3.0, 4.0, 5.0, 6.0)]
         [Theory] public void SparseRowElementSwaps(int width, params double[] vector) {
-            var inputVector = new SparseRow<double>(width, 6);
+            var inputVector = new SparseRowDouble(width, 6);
 
             for(int i = 0; i < width; ++i) {
                 inputVector[i] = vector[i];
             }
             double el1 = inputVector[2];
             double el2 = inputVector[4];
-            inputVector.SwapElementsExplicit(2,4);
+            inputVector.SwapElms(2,4);
             double el3 = inputVector[4];
             double el4 = inputVector[2];
             Assert.True(el1 == el3);
@@ -187,4 +186,3 @@ namespace Fluid.Tests
         }
     }
 }
-#endif

@@ -33,9 +33,9 @@ namespace Fluid.Internals.Meshing
         }
 
         /// <summary>Create a SparseRow out of Nodes array. Simply flatten list and copy it to SparseRow.</summary>
-        public SparseRow<double> NodesArrayToSparseRow() {
+        public SparseRowDouble NodesArrayToSparseRow() {
             int rowWidth = _nodes.Length * _variableCount;
-            var sparseRow = new SparseRow<double>(rowWidth, rowWidth);
+            var sparseRow = new SparseRowDouble(rowWidth, rowWidth);
             int index = 0;
 
             for(int i = 0; i < _nodes.Length; ++i) {

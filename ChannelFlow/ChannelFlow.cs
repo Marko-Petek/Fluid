@@ -19,13 +19,13 @@ namespace Fluid.ChannelFlow
         /// <summary>Peak velocity at inlet (mid point across). Velocity profile at inlet is parabolic.</summary>
         double _peakInletVelocity;
         /// <summary>Solution represents a change of values from prvious time to new time.</summary>
-        SparseRow<double> _solution;
+        SparseRowDouble _solution;
         /// <summary>Holds positions of nodes.</summary>
         ChannelMesh _channelMesh;
         /// <summary>Channel width.</summary>
         double _width;
         /// <summary>Swaps that have to be made in solution vector and forcing vector to move constrained nodes to bottom most rows. These same swaps have to occurr also to columns of StiffnessMatrix.</summary>
-        SparseMat<int> _swapMatrix;
+        SparseMatInt _swapMatrix;
         /// <summary>FlowSolver's step length for marching in time.</summary>
         public double GetDt() => _dt;
         /// <summary>Fluid's viscosity.</summary>
@@ -63,9 +63,9 @@ namespace Fluid.ChannelFlow
                                                                                                             Reporter.Write("Assembling stiffness matrix from node data.");
             var stiffnessMatrix = _channelMesh.AssembleStiffnessMatrix(this);                               /* Acquire stiffness matrix from existing values. */ Reporter.Write("Assembling forcing vector from node data.");
             var forcingVector = _channelMesh.AssembleForcingVector(this);                                   /* Acquire forcing vector. */ Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
-            stiffnessMatrix.ApplyColumnSwaps(_swapMatrix);                                                  // Swap columns so that constrained variables end up at right side.
-            int stiffnessMatrixWidth = stiffnessMatrix.GetWidth();                                          Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
-            forcingVector.ApplySwaps(_swapMatrix);                                                          // Swap elements so that constrained elements end up at end.
+            stiffnessMatrix.ApplyColSwaps(_swapMatrix);                                                  // Swap columns so that constrained variables end up at right side.
+            int stiffnessMatrixWidth = stiffnessMatrix.Width;                                          Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
+            forcingVector.ApplySwaps(_swapMatrix);                                                         // Swap elements so that constrained elements end up at end.
             int forcingVectorWidth = forcingVector.Width;
             int nConstraints = _channelMesh.GetConstraintCount();                                           Reporter.Write("Splitting stiffness matrix along connstrained nodes column.");
             var stiffnessMatrixRight = stiffnessMatrix.SplitAtCol(stiffnessMatrixWidth - nConstraints);  /* Split stiffness matrix vertically. Remember right part. */ Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
@@ -82,11 +82,11 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Creates a matrix whose entries indicate which solution vector rows should be swapped with one another.</summary>
-        SparseMat<int> CreateSwapMatrix() {
+        SparseMatInt CreateSwapMatrix() {
             int posCount = _channelMesh.GetPositionCount();
             int nVars = _channelMesh.GetVariableCount();
             int width = posCount * nVars;
-            var matrix = new SparseMat<int>(width, width, 2000);
+            var matrix = new SparseMatInt(width, width, 2000);
 
             for(int front = 0, back = width - 1; front <= back; ++front) {
                 int frontPosIndex = front / nVars;                                  // Is rounded down.
