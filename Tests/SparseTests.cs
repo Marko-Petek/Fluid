@@ -1,4 +1,3 @@
-#if FALSE
 using System;
 using Xunit;
 using Fluid.Internals.Collections;
@@ -11,33 +10,33 @@ namespace Fluid.Tests
         /// <summary>Test addition of two sparse rows.</summary>
         [Fact] public void AddTwoSparseRows()
         {
-            var sparseRow = new SparseRow<double>(3);
+            var sparseRow = new SparseRowDouble(3);
             sparseRow[0] = 1.0;
             sparseRow[1] = 3.0;
             sparseRow[2] = 2.0;
 
-            var sparseRow2 = new SparseRow<double>(3);
+            var sparseRow2 = new SparseRowDouble(3);
             sparseRow2[0] = 2.0;
             sparseRow2[1] = 3.0;
             sparseRow2[2] = 1.0;
 
             var resultSparseRow = sparseRow + sparseRow2;
-            var expectedSparseRow = new SparseRow<double>(3,3) {    // Expected: 3.0, 6.0, 3.0
-                new SparseElement<double>(0, 3.0),
-                new SparseElement<double>(1, 6.0),
-                new SparseElement<double>(2, 3.0)
+            var expectedSparseRow = new SparseRowDouble(3,3) {    // Expected: 3.0, 6.0, 3.0
+                {0, 3.0},
+                {1, 6.0},
+                {2, 3.0}
             };
             Assert.True(resultSparseRow.Equals(expectedSparseRow));
         }
 
         /// <summary>Dot (inner product) two sparse rows.</summary>
         [Fact] public void DotTwoSparseRows() {
-            var sparseRow = new SparseRow<double>(3);
+            var sparseRow = new SparseRowDouble(3);
             sparseRow[0] = 2.0;
             sparseRow[1] = 1.0;
             sparseRow[2] = 3.0;
 
-            var sparseRow2 = new SparseRow<double>(3);
+            var sparseRow2 = new SparseRowDouble(3);
             sparseRow2[0] = 5.0;
             sparseRow2[1] = 2.0;
             sparseRow2[2] = 3.0;
@@ -48,12 +47,12 @@ namespace Fluid.Tests
 
         /// <summary>Dot (inner product) two sparse rows.</summary>
         [Fact] public void DotTwoSparseRows2() {
-            var sparseRow = new SparseRow<double>(3);
+            var sparseRow = new SparseRowDouble(3);
             sparseRow[0] = 2.0;
             sparseRow[1] = 1.0;
             sparseRow[2] = 3.0;
 
-            var sparseRow2 = new SparseRow<double>(3);
+            var sparseRow2 = new SparseRowDouble(3);
             sparseRow2[1] = 2.0;
             sparseRow2[2] = 3.0;
 
@@ -63,7 +62,7 @@ namespace Fluid.Tests
 
         /// <summary>Add two sparse matrices.</summary>
         [Fact] public void AddTwoSparseMatrices() {
-            var sparseMatrix = new SparseMatrix<double>(3,3);
+            var sparseMatrix = new SparseMatDouble(3,3);
             sparseMatrix[0][0] = 1.0;
             sparseMatrix[0][1] = 2.0;
             sparseMatrix[0][2] = 3.0;
@@ -74,7 +73,7 @@ namespace Fluid.Tests
             sparseMatrix[2][1] = 4.0;
             sparseMatrix[2][2] = 1.0;
 
-            var sparseMatrix2 = new SparseMatrix<double>(3,3);
+            var sparseMatrix2 = new SparseMatDouble(3,3);
             sparseMatrix2[1][0] = 5.0;
             sparseMatrix2[1][1] = 2.0;
             sparseMatrix2[1][2] = 3.0;
@@ -147,4 +146,3 @@ namespace Fluid.Tests
 
     }
 }
-#endif

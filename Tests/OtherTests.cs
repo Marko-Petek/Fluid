@@ -102,12 +102,12 @@ namespace Fluid.Tests
             var transformedMatrix = new SparseMatDouble(inputMatrix);
 
             for(int i = 0; i < width/2; ++i) {
-                transformedMatrix.SwapCols(i, width - 1 - i);                   // We swap two columns.
+                transformedMatrix.SwapCols(i, width - 1 - i);                   // Swap each left half column with its counterpart on right side.
             }
             Assert.All(transformedMatrix, rowPair => {                      // TODO: Correct all tests!!!
 
                 for(int i = 0; i < width/2; ++i) {
-                    rowPair.Value.Equals(rowPair.Value[width - 1 - i]);      // Therefore 
+                    rowPair.Value[i].Equals(rowPair.Value[width - 1 - i]);      // Therefore this has to be true after swaps.
                 }
             });
         }
