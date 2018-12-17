@@ -123,12 +123,12 @@ namespace Fluid.Internals.Collections
             }
             set {
                 if(!EqComparer.Equals(value, default(T))) {     // Setting a value different from 0.
-                    var dummy = this as DummyRow<T>;            // Try downcasting to DummyRow.
+                    var dummy = this as IDummyRow<T>;            // Try downcasting to DummyRow.
 
                     if(dummy != null) {                         // Cast succeeded. Add new row to its owner and add value to it.
                         var newRow = CreateSparseRow(Width);
                         newRow.Add(i, value);
-                        dummy.Owner.Add(i, newRow);
+                        dummy.Owner.Add(dummy.Index, newRow);
                     }
                     else
                         base[i] = value;

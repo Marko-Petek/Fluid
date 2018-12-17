@@ -5,9 +5,11 @@ namespace Fluid.Internals.Collections
     public class SparseMatInt : SparseMat<int>
     {
         public SparseMatInt(int width, int height, int capacity = 6) : base(width, height, capacity) {
+            _DummyRow = new DummyRowInt(this, width, 1);
         }
 
         public SparseMatInt(SparseMatInt source) : base(source) {
+            _DummyRow = new DummyRowInt(this, source.Width, 1);
         }
 
         /// <summary>Creates a SparseMatrix from an array (copies elements from array).</summary><param name="source">Source array.</param>
@@ -16,6 +18,8 @@ namespace Fluid.Internals.Collections
 
             for(int row = 0; row < nRows; ++row)
                 Add(row, CreateSparseRow(source[row]));
+
+            _DummyRow = new DummyRowInt(this, source.Length, 1);
         }
 
         internal override SparseRow<int> CreateSparseRow(int width, int capacity = 6) => new SparseRowInt(width, capacity);

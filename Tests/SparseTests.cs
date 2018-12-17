@@ -81,7 +81,7 @@ namespace Fluid.Tests
             sparseMatrix2[2][1] = 1.0;
 
             var sparseMatrix3 = sparseMatrix + sparseMatrix2;
-            var expectedMatrix = new SparseMatrix<double>(3,3,3);
+            var expectedMatrix = new SparseMatDouble(3,3,3);
 
             expectedMatrix[0][0] = 1.0; expectedMatrix[0][1] = 2.0; expectedMatrix[0][2] = 3.0;
             expectedMatrix[1][0] = 7.0; expectedMatrix[1][1] = 3.0; expectedMatrix[1][2] = 7.0;
@@ -96,49 +96,54 @@ namespace Fluid.Tests
 
         /// <summary>Multiply a sparse matrix with a sparse row.</summary>
         [Fact] public void MultiplySparseMatrixAndSparseRow() {
-            var sparseMatrix = new SparseMatrix<double>(3,3);
-            sparseMatrix[0][0] = 1.0;
-            sparseMatrix[0][1] = 2.0;
-            sparseMatrix[0][2] = 3.0;
-            sparseMatrix[1][0] = 2.0;
-            sparseMatrix[1][1] = 1.0;
-            sparseMatrix[1][2] = 4.0;
-            sparseMatrix[2][0] = 3.0;
-            sparseMatrix[2][1] = 4.0;
-            sparseMatrix[2][2] = 1.0;
+            var sparseMat = new SparseMatDouble(3,3);
+            sparseMat[0][0] = 1.0;
+            sparseMat[0][1] = 2.0;
+            sparseMat[0][2] = 3.0;
+            sparseMat[1][0] = 2.0;
+            sparseMat[1][1] = 1.0;
+            sparseMat[1][2] = 4.0;
+            sparseMat[2][0] = 3.0;
+            sparseMat[2][1] = 4.0;
+            sparseMat[2][2] = 1.0;
 
-            var sparseMatrix2 = new SparseMatrix<double>(3,3);
+            var sparseMatrix2 = new SparseMatDouble(3,3);
             sparseMatrix2[1][0] = 5.0;
             sparseMatrix2[1][1] = 2.0;
             sparseMatrix2[1][2] = 3.0;
             sparseMatrix2[2][0] = 2.0;
             sparseMatrix2[2][1] = 1.0;
 
-            var sparseRow = new SparseRow<double>(3);
+            var sparseRow = new SparseRowDouble(3);
             sparseRow[0] = 2.0;
             sparseRow[1] = 1.0;
             sparseRow[2] = 3.0;
 
-            var sparseRow2 = new SparseRow<double>(3);
+            var sparseRow2 = new SparseRowDouble(3);
             sparseRow2[0] = 5.0;
             sparseRow2[1] = 2.0;
             sparseRow2[2] = 3.0;
 
-            var resultSparseRow = sparseMatrix * sparseRow;
-            var expectedSparseRow = new SparseRow<double>(3) {
-                new SparseElement<double>(0, 13.0), new SparseElement<double>(1, 17.0), new SparseElement<double>(2, 13.0)
+            var resultSparseRow = sparseMat * sparseRow;
+            var expectedSparseRow = new SparseRowDouble(3) {
+                {0, 13.0},
+                {1, 17.0},
+                {2, 13.0}
             };
             Assert.True(resultSparseRow.Equals(expectedSparseRow));             // Expected: {0: 13}, {1: 17}, {2: 13}
 
             var resultSparseRow2 = sparseMatrix2 * sparseRow2;
-            var expectedSparseRow2 = new SparseRow<double>(3) {
-                new SparseElement<double>(1, 38.0), new SparseElement<double>(2, 12.0)
+            var expectedSparseRow2 = new SparseRowDouble(3) {
+                {1, 38.0},
+                {2, 12.0}
             };
             Assert.True(resultSparseRow2.Equals(expectedSparseRow2));           // Expected: {1: 38}, {2: 12}
 
-            var resultSparseRow3 = sparseRow * sparseMatrix;
-            var expectedSparseRow3 = new SparseRow<double>(3) {
-                new SparseElement<double>(0, 13.0), new SparseElement<double>(1, 17.0), new SparseElement<double>(2, 13.0)
+            var resultSparseRow3 = sparseRow * sparseMat;
+            var expectedSparseRow3 = new SparseRowDouble(3) {
+                {0, 13.0},
+                {1, 17.0},
+                {2, 13.0}
             };
             Assert.True(resultSparseRow3.Equals(expectedSparseRow3));           // Expected: {0: 13}, {1: 17}, {2: 13}
         }

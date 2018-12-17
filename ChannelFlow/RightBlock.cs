@@ -194,8 +194,8 @@ namespace Fluid.ChannelFlow
                     for(int subResultRow = 0; subResultRow < 8; ++subResultRow) {
                         
                         for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.
-                            A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] = subResult[subResultRow][subResultCol];
-                            A[globalColBelt * 8 + subResultCol][globalRowBelt * 8 + subResultRow] = subResult[subResultRow][subResultCol];
+                            A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] += subResult[subResultRow][subResultCol];
+                            A[globalColBelt * 8 + subResultCol][globalRowBelt * 8 + subResultRow] += subResult[subResultRow][subResultCol];
                         }
                     }
                 }
@@ -258,7 +258,7 @@ namespace Fluid.ChannelFlow
                 globalRowBelt = GlobalPositionIndexStd(row, col, j);
 
                 for(int subResultRow = 0; subResultRow < 8; ++subResultRow) {
-                    b[globalRowBelt * 8 + subResultRow] = subVector[subResultRow];
+                    b[globalRowBelt * 8 + subResultRow] += subVector[subResultRow];
                 }
             }
         }

@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Height (length of columns) that matrix would have in its explicit form.</summary>
         protected int _Height;
         /// <summary>Used by indexer when fetching a row that does not actually exist. If a setter of that row then decides to add an element, row is copied to matrix.</summary>
-        DummyRow<T> _DummyRow;
+        internal IDummyRow<T> _DummyRow;
 
 
         /// <summary>Width (length of rows) that matrix would have in its explicit form.</summary>
@@ -19,7 +19,7 @@ namespace Fluid.Internals.Collections
         /// <summary>Height (length of columns) that matrix would have in its explicit form.</summary>
         public int Height => _Height;
         /// <summary>Used by indexer when fetching a row that does not actually exist. If a setter of that row then decides to add an element, row is copied to matrix.</summary>
-        internal DummyRow<T> DummyRow => _DummyRow;
+        internal IDummyRow<T> DummyRow => _DummyRow;
 
         /// <summary>Does not assign Width or Height. User of this constructor must do it manually.</summary>
         protected SparseMat() {}
@@ -28,14 +28,12 @@ namespace Fluid.Internals.Collections
         public SparseMat(int width, int height, int capacity = 6) : base(capacity) {
             _Width = width;
             _Height = height;
-            _DummyRow = new DummyRow<T>(this, width);
         }
 
         /// <summary>Create a copy of specified SparseMatrix.</summary><param name="source">Source SparseMatrix to copy.</param>
         public SparseMat(SparseMat<T> source) : base(source) {
             _Width = source.Width;
             _Height = source.Height;
-            _DummyRow = new DummyRow<T>(this, source.Width);
         }
 
         /// <summary>Creates an instance of the same (most derived) type as instance on which it is invoked.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
@@ -52,9 +50,9 @@ namespace Fluid.Internals.Collections
             var removedRightPart = CreateSparseMat(remWidth, Height);
             _Width = virtJ;                                                 // Adjust width of this Matrix.
 
-            foreach(var rowPair in this) {                                  // Split each SparseRow separately.
-                var removedCols = rowPair.Value.SplitAt(virtJ);
-                removedRightPart.Add(rowPair.Key, removedCols);
+            foreach(var row in this) {                                  // Split each SparseRow separately.
+                var removedCols = row.Value.SplitAt(virtJ);             // TODO: Check all split algorithms whether they properly remove rows/cols.
+                removedRightPart.Add(row.Key, removedCols);
             }
             return removedRightPart;
         }
@@ -113,8 +111,11 @@ namespace Fluid.Internals.Collections
             get {
                 if(TryGetValue(i, out SparseRow<T> result))            // Try to fetch value at index i.
                     return result;
-                else
-                    return DummyRow;
+                else {
+                    DummyRow.Owner = this;
+                    DummyRow.Index = i;
+                    return (SparseRow<T>)DummyRow;
+                }
             }
         }
     }

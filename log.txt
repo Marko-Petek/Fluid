@@ -784,3 +784,4 @@ h rows have to be swapped to bring boundary no  (0.836 s)
          Assembling stiffness matrix from node data. 65 SolveNextAndAddToNodeArray 6
          5 SolveNextAndAddToNodeArray0         Program started, 10:23 PM                                                              /home/marko/Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow  Main                       21    
                                                                                                  /Program.cs                                                                                    
+6:23 PM   Program started.                                          0         ChannelFlow/Program.cs         Main              23    
