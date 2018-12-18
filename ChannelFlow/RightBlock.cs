@@ -170,7 +170,7 @@ namespace Fluid.ChannelFlow
             return _rectForcingIntegrals[j][n];
         }
 
-        public override void AddContributionsToStiffnessMatrix(SparseMat<double> A, double dt, double ni) {
+        public override void AddContributionsToStiffnessMatrix(SparseMatDouble A, double dt, double ni) {
             for(int row = 0; row < 20; ++row) {
                 for(int col = 0; col < 60; ++col) {
                     AddElementContributionToStiffnessMatrix(A, row, col, dt, ni);
@@ -179,7 +179,7 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        void AddElementContributionToStiffnessMatrix(SparseMat<double> A, int row, int col, double dt, double ni) {
+        void AddElementContributionToStiffnessMatrix(SparseMatDouble A, int row, int col, double dt, double ni) {
             double[][] subResult;
             int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
             int globalColBelt;
@@ -238,7 +238,7 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Add whole block's contribution to global forcing vector.</summary><param name="b">Gloabal forcing vector.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        public override void AddContributionsToForcingVector(SparseRow<double> b, double dt, double ni) {
+        public override void AddContributionsToForcingVector(SparseRowDouble b, double dt, double ni) {
 
             for(int row = 0; row < 20; ++row) {
                 for(int col = 0; col < 60; ++col) {
@@ -248,7 +248,7 @@ namespace Fluid.ChannelFlow
         }
 
         /// <summary>Add contribution from element at specified row and col to global forcing vector.</summary><param name="b">Global forcing vector.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        void AddElementContributionToForcingVector(SparseRow<double> b, int row, int col, double dt, double ni) {
+        void AddElementContributionToForcingVector(SparseRowDouble b, int row, int col, double dt, double ni) {
             double[] subVector;
             int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
 

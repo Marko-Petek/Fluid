@@ -785,3 +785,49 @@ h rows have to be swapped to bring boundary no  (0.836 s)
          5 SolveNextAndAddToNodeArray0         Program started, 10:23 PM                                                              /home/marko/Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow  Main                       21    
                                                                                                  /Program.cs                                                                                    
 6:23 PM   Program started.                                          0         ChannelFlow/Program.cs         Main              23    
+5:32 PM   Program started.                                                                         0         ChannelFlow/Program.cs                          Main              23    
+          Exception occured:  The type initializer for 'Fluid.ChannelFlow.ObstructionBlock' threw  0.892     ChannelFlow/Program.cs                          Main              31    
+           an exception.                                                                                                                                                             
+          Stack trace:     at Fluid.ChannelFlow.ObstructionBlock..ctor(ChannelMesh channelMesh, C  0.0679    ChannelFlow/Program.cs                          Main              32    
+          hannelFlow channelFlow, Double lowerLeftX, Double lowerLeftY, Double lowerRightX, Doubl                                                                                    
+          e lowerRightY, Double upperRightX, Double upperRightY, Double upperLeftX, Double upperL                                                                                    
+          eftY) in /home/marko/Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow/ObstructionBlock.                                                                                    
+          cs:line 56
+   at Fluid.ChannelFlow.SouthBlock..ctor(ChannelMesh channelMesh, ChannelFlo                                                                                    
+          w channelFlow) in /home/marko/Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow/SouthBlo                                                                                    
+          ck.cs:line 15
+   at Fluid.ChannelFlow.ChannelMesh..ctor(ChannelFlow channelFlow, Double                                                                                    
+           width, Double relObstructionDiameter, Int32 elementDensity) in /home/marko/Dokumenti/F                                                                                    
+          izikalne aplikacije/Fluid/ChannelFlow/ChannelMesh.cs:line 108
+   at Fluid.ChannelFlow.C                                                                                    
+          hannelFlow..ctor(Double peakInletVelocity, Double dt, Double viscosity) in /home/marko/                                                                                    
+          Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow/ChannelFlow.cs:line 43
+   at Fluid.Cha                                                                                    
+          nnelFlow.Program.Main(String[] args) in /home/marko/Dokumenti/Fizikalne aplikacije/Flui                                                                                    
+          d/ChannelFlow/Program.cs:line 24                                                                                                                                           
+5:44 PM   Program started.                                            0         ChannelFlow/Program.cs          Main              23    
+          Exception occured:  The type initializer for 'Fluid.Channe  0.677     ChannelFlow/Program.cs          Main              31    
+          lFlow.ObstructionBlock' threw an exception.                                                                                   
+          Stack trace:     at Fluid.ChannelFlow.ObstructionBlock..ct  0.084     ChannelFlow/Program.cs          Main              32    
+          or(ChannelMesh channelMesh, ChannelFlow channelFlow, Doubl                                                                    
+          e lowerLeftX, Double lowerLeftY, Double lowerRightX, Doubl                                                                    
+          e lowerRightY, Double upperRightX, Double upperRightY, Dou                                                                    
+          ble upperLeftX, Double upperLeftY) in /home/marko/Dokument                                                                    
+          i/Fizikalne aplikacije/Fluid/ChannelFlow/ObstructionBlock.                                                                    
+          cs:line 56
+   at Fluid.ChannelFlow.SouthBlock..ctor(Channe                                                                    
+          lMesh channelMesh, ChannelFlow channelFlow) in /home/marko                                                                    
+          /Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow/SouthBlo                                                                    
+          ck.cs:line 15
+   at Fluid.ChannelFlow.ChannelMesh..ctor(Ch                                                                    
+          annelFlow channelFlow, Double width, Double relObstruction                                                                    
+          Diameter, Int32 elementDensity) in /home/marko/Dokumenti/F                                                                    
+          izikalne aplikacije/Fluid/ChannelFlow/ChannelMesh.cs:line                                                                     
+          108
+   at Fluid.ChannelFlow.ChannelFlow..ctor(Double peakI                                                                    
+          nletVelocity, Double dt, Double viscosity) in /home/marko/                                                                    
+          Dokumenti/Fizikalne aplikacije/Fluid/ChannelFlow/ChannelFl                                                                    
+          ow.cs:line 43
+   at Fluid.ChannelFlow.Program.Main(String[                                                                    
+          ] args) in /home/marko/Dokumenti/Fizikalne aplikacije/Flui                                                                    
+          d/ChannelFlow/Program.cs:line 24                                                                                              

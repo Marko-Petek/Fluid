@@ -145,9 +145,9 @@ namespace Fluid.Internals.Meshing
         protected abstract int ApplyConstraints();
 
         /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-        public abstract void AddContributionsToStiffnessMatrix(SparseMat<double> A, double dt, double ni);
+        public abstract void AddContributionsToStiffnessMatrix(SparseMatDouble A, double dt, double ni);
 
-        public abstract void AddContributionsToForcingVector(SparseRow<double> b, double dt, double ni);
+        public abstract void AddContributionsToForcingVector(SparseRowDouble b, double dt, double ni);
 
         /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
         protected double[][] NodeOperatorMatrix0(ref Node node, double dt, double ni) {

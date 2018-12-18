@@ -4,5 +4,57 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"workbench.colorTheme": "Visual Studio Light",
+		"workbench.colorCustomizations": {
+			"terminal.foreground": "#020021",
+			"terminal.background": "#d2d2d2",
+			"terminal.selectionBackground": "#ff9e9e50",
+			"terminalCursor.background": "#000000",
+			"terminalCursor.foreground": "#ff9e9e",
+			"panel.background": "#414141",
+			"panel.border": "#000000",
+			"list.hoverBackground": "#ab1616aa",
+			"list.errorForeground": "#ff0000",
+			"list.activeSelectionForeground": "#ffffff",
+			"list.activeSelectionBackground": "#870000",
+			"list.inactiveSelectionForeground": "#ff0000aa",
+			"list.focusForeground": "#000000",
+			"list.hoverForeground": "#ffffff",
+			"list.inactiveSelectionBackground": "#b1acac",
+			"editorSuggestWidget.background": "#d9f0ff",
+			"editorSuggestWidget.selectedBackground": "#e4eb93",
+			"panelTitle.activeForeground": "#ffffff",
+			"panelTitle.inactiveForeground": "#c6c6c6",
+			"panelTitle.activeBorder": "#f6ff44",
+			"terminal.ansiBrightGreen": "#007826",
+			"terminal.ansiBrightYellow": "#a25900",
+			"foreground": "#a1a1a1",
+			"sideBar.background": "#d9d9d9",
+			"sideBar.foreground": "#000000",
+			"sideBarSectionHeader.background": "#b5b5b5",
+			"sideBarSectionHeader.foreground": "#000000",
+			"sideBarTitle.foreground": "#870000"
+		},
+		"terminal.integrated.fontWeight": "bold",
+		"terminal.integrated.fontWeightBold": "bold",
+		"window.zoomLevel": 1,
+		//"window.titleBarStyle": "native",
+		"todo-tree.defaultHighlight": {
+			"foreground": "green",
+			"type": "none"
+		},
+		"todo-tree.customHighlight": {
+			"TODO": {},
+			"FIXME": {}
+		},
+		"python.jediEnabled": false,
+		"python.pythonPath": "/usr/bin/python3",
+		"editor.minimap.enabled": false,
+		"jupyter.appendResults": true,
+		"python.linting.pylintEnabled": true,
+		"terminal.integrated.rendererType": "dom",
+		"editor.codeLens": false,
+		"workbench.settings.editor": "json"
+	}
 }
