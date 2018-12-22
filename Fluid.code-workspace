@@ -38,12 +38,14 @@
 			"sideBarSectionHeader.background": "#b5b5b5",
 			"sideBarSectionHeader.foreground": "#000000",
 			"sideBarTitle.foreground": "#870000",
-			"debug"
+			"menubar.selectionForeground": "#ffffff",
+			"menubar.selectionBackground": "#4d4d4d",
+			"menu.background": "#4a4a4a",
+			"input.foreground": "#000000"
 		},
 		"terminal.integrated.fontWeight": "bold",
 		"terminal.integrated.fontWeightBold": "bold",
 		"window.zoomLevel": 1,
-		//"window.titleBarStyle": "native",
 		"todo-tree.defaultHighlight": {
 			"foreground": "green",
 			"type": "none"
