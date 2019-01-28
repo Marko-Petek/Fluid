@@ -12,3 +12,10 @@ nSosedov2 = 2^n + n*2^(n-1)
 nSosedov3 = 2^n + n*2^(n-1) + n*2^(n-2)
 
 344661
+
+\begin{minipage}[c]{0.48\textwidth}
+    \centering
+    \captionsetup{type=figure}
+    \includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
+    \caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
+\end{minipage}

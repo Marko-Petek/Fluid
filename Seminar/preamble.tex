@@ -41,7 +41,8 @@
 \usepackage{booktabs}							% Za TabItem (pikica pri seznamu).
 \usepackage{xcolor}								% Required by tabu.
 \usepackage{colortbl}							% Required by tabu.
-\usepackage{tabu}							% Width-adjustable tabular.
+\usepackage{tabu}								% Width-adjustable tabular.
+\usepackage{multirow}							% Columns spanning multiple rows.
 \newcommand{\tabitem}{~~\llap{\textbullet}~~}
 %\usepackage{sectsty} % Za veèje naslove.
 %\sectionfont{\huge}
@@ -138,32 +139,34 @@
 	\section{Temelji FEM}
 	Kadar obravnavamo prostorsko dinamiko (npr.\ prevajanje toplote ali tok tekočine), lahko fizični prostor modeliramo kot 1, 2, 3 ali 4-mnogoterost. Temelje \texttt{FEM} bomo polagali na splošnem primeru $d$-mnogoterosti, v prid predstavljivosti pa na njih sproti gradili konkretni 2D primer.
 	
-	Naj bo prizorišče dogajanja $d$-monogoterost $\Omega$ s krajevnim vektorjem $\mathbf{x}$. Pri reševanju sistema $p$ \texttt{PDE} iščemo p funkcij $u_1(\mathbf{x}), ..., u_p(\mathbf{x})$, ki v vsaki točki odprte domene $\Omega$ zadostijo sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem. Obravnava bo enostavnejša, če iskane funkcije zložimo v vektor $\mathbf{u}(\mathbf{x})$: \\[0.2cm]
-	\begin{tabu} to 1\textwidth {X[1,c]X[1,c]}
-		$\mathbf{x} = \begin{bmatrix}
+	Naj bo prizorišče dogajanja $d$-monogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x}$. Pri reševanju sistema $p$ \texttt{PDE} iščemo p funkcij $u_1(\mathbf{x}), ..., u_p(\mathbf{x})$, ki v vsaki točki odprte domene $\Omega$ zadostijo sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Obravnava bo enostavnejša, če iskane funkcije zložimo v vektor $\mathbf{u}(\mathbf{x})$:\\[0.5cm]
+	\begin{tabular}{m{3mm} m{3.5mm} m{1mm} p{1cm} m{4.5cm}}
+		& $\hspace{0.5mm}\mathbf{x}$ & $\hspace{-0.9mm}=$ & $\begin{bmatrix}
 			x_1 \\
 			\vdots \\
 			x_d \\
-		\end{bmatrix} \hspace{1.0cm} d \texttt{ koordinat na }\Omega \ ,$ &
-		$\mathbf{u}(\mathbf{x}) = \begin{bmatrix}
+		\end{bmatrix}$ & $\hspace{0.4cm} d \texttt{ koordinat na }\Omega \ ,$
+		\\[1.2cm]
+		& $\hspace{-2mm}\mathbf{u}(\mathbf{x})$ & $\hspace{-0.9mm}=$ & $\hspace{-2mm}\begin{bmatrix}
 			u_1(\mathbf{x}) \\
 			\vdots \\
 			u_p(\mathbf{x})
-		\end{bmatrix} \hspace{1.0cm} p \texttt{ neznank na } \Omega \ .$
-	\end{tabu} \\[0.2cm]
+		\end{bmatrix}$ & $\hspace{0.6cm} p \texttt{ neznank na } \Omega \ .$
+	\end{tabular}
+	\begin{minipage}[c]{0.48\textwidth}
+    \centering
+    \captionsetup{type=figure}
+    \includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
+    \caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
+    \label{fig:funkInDom}
+\end{minipage}\\[0.5cm]
 	Splošno razlago bomo sproti ilustrirali sistema s tremi spremenljivkami ($p = 3$). \\[0cm]
 	
-	\begin{minipage}[l]{0.5\textwidth}
-		\captionsetup{type=figure}
-		\centering
-		\includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
-		\caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
-	\end{minipage}
 	\begin{minipage}[l]{0.49\textwidth}
 		\vspace{-0.4cm}
 		\begin{IEEEeqnarray}{cc}
-			\alpha \frac{\pd u_1}{\pd x_1} + \beta \frac{\pd u_2}{\pd x_1} + \gamma u_2 = 0 \quad , & \hspace{1.0cm} \\[0.6cm]
-			\alpha u_1 + \gamma \frac{\pd u_3}{\pd x_2} = 0 \quad , & \\[0.6cm]
+			\alpha \frac{\pd u_1}{\pd x_1} + \beta \frac{\pd u_2}{\pd x_1} + \gamma u_2 = 0 \quad , & \hspace{1.0cm} \\[0.2cm]
+			\alpha u_1 + \gamma \frac{\pd u_3}{\pd x_2} = 0 \quad , & \\[0.2cm]
 			\alpha \frac{\pd u_1}{\pd x_2} + \gamma \frac{\pd u_2}{\pd x_2} - \beta u_3 = 0 \quad . & 
 		\end{IEEEeqnarray}
 	\end{minipage}
