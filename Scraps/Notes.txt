@@ -10,3 +10,5 @@ Certain segments may be useful if I decide to further develop this project.
 
 nSosedov2 = 2^n + n*2^(n-1)
 nSosedov3 = 2^n + n*2^(n-1) + n*2^(n-2)
+
+344661

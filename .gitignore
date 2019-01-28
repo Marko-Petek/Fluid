@@ -3,6 +3,14 @@
 
 **/obj
 **/obj/**
-#**/obj/Debug/netcoreapp2.1
-.vs
 
+*.vs
+*.dvi
+*.bbl
+*.aux
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.synctex.gz
