@@ -19,3 +19,7 @@ nSosedov3 = 2^n + n*2^(n-1) + n*2^(n-2)
     \includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
     \caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
 \end{minipage}
+
+str. 143 (Stokes Equations)
+str. 14 (Basic Lemma of Variational Principles
+str. 66 (General Formulation of LSFEM)
