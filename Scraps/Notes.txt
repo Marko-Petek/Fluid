@@ -23,3 +23,83 @@ nSosedov3 = 2^n + n*2^(n-1) + n*2^(n-2)
 str. 143 (Stokes Equations)
 str. 14 (Basic Lemma of Variational Principles
 str. 66 (General Formulation of LSFEM)
+
+
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		
+		"workbench.colorTheme": "Visual Studio Light",
+		"workbench.colorCustomizations": {
+			"terminal.foreground": "#020021",
+			"terminal.background": "#d2d2d2",
+			"terminal.selectionBackground": "#ff9e9e50",
+			"terminalCursor.background": "#000000",
+			"terminalCursor.foreground": "#ff9e9e",
+			"panel.background": "#414141aa",
+			"panel.border": "#000000",
+			"list.hoverBackground": "#d53900aa",
+			"list.errorForeground": "#ff0000",
+			"list.activeSelectionForeground": "#ffffff",
+			"list.activeSelectionBackground": "#a23939",
+			"list.focusForeground": "#000000",
+			"list.hoverForeground": "#ffffff",
+			"list.inactiveSelectionForeground": "#000000",
+			"list.inactiveSelectionBackground": "#9e9a9a",
+			"editorSuggestWidget.background": "#d9e7ff",
+			"editorSuggestWidget.foreground": "#484848",
+			"editorSuggestWidget.selectedBackground": "#ffbd6cfe",
+			"editorSuggestWidget.highlightForeground": "#000000",
+			"editorSuggestWidget.border": "#000000",
+			"panelTitle.activeForeground": "#000000",
+			"panelTitle.inactiveForeground": "#3a3a3a",
+			"terminal.ansiBrightGreen": "#007826",
+			"terminal.ansiBrightYellow": "#a25900",
+			"foreground": "#ffffff",
+			"sideBar.background": "#d9d9d9",
+			"sideBar.foreground": "#000000",
+			"sideBarSectionHeader.background": "#b5b5b5",
+			"sideBarSectionHeader.foreground": "#000000",
+			"sideBarTitle.foreground": "#870000",
+			"menubar.selectionForeground": "#ffffff",
+			"menubar.selectionBackground": "#353232",
+			"menu.background": "#353232",
+			"input.foreground": "#000000",
+			"notifications.background": "#3c3c3c",
+			"statusBar.background": "#2e5595",
+			"statusBar.foreground": "#ffffff",
+			"activityBar.background": "#272424",
+			"tab.activeBackground": "#4a6186",
+			"tab.activeForeground": "#ffffff",
+			"tab.inactiveBackground": "#b7c5dd",
+			"tab.inactiveForeground": "#000000",
+			"titleBar.activeBackground": "#4d4d4d",
+			"titleBar.activeForeground": "#dbdbdb"
+		},
+		"terminal.integrated.fontWeight": "bold",
+		"terminal.integrated.fontWeightBold": "bold",
+		"window.zoomLevel": 1.8,
+		"todo-tree.defaultHighlight": {
+			"foreground": "green",
+			"type": "none"
+		},
+		"todo-tree.customHighlight": {
+			"TODO": {},
+			"FIXME": {}
+		},
+		"python.jediEnabled": false,
+		"python.pythonPath": "/home/marko/anaconda3/bin/python",
+		"editor.minimap.enabled": false,
+		"editor.fontFamily": "DejaVu Sans Mono",
+		"editor.fontSize": 14,
+		"jupyter.appendResults": true,
+		"python.linting.pylintEnabled": true,
+		"terminal.integrated.rendererType": "dom",
+		"editor.codeLens": false,
+		"workbench.settings.editor": "json"
+	}
+}

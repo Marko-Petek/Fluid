@@ -13,36 +13,29 @@ Numerično reševanje parcialnih diferencialnih enačb (\texttt{PDE}) je zaradi 
 kjer naletimo na \texttt{PDE}, se tako tudi v višjem izobraževanju najraje izognemo. Metoda končnih elementov (\texttt{FEM}), ki minimizira kvadrat ostanka aproksimacije (\texttt{LSFEM} = Least Squares \texttt{FEM}), obeta razvoj vsestranskega algoritma za reševanje \texttt{PDE} in s tem približanje omenjenih problemov širšemu krogu raziskovalcev.
 
 \section{Temelji \texttt{LSFEM}}
-Kadar obravnavamo prostorsko dinamiko (npr.\ prevajanje toplote ali tok tekočine), lahko fizični prostor modeliramo kot 1, 2 ali 3-mnogoterost. Temelje \texttt{LSFEM} bomo polagali na splošnem primeru $d$-mnogoterosti, v prid predstavljivosti pa na njih sproti gradili konkretni 2D primer.
-
-Naj bo prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = [x_1, ..., x_d]$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  [u_1(\mathbf{x}), ..., u_m(\mathbf{x})]$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Za primer vzemimo stacionarne Stokesove enačbe v 2D:
-
-\begin{wrapfigure}{l}{0.5\textwidth}
+Kadar obravnavamo prostorsko dinamiko (npr.\ prevajanje toplote ali tok tekočine), lahko fizični prostor modeliramo kot 1, 2 ali 3-mnogoterost. Temelje \texttt{LSFEM} bomo polagali na splošnem primeru $d$-mnogoterosti, v prid predstavljivosti pa na njih sproti gradili konkretni 2D primer.\\[-0.1cm]
+\begin{wrapfigure}{r}{5.5cm}
 	\centering
 	\captionsetup{type=figure}
-	\includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
+	\includegraphics[width=5.5cm]{Slike/funkcijaInDomenaG}
 	\caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
 \label{fig:funkInDom}
+\vspace{-2.4cm}
 \end{wrapfigure}
-
-% \begin{minipage}[c]{0.48\textwidth}
-% \centering
-% \captionsetup{type=figure}
-% \includegraphics[height=3.7cm]{Slike/funkcijaInDomenaG}
-% \caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
-% \label{fig:funkInDom}
-% \end{minipage}
-%\begin{minipage}[l]{0.4\textwidth}
-	%\vspace{-0.2cm}
-	\begin{IEEEeqnarray}{rl}
-		\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \hspace{1.0cm} \\[0.2cm]
-		\frac{\pd p}{\pd x} + \frac{\pd \omega}{\pd y} &= f_1 \ , \\[0.2cm]
-		\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_2 \ , \\[0.2cm]
-		\omega - \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
-	\end{IEEEeqnarray}
-%\end{minipage}
-\begin{minipage}[l]{0.01\textwidth}
+Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = \{x_1, ..., x_d\}$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\}$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Za primer vzemimo stacionarne Stokesove enačbe v 2D:\\[0.1cm]
+\begin{minipage}{5.0cm}
+\begin{IEEEeqnarray}{rl}
+	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \\[0.2cm]
+	\frac{\pd p}{\pd x} + \frac{\pd \omega}{\pd y} &= f_1 \ ,
+\end{IEEEeqnarray}
 \end{minipage}
+\begin{minipage}{5.3cm}
+\begin{IEEEeqnarray}{rl}
+	\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_2 \ , \\[0.2cm]
+	\omega - \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
+\end{IEEEeqnarray}
+\end{minipage}\\[0.4cm]
+Stokesove enačbe so poenostavitev nelinearnih Navier-Stokesovih enačb. Opisujejo
 
 Pri \texttt{FEM} ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem. Za poljubno funkcijo $\mathbf{w}(\mathbf{x})$ zapišemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki  zavzame minimalno vrednost, kadar je $\mathbf{w}$ enaka rešitvi. Ta funkcional je pri vseh različicah \texttt{FEM} integral neke funkcije $F = F\left(\mathbf{w}\right)$ po domeni $\Omega$:
 \begin{equation}
