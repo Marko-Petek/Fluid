@@ -13,31 +13,39 @@ Numerično reševanje parcialnih diferencialnih enačb (\texttt{PDE}) je zaradi 
 kjer naletimo na \texttt{PDE}, se tako tudi v višjem izobraževanju najraje izognemo. Metoda končnih elementov (\texttt{FEM}), ki minimizira kvadrat ostanka aproksimacije (\texttt{LSFEM} = Least Squares \texttt{FEM}), obeta razvoj vsestranskega algoritma za reševanje \texttt{PDE} in s tem približanje omenjenih problemov širšemu krogu raziskovalcev.
 
 \section{Temelji \texttt{LSFEM}}
-Kadar obravnavamo prostorsko dinamiko (npr.\ prevajanje toplote ali tok tekočine), lahko fizični prostor modeliramo kot 1, 2 ali 3-mnogoterost. Temelje \texttt{LSFEM} bomo polagali na splošnem primeru $d$-mnogoterosti, v prid predstavljivosti pa na njih sproti gradili konkretni 2D primer.\\[-0.1cm]
+Kadar obravnavamo prostorsko dinamiko (npr.\ tok tekočine), lahko fizični prostor modeliramo kot 1, 2 ali 3-mnogoterost. Temelje \texttt{LSFEM} bomo polagali na splošnem primeru $d$-mnogoterosti, za ponazoritev pa na njih sproti gradili konkretni 2D primer.
+
 \begin{wrapfigure}{r}{5.5cm}
+	\vspace{-0.3cm}
 	\centering
 	\captionsetup{type=figure}
 	\includegraphics[width=5.5cm]{Slike/funkcijaInDomenaG}
 	\caption{Domena $\Omega$, meja domene $\Gamma$ in komponenta rešitve $u_i(\mathbf{x})$.}
 \label{fig:funkInDom}
-\vspace{-2.4cm}
+\vspace{-2.6cm}
 \end{wrapfigure}
-Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = \{x_1, ..., x_d\}$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\}$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Za primer vzemimo stacionarne Stokesove enačbe v 2D:\\[0.1cm]
+Naj bo splošno prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = \{x_1, ..., x_d\}$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\}$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Konkretni primer naj bo \textbf{sistem Stokesovih enačb} v obliki \emph{u-p-$\omega$} (hitrost, tlak, vrtinčnost):\\[0.05cm]
 \begin{minipage}{5.0cm}
 \begin{IEEEeqnarray}{rl}
-	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \\[0.2cm]
+	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \\[0.3cm]
 	\frac{\pd p}{\pd x} + \frac{\pd \omega}{\pd y} &= f_1 \ ,
 \end{IEEEeqnarray}
 \end{minipage}
 \begin{minipage}{5.3cm}
 \begin{IEEEeqnarray}{rl}
-	\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_2 \ , \\[0.2cm]
+	\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_2 \ , \\[0.3cm]
 	\omega - \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
-Stokesove enačbe so poenostavitev nelinearnih Navier-Stokesovih enačb. Opisujejo
+To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektivnih členov. Pri numeričnem reševanju moramo namreč nelinearne \texttt{PDE} linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Kot zanimivost navržimo, da Stokesove enačbe opisujejo plazeče se (ang.: creeping) tokove, pri katerih je konvekcija gibalne količine majhna v primerjavi z njeno difuzijo. Ker v enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), so Stokesovi tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
 
-Pri \texttt{FEM} ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem. Za poljubno funkcijo $\mathbf{w}(\mathbf{x})$ zapišemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki  zavzame minimalno vrednost, kadar je $\mathbf{w}$ enaka rešitvi. Ta funkcional je pri vseh različicah \texttt{FEM} integral neke funkcije $F = F\left(\mathbf{w}\right)$ po domeni $\Omega$:
+\begin{figure}[ht]
+	\includegraphics[width = 1\textwidth]{Slike/TaylorCouette}
+	\caption{Zabaven eksperiment, pri katerem se v ozkem prostoru med dvema koncentričnima valjema nahaja viskozna tekočina, ki jo na dveh mestih označimo z liso barvila. Valja pet minut vrtimo v nasprotnih smereh, da se lisi pomešata, nato smeri vrtenja obrnemo in po petih minutah se lisi sestavita.}
+	\label{fig:TaylorCouette}
+\end{figure}
+
+Pri \texttt{LSFEM} ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v variacijski problem. \textbf{Rayleigh-Ritzeva različica}, ki je bila razvita prva in ima korenine v začetku dvajsetega stoletja (cite), je prav tako variacijska metoda. Zapišemo funkcional $I$, ki sprejme poljubno funkcijo $\mathbf{w}(\mathbf{x})$ in zavzame minimalno vrednost, kadar je $\mathbf{w}$ enaka rešitvi. Ta funkcional je pri vseh različicah \texttt{FEM} integral neke funkcije $F = F\left(\mathbf{w}\right)$ po domeni $\Omega$:
 \begin{equation}
 	I[\mathbf{w}(\mathbf{x})] = \int_{\Omega} F\left(\mathbf{w}(\mathbf{x})\right) \, \ud \Omega \hspace{1.1cm} \texttt{funkcional} \quad .
 \end{equation}

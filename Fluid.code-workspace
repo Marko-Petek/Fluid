@@ -53,6 +53,7 @@
 			"menubar.selectionBackground": "#353232",
 			"menubar.selectionForeground": "#ffffff",
 			"notifications.background": "#3c3c3c",
+			"notifications.foreground": "#ffffff",
 			"notificationCenterHeader.background": "#d53900aa",
 			"panel.background": "#cbdfff",
 			"panel.border": "#000000",
