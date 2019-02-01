@@ -43,27 +43,31 @@ To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektiv
 	\includegraphics[width = 1\textwidth]{Slike/TaylorCouette}
 	\caption{Zabaven eksperiment, pri katerem se v ozkem prostoru med dvema koncentričnima valjema nahaja viskozna tekočina, ki jo na dveh mestih označimo z liso barvila. Valja pet minut vrtimo v nasprotnih smereh (Stokesov tok, ki tako nastane, imenujemo Taylor-Couettov tok), da se lisi pomešata, nato smeri vrtenja obrnemo in po petih minutah se lisi ponovno sestavita \cite{Wiki-StokesFlow}.}
 	\label{fig:TaylorCouette}
+	\vspace{-0.2cm}
 \end{figure}
 
-Vse različice \texttt{FEM} temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Kakršenkoli funkcional pa za rešitev problema ni dober. Najti moramo takšnega, ki, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi, vrne najmanjšo vrednost. Ponavadi je funkcional integral neke funkcije $F\left(\mathbf{w}\right)$ po domeni $\Omega$:
-\begin{equation}
-	I[\mathbf{w}(\mathbf{x})] = \int_{\Omega} F\left(\mathbf{w}(\mathbf{x})\right) \, \ud \Omega \hspace{1.1cm} \texttt{funkcional} \quad .
-\end{equation}
-Kot vemo, poiščemo minimum funkcionala $I$ tako, da za $\mathbf{w}$ vstavimo:
+Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa Kakršenkoli funkcional za rešitev problema ni dober: ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi, mora funkcional vrniti najmanjšo vrednost. Fizikalno najintuitivnejša izbira je potencialna energija sistema, zaradi česar je bila različica FEM, ki jo na tak način dobimo, razvita prva. Vzamemo energijski potencial $F\left(\mathbf{w}\right)$, ki ga integriramo po domeni $\Omega$:
 
-\setlength{\textheight}{26.5cm}			% Header Lower Margin to
+\setlength{\textheight}{26.5cm}
 \pagebreak
 \setlength{\topmargin}{1.6cm}			% Header Top Margin Height
 \setlength{\headheight}{0.0cm}
 \setlength{\headsep}{0.0cm}			% Header Lower Margin Height	 Footer height
 \fancyhf{}
 \fancyfoot[C]{\thepage}
+% Negative vspace set in figure above.
 \begin{equation}
-	\mathbf{w}(\mathbf{x}, \varepsilon) = \mathbf{u}(\mathbf{x}) + \varepsilon \mathbf{v}(\mathbf{x}) \quad ,
+	I[\mathbf{w}(\mathbf{x})] = \int_{\Omega} F\left(\mathbf{w}(\mathbf{x})\right) \, \ud \Omega \hspace{1.4cm} \texttt{funkcional poskusne funkcije} \quad ,
+	\label{eq:GeneralFunctional}
 \end{equation}
-kjer je $\mathbf{v}(\mathbf{x})$ poljuben odmik od rešitve $\mathbf{u}(\mathbf{x})$, $\varepsilon$ pa skalar. Odvajamo po $\varepsilon$ in odvod enačimo z 0:
+
+kar je po definiciji potencialna energija sistema. Iščemo minimum funkcionala, zato poskusno funkcijo $\mathbf{w}$ razvijemo okoli rešitve $\mathbf{u}(\mathbf{x})$:
 \begin{equation}
-\frac{\ud I}{\ud \varepsilon} = \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\mathbf{w}) \, \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \mathbf{w}} \cdot \frac{\ud \mathbf{w}}{\ud \varepsilon} \ \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \mathbf{w}} \cdot \mathbf{v} \ \ud \Omega = 0 \hspace{0.9cm} \texttt{prva variacija} \ .
+	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) = \mathbf{u}(\mathbf{x}) + \varepsilon \mathbf{v}(\mathbf{x}) \quad ,
+\end{equation}
+kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Razvito funkcijo vstavimo v funkcional \eqref{eq:GeneralFunctional} in ga nato odvajamo po $\varepsilon$:
+\begin{equation}
+\frac{\ud I}{\ud \varepsilon} = \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v} \ \ud \Omega \quad .
 \end{equation}
 
 Fizikalno najintuitivnejša je \textbf{Rayleigh-Ritzeva različica}, kjer za $F$ uporabimo energijski potencial sistema \texttt{PDE}. Rešitev $\mathbf{u}(\mathbf{x})$ je potemtakem funkcija, ki minimizira totalno potencialno energijo sistema. Rayleigh-Ritzeva različica poseduje lastnost najboljšega približka (minimizira razliko energijskih norm numerične in eksaktne rešitve), hkrati pa vodi do sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami.
