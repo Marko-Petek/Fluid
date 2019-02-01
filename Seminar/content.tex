@@ -24,7 +24,7 @@ Kadar obravnavamo prostorsko dinamiko (npr.\ tok tekočine), lahko fizični pros
 \label{fig:funkInDom}
 \vspace{-2.6cm}
 \end{wrapfigure}
-Naj bo splošno prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = \{x_1, ..., x_d\}$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\}$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Konkretni primer naj bo \textbf{sistem Stokesovih enačb} v obliki \emph{u-p-$\omega$} (hitrost, tlak, vrtinčnost):\\[0.05cm]
+Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s krajevnim vektorjem $\mathbf{x} = \{x_1, ..., x_d\}$. Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij $\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\}$, ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem (slika \ref{fig:funkInDom}). Konkretni primer bomo gradili na \textbf{sistemu Stokesovih enačb} za nestisljive tekočine v obliki \emph{u-p-$\omega$} (hitrost, tlak, vrtinčnost):\\[0.05cm]
 \begin{minipage}{5.0cm}
 \begin{IEEEeqnarray}{rl}
 	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \\[0.3cm]
@@ -37,15 +37,15 @@ Naj bo splošno prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s kr
 	\omega - \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
-To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektivnih členov. Pri numeričnem reševanju moramo namreč nelinearne \texttt{PDE} linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Kot zanimivost navržimo, da Stokesove enačbe opisujejo plazeče se (ang.: creeping) tokove, pri katerih je konvekcija gibalne količine majhna v primerjavi z njeno difuzijo. Ker v enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), so Stokesovi tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
+To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektivnih členov, ki jih moramo pri numeričnem reševanju linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Kot zanimivost navržimo, da Stokesove enačbe opisujejo plazeče se tokove, pri katerih je konvekcija gibalne količine (zaradi gibanja) majhna v primerjavi z njeno difuzijo (zaradi viskoznosti). V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), zato so takšni tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
 
 \begin{figure}[ht]
 	\includegraphics[width = 1\textwidth]{Slike/TaylorCouette}
-	\caption{Zabaven eksperiment, pri katerem se v ozkem prostoru med dvema koncentričnima valjema nahaja viskozna tekočina, ki jo na dveh mestih označimo z liso barvila. Valja pet minut vrtimo v nasprotnih smereh, da se lisi pomešata, nato smeri vrtenja obrnemo in po petih minutah se lisi sestavita.}
+	\caption{Zabaven eksperiment, pri katerem se v ozkem prostoru med dvema koncentričnima valjema nahaja viskozna tekočina, ki jo na dveh mestih označimo z liso barvila. Valja pet minut vrtimo v nasprotnih smereh (Stokesov tok, ki tako nastane, imenujemo Taylor-Couettov tok), da se lisi pomešata, nato smeri vrtenja obrnemo in po petih minutah se lisi ponovno sestavita \cite{Wiki-StokesFlow}.}
 	\label{fig:TaylorCouette}
 \end{figure}
 
-Pri \texttt{LSFEM} ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v variacijski problem. \textbf{Rayleigh-Ritzeva različica}, ki je bila razvita prva in ima korenine v začetku dvajsetega stoletja (cite), je prav tako variacijska metoda. Zapišemo funkcional $I$, ki sprejme poljubno funkcijo $\mathbf{w}(\mathbf{x})$ in zavzame minimalno vrednost, kadar je $\mathbf{w}$ enaka rešitvi. Ta funkcional je pri vseh različicah \texttt{FEM} integral neke funkcije $F = F\left(\mathbf{w}\right)$ po domeni $\Omega$:
+Vse različice \texttt{FEM} temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Kakršenkoli funkcional pa za rešitev problema ni dober. Najti moramo takšnega, ki, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi, vrne najmanjšo vrednost. Ponavadi je funkcional integral neke funkcije $F\left(\mathbf{w}\right)$ po domeni $\Omega$:
 \begin{equation}
 	I[\mathbf{w}(\mathbf{x})] = \int_{\Omega} F\left(\mathbf{w}(\mathbf{x})\right) \, \ud \Omega \hspace{1.1cm} \texttt{funkcional} \quad .
 \end{equation}
@@ -72,3 +72,5 @@ Z Rayleigh-Ritzevo metodo dobimo sistem linearnih algebrajskih enačb za
 
 Galerkin, Najmanših kvadratov \cite{JiangB-LSFEM}
 Basic lemma of variational principles: Temeljni lema variacijskih načel.
+
+\textbf{Rayleigh-Ritzeva različica} \texttt{FEM}, ki je bila razvita prva in ima korenine v začetku dvajsetega stoletja (cite), je prav tako variacijska metoda.
