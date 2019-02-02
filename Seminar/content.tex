@@ -45,7 +45,7 @@ To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektiv
 	\label{fig:TaylorCouette}
 \end{figure}
 
-\parbox{\textwidth}{Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je to fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva raz-} \parfillskip=0pt}
+\parbox{\textwidth}{Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je to fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Zato ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva} \parfillskip=0pt}
 
 \setlength{\textheight}{26.5cm}
 \pagebreak
@@ -55,19 +55,28 @@ To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektiv
 \fancyhf{}
 \fancyfoot[C]{\thepage}
 
-\textbf{ličica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva. Koraka konstrukcije funkcionala in njegove minimizacije sta tipična koraka variacijskega pristopa in nista specifična zanjo. Funkcional konstruiramo tako, da vzamemo funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
+\textbf{različica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva. Konstrukcija funkcionala in njegova minimizacija sta tipična koraka variacijskega pristopa in nista specifična za \texttt{RRFEM}: vzamemo neko funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
 \begin{equation}
 	I[\mathbf{w}(\mathbf{x})] = \int_{\Omega} F\left(\mathbf{w}(\mathbf{x})\right) \, \ud \Omega \hspace{1.4cm} \texttt{funkcional poskusne funkcije} \quad .
 	\label{eq:GeneralFunctional}
 \end{equation}
-Pri \texttt{RRFEM} je $F\left(\mathbf{w}(\mathbf{x})\right)$ energijski potencial, dobljen funkcional pa potencialna energija sistema in rešitev $\mathbf{u}(\mathbf{x})$ potemtakem minimizira potencialno energijo sistema. Zaradi tega \texttt{RRFEM} poseduje lastnost najboljšega približka, hkrati pa vodi do simetričnega in pozitivno definitnega sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami. Metoda se je izkazala pri reševanju problemov v gradbenem inženirstvu (elastomehanika), kjer je s problemom vedno povezan energijski potencial. In res, še danes temelji večina programov s tega področja na \texttt{RRFEM}. Iščemo minimum funkcionala, zato poskusno funkcijo $\mathbf{w}$ razvijemo okoli rešitve $\mathbf{u}(\mathbf{x})$:
+$F\left(\mathbf{w}(\mathbf{x})\right)$ je npr.\ pri \texttt{RRFEM} energijski potencial, dobljen funkcional pa skupna potencialna energija sistema. Rešitev $\mathbf{u}(\mathbf{x})$ potemtakem minimizira potencialno energijo sistema, zaradi česar \texttt{RRFEM} poseduje last\-nost najboljšega približka. 
+
+Ko smo prepričani, da ima funkcional minimum pri rešitvi $\mathbf{u}(\mathbf{x})$, sledimo znanemu Euler-Lagrangevemu postopku. Ta nas pripelje do izjave, ki velja le, kadar je poskusna funkcija $\mathbf{w}(\mathbf{x})$ enaka rešitvi $\mathbf{u}(\mathbf{x})$. Poskusno funkcijo razvijemo okoli rešitve:
 \begin{equation}
-	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) = \mathbf{u}(\mathbf{x}) + \varepsilon \mathbf{v}(\mathbf{x}) \quad ,
+	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) = \mathbf{u}(\mathbf{x}) + \varepsilon \mathbf{v}(\mathbf{x}) \ ,
+	\label{eq:trialFuncAroundSol}
 \end{equation}
-kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Razvito funkcijo vstavimo v funkcional \eqref{eq:GeneralFunctional} in ga nato odvajamo po $\varepsilon$:
+kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Razvoj \eqref{eq:trialFuncAroundSol} vstavimo v funkcional \eqref{eq:GeneralFunctional} namesto $\mathbf{w}(\mathbf{x})$ in odvajamo po $\varepsilon$:
 \begin{equation}
-\frac{\ud I}{\ud \varepsilon} = \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v} \ \ud \Omega \quad .
+\frac{\ud I}{\ud \varepsilon} = \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v} \ \ud \Omega \ .
 \end{equation}
+Kadar gre $\varepsilon \rightarrow 0$, gre $\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) \rightarrow \mathbf{u}(\mathbf{x})$, obenem pa vemo, da ima funkcional $I$ tam minimum. Variacijska izjava se zato glasi:
+\begin{equation}
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} = \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega = 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ .
+\end{equation}
+
+Diskretizacija problema nas pri \texttt{RRFEM} pripelje do simetričnega in pozitivno definitnega sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami. Različica metode se je izkazala pri reševanju problemov v gradbenem inženirstvu (elastomehanika), kjer je s problemom vedno povezan energijski potencial. In res, še danes temelji večina programov s tega področja na \texttt{RRFEM}. 
 
  Rayleigh-Ritzeva različica poseduje lastnost najboljšega približka (minimizira razliko energijskih norm numerične in eksaktne rešitve), hkrati pa vodi do sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami.
 
