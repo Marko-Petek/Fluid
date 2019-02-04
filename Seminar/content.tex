@@ -28,13 +28,13 @@ Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$, opremljena s kraje
 \begin{minipage}{5.0cm}
 \begin{IEEEeqnarray}{rl}
 	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \label{eq:StokesDiv} \\[0.3cm]
-	\frac{\pd p}{\pd x} + \frac{\pd \omega}{\pd y} &= f_1 \ ,
+	\frac{\pd p}{\pd x} + \frac{\pd \omega}{\pd y} &= f_x \ ,
 \end{IEEEeqnarray}
 \end{minipage}
 \begin{minipage}{5.3cm}
 \begin{IEEEeqnarray}{rl}
-	\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_2 \ , \\[0.3cm]
-	\omega - \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ . \label{eq:StokesCurl}
+	\frac{\pd p}{\pd y} - \frac{\pd \omega}{\pd x} &= f_y \ , \\[0.3cm]
+	\omega + \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ . \label{eq:StokesCurl}
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
 To je le sistem stacionarnih Navier-Stokesovih enačb brez nelinearnih konvektivnih členov, ki jih moramo pri numeričnem reševanju linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Kot zanimivost navržimo, da Stokesove enačbe opisujejo plazeče se tokove, pri katerih je konvekcija gibalne količine (zaradi gibanja) majhna v primerjavi z njeno difuzijo (zaradi viskoznosti). V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), zato so takšni tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
@@ -83,7 +83,7 @@ V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi sprem
 		0 & 1 & 0 & 0 \\
 		0 & 0 & 0 & 1 \\
 		0 & 0 & 1 & 0 \\
-		-1 & 0 & 0 & 0 \\
+		1 & 0 & 0 & 0 \\
 	\end{pmatrix} \frac{\pd}{\pd y} \, \right]
 	\ \cdot \
 	\begin{pmatrix}
@@ -91,20 +91,20 @@ V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi sprem
 	\end{pmatrix}
 	\ = \
 	\begin{pmatrix}
-		0 \\ f_1(\mathbf{x}) \\ f_2(\mathbf{x}) \\ 0
+		0 \\ f_x(\mathbf{x}) \\ f_y(\mathbf{x}) \\ 0
 	\end{pmatrix} \ .
 \end{equation}
 
 \section{Temelji \texttt{LSFEM}}
 
-Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je to fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Zato ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva različica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva (temelji postavljeni 1909) \cite{RitzW-Variationsprobleme}. Konstrukcija funkcionala in njegova minimizacija sta tipična koraka variacijskega pristopa in nista specifična za \texttt{RRFEM}: vzamemo neko funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
+Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je to fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Zato ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva različica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva (1909) \cite{RitzW-Variationsprobleme}. Konstrukcija funkcionala in njegova minimizacija sta tipična koraka variacijskega pristopa in nista specifična za \texttt{RRFEM}: vzamemo neko funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
 \begin{equation}
 	I[\mathbf{w(x)}] = \int_{\Omega} F\left(\mathbf{w(x)}\right) \, \ud \Omega \hspace{1.4cm} \texttt{funkcional poskusne funkcije} \quad .
 	\label{eq:GeneralFunctional}
 \end{equation}
 $F\left(\mathbf{w}(\mathbf{x})\right)$ je npr.\ pri \texttt{RRFEM} energijski potencial, dobljen funkcional pa skupna potencialna energija sistema. Rešitev $\mathbf{u}(\mathbf{x})$ potemtakem minimizira potencialno energijo sistema, zaradi česar \texttt{RRFEM} poseduje last\-nost najboljšega približka, hkrati pa vodi do sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami. Različica metode se je izkazala pri reševanju problemov v gradbenem inženirstvu, kjer je s problemom vedno povezan energijski potencial. Večina računalniških programov s tega področja zato še danes temelji na \texttt{RRFEM}.
 
-S \texttt{PDE} povezan energijski potencial žal vedno ne obstaja, kar velja predvsem v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, a na precej neroden, ad hoc način. Akademiki so pričakovali, da se bo uspeh \texttt{RRFEM} v gradbenem inženirstvu ponovil v dinamiki tekočin z Galerkinovo metodo, vendar se to ni zgodilo \cite{JiangB-LSFEM}. Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi \texttt{GFEM}, saj je na svetu že lep čas (od 1940-ih) in je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} definiramo vektor ostanka (glej enačbo \eqref{eq:compactPDE}):
+Energijski potencial povezan s sistemom \texttt{PDE} žal vedno ne obstaja, kar velja predvsem v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, a na precej neroden, ad hoc način. Akademiki so pričakovali, da se bo uspeh \texttt{RRFEM} v gradbenem inženirstvu ponovil v dinamiki tekočin z Galerkinovo metodo, vendar se to ni zgodilo \cite{JiangB-LSFEM}. Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi \texttt{GFEM}, saj je na svetu že lep čas (od 1940-ih) in je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} definiramo vektor ostanka (glej enačbo \eqref{eq:compactPDE}):
 \begin{equation}
 	\mathbf{R(w(x))} = \mathbsf{A}(\mathbf{x}) \cdot \mathbf{w(x)} - \mathbf{f(x)} \hspace{1.3cm} \texttt{vektor ostanka .}
 	\label{eq:residual}
@@ -129,7 +129,7 @@ Kadar gre $\varepsilon$ proti nič, gre $\widetilde{\mathbf{w}}(\mathbf{x}, \var
 \begin{equation}
 	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} = \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega = \ \boxed{\, \int_{\Omega} \left( \lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right) \cdot \mathbf{v} \ \ud \Omega = 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\, \vphantom{\Biggr{)}}} \ .
 \end{equation}
-Komaj tukaj se začne formulacija Galerkinove različice. Na izraz v oklepaju gledamo v kontekstu \texttt{RRFEM} kot na neko funkcijo potenciala povezanega s sistemom \texttt{PDE}. Namesto omenjenega izraza v oklepaju vstavimo vektor ostanka \eqref{eq:residual}:
+Komaj tukaj se začne formulacija Galerkinove različice. Na izraz v oklepaju gledamo v kontekstu \texttt{RRFEM} kot na funkcijo potenciala povezanega s sistemom \texttt{PDE}. Namesto omenjenega izraza v oklepaju vstavimo vektor ostanka \eqref{eq:residual}:
 \begin{equation}
 	\int_{\Omega} \mathbf{R(w(x))} \cdot \mathbf{v(x)} \ \ud \Omega = 0
 \end{equation}
@@ -139,5 +139,3 @@ Potem omejimo Diskretizacija problema
 
 Galerkin, Najmanših kvadratov \cite{JiangB-LSFEM}
 Basic lemma of variational principles: Temeljni lema variacijskih načel.
-
-\textbf{Rayleigh-Ritzeva različica} \texttt{FEM}, ki je bila razvita prva in ima korenine v začetku dvajsetega stoletja (cite), je prav tako variacijska metoda.
