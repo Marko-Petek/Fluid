@@ -1,0 +1,59 @@
+\section{Temelji \texttt{LSFEM}}
+
+Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je to fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Zato ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva različica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva (1909) \cite{RitzW-Variationsprobleme}. Konstrukcija funkcionala in njegova minimizacija sta tipična koraka variacijskega pristopa in nista specifična za \texttt{RRFEM}: vzamemo neko funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
+\begin{equation}
+	I[\mathbf{w(x)}] = \int_{\Omega} F\left(\mathbf{w(x)}\right) \, \ud \Omega \hspace{1.4cm} \texttt{funkcional poskusne funkcije} \quad .
+	\label{eq:GeneralFunctional}
+\end{equation}
+$F\left(\mathbf{w}(\mathbf{x})\right)$ je npr.\ pri \texttt{RRFEM} energijski potencial, dobljen funkcional pa skupna potencialna energija sistema. Rešitev $\mathbf{u}(\mathbf{x})$ potemtakem minimizira potencialno energijo sistema, zaradi česar \texttt{RRFEM} poseduje last\-nost najboljšega približka, hkrati pa vodi do sistema linearnih algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami. Različica metode se je izkazala pri reševanju problemov v gradbenem inženirstvu, kjer je s problemom vedno povezan energijski potencial. Večina računalniških programov s tega področja zato še danes temelji na \texttt{RRFEM}.
+
+Energijski potencial povezan s sistemom \texttt{PDE} žal vedno ne obstaja, kar velja predvsem v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, a na precej neroden, ad hoc način. Akademiki so pričakovali, da se bo uspeh \texttt{RRFEM} v gradbenem inženirstvu ponovil v dinamiki tekočin z Galerkinovo metodo, vendar se to ni zgodilo \cite{JiangB-LSFEM}. Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi \texttt{GFEM}, saj je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} definiramo vektor ostanka (glej enačbo \eqref{eq:compactPDE}):
+\begin{equation}
+	\mathbf{R(w(x))} = \mathbsf{A}(\mathbf{x}) \cdot \mathbf{w(x)} - \mathbf{f(x)} \hspace{1.3cm} \texttt{vektor ostanka .}
+	\label{eq:residual}
+\end{equation}
+ki ga potem na nek način poskušamo minimizirati. To idejo uporabimo tudi pri \texttt{LSFEM}, kjer se minimizacije lotimo na legitimen način. Za $F(\mathbf{w(x)})$ vstavimo:
+\begin{equation}
+	F(\mathbf{w(x)}) = \mathbf{R(w(x))} \cdot \mathbf{R(w(x))} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka}
+\end{equation}
+in minimiziramo funkcional:
+\begin{equation}
+	\boxed{\, I[\mathbf{w(x)}] = \int_{\Omega} R^2(\mathbf{w(x)}) \ \ud \Omega \,} \hspace{1.3cm} \texttt{funkcional LSFEM ,}
+\end{equation}
+od koder dobi metoda svoje ime. Nadaljuj\-mo razlago preko splošnega funkcionala \eqref{eq:GeneralFunctional}, da bomo lahko kasneje orisali še postopek minimizacije pri \texttt{GFEM} in komentirali slabosti, ki jih prinese.
+
+Ko smo torej prepričani, da ima funkcional \eqref{eq:GeneralFunctional} minimum pri rešitvi $\mathbf{u}(\mathbf{x})$, sledimo znanemu Euler-Lagrangevemu postopku. Ta nas pripelje do variacijske izjave, ki velja le, kadar je poskusna funkcija $\mathbf{w}(\mathbf{x})$ enaka rešitvi $\mathbf{u}(\mathbf{x})$. Poskusno funkcijo razvijemo okoli rešitve:
+\begin{equation}
+	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) = \mathbf{u}(\mathbf{x}) + \varepsilon \mathbf{v}(\mathbf{x}) \ ,
+	\label{eq:trialFuncAroundSol}
+\end{equation}
+kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Razvoj \eqref{eq:trialFuncAroundSol} vstavimo v funkcional \eqref{eq:GeneralFunctional} namesto $\mathbf{w}(\mathbf{x})$ in izraz odvajamo po $\varepsilon$:
+\begin{equation}
+\frac{\ud I}{\ud \varepsilon} = \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega = \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v} \ \ud \Omega \ .
+\label{eq:funcDerivative}
+\end{equation}
+Kadar gre $\varepsilon$ proti nič, gre $\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)$ proti rešitvi problema $\mathbf{u}(\mathbf{x})$, hkrati pa vemo, da ima funkcional $I$ pri $\mathbf{u}(\mathbf{x})$ minimum. Da dobimo \textbf{variacijsko izjavo}, torej v odvodu funkcionala \eqref{eq:funcDerivative} $\varepsilon$ pošljemo proti nič in izraz enačimo z nič:
+\begin{equation}
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} = \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega = \ \boxed{\, \int_{\Omega} \left( \lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right) \cdot \mathbf{v} \ \ud \Omega = 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\, \vphantom{\Biggr{)}}} \ .
+	\label{eq:variationalStatement}
+\end{equation}
+Formulacija Galerkinove različice se začne komaj na tem mestu. Namesto izraza v oklepaju vstavimo vektor ostanka \eqref{eq:residual}:
+\begin{equation}
+	\int_{\Omega} \mathbf{R(w(x))} \cdot \mathbf{v(x)} \ \ud \Omega = 0
+\end{equation}
+in upamo, da bo novi način minimiziral ostanek $\mathbf{R}$. Pristop imenujemo \emph{metoda uteženih ostankov (method of weighted residuals)}. Pri \texttt{LSFEM} od enačbe \eqref{eq:variationalStatement} nadaljujemo po pravilih. Imamo:
+\begin{equation}
+	\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} = 2 \mathbf{R(\widetilde{w})} \cdot \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}} = 2 (\mathbsf{A} \cdot \mathbf{\widetilde{w}} - \mathbf{f}) \cdot \mathbsf{A}
+\end{equation}
+in
+\begin{equation}
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} = 2 (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f}) \cdot \mathbsf{A} \ .
+\end{equation}
+Variacijska izjava se nato glasi:
+\begin{equation}
+	\int_{\Omega} 2 (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f}) \cdot \mathbsf{A} \cdot \mathbf{v} \ \ud \Omega = 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
+\end{equation}
+Če jo rahlo preoblikujemo in zapišemo z matrikami, imamo:
+\begin{equation}
+	\int_{\Omega} (\mathbsf{A} \mathbf{v})^\mathsf{T} (\mathbsf{A} \mathbf{u} - \mathbf{f}) \ \ud \Omega = 0 \ , \quad \forall \mathbf{v} \ . \vphantom{\Biggr{)}}
+\end{equation}

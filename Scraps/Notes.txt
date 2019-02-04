@@ -103,3 +103,5 @@ str. 66 (General Formulation of LSFEM)
 		"workbench.settings.editor": "json"
 	}
 }
+
+13. II. 2019 ob 8.30 (sreda) // Celotna predstavitev
