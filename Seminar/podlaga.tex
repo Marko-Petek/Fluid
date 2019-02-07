@@ -2,8 +2,8 @@
 
 Kadar obravnavamo prostorsko dinamiko (npr.\ tok tekočine), lahko fizični prostor modeliramo kot 1, 2 ali 3-mnogoterost. Temelje \texttt{LSFEM} bomo polagali na splošnem primeru $d$-mnogoterosti, za ponazoritev pa na njih sproti gradili konkretni 2D primer.
 
-\begin{wrapfigure}{r}{5.5cm}
-	\vspace{-0.3cm}
+\begin{wrapfigure}{r}{6cm}
+	\vspace{-3mm}
 	\centering
 	\captionsetup{type=figure}
 	\includegraphics[width=5.5cm]{Slike/funkcijaInDomenaG}
@@ -13,7 +13,7 @@ Kadar obravnavamo prostorsko dinamiko (npr.\ tok tekočine), lahko fizični pros
 \end{wrapfigure}
 
 Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$ (slika \ref{fig:funkInDom}), opremljena s krajevnim vektorjem:
-\vspace{-2mm}
+\vspace{-1.5mm}
 \begin{equation}
 \mathbf{x} = \{x_1, ..., x_d\} \ . \nonumber
 \vspace{-1mm}
@@ -21,19 +21,22 @@ Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$ (slika \ref{fig:fun
 Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij:
 \begin{equation}
 	\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\} \ , \nonumber
+	\vspace{-1mm}
 \end{equation}
-ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem. Konkretni primer bomo gradili na 2D primeru s štirimi spremenljivkami, kjer bosta krajevni vektor in vektor odvisnih spremenljivk enaka:
+ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$ pa robnim pogojem. Konkretni primer bomo gradili na 2D primeru s štirimi spremenljivkami, pri katerem bosta krajevni vektor in vektor odvisnih spremenljivk enaka:
+\vspace{2.5mm}
 \begin{equation}
-	\hspace{-40mm} \mathbf{x} = \{x, y\} \quad \text{in} \quad \mathbf{u} =  \{u, v, p, \omega\} \ . \nonumber
+	\hspace{-60mm} \mathbf{x} = \{x, y\} \quad \text{in} \quad \mathbf{u} =  \{u, v, p, \omega\} \ . \nonumber
 \end{equation}
 \\[-4mm]
-To bo \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitrost, tlak, vrtinčnost, ki jim za večjo nazornost primera umetno dodamo koeficiente $\alpha(\mathbf{x})$, $\beta(\mathbf{x})$, $\gamma(\mathbf{x})$ in $\delta(\mathbf{x})$:\\[0.05cm]
+Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitrost-tlak-vrtinčnost, ki jim za večjo nazornost primera umetno dodamo koeficiente $\alpha(\mathbf{x})$, $\beta(\mathbf{x})$, $\gamma(\mathbf{x})$ in $\delta(\mathbf{x})$:\\[0.05cm]
 \begin{minipage}{0.14\textwidth}
 	\hspace{1cm}
 \end{minipage}
 \begin{minipage}{0.3\textwidth}
 \begin{IEEEeqnarray}{rl}
 	\alpha \frac{\pd p}{\pd x} + \beta \frac{\pd \omega}{\pd y} &= f_x \ ,
+	\label{eq:StokesXMom}
 	\\[0.3cm]
 	\gamma \frac{\pd p}{\pd y} - \delta \frac{\pd \omega}{\pd x} &= f_y \ ,
 \end{IEEEeqnarray}
@@ -42,7 +45,7 @@ To bo \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitros
 \begin{IEEEeqnarray}{rl}
 	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \label{eq:StokesDiv}
 	\\[0.3cm]
-	\omega + \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ ,
+	\omega + \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
 	\label{eq:StokesCurl}
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
@@ -68,20 +71,26 @@ Sistem \texttt{PDE}, ki ga obravnavamo, zapišemo bolj jedrnato v matrični obli
 \begin{equation}
 	\mathbsf{A}(\mathbf{x}) = \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2} \ ,
 	\label{eq:AMatrixDefinition}
+	\vspace{-1mm}
 \end{equation}
+\vspace{1mm}
 s katerim lahko sistem enačb zapišemo kot:
 \begin{equation}
 	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2}\right) \cdot \mathbf{u}(\mathbf{x}) = \mathbf{f}(\mathbf{x}) \ ,
 	\label{eq:matrixPDE1}
+	\vspace{-1mm}
 \end{equation}
 oziroma na kratko:
+\vspace{1mm}
 \begin{equation}
 	\hspace{1.5cm}
 	\mathbsf{A}(\mathbf{x}) \cdot \mathbf{u}(\mathbf{x}) = \mathbf{f}(\mathbf{x})
 	\hspace{1.3cm} \texttt{sistem PDE .}
 	\label{eq:compactPDE}
+	\vspace{1mm}
 \end{equation}
-V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po prvi koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk drugi koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Stokesove enačbe \eqref{eq:StokesDiv} - \eqref{eq:StokesCurl} lahko po zgledu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
+V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po prvi koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk drugi koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Enačbe \eqref{eq:StokesXMom} - \eqref{eq:StokesCurl} lahko po zgledu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
+\vspace{1mm}
 \begin{equation}
 	\left[ \,
 	\begin{pmatrix}
@@ -110,4 +119,5 @@ V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi sprem
 	\begin{pmatrix}
 		0 \\ f_x(\mathbf{x}) \\ f_y(\mathbf{x}) \\ 0
 	\end{pmatrix} \ .
+	\vspace{2mm}
 \end{equation}
