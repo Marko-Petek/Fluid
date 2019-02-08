@@ -19,6 +19,7 @@ Naj bo torej prizorišče dogajanja $d$-mnogoterost $\Omega$ (slika \ref{fig:fun
 \vspace{-1mm}
 \end{equation}
 Pri reševanju sistema $m$ \texttt{PDE} iščemo nabor funkcij:
+\vspace{-0.5mm}
 \begin{equation}
 	\mathbf{u}(\mathbf{x}) =  \{u_1(\mathbf{x}), ..., u_m(\mathbf{x})\} \ , \nonumber
 	\vspace{-1mm}
@@ -49,7 +50,7 @@ Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v
 	\label{eq:StokesCurl}
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
-Stokesove enačbe ustrezajo stacionarnim Navier-Stokesovim enačbam brez nelinearnih konvektivnih členov, ki jih moramo pri numeričnem reševanju linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Kot zanimivost navržimo, da Stokesove enačbe opisujejo plazeče se tokove, pri katerih je konvekcija gibalne količine (zaradi gibanja) majhna v primerjavi z nje-
+Stokesove enačbe ustrezajo stacionarnim Navier-Stokesovim enačbam brez nelinearnih konvektivnih členov, ki jih moramo pri numeričnem reševanju linearizirati. Ker ta korak za ponazoritev \texttt{LSFEM} ni ključen, se mu na tak način izognemo. Stokesove enačbe opisujejo plazeče se tokove, pri katerih je konvekcija gibalne količine (zaradi gibanja) majhna v primerjavi z njeno difuzijo (zaradi viskoznosti).
 
 \setlength{\textheight}{26.4cm}
 \pagebreak
@@ -59,7 +60,7 @@ Stokesove enačbe ustrezajo stacionarnim Navier-Stokesovim enačbam brez nelinea
 \fancyhf{}
 \fancyfoot[C]{\thepage}
 
-no difuzijo (zaradi viskoznosti). V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), zato so takšni tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
+V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev), zato so takšni tokovi časovno obrnljivi: časovno obrnjena rešitev enačb je prav tako rešitev (slika \ref{fig:TaylorCouette}).
 
 \begin{figure}[!ht]
 	\includegraphics[width = 1\textwidth]{Slike/TaylorCouette}
@@ -69,28 +70,28 @@ no difuzijo (zaradi viskoznosti). V enačbah ni časovnih odvisnosti (razen prek
 
 Sistem \texttt{PDE}, ki ga obravnavamo, zapišemo bolj jedrnato v matrični obliki. To je enostavno, če je sistem linearen. Uvedemo diferencialni operator $\mathbsf{A}$:
 \begin{equation}
-	\mathbsf{A}(\mathbf{x}) = \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2} \ ,
+	\mathbsf{A}(\mathbf{x}) \ = \ \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2} \ ,
 	\label{eq:AMatrixDefinition}
 	\vspace{-1mm}
 \end{equation}
 \vspace{1mm}
 s katerim lahko sistem enačb zapišemo kot:
 \begin{equation}
-	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2}\right) \cdot \mathbf{u}(\mathbf{x}) = \mathbf{f}(\mathbf{x}) \ ,
+	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2}\right) \cdot \mathbf{u}(\mathbf{x}) \ = \ \mathbf{f}(\mathbf{x}) \ ,
 	\label{eq:matrixPDE1}
 	\vspace{-1mm}
 \end{equation}
 oziroma na kratko:
-\vspace{1mm}
+\vspace{2mm}
 \begin{equation}
-	\hspace{1.5cm}
-	\mathbsf{A}(\mathbf{x}) \cdot \mathbf{u}(\mathbf{x}) = \mathbf{f}(\mathbf{x})
+	\hspace{12mm}
+	\boxed{\ \vphantom{\Big(} \mathbsf{A}(\mathbf{x}) \cdot \mathbf{u}(\mathbf{x}) \, = \, \mathbf{f}(\mathbf{x}) \ }
 	\hspace{1.3cm} \texttt{sistem PDE .}
 	\label{eq:compactPDE}
-	\vspace{1mm}
+	\vspace{1.5mm}
 \end{equation}
-V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po prvi koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk drugi koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Enačbe \eqref{eq:StokesXMom} - \eqref{eq:StokesCurl} lahko po zgledu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
-\vspace{1mm}
+V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Enačbe \eqref{eq:StokesXMom} - \eqref{eq:StokesCurl} lahko po zgledu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
+\vspace{1.5mm}
 \begin{equation}
 	\left[ \,
 	\begin{pmatrix}
@@ -119,5 +120,5 @@ V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi sprem
 	\begin{pmatrix}
 		0 \\ f_x(\mathbf{x}) \\ f_y(\mathbf{x}) \\ 0
 	\end{pmatrix} \ .
-	\vspace{2mm}
+	\vspace{1mm}
 \end{equation}
