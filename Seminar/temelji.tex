@@ -48,9 +48,7 @@ Funkcija $\mathbf{w(x)}$, ki naredi ostanek $\mathbf{R(w(x))}$ enak nič, je re�
 	\int_{\Omega} \mathbf{R(w(x))} \cdot \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
 	\label{eq:GfemStatement}
 \end{equation}
-Po diskretizaciji problema \eqref{eq:GfemStatement} dobimo toliko algebrajskih enačb, kolikor vozliščnih funkcij. Pristop imenujemo \emph{metoda uteženih ostankov (method of weighted residuals)}.
-
-Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Prednost \texttt{GFEM} je Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi , saj je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}.  To idejo uporabimo tudi pri \texttt{LSFEM}, kjer se minimizacije lotimo na legitimen način. Za $F(\mathbf{w(x)})$ vstavimo:
+Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti - takšne, ki se pojavijo v dinamiki tekočin, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a so se njihova pričakovanja izkazala kot preveč optimistična \cite{JiangB-LSFEM}. Težava \texttt{GFEM} izhaja iz šibkih temeljev pristopa uteženih ostankov. Načelo \eqref{eq:GfemStatement} ni nujno zvesto reševanju osnovnega problema \texttt{PDE} in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le z močnimi izboljšavami mreže, kar očitno krni praktičnost metode. Zaradi tega obstaja cela vrsta priredb Galerkinove metode, ki skuša težavo odpraviti Zaradi tega sta metoda končnih diferenc in metoda končnih volumnov v dinamiki tekočin še vedno v modi. Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi , saj je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}.  To idejo uporabimo tudi pri \texttt{LSFEM}, kjer se minimizacije lotimo na legitimen način. Za $F(\mathbf{w(x)})$ vstavimo:
 \begin{equation}
 	F(\mathbf{w(x)}) = \mathbf{R(w(x))} \cdot \mathbf{R(w(x))} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka}
 \end{equation}
@@ -78,3 +76,5 @@ Variacijska izjava se nato glasi:
 \begin{equation}
 	\int_{\Omega} (\mathbsf{A} \mathbf{v})^\mathsf{T} (\mathbsf{A} \mathbf{u} - \mathbf{f}) \ \ud \Omega = 0 \ , \quad \forall \mathbf{v} \ . \vphantom{\Biggr{)}}
 \end{equation}
+
+Po diskretizaciji problema \eqref{eq:GfemStatement} dobimo toliko algebrajskih enačb, kolikor vozliščnih funkcij.
