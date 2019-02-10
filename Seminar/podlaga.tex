@@ -31,22 +31,22 @@ ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$
 \end{equation}
 \\[-4mm]
 Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitrost-tlak-vrtinčnost, ki jim za večjo nazornost primera umetno dodamo koeficiente $\alpha(\mathbf{x})$, $\beta(\mathbf{x})$, $\gamma(\mathbf{x})$ in $\delta(\mathbf{x})$:\\[0.05cm]
-\begin{minipage}{0.14\textwidth}
+\begin{minipage}{0.11\textwidth}
 	\hspace{1cm}
 \end{minipage}
-\begin{minipage}{0.3\textwidth}
+\begin{minipage}{0.33\textwidth}
 \begin{IEEEeqnarray}{rl}
-	\alpha \frac{\pd p}{\pd x} + \beta \frac{\pd \omega}{\pd y} &= f_x \ ,
+	\alpha \frac{\pd p}{\pd x} + \beta \frac{\pd \omega}{\pd y} & \ = \, f_x \ ,
 	\label{eq:StokesXMom}
 	\\[0.3cm]
-	\gamma \frac{\pd p}{\pd y} - \delta \frac{\pd \omega}{\pd x} &= f_y \ ,
+	\gamma \frac{\pd p}{\pd y} - \delta \frac{\pd \omega}{\pd x} & \ = \, f_y \ ,
 \end{IEEEeqnarray}
 \end{minipage}
-\begin{minipage}{0.3\textwidth}
+\begin{minipage}{0.33\textwidth}
 \begin{IEEEeqnarray}{rl}
-	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} &= 0 \ , \label{eq:StokesDiv}
+	\frac{\pd u}{\pd x} + \frac{\pd v}{\pd y} & \ = \, 0 \ , \label{eq:StokesDiv}
 	\\[0.3cm]
-	\omega + \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} &= 0 \ .
+	\omega + \frac{\pd u}{\pd y} - \frac{\pd v}{\pd x} & \ = \, 0 \ .
 	\label{eq:StokesCurl}
 \end{IEEEeqnarray}
 \end{minipage}\\[0.4cm]
@@ -70,14 +70,14 @@ V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev
 
 Sistem \texttt{PDE}, ki ga obravnavamo, zapišemo bolj jedrnato v matrični obliki. To je enostavno, če je sistem linearen. Uvedemo diferencialni operator $\mathbsf{A}$:
 \begin{equation}
-	\mathbsf{A}(\mathbf{x}) \ = \ \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2} \ ,
+	\mathbsf{A}(\mathbf{x}) \, = \ \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \, \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2} \ ,
 	\label{eq:AMatrixDefinition}
 	\vspace{-1mm}
 \end{equation}
 \vspace{1mm}
 s katerim lahko sistem enačb zapišemo kot:
 \begin{equation}
-	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2}\right) \cdot \mathbf{u}(\mathbf{x}) \ = \ \mathbf{f}(\mathbf{x}) \ ,
+	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2}\right) \mkern-1mu \cdot \mkern-1mu \mathbf{u}(\mathbf{x}) \, = \, \mathbf{f}(\mathbf{x}) \ ,
 	\label{eq:matrixPDE1}
 	\vspace{-1mm}
 \end{equation}
@@ -85,7 +85,7 @@ oziroma na kratko:
 \vspace{2mm}
 \begin{equation}
 	\hspace{12mm} \boxed{
-		\, \vphantom{\big(} \mathbsf{A}(\mathbf{x}) \cdot \mathbf{u}(\mathbf{x}) \, = \, \mathbf{f}(\mathbf{x}) \,
+		\, \vphantom{\big(} \mathbsf{A}(\mathbf{x}) \mkern-1.5mu \cdot \mkern-1.5mu \mathbf{u}(\mathbf{x}) = \, \mathbf{f}(\mathbf{x}) \,
 	}\hspace{1.3cm} \texttt{sistem PDE .}
 	\label{eq:compactPDE}
 	\vspace{1.5mm}

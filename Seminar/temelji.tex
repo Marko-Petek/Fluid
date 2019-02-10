@@ -16,18 +16,18 @@ kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa re
 \begin{equation}
 	\frac{\ud I}{\ud \varepsilon} \, =
 	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \, =
-	\, \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega \, =
-	\, \int_{\Omega} \frac{\ud F}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v} \ \ud \Omega \ ,
+	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega \, =
+	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v} \ \ud \Omega \ ,
 \label{eq:funcDerivative}
 \end{equation}
 nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celoten izraz enačimo z nič:
 \begin{equation}
-	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \, = \, \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}} \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega \, = \, 0 \ .
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \, = \, \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \left(\frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega \, = \, 0 \ .
 \end{equation}
 Limita deluje le na prvi člen v integrandu, zato se variacijska izjava glasi:
 \begin{equation}
 	\boxed{\, \vphantom{\bigg)^2_3}
-		\int_{\Omega} \left( \lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right) \cdot \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
+		\int_{\Omega} \, \lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
 	}
 	\hspace{1.3cm} \texttt{variacijska izjava} \ .
 	\label{eq:variationalStatement}
@@ -36,45 +36,54 @@ V jeziku funkcionalne analize, kjer na funkcije gledamo kot na vektorje, izjava 
 
 $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \texttt{RRFEM} energijski potencial, funkcional pa torej skupna potencialna energija sistema, ki jo rešitev $\mathbf{u}(\mathbf{x})$ minimizira. Zaradi tega ima \texttt{RRFEM} last\-nost najboljšega približka, diskretizacija pa vodi do simetričnega in pozitivno-definitnega sistema algebrajskih enačb, ki je zelo prikladen za reševanje s hitrimi iteracijskimi metodami. Različica metode se je izkazala v gradbenem inženirstvu, kjer je s problemom vedno povezan energijski potencial. Večina računalniških programov s tega področja zato še danes temelji na \texttt{RRFEM}.
 
-Žal energijski potencial povezan s sistemom \texttt{PDE} ne obstaja vedno, kar je značilno za sisteme \texttt{PDE} v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, vendar na precej neroden način. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} \eqref{eq:compactPDE} in za poljubno poskusno funkcijo $\mathbf{w(x)}$ definiramo vektor ostanka $\mathbf{R(w(x))}$. Vse člene v enačbi \eqref{eq:compactPDE} damo na eno stran in namesto $\mathbf{u(x)}$ pišemo $\mathbf{w(x)}$:
+Žal energijski potencial povezan s sistemom \texttt{PDE} ne obstaja vedno, kar je značilno za sisteme \texttt{PDE} v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, vendar na precej neroden način. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} \eqref{eq:compactPDE} in za poljubno poskusno funkcijo $\mathbf{w(x)}$ definiramo vektor ostanka $\mathbf{R(w(x))}$. Vse člene v jedrnatem zapisu sistema \texttt{PDE} \eqref{eq:compactPDE} damo na eno stran in namesto $\mathbf{u(x)}$ pišemo $\mathbf{w(x)}$:
 \begin{equation}
-	\hspace{0mm} \boxed{\, \vphantom{\big(}
+	\hspace{10mm} \boxed{\, \vphantom{\big(}
 		\mathbf{R(w(x))} \, = \, \mathbsf{A}(\mathbf{x}) \cdot \mathbf{w(x)} - \mathbf{f(x)} \,
-	}\hspace{20mm} \texttt{ostanek .}
+	}\hspace{20mm} \texttt{vektor ostanka .}
 	\label{eq:residual}
 \end{equation}
 Funkcija $\mathbf{w(x)}$, ki naredi ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
 \begin{equation}
-	\int_{\Omega} \mathbf{R(w(x))} \cdot \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
+	\int_{\Omega} \mathbf{R(w(x))}^\mathsf{T} \cdot \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
 	\label{eq:GfemStatement}
 \end{equation}
-Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti - takšne, ki se pojavijo v dinamiki tekočin, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a so se njihova pričakovanja izkazala kot preveč optimistična \cite{JiangB-LSFEM}. Težava \texttt{GFEM} izhaja iz šibkih temeljev pristopa uteženih ostankov. Načelo \eqref{eq:GfemStatement} ni nujno zvesto reševanju osnovnega problema \texttt{PDE} in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le z močnimi izboljšavami mreže, kar očitno krni praktičnost metode. Zaradi tega obstaja cela vrsta priredb Galerkinove metode, ki skuša težavo odpraviti Zaradi tega sta metoda končnih diferenc in metoda končnih volumnov v dinamiki tekočin še vedno v modi. Večina računalniških programov za simulacije dinamike tekočin je dandanes napisana na osnovi , saj je zanjo napisane ogromno literature. To ne velja za mlajšo \texttt{LSFEM}.  To idejo uporabimo tudi pri \texttt{LSFEM}, kjer se minimizacije lotimo na legitimen način. Za $F(\mathbf{w(x)})$ vstavimo:
-\begin{equation}
-	F(\mathbf{w(x)}) = \mathbf{R(w(x))} \cdot \mathbf{R(w(x))} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka}
-\end{equation}
-in minimiziramo funkcional:
-\begin{equation}
-	\boxed{\, I[\mathbf{w(x)}] = \int_{\Omega} \mathbf{R(w(x))} \cdot \mathbf{R(w(x))} \ \ud \Omega \,} \hspace{1.3cm} \texttt{funkcional LSFEM ,}
-\end{equation}
-od koder dobi metoda svoje ime.
+Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Ko $\mathbsf{A}$ ni sebi-adjugniran, namreč načelo \eqref{eq:GfemStatement} ni nujno zvesto osnovnemu problemu \texttt{PDE}. Metoda v tem primeru ne poseduje lastnosti najboljšega približka in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le s hudimi izboljšavami mreže, kar očitno okrnjuje praktičnost metode. Metoda končnih diferenc in metoda končnih volumnov sta zato v dinamiki tekočin še vedno v modi.
 
-komentirali slabosti, ki jih prinese.
-
-Pri \texttt{LSFEM} od enačbe \eqref{eq:variationalStatement} nadaljujemo po pravilih. Imamo:
+Podobno kot pri \texttt{GFEM} se tudi pri \texttt{LSFEM} opremo na vektor ostanka \eqref{eq:residual}, a reševanja variacijskega problema se lotimo na legitimen način. Ne zanašamo se na ad hoc načela, kot je zahteva \eqref{eq:GfemStatement}, ampak začnemo od začetka - s konstrukcijo funkcionala \eqref{eq:GeneralFunctional}. Sestavimo ga s kvadratom ostanka:
 \begin{equation}
-	\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} = 2 \mathbf{R(\widetilde{w})} \cdot \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}} = 2 (\mathbsf{A} \cdot \mathbf{\widetilde{w}} - \mathbf{f}) \cdot \mathbsf{A}
+	F(\mathbf{w(x)}) = \mathbf{R(w(x))}^\mathsf{T} \! \cdot \mathbf{R(w(x))} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
+	\label{eq:squareOfResidual}
 \end{equation}
-in
+in funkcional, ki ga minimiziramo, se glasi:
 \begin{equation}
-	\lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} = 2 (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f}) \cdot \mathbsf{A} \ .
+	\boxed{\, I[\mathbf{w(x)}] = \int_{\Omega} \mathbf{R(w(x))}^\mathsf{T} \! \cdot \mathbf{R(w(x))} \ \ud \Omega \,} \hspace{1.3cm} \texttt{funkcional LSFEM ,}
 \end{equation}
-Variacijska izjava se nato glasi:
+od koder dobi metoda svoje ime. Želimo dobiti variacijsko izjavo za ta specifični funkcional, zato v splošno izjavo \eqref{eq:variationalStatement} vstavimo kvadrat vektorja ostanka \eqref{eq:squareOfResidual} in postopek izpeljemo do konca. Najprej torej izračunamo odvod integranda:
 \begin{equation}
-	\int_{\Omega} 2 (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f}) \cdot \mathbsf{A} \cdot \mathbf{v} \ \ud \Omega = 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
+	\hspace{-10mm}
+	\left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
+	\left(\frac{\ud \! \left(\mathbf{R(\widetilde{w})}^\mathsf{T} \cdot \mathbf{R(\widetilde{w})}\right)}{\ud \mathbf{\widetilde{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
+	2 \mathbf{R(\widetilde{w})}^\mathsf{T} \cdot \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}} \ = \
+	2 (\mathbsf{A} \cdot \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \! \cdot \mathbsf{A}
 \end{equation}
-Če jo rahlo preoblikujemo in zapišemo z matrikami, imamo:
+ter nato limito, ko gre $\varepsilon$ proti nič:
 \begin{equation}
-	\int_{\Omega} (\mathbsf{A} \mathbf{v})^\mathsf{T} (\mathbsf{A} \mathbf{u} - \mathbf{f}) \ \ud \Omega = 0 \ , \quad \forall \mathbf{v} \ . \vphantom{\Biggr{)}}
+	\hspace{-7mm}
+	\lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
+	\lim_{\varepsilon \rightarrow 0} \, \Big(2 \, \big(\mathbsf{A} \! \cdot \! (\mathbf{u} + \varepsilon \mathbf{v}) - \mathbf{f}\big)^\mathsf{\mkern-2mu T} \cdot \, \mathbsf{A}\Big) \ = \
+	2 \, (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f})^\mathsf{T} \cdot \, \mathbsf{A} \ .
 \end{equation}
-
-Po diskretizaciji problema \eqref{eq:GfemStatement} dobimo toliko algebrajskih enačb, kolikor vozliščnih funkcij.
+Variacijska izjava za minimizacijo funkcionala \texttt{LSFEM} se zato glasi:
+\begin{equation}
+	\int_{\Omega} 2 \, (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \! \cdot (\mathbsf{A} \! \cdot \! \mathbf{v}) \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
+\end{equation}
+Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem produktu, s čemer rezultata ne spremenimo) ter ga delimo z dve:
+\begin{equation}
+	\boxed{\
+		\int_{\Omega} \, (\mathbsf{A} \! \cdot \! \mathbf{v})^\mathsf{T} \! \cdot (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}) \ \ud \Omega \, = \,
+		0 \ , \hspace{5mm} \forall \mathbf{v} \vphantom{\bigg{)}} \
+	}
+	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
+\end{equation}
+Izjava pravzaprav ustreza Galerkinovi formulaciji \eqref{eq:GfemStatement}, kjer namesto odmičnih funkcij samih ($\mathbf{v}$) uporabimo njihove odvode ($\mathbsf{A} \! \cdot \! \mathbf{v}$).
