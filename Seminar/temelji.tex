@@ -3,31 +3,43 @@
 Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kjer ne operiramo neposredno na \texttt{PDE}, ampak jih najprej pretvorimo v enakovreden variacijski problem: omislimo si \textbf{poskusno funkcijo} $\mathbf{w}(\mathbf{x})$, ki jo napnemo nad domeno $\Omega$, in izberemo funkcional $I[\mathbf{w}(\mathbf{x})]$, ki za vsako $\mathbf{w}(\mathbf{x})$ vrne neko realno število. Za uspešnost variacijskega pristopa moramo izbrati funkcional, ki vrne najmanjšo vrednost, ko je $\mathbf{w}(\mathbf{x})$ enaka rešitvi. Kadar obstaja s sistemom \texttt{PDE} povezan energijski potencial, je le-ta fizikalno najintuitivnejša izbira za konstrukcijo funkcionala. Zato ni presenetljivo, da je bila \textbf{Rayleigh-Ritzeva različica} \texttt{FEM} (\texttt{RRFEM}), ki jo na tak način dobimo, razvita prva \cite{RitzW-Variationsprobleme}. Konstrukcija funkcionala in njegova minimizacija sta tipična koraka variacijskega pristopa in nista specifična za \texttt{RRFEM}: vzamemo neko funkcijo poskusne funkcije $F\left(\mathbf{w}\right)$ in jo integriramo po domeni $\Omega$:
 \vspace{-1mm}
 \begin{equation}
-	\hspace{17mm} \boxed{
-		\vphantom{\bigg(} \ I[\mathbf{w(x)}] \, = \int_{\Omega} F\left(\mathbf{w(x)}\right) \, \ud \Omega \ } \hspace{13mm} \texttt{funkcional poskusne funkcije} \ .
+	\hspace{17mm}
+	\boxed{
+		\vphantom{\bigg(} \ I\big[\mathbf{w(x)}\big] \mkern2mu = \int_{\Omega} F\big(\mathbf{w(x)}\big) \, \ud \Omega \ 
+	}
+	\hspace{13mm} \texttt{funkcional poskusne funkcije} \ .
 	\label{eq:GeneralFunctional}
 \end{equation}
 Ko smo prepričani, da ima funkcional \eqref{eq:GeneralFunctional} minimum pri rešitvi $\mathbf{u}(\mathbf{x})$, sledimo znanemu Euler-Lagrange\-ve\-mu postopku. Ta nas pripelje do variacijske izjave, ki velja le, kadar je poskusna funkcija $\mathbf{w}(\mathbf{x})$ enaka rešitvi $\mathbf{u}(\mathbf{x})$. Poskusno funkcijo razvijemo okoli rešitve:
 \begin{equation}
-	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) \, = \, \mathbf{u}(\mathbf{x}) \, + \, \varepsilon \mathbf{v}(\mathbf{x}) \ ,
+	\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon) \mkern2mu
+	=
+	\, \mathbf{u}(\mathbf{x}) \mkern1mu + \mkern1.5mu \varepsilon \mathbf{v}(\mathbf{x}) \ ,
 	\label{eq:trialFuncAroundSol}
 \end{equation}
 kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Kadar gre $\varepsilon$ proti nič, gre $\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)$ proti rešitvi problema $\mathbf{u}(\mathbf{x})$, hkrati pa vemo, da ima funkcional $I$ pri $\mathbf{u}(\mathbf{x})$ minimum. Minimum funkcionala poiščemo tako, da razvoj \eqref{eq:trialFuncAroundSol} vstavimo v funkcional \eqref{eq:GeneralFunctional} namesto $\mathbf{w}(\mathbf{x})$ in izraz odvajamo po $\varepsilon$:
 \begin{equation}
-	\frac{\ud I}{\ud \varepsilon} \, =
-	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \, =
-	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega \, =
-	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v} \ \ud \Omega \ ,
+	\frac{\ud I}{\ud \varepsilon} \,
+	=
+	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \,
+	=
+	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega \,
+	=
+	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \ ,
 \label{eq:funcDerivative}
 \end{equation}
 nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celoten izraz enačimo z nič:
 \begin{equation}
-	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \, = \, \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \left(\frac{\ud F(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon))}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega \, = \, 0 \ .
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \,
+	=
+	\, \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \left(\frac{\ud F\big(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)\big)}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega \,
+	=
+	\, 0 \ .
 \end{equation}
 Limita deluje le na prvi člen v integrandu, zato se variacijska izjava glasi:
 \begin{equation}
 	\boxed{\, \vphantom{\bigg)^2_3}
-		\int_{\Omega} \, \lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right)^\mathsf{\mkern-7mu T} \! \cdot \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
+		\int_{\Omega} \, \lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
 	}
 	\hspace{1.3cm} \texttt{variacijska izjava} \ .
 	\label{eq:variationalStatement}
@@ -39,49 +51,61 @@ $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \t
 Žal energijski potencial povezan s sistemom \texttt{PDE} ne obstaja vedno, kar je značilno za sisteme \texttt{PDE} v dinamiki tekočin. To je motiviralo razvoj Galerkinove različice \texttt{FEM} (\texttt{GFEM}), ki je zastavljena kot posplošitev \texttt{RRFEM}, vendar na precej neroden način. Ideja \texttt{GFEM} je, da lahko za vsak sistem \texttt{PDE} \eqref{eq:compactPDE} in za poljubno poskusno funkcijo $\mathbf{w(x)}$ definiramo vektor ostanka $\mathbf{R(w(x))}$. Vse člene v jedrnatem zapisu sistema \texttt{PDE} \eqref{eq:compactPDE} damo na eno stran in namesto $\mathbf{u(x)}$ pišemo $\mathbf{w(x)}$:
 \begin{equation}
 	\hspace{10mm} \boxed{\, \vphantom{\big(}
-		\mathbf{R(w(x))} \, = \, \mathbsf{A}(\mathbf{x}) \cdot \mathbf{w(x)} - \mathbf{f(x)} \,
+		\mathbf{R\big(w(x)\big)} \, = \, \mathbsf{A}(\mathbf{x}) \mkern-2.5mu \cdot \mkern-2mu \mathbf{w(x)} - \mathbf{f(x)} \,
 	}\hspace{20mm} \texttt{vektor ostanka .}
 	\label{eq:residual}
 \end{equation}
 Funkcija $\mathbf{w(x)}$, ki naredi ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
 \begin{equation}
-	\int_{\Omega} \mathbf{R(w(x))}^\mathsf{T} \cdot \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
+	\int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
 	\label{eq:GfemStatement}
 \end{equation}
 Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Ko $\mathbsf{A}$ ni sebi-adjugniran, namreč načelo \eqref{eq:GfemStatement} ni nujno zvesto osnovnemu problemu \texttt{PDE}. Metoda v tem primeru ne poseduje lastnosti najboljšega približka in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le s hudimi izboljšavami mreže, kar očitno okrnjuje praktičnost metode. Metoda končnih diferenc in metoda končnih volumnov sta zato v dinamiki tekočin še vedno v modi.
 
 Podobno kot pri \texttt{GFEM} se tudi pri \texttt{LSFEM} opremo na vektor ostanka \eqref{eq:residual}, a reševanja variacijskega problema se lotimo na legitimen način. Ne zanašamo se na ad hoc načela, kot je zahteva \eqref{eq:GfemStatement}, ampak začnemo od začetka - s konstrukcijo funkcionala \eqref{eq:GeneralFunctional}. Sestavimo ga s kvadratom ostanka:
 \begin{equation}
-	F(\mathbf{w(x)}) = \mathbf{R(w(x))}^\mathsf{T} \! \cdot \mathbf{R(w(x))} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
+	F\big(\mathbf{w(x)}\big)
+	=
+	\mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R\big(w(x)\big)} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
 	\label{eq:squareOfResidual}
 \end{equation}
 in funkcional, ki ga minimiziramo, se glasi:
 \begin{equation}
-	\boxed{\, I[\mathbf{w(x)}] = \int_{\Omega} \mathbf{R(w(x))}^\mathsf{T} \! \cdot \mathbf{R(w(x))} \ \ud \Omega \,} \hspace{1.3cm} \texttt{funkcional LSFEM ,}
+	\boxed{
+		\, I\big[\mathbf{w(x)}\big]
+		=
+		\int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-2mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R\big(w(x)\big)} \ \ud \Omega \,
+	}
+	\hspace{1.3cm} \texttt{funkcional LSFEM ,}
 \end{equation}
 od koder dobi metoda svoje ime. Želimo dobiti variacijsko izjavo za ta specifični funkcional, zato v splošno izjavo \eqref{eq:variationalStatement} vstavimo kvadrat vektorja ostanka \eqref{eq:squareOfResidual} in postopek izpeljemo do konca. Najprej torej izračunamo odvod integranda:
 \begin{equation}
 	\hspace{-10mm}
-	\left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
-	\left(\frac{\ud \! \left(\mathbf{R(\widetilde{w})}^\mathsf{T} \cdot \mathbf{R(\widetilde{w})}\right)}{\ud \mathbf{\widetilde{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
-	2 \mathbf{R(\widetilde{w})}^\mathsf{T} \cdot \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}} \ = \
-	2 (\mathbsf{A} \cdot \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \! \cdot \mathbsf{A}
+	\left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T}
+	\mkern1mu = \,
+	\left(\frac{\ud \! \left(\mathbf{R(\widetilde{w})}^\mathsf{\mkern-1mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R(\widetilde{w})}\right)}{\ud \mathbf{\widetilde{w}}}\right)^\mathsf{\mkern-10mu T}
+	= \mkern3mu
+	2 \mathbf{R(\widetilde{w})}^\mathsf{\mkern-1mu T} \mkern-4mu \cdot \mkern-1mu \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}}
+	\, = \mkern5mu
+	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \mkern-2mu \cdot \mathbsf{A}
 \end{equation}
 ter nato limito, ko gre $\varepsilon$ proti nič:
 \begin{equation}
 	\hspace{-7mm}
-	\lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \ = \
-	\lim_{\varepsilon \rightarrow 0} \, \Big(2 \, \big(\mathbsf{A} \! \cdot \! (\mathbf{u} + \varepsilon \mathbf{v}) - \mathbf{f}\big)^\mathsf{\mkern-2mu T} \cdot \, \mathbsf{A}\Big) \ = \
-	2 \, (\mathbsf{A} \cdot \mathbf{u} - \mathbf{f})^\mathsf{T} \cdot \, \mathbsf{A} \ .
+	\lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T}
+	= \mkern5mu
+	\lim_{\varepsilon \rightarrow 0} \, \Big(2 \mkern1mu \big(\mathbsf{A} \! \cdot \! (\mathbf{u} \mkern-2mu + \mkern-2mu \varepsilon \mathbf{v}) - \mathbf{f}\big)^\mathsf{\mkern-2mu T} \mkern-3mu \cdot \mathbsf{A}\Big)
+	\, = \mkern5mu
+	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-2mu \cdot \mathbsf{A} \ .
 \end{equation}
 Variacijska izjava za minimizacijo funkcionala \texttt{LSFEM} se zato glasi:
 \begin{equation}
-	\int_{\Omega} 2 \, (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \! \cdot (\mathbsf{A} \! \cdot \! \mathbf{v}) \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
+	\int_{\Omega} 2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-4.5mu \cdot \mkern-1mu (\mathbsf{A} \! \cdot \! \mathbf{v}) \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
 \end{equation}
-Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem produktu, s čemer rezultata ne spremenimo) ter ga delimo z dve:
+Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem produktu, s čemer rezultata ne spremenimo) ter delimo z dve:
 \begin{equation}
 	\boxed{\
-		\int_{\Omega} \, (\mathbsf{A} \! \cdot \! \mathbf{v})^\mathsf{T} \! \cdot (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}) \ \ud \Omega \, = \,
+		\int_{\Omega} \, (\mathbsf{A} \! \cdot \! \mathbf{v})^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}) \ \ud \Omega \, = \,
 		0 \ , \hspace{5mm} \forall \mathbf{v} \vphantom{\bigg{)}} \
 	}
 	\hspace{10mm} \texttt{variacijska izjava LSFEM .}

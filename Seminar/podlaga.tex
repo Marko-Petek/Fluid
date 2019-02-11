@@ -36,10 +36,10 @@ Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v
 \end{minipage}
 \begin{minipage}{0.33\textwidth}
 \begin{IEEEeqnarray}{rl}
-	\alpha \frac{\pd p}{\pd x} + \beta \frac{\pd \omega}{\pd y} & \ = \, f_x \ ,
+	\alpha \mkern2mu \frac{\pd p}{\pd x} + \beta \mkern2mu \frac{\pd \omega}{\pd y} & \ = \, f_x \ ,
 	\label{eq:StokesXMom}
 	\\[0.3cm]
-	\gamma \frac{\pd p}{\pd y} - \delta \frac{\pd \omega}{\pd x} & \ = \, f_y \ ,
+	\gamma \mkern2mu \frac{\pd p}{\pd y} - \delta \mkern2mu \frac{\pd \omega}{\pd x} & \ = \, f_y \ ,
 \end{IEEEeqnarray}
 \end{minipage}
 \begin{minipage}{0.33\textwidth}
@@ -70,14 +70,16 @@ V enačbah ni časovnih odvisnosti (razen preko časovno odvisnih robnih pogojev
 
 Sistem \texttt{PDE}, ki ga obravnavamo, zapišemo bolj jedrnato v matrični obliki. To je enostavno, če je sistem linearen. Uvedemo diferencialni operator $\mathbsf{A}$:
 \begin{equation}
-	\mathbsf{A}(\mathbf{x}) \, = \ \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \, \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2} \ ,
+	\mathbsf{A}(\mathbf{x}) \mkern2mu
+	=
+	\, \mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \frac{\pd}{\pd x_1} + \, \mathbsf{A}_2(\mathbf{x}) \frac{\pd}{\pd x_2} \ ,
 	\label{eq:AMatrixDefinition}
 	\vspace{-1mm}
 \end{equation}
 \vspace{1mm}
 s katerim lahko sistem enačb zapišemo kot:
 \begin{equation}
-	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \, \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \, \frac{\pd}{\pd x_2}\right) \mkern-1mu \cdot \mkern-1mu \mathbf{u}(\mathbf{x}) \, = \, \mathbf{f}(\mathbf{x}) \ ,
+	\left(\mathbsf{A}_0(\mathbf{x}) + \mathbsf{A}_1(\mathbf{x}) \mkern1mu \frac{\pd}{\pd x_1} + \mathbsf{A}_2(\mathbf{x}) \mkern1mu \frac{\pd}{\pd x_2}\right) \mkern-1mu \cdot \mkern-1mu \mathbf{u}(\mathbf{x}) \, = \, \mathbf{f}(\mathbf{x}) \ ,
 	\label{eq:matrixPDE1}
 	\vspace{-1mm}
 \end{equation}
