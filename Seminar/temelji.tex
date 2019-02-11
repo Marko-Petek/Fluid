@@ -5,7 +5,9 @@ Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kje
 \begin{equation}
 	\hspace{17mm}
 	\boxed{
-		\vphantom{\bigg(} \ I\big[\mathbf{w(x)}\big] \mkern2mu = \int_{\Omega} F\big(\mathbf{w(x)}\big) \, \ud \Omega \ 
+		\vphantom{\bigg(} \ I\big[\mathbf{w(x)}\big]\mkern2mu
+		=
+		\int_{\Omega} \mkern-4mu F\big(\mathbf{w(x)}\big) \mkern5mu \ud \Omega \ 
 	}
 	\hspace{13mm} \texttt{funkcional poskusne funkcije} \ .
 	\label{eq:GeneralFunctional}
@@ -109,5 +111,6 @@ Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem p
 		0 \ , \hspace{5mm} \forall \mathbf{v} \vphantom{\bigg{)}} \
 	}
 	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
+	\label{eq:LsfemVariationalStatement}
 \end{equation}
 Izjava pravzaprav ustreza Galerkinovi formulaciji \eqref{eq:GfemStatement}, kjer namesto odmičnih funkcij samih ($\mathbf{v}$) uporabimo njihove odvode ($\mathbsf{A} \! \cdot \! \mathbf{v}$).

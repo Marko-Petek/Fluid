@@ -1,6 +1,11 @@
-\section{Diskretizacija}
+\section{Diskretizacija problema}
 
-Od te točke dalje nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajskih enačb. Ta korak je enak pri vseh različicah \texttt{FEM}. Funkcije na domeni $\Omega$ imajo neskončno štveilo prostostnih stopenj. Problem pripravimo za numerično reševanje tako, da funkcijam  omejimo število prostostnih stopenj. Rešitev npr. zapišemo kot sestavljanko vozliščnih funkcij. Imamo $N$ vozlišč:
+Z natančno analitično izpeljavo se prebijemo do izjave \eqref{eq:LsfemVariationalStatement}, od tod dalje pa moramo iskanje funkcije $\mathbf{u(x)}$ z neskončno prostostnimi stopnjami poenostaviti v iskanje funkcije s končnim številom prostostnih stopenj $N$. Poljubno funkcijo $f(\mathbf{x})$ na domeni $\Omega$ zapišemo kot sestavljanko N vozliščnih funkcij $\Phi_i$:
+\begin{equation}
+    f(\mathbf{x}) = \sum_{i = 1}^N f_i  \mkern1mu \Phi_i
+\end{equation}
+
+nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajskih enačb. Ta korak je enak pri vseh različicah \texttt{FEM}. Funkcije na domeni $\Omega$ imajo neskončno štveilo prostostnih stopenj. 
 \begin{equation}
     u_i(\mathbf{x}) = \sum_{a = 1}^N \Phi^{a0} u^{a0}_i
 \end{equation}

@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"editor.codeLens": true,
-		"editor.lineNumbers": "off",
+		"editor.lineNumbers": "on",
 		"editor.useTabStops": true,
 		"editor.minimap.enabled": false,
 		"editor.fontFamily": "DejaVu Sans Mono",
@@ -33,8 +33,9 @@
 		"workbench.colorCustomizations": {
 			"activityBar.background": "#272424",
 			"button.background": "#ffbe4e88",
-			"button.foreground": "#000000",
+			"button.foreground": "#ffffff",
 			"dropdown.listBackground": "#b0b0b0",
+			"dropdown.foreground": "#000000",
 			"editorSuggestWidget.background": "#d9e7ff",
 			"editorSuggestWidget.foreground": "#484848",
 			"editorSuggestWidget.selectedBackground": "#ffbd6cfe",
@@ -42,18 +43,21 @@
 			"editorSuggestWidget.border": "#000000",
 			"foreground": "#000000",
 			"input.foreground": "#000000",
-			"list.inactiveFocusBackground": "#00ff15",
+			"list.inactiveFocusBackground": "#90ff99",
 			"list.hoverBackground": "#fff898aa",
 			"list.errorForeground": "#ff0000",
-			"list.activeSelectionForeground": "#ffffff",
-			"list.activeSelectionBackground": "#b05959cc",
-			"list.focusBackground": "#0bd50077", 					// Panel/Output/DropdownListInUpperLine
+			"list.activeSelectionForeground": "#000000",
+			"list.activeSelectionBackground": "#00ca117a",
+			"list.focusBackground": "#5bff699d", 					// Panel/Output/DropdownListInUpperLine
 			"list.focusForeground": "#000000",
+			"list.highlightForeground": "#000872",
 			"list.hoverForeground": "#000000",
 			"list.inactiveSelectionForeground": "#000000",
 			"list.inactiveSelectionBackground": "#9e9a9a77",
 			"menu.background": "#353232",
 			"menu.foreground": "#e4e4e4",
+			"menu.selectionBackground": "#ff505096",
+			"menu.selectionForeground": "#ffffff",
 			"menubar.selectionBackground": "#353532",
 			"menubar.selectionForeground": "#ffffff",
 			"notifications.background": "#fffab6",
@@ -81,14 +85,22 @@
 			"terminal.selectionBackground": "#ff9e9e50",
 			"terminalCursor.background": "#000000",
 			"terminalCursor.foreground": "#ff9e9e",
-			"textLink.foreground": "#0f7100",
-			"textLink.activeForeground": "#2ea41c",
+			"textLink.foreground": "#1100af",
+			"textLink.activeForeground": "#201586",
 			"titleBar.activeBackground": "#4d4d4d",
 			"titleBar.activeForeground": "#dbdbdb",
 			"welcomePage.background": "#ddeaff",
 			"welcomePage.buttonBackground": "#b4d0ff",
 			"welcomePage.buttonHoverBackground": "#8ebbfe"
 		},
-		"workbench.settings.editor": "json"
+		"workbench.settings.editor": "json",
+
+		"[csharp]": {
+			"editor.codeLens": false,
+			"editor.lineNumbers": "on"
+		},
+		"[latex]": {
+			"editor.lineNumbers": "off"
+		}
 	}
 }
