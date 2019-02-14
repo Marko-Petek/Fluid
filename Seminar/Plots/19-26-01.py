@@ -66,6 +66,8 @@ def AddGaussiansToAxes(ax, x, y, x0s, y0s, stds, strides, cmaps):
 #%%
 fig = Plt.figure(num = 0, figsize = (6, 6), dpi = 72)
 axes3d = fig.gca(projection = '3d', xlim = (0, 100), ylim = (0, 100))
+axes3d.set_proj_type('ortho')
+axes3d.view_init(40, 45)
 axes3d.xaxis.set_major_locator(LinearLocator(5))                        # Remove ticks.
 axes3d.yaxis.set_major_locator(LinearLocator(5))
 axes3d.zaxis.set_major_locator(LinearLocator(3))
@@ -78,5 +80,3 @@ stds = [20.0, 12.0, 16.0, 24.0]                                                 
 strides = [5, 3, 4, 6]
 cmaps = [cm.get_cmap('Blues', 20), cm.get_cmap('Reds', 20), cm.get_cmap('Greens', 20), cm.get_cmap('Purples', 20)]
 AddGaussiansToAxes(axes3d, x, y, centralNodesT[0], centralNodesT[1], stds, strides, cmaps)
-
-#surf = ax.plot_wireframe(x, y, Gaussian(x0[0], y0[0], std[0]), rstride = 20, cstride = 20, color = 'red', alpha = 0.5, antialiased = True)
