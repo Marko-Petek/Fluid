@@ -7,13 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChannelFlow", "ChannelFlow\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{826A8B4D-D990-4A87-A221-ED37E2C9E872}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dynamics", "Dynamics\Dynamics.csproj", "{501BEFAA-BDE6-4E90-9433-77568EC59845}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internals", "Internals\Internals.csproj", "{E5D9C3C3-AAEF-4187-90B4-14E9CB53E1ED}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L03_Percolation", "L03_Percolation\L03_Percolation.csproj", "{7D1B0BF8-F6DE-426D-90F2-28E32A2037EB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "L02_SolarFlux", "L02_SolarFlux\L02_SolarFlux.csproj", "{2CC2AD79-41CE-4E01-9346-C1C957A4524E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
