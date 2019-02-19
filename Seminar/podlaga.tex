@@ -30,7 +30,7 @@ ki v vsaki točki domene $\Omega$ zadosti sistemu \texttt{PDE}, na meji $\Gamma$
 	\hspace{-60mm} \mathbf{x} = \{x, y\} \quad \text{in} \quad \mathbf{u} =  \{u, v, p, \omega\} \ . \nonumber
 \end{equation}
 \\[-4mm]
-Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitrost-tlak-vrtinčnost, ki jim za večjo nazornost primera umetno dodamo koeficiente $\alpha(\mathbf{x})$, $\beta(\mathbf{x})$, $\gamma(\mathbf{x})$ in $\delta(\mathbf{x})$:\\[0.05cm]
+Dinamiko naj opiše \textbf{sistem Stokesovih enačb} za nestisljive tekočine v obliki hitrost-tlak-vrtinčnost, ki jim v prid nazornosti primera umetno dodamo koeficiente $\alpha(\mathbf{x})$, $\beta(\mathbf{x})$, $\gamma(\mathbf{x})$ in $\delta(\mathbf{x})$:\\[0.05cm]
 \begin{minipage}{0.11\textwidth}
 	\hspace{1cm}
 \end{minipage}
@@ -92,9 +92,9 @@ oziroma na kratko:
 	\label{eq:compactPDE}
 	\vspace{1.5mm}
 \end{equation}
-V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Enačbe \eqref{eq:StokesXMom} - \eqref{eq:StokesCurl} lahko po zgledu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
+V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi spremenljivkami, v matriko $\mathbsf{A}_1$ vse koeficiente pred členi z odvodi odvisnih spremenljivk po koordinati $x_1$ in v $\mathbsf{A}_2$ vse koeficiente pred členi z odvodi odvisnih spremenljivk koordinati $x_2$. Ostale člene zložimo v vektor $\mathbf{f}$. Enačbe \eqref{eq:StokesXMom} - \eqref{eq:StokesCurl} lahko v duhu enačbe \eqref{eq:matrixPDE1} zapišemo kot:
 \vspace{1.5mm}
-\begin{equation}
+\begin{equation*}
 	\left[ \,
 	\begin{pmatrix}
 		0 & 0 & 0 & 0 \\
@@ -123,4 +123,4 @@ V matriko $\mathbsf{A}_0$ spravimo vse koeficiente pred členi z odvisnimi sprem
 		f_x(\mathbf{x}) \\ f_y(\mathbf{x}) \\ 0 \\ 0
 	\end{pmatrix} \ .
 	\vspace{1mm}
-\end{equation}
+\end{equation*}

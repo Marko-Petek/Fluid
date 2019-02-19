@@ -20,7 +20,7 @@ Ko smo prepričani, da ima funkcional \eqref{eq:GeneralFunctional} minimum pri r
 	\label{eq:trialFuncAroundSol}
 \end{equation}
 kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa realno število. Kadar gre $\varepsilon$ proti nič, gre $\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)$ proti rešitvi problema $\mathbf{u}(\mathbf{x})$, hkrati pa vemo, da ima funkcional $I$ pri $\mathbf{u}(\mathbf{x})$ minimum. Minimum funkcionala poiščemo tako, da razvoj \eqref{eq:trialFuncAroundSol} vstavimo v funkcional \eqref{eq:GeneralFunctional} namesto $\mathbf{w}(\mathbf{x})$ in izraz odvajamo po $\varepsilon$:
-\begin{equation}
+\begin{equation*}
 	\frac{\ud I}{\ud \varepsilon} \,
 	=
 	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \,
@@ -29,15 +29,15 @@ kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa re
 	=
 	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \ ,
 \label{eq:funcDerivative}
-\end{equation}
+\end{equation*}
 nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celoten izraz enačimo z nič:
-\begin{equation}
+\begin{equation*}
 	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \,
 	=
 	\, \lim_{\varepsilon \rightarrow 0} \int_{\Omega} \left(\frac{\ud F\big(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)\big)}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mathbf{v(\mathbf{x})} \ \ud \Omega \,
 	=
 	\, 0 \ .
-\end{equation}
+\end{equation*}
 Limita deluje le na prvi člen v integrandu, zato se variacijska izjava glasi:
 \begin{equation}
 	\boxed{\, \vphantom{\bigg)^2_3}
@@ -57,12 +57,12 @@ $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \t
 	}\hspace{20mm} \texttt{vektor ostanka .}
 	\label{eq:residual}
 \end{equation}
-Funkcija $\mathbf{w(x)}$, ki naredi ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
+Funkcija $\mathbf{w(x)}$, za katero je ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
 \begin{equation}
-	\int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu \mathbf{v(x)} \ \ud \Omega \, = \, 0 \ .
+	\hspace{21mm} \int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu \mathbf{v(x)} \ \ud \Omega \, = \, 0 \hspace{13mm} \texttt{načelo metode uteženih ostankov .}
 	\label{eq:GfemStatement}
 \end{equation}
-Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Ko $\mathbsf{A}$ ni sebi-adjugniran, namreč načelo \eqref{eq:GfemStatement} ni nujno zvesto osnovnemu problemu \texttt{PDE}. Metoda v tem primeru ne poseduje lastnosti najboljšega približka in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le s hudimi izboljšavami mreže, kar očitno okrnjuje praktičnost metode. Metoda končnih diferenc in metoda končnih volumnov sta zato v dinamiki tekočin še vedno v modi.
+Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Ko $\mathbsf{A}$ ni sebi-adjungiran, namreč načelo \eqref{eq:GfemStatement} ni nujno zvesto osnovnemu problemu \texttt{PDE}. Metoda v tem primeru ne poseduje lastnosti najboljšega približka in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le s hudimi izboljšavami mreže, kar očitno okrnjuje praktičnost metode. Metoda končnih diferenc in metoda končnih volumnov sta zato v dinamiki tekočin še vedno v modi.
 
 Podobno kot pri \texttt{GFEM} se tudi pri \texttt{LSFEM} opremo na vektor ostanka \eqref{eq:residual}, a reševanja variacijskega problema se lotimo na legitimen način. Ne zanašamo se na ad hoc načela, kot je zahteva \eqref{eq:GfemStatement}, ampak začnemo od začetka - s konstrukcijo funkcionala \eqref{eq:GeneralFunctional}. Sestavimo ga s kvadratom ostanka:
 \begin{equation}
@@ -71,7 +71,7 @@ Podobno kot pri \texttt{GFEM} se tudi pri \texttt{LSFEM} opremo na vektor ostank
 	\mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R\big(w(x)\big)} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
 	\label{eq:squareOfResidual}
 \end{equation}
-in funkcional, ki ga minimiziramo, se glasi:
+in tako se funkcional, ki ga minimiziramo, glasi:
 \begin{equation}
 	\boxed{
 		\, I\big[\mathbf{w(x)}\big]
@@ -81,7 +81,7 @@ in funkcional, ki ga minimiziramo, se glasi:
 	\hspace{1.3cm} \texttt{funkcional LSFEM ,}
 \end{equation}
 od koder dobi metoda svoje ime. Želimo dobiti variacijsko izjavo za ta specifični funkcional, zato v splošno izjavo \eqref{eq:variationalStatement} vstavimo kvadrat vektorja ostanka \eqref{eq:squareOfResidual} in postopek izpeljemo do konca. Najprej torej izračunamo odvod integranda:
-\begin{equation}
+\begin{equation*}
 	\hspace{-10mm}
 	\left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T}
 	\mkern1mu = \,
@@ -89,21 +89,21 @@ od koder dobi metoda svoje ime. Želimo dobiti variacijsko izjavo za ta specifi�
 	= \mkern3mu
 	2 \mathbf{R(\widetilde{w})}^\mathsf{\mkern-1mu T} \mkern-4mu \cdot \mkern-1mu \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}}
 	\, = \mkern5mu
-	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \mkern-2mu \cdot \mathbsf{A}
-\end{equation}
+	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \mkern-5mu \cdot \mkern-2mu \mathbsf{A}
+\end{equation*}
 ter nato limito, ko gre $\varepsilon$ proti nič:
-\begin{equation}
+\begin{equation*}
 	\hspace{-7mm}
 	\lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T}
-	= \mkern5mu
-	\lim_{\varepsilon \rightarrow 0} \, \Big(2 \mkern1mu \big(\mathbsf{A} \! \cdot \! (\mathbf{u} \mkern-2mu + \mkern-2mu \varepsilon \mathbf{v}) - \mathbf{f}\big)^\mathsf{\mkern-2mu T} \mkern-3mu \cdot \mathbsf{A}\Big)
-	\, = \mkern5mu
-	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-2mu \cdot \mathbsf{A} \ .
-\end{equation}
+	=
+	\mkern5mu \lim_{\varepsilon \rightarrow 0} \ 2 \mkern1mu \big(\mathbsf{A} \! \cdot \! (\mathbf{u} \mkern-2mu + \mkern-2mu \varepsilon \mathbf{v}) - \mathbf{f}\big)^\mathsf{\mkern-2mu T} \mkern-6mu \cdot \mkern-2mu \mathbsf{A}\,
+	=
+	\mkern5mu 2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-4mu \cdot \mkern-2mu \mathbsf{A} \ .
+\end{equation*}
 Variacijska izjava za minimizacijo funkcionala \texttt{LSFEM} se zato glasi:
-\begin{equation}
+\begin{equation*}
 	\int_{\Omega} 2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-4.5mu \cdot \mkern-1mu (\mathbsf{A} \! \cdot \! \mathbf{v}) \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
-\end{equation}
+\end{equation*}
 Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem produktu, s čemer rezultata ne spremenimo) ter delimo z dve:
 \begin{equation}
 	\boxed{\

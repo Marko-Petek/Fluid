@@ -2,6 +2,32 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.1": {
+      "gtk-sharp-3/3.22.6.4": {
+        "type": "package",
+        "compile": {
+          "lib/net40/atk-sharp.dll": {},
+          "lib/net40/cairo-sharp.dll": {},
+          "lib/net40/gdk-sharp.dll": {},
+          "lib/net40/gio-sharp.dll": {},
+          "lib/net40/glib-sharp.dll": {},
+          "lib/net40/gtk-dotnet.dll": {},
+          "lib/net40/gtk-sharp.dll": {},
+          "lib/net40/pango-sharp.dll": {}
+        },
+        "runtime": {
+          "lib/net40/atk-sharp.dll": {},
+          "lib/net40/cairo-sharp.dll": {},
+          "lib/net40/gdk-sharp.dll": {},
+          "lib/net40/gio-sharp.dll": {},
+          "lib/net40/glib-sharp.dll": {},
+          "lib/net40/gtk-dotnet.dll": {},
+          "lib/net40/gtk-sharp.dll": {},
+          "lib/net40/pango-sharp.dll": {}
+        },
+        "build": {
+          "build/net40/_._": {}
+        }
+      },
       "Microsoft.CodeCoverage/15.8.0": {
         "type": "package",
         "compile": {
@@ -1683,7 +1709,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.1",
         "dependencies": {
-          "Internals": "1.0.0"
+          "Internals": "1.0.0",
+          "gtk-sharp-3": "3.22.6.4"
         },
         "compile": {
           "bin/placeholder/ChannelFlow.dll": {}
@@ -1705,6 +1732,33 @@
     }
   },
   "libraries": {
+    "gtk-sharp-3/3.22.6.4": {
+      "sha512": "at0wGuO8xli5QteXph4Z4RZo9trCRibRVtTpeU91WcpN2PH2PgUhqwx6DNyjJqAYQhMTRB1mSYgAKbZlP/E79Q==",
+      "type": "package",
+      "path": "gtk-sharp-3/3.22.6.4",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net40/atk-sharp.dll.config",
+        "build/net40/gdk-sharp.dll.config",
+        "build/net40/gio-sharp.dll.config",
+        "build/net40/glib-sharp.dll.config",
+        "build/net40/gtk-dotnet.dll.config",
+        "build/net40/gtk-sharp-3.targets",
+        "build/net40/gtk-sharp.dll.config",
+        "build/net40/pango-sharp.dll.config",
+        "gtk-sharp-3.3.22.6.4.nupkg.sha512",
+        "gtk-sharp-3.nuspec",
+        "lib/net40/atk-sharp.dll",
+        "lib/net40/cairo-sharp.dll",
+        "lib/net40/gdk-sharp.dll",
+        "lib/net40/gio-sharp.dll",
+        "lib/net40/glib-sharp.dll",
+        "lib/net40/gtk-dotnet.dll",
+        "lib/net40/gtk-sharp.dll",
+        "lib/net40/pango-sharp.dll"
+      ]
+    },
     "Microsoft.CodeCoverage/15.8.0": {
       "sha512": "2hwgoDq1ipHizvgBJG3SBhOnAQlq8eeyk19o2ywauP11+5DjkmDTNUjYglQsHgKKOkvPvCOAaFflQlLbkQnz3Q==",
       "type": "package",
@@ -5955,5 +6009,17 @@
         "warn": true
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'gtk-sharp-3 3.22.6.4' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
+      "libraryId": "gtk-sharp-3",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v2.1"
+      ]
+    }
+  ]
 }

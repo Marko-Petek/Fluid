@@ -1,11 +1,16 @@
 \section{Diskretizacija problema}
 
-Funkcije na domeni $\Omega$ so bile do te točke popolnoma svobodne. Dopuščali smo vse oblike odvisnosti, ki smo jih lahko nad domeno napeli. Če želimo z reševanjem variacijskega problema \eqref{eq:LsfemVariationalStatement} nadaljevati, jim moramo del svobode odvzeti. Po domeni $\Omega$ kar-se-da enakomerno razporedimo $N$ vozlišč in nad vsakim napnemo skalarno \textbf{vozliščno funkcijo} $\Phi_i(\mathbf{x})$. Poljubno skalarno funkcijo $v(\mathbf{x})$ na domeni nato aproksimiramo s sestavljanko $N$ vozliščnih funkcij:
+Funkcije, ki smo jih do te točke napenjali nad domeno $\Omega$, so bile  popolnoma svobodne. Domena kljub svoji omejenosti vsebuje neskončno število točk in v vsaki izmed njih smo funkcijam dovoljevali vrednost, neodvisno od vrednosti v ostalih točkah. Dovoljevali smo jim neskončno število prostostnih stopenj. Če želimo z reševanjem variacijskega problema \eqref{eq:LsfemVariationalStatement} nadaljevati, jim moramo del svobode odvzeti. Vzemimo skrajno preprosto kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo z $n$ (= 9) \textbf{elementi} in $N$ (= 16) \textbf{vozlišči} (slika \ref{fig:regionAndNodeFunctions}a). Nad vozlišči napnimo prav toliko vozliščnih funkcij:
+\begin{IEEEeqnarray*}{rc}
+    \hspace{16mm} \Phi_i(\bm\chi) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije ,}
+\end{IEEEeqnarray*}
+z nastavljivo višino (\textbf{vozliščno vrednostjo}) $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
+
+Poljubno skalarno funkcijo $v(\mathbf{x})$ na domeni nato aproksimiramo s sestavljanko $N$ vozliščnih funkcij:
 \begin{equation}
     v(\mathbf{x}) = \sum_{i = 1}^N v_i  \mkern3mu \Phi_i(\mathbf{x}) \ .
     \label{eq:nodalSeries}
 \end{equation}
-Za primer vzemimo kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$ in nanjo postavimo pravokotno mrežo s šestnajstimi vozlišči. Vsakemu vozlišču pripadata vozliščna funkcija $\Phi_i(\bm\chi)$ in \textbf{vozliščna vrednost} $v_i\mkern1mu$. Slednja predstavlja višino vozliščne funkcije v tej točki. Posamezne ploskvice, ki sestavljajo mrežo, so \textbf{elementi} mreže. Ukvarjali se bomo s štirikotnimi elementi, čeprav se najpogosteje uporabljajo trikotni elementi. Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev elementov Kartezična. Mreža je lahko pri \texttt{FEM} tudi nestrukturirana, kar je ena izmed prednosti metode. V prid nazornosti bomo risali le osrednje vozliščne funkcije (slika \ref{fig:regionAndNodeFunctions}b).
 
 \begin{figure}[ht]
     \begin{subfigure}[b]{0.42\textwidth}
@@ -19,11 +24,11 @@ Za primer vzemimo kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times 
         \includegraphics[width=0.94\textwidth]{Slike/undeformedNodeFs.png}
         \caption{}
     \end{subfigure}
-    \caption{(a) Pravokotna domena s šestnajstimi vozlišči (rdeče številke) in devetimi elementi (modre številke) ter (b) nad vozlišči napete vozliščne funkcije.}
+    \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le osrednje vozliščne funkcije.}
     \label{fig:regionAndNodeFunctions}
 \end{figure}
 
-Vsaka vozliščna funkcija $\Phi_i$ mora pokriti samo elemente, ki se $i$-tega vozlišča dotikajo. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
+Nobena vozliščna funkcija $\Phi_i$ se ne sme raztezati nad elementi, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
 
 Ozrimo se na variacijsko izjavo \eqref{eq:LsfemVariationalStatement} ter si predstavljajmo funkcije $\mathbsf{A}(\mathbf{x}), \mathbf{u(x)}, \mathbf{v(x)}$ in $\mathbf{f(x)}$ zapisane v smislu razvoja po vozliščnih funkcijah \eqref{eq:nodalSeries}. Zaslutimo, da bomo računali prekrivne integrale vozliščnih funkcij:
 \begin{equation}
@@ -79,6 +84,8 @@ nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajsk
 \begin{equation}
     u_i(\mathbf{x}) = \sum_{a = 1}^N \Phi^{a0} u^{a0}_i
 \end{equation}
+
+Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev elementov Kartezična. Mreža je lahko pri \texttt{FEM} tudi nestrukturirana, kar je ena izmed prednosti metode.
 
 Potem omejimo Diskretizacija problema 
 
