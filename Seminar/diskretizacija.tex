@@ -1,9 +1,12 @@
 \section{Diskretizacija problema}
 
-Funkcije, ki smo jih do te točke napenjali nad domeno $\Omega$, so bile  popolnoma svobodne. Domena kljub svoji omejenosti vsebuje neskončno število točk in v vsaki izmed njih smo funkcijam dovoljevali vrednost, neodvisno od vrednosti v ostalih točkah. Dovoljevali smo jim neskončno število prostostnih stopenj. Če želimo z reševanjem variacijskega problema \eqref{eq:LsfemVariationalStatement} nadaljevati, jim moramo del svobode odvzeti. Vzemimo skrajno preprosto kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo z $n$ (= 9) \textbf{elementi} in $N$ (= 16) \textbf{vozlišči} (slika \ref{fig:regionAndNodeFunctions}a). Nad vozlišči napnimo prav toliko vozliščnih funkcij:
+Za reševanje problema z računalnikom moramo abs\-trakt\-no zastavitev \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami narediti oprijemljivejšo. Domena $\Omega$ namreč kljub omejenosti vsebuje neskončno število točk, v katerih funkcijam dopuščamo neodvisne vrednosti. Število prostostnih stopenj omejimo tako, da poljubno funkcijo $v(\mathbf{x})$ razvijemo v vrsto $N$ baznih funkcij, ki jih izberemo sami:
 \begin{IEEEeqnarray*}{rc}
     \hspace{16mm} \Phi_i(\bm\chi) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije ,}
 \end{IEEEeqnarray*}
+
+Vzemimo skrajno preprosto kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo z $n$ (= 9) \textbf{elementi} in $N$ (= 16) \textbf{vozlišči} (slika \ref{fig:regionAndNodeFunctions}a). Nad vozlišči napnimo prav toliko vozliščnih funkcij:
+
 z nastavljivo višino (\textbf{vozliščno vrednostjo}) $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
 
 Poljubno skalarno funkcijo $v(\mathbf{x})$ na domeni nato aproksimiramo s sestavljanko $N$ vozliščnih funkcij:
