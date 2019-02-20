@@ -1,19 +1,16 @@
 \section{Diskretizacija problema}
 
-Za reševanje problema z računalnikom moramo abs\-trakt\-no zastavitev \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami narediti oprijemljivejšo. Domena $\Omega$ namreč kljub omejenosti vsebuje neskončno število točk, v katerih funkcijam dopuščamo neodvisne vrednosti. Število prostostnih stopenj omejimo tako, da poljubno funkcijo $v(\mathbf{x})$ razvijemo v vrsto $N$ baznih funkcij, ki jih izberemo sami:
+Za reševanje problema z računalnikom moramo abs\-trakt\-no zastavitev problema \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami diskretizirati. Domena $\Omega$ kljub omejenosti vsebuje neskončno število točk, v katerih obstajajo funkcijske vrednosti: funkcije so na domeni $\Omega$ povsod goste. To lastnost funkcij želimo ohraniti, hkrati pa iskanje omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
 \begin{IEEEeqnarray*}{rc}
-    \hspace{16mm} \Phi_i(\bm\chi) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije ,}
+    \hspace{16mm} \Phi_i(\mathbf{x}) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
 \end{IEEEeqnarray*}
-
-Vzemimo skrajno preprosto kvadratno domeno $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo z $n$ (= 9) \textbf{elementi} in $N$ (= 16) \textbf{vozlišči} (slika \ref{fig:regionAndNodeFunctions}a). Nad vozlišči napnimo prav toliko vozliščnih funkcij:
-
-z nastavljivo višino (\textbf{vozliščno vrednostjo}) $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
-
-Poljubno skalarno funkcijo $v(\mathbf{x})$ na domeni nato aproksimiramo s sestavljanko $N$ vozliščnih funkcij:
+Predstavljamo si jih kot hribčke na domeni $\Omega$. Problemu omejimo število prostostnih stopenj tako, da dopustimo le obstoj tistih funkcij $v(\mathbf{x})$, ki so superpozicija vozliščnih funkcij. To so funkcije, ki jih lahko zapišemo kot vrsto vozliščnih funkcij $\Phi_i(\mathbf{x})$ s koeficienti $v_i$:
+\vspace{-3mm}
 \begin{equation}
     v(\mathbf{x}) = \sum_{i = 1}^N v_i  \mkern3mu \Phi_i(\mathbf{x}) \ .
     \label{eq:nodalSeries}
 \end{equation}
+S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Naslikajmo idejo na skrajno preprosti kvadratni domeni $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo s šestnajstimi vozlišči (slika \ref{fig:regionAndNodeFunctions}a) in nad njimi napnemo prav toliko vozliščnih funkcij z nastavljivimi višinami $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
 
 \begin{figure}[ht]
     \begin{subfigure}[b]{0.42\textwidth}
@@ -27,11 +24,11 @@ Poljubno skalarno funkcijo $v(\mathbf{x})$ na domeni nato aproksimiramo s sestav
         \includegraphics[width=0.94\textwidth]{Slike/undeformedNodeFs.png}
         \caption{}
     \end{subfigure}
-    \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le osrednje vozliščne funkcije.}
+    \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le štiri osrednje vozliščne funkcije.}
     \label{fig:regionAndNodeFunctions}
 \end{figure}
 
-Nobena vozliščna funkcija $\Phi_i$ se ne sme raztezati nad elementi, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
+Štirikotne ploskvice, ki nastanejo s postavitvijo vozlišč, imenujemo \textbf{elementi}. Nobena vozliščna funkcija $\Phi_i$ ne sme pokrivati elementov, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
 
 Ozrimo se na variacijsko izjavo \eqref{eq:LsfemVariationalStatement} ter si predstavljajmo funkcije $\mathbsf{A}(\mathbf{x}), \mathbf{u(x)}, \mathbf{v(x)}$ in $\mathbf{f(x)}$ zapisane v smislu razvoja po vozliščnih funkcijah \eqref{eq:nodalSeries}. Zaslutimo, da bomo računali prekrivne integrale vozliščnih funkcij:
 \begin{equation}
