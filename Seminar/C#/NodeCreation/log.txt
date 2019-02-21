@@ -1,0 +1,8 @@
+16:24     Program started.                                0         Seminar/C#/NodeCreation/  Main              21    
+                                                                    Program.cs                                        
+          Created an array!                               0,0239    Seminar/C#/NodeCreation/  Main              36    
+                                                                    Program.cs                                        
+16:36     Program started.                                0         Seminar/C#/NodeCreation/  Main              21    
+                                                                    Program.cs                                        
+          Created an array!                               47,7      Seminar/C#/NodeCreation/  Main              36    
+                                                                    Program.cs                                        

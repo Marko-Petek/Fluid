@@ -5,14 +5,28 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "ChannelFlow Debug",
             "type": "coreclr",
             "request": "launch",
             //"preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ChannelFlow/bin/Debug/netcoreapp2.1/ChannelFlow.dll",
+            "program": "${workspaceFolder}/ChannelFlow/bin/Debug/netcoreapp2.2/ChannelFlow.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ChannelFlow",
+            // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "NodeCreation Debug",
+            "type": "coreclr",
+            "request": "launch",
+            //"preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Seminar/C#/NodeCreation/bin/Debug/netcoreapp2.2/NodeCreation.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Seminar/C#/NodeCreation",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "integratedTerminal",
             "stopAtEntry": false,

@@ -90,6 +90,21 @@
             },
             "problemMatcher": "$msCompile",
             "group": "none"
+        },
+        {
+            "label": "Run NodeCreation",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/Seminar/C#/NodeCreation/NodeCreation.csproj"
+            ],
+            "options": {
+                "cwd": "./Seminar/C#/NodeCreation"
+            },
+            "problemMatcher": "$msCompile",
+            "group": "none"
         }
     ]
 }

@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internals", "Internals\Internals.csproj", "{E5D9C3C3-AAEF-4187-90B4-14E9CB53E1ED}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Seminar", "Seminar", "{9CC1299A-B78C-463F-969B-3B53289525C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "C#", "C#", "{7C260B2E-29F0-453A-85A5-5AEC7DE1EDC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeCreation", "Seminar\C#\NodeCreation\NodeCreation.csproj", "{3B172432-26C3-40BE-829B-E90069BBA188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +100,18 @@ Global
 		{2CC2AD79-41CE-4E01-9346-C1C957A4524E}.Release|x64.Build.0 = Release|Any CPU
 		{2CC2AD79-41CE-4E01-9346-C1C957A4524E}.Release|x86.ActiveCfg = Release|Any CPU
 		{2CC2AD79-41CE-4E01-9346-C1C957A4524E}.Release|x86.Build.0 = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|x64.Build.0 = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Debug|x86.Build.0 = Debug|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x64.ActiveCfg = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x64.Build.0 = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x86.ActiveCfg = Release|Any CPU
+		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
@@ -115,5 +133,9 @@ Global
 		$2.NewLineForClausesInQuery = False
 		$2.SpaceAfterControlFlowStatementKeyword = False
 		$2.scope = text/x-csharp
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7C260B2E-29F0-453A-85A5-5AEC7DE1EDC5} = {9CC1299A-B78C-463F-969B-3B53289525C0}
+		{3B172432-26C3-40BE-829B-E90069BBA188} = {7C260B2E-29F0-453A-85A5-5AEC7DE1EDC5}
 	EndGlobalSection
 EndGlobal
