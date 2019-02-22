@@ -10,6 +10,12 @@ namespace Fluid.Internals
 {
     public class HardDrive
     {
+        FileInfo _File;
+        public FileInfo File => _File;
+
+        DirectoryInfo _Directory;
+        public DirectoryInfo Directory => _Directory;
+
         public const string DefaultFileName = "Output.txt";
         public string AppDirPath { get; set; }
         string _DirPath;
