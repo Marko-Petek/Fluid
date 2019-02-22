@@ -25,3 +25,17 @@
                                                                      rogram.cs                                          
 18:56     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
                                                                      rogram.cs                                          
+22:09     Program started.                                                            0         Seminar/C#/NodeCreation/Program.cs       Main              24    
+          Created an array!                                                           0,0318    Seminar/C#/NodeCreation/Program.cs       Main              39    
+          −3                                                                          0,000137  Seminar/C#/NodeCreation/Program.cs       Main              40    
+22:29     Program started.                                                            0         Seminar/C#/NodeCreation/Program.cs       Main              24    
+22:30     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                      rogram.cs                                          
+22:31     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                      rogram.cs                                          
+22:32     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                      rogram.cs                                          
+22:34     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                      rogram.cs                                          
+22:36     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                      rogram.cs                                          

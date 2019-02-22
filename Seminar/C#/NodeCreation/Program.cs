@@ -37,7 +37,7 @@ namespace Fluid.Seminar.NodeCreation
                 ).ToArray();
 
                 Reporter.Write("Created an array!");
-                Reporter.Write(nodes[0][0][0][0].ToString());
+                Drive.Write(nodes);
             }
             catch(Exception exc) {
                 Reporter.Write($"Exception occured:  {exc.Message}");

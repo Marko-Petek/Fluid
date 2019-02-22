@@ -85,9 +85,24 @@ namespace Fluid.Internals
         }
 
         /// <summary>Writes an IEnumerable to hard drive.</summary><param name="enumerable">Enumerable to write to HD.</param>
-        public void Write(IEnumerable enumerable, string fullPathOrFileName) {
-            FullPath = fullPath;                                                // TODO: Implement a method that determines which one user entered.
+        public void Write(IEnumerable enumerable, string pathOrName) {
+            
+            if(IsName(pathOrName)) {
+                File = pathOrName;
+            }
+            else {
+                FullPath = pathOrName;
+            }
             Write(enumerable);
+        }
+
+        bool IsName(string pathOrName) {
+            var stringArray = pathOrName.Split('/');
+
+            if(stringArray.Length > 1)                 // It's a path.
+                return false;
+            else                                        // It's a name.
+                return true;
         }
 
         ~HardDrive() {
