@@ -117,3 +117,6 @@
                                                                     rogram.cs                                          
           Created an array!                               0,026     Seminar/C#/NodeCreation/P  Main              39    
                                                                     rogram.cs                                          
+15:23     Program started.                                0         Internals/Toolbox.cs       Reporter          12    
+          Created an array!                               0,019     Seminar/C#/NodeCreation/P  Main              27    
+                                                                    rogram.cs                                          

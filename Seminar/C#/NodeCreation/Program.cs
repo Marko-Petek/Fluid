@@ -4,26 +4,14 @@ using System.Linq;
 using static System.Linq.Enumerable;
 using Fluid.Internals;
 using Fluid.Internals.Development;
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Seminar.NodeCreation
 {
     class Program
     {
-        /// <summary>Program's main reporter.</summary>
-        static AppReporter _Reporter;
-        /// <summary>Program's main reporter.</summary>
-        public static AppReporter Reporter => _Reporter;
-
-        static HardDrive _Drive;
-        public static HardDrive Drive => _Drive;
-
         static void Main(string[] args) {
-            try {
-                Console.OutputEncoding = Encoding.UTF8;
-                _Reporter = new AppReporter(VerbositySettings.Moderate);
-                _Drive = new HardDrive();
-                
+            try {  
                 var nodes = 
                 Range(0,3).Select(row =>
                     Range(0,3).Select(col =>

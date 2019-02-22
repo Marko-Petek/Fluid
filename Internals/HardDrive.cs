@@ -12,27 +12,27 @@ namespace Fluid.Internals
     {
         public const string DefaultFileName = "Output.txt";
         public string AppDirPath { get; set; }
-        string _Directory;
+        string _DirPath;
 
-        public string Directory {
-            get => _Directory;
+        public string DirPath {
+            get => _DirPath;
             set {
-                if(_Directory != value) {
-                    _Directory = value;
-                    _FullPath = value + "/" + File;
+                if(_DirPath != value) {
+                    _DirPath = value;
+                    _FullPath = value + "/" + FilePath;
                     _Writer?.Dispose();
                     _Writer = new StreamWriter(_FullPath);
                 }
             }
         }
-        string _File;
+        string _FilePath;
 
-        public string File {
-            get => _File;
+        public string FilePath {
+            get => _FilePath;
             set {
-                if(_File != value) {
-                    _File = value;
-                    _FullPath = Directory + "/" + value;
+                if(_FilePath != value) {
+                    _FilePath = value;
+                    _FullPath = DirPath + "/" + value;
                     _Writer?.Dispose();
                     _Writer = new StreamWriter(_FullPath);
                 }
@@ -47,9 +47,9 @@ namespace Fluid.Internals
                     _FullPath = value;
                     var splitPath = value.Split('/').Skip(1);
                     var dir = splitPath.Take(splitPath.Count() - 1).Select(word => "/" + word);
-                    _Directory = String.Concat(dir);
+                    _DirPath = String.Concat(dir);
                     var file = splitPath.TakeLast(1);
-                    _File = String.Concat(file);
+                    _FilePath = String.Concat(file);
                     _Writer?.Dispose();
                     _Writer = new StreamWriter(FullPath);
                 }
@@ -104,7 +104,7 @@ namespace Fluid.Internals
         public void Write<T>(T[] array, string pathOrName) where T : struct {
             
             if(IsName(pathOrName)) {
-                File = pathOrName;
+                FilePath = pathOrName;
             }
             else {
                 FullPath = pathOrName;
@@ -115,7 +115,7 @@ namespace Fluid.Internals
         public void Write<T>(T[][] array, string pathOrName) where T : struct {
             
             if(IsName(pathOrName)) {
-                File = pathOrName;
+                FilePath = pathOrName;
             }
             else {
                 FullPath = pathOrName;
@@ -126,7 +126,7 @@ namespace Fluid.Internals
         public void Write<T>(T[][][] array, string pathOrName) where T : struct {
             
             if(IsName(pathOrName)) {
-                File = pathOrName;
+                FilePath = pathOrName;
             }
             else {
                 FullPath = pathOrName;
@@ -137,7 +137,7 @@ namespace Fluid.Internals
         public void Write<T>(T[][][][] array, string pathOrName) where T : struct {
             
             if(IsName(pathOrName)) {
-                File = pathOrName;
+                FilePath = pathOrName;
             }
             else {
                 FullPath = pathOrName;
