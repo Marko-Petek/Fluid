@@ -5,7 +5,6 @@
 		}
 	],
 	"settings": {
-		"zenMode.hideActivityBar": true,
 		"editor.codeLens": true,
 		"editor.lineNumbers": "on",
 		"editor.useTabStops": true,
@@ -48,6 +47,7 @@
 			"input.foreground": "#000000",
 			"list.inactiveFocusBackground": "#90ff99",
 			"list.hoverBackground": "#fff898aa",
+			"list.warningForeground": "#e4a700",
 			"list.errorForeground": "#ff0000",
 			"list.activeSelectionForeground": "#000000",
 			"list.activeSelectionBackground": "#00ca117a",
@@ -97,6 +97,7 @@
 			"welcomePage.buttonHoverBackground": "#8ebbfe"
 		},
 		"workbench.settings.editor": "json",
+		"zenMode.hideActivityBar": true,
 
 		"[csharp]": {
 			"editor.codeLens": false,

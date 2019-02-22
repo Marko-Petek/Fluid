@@ -16,7 +16,7 @@ namespace Fluid.Seminar.NodeCreation
         public static AppReporter Reporter => _Reporter;
 
         static HardDrive _Drive;
-        public static HardDrive Drive => Drive;
+        public static HardDrive Drive => _Drive;
 
         static void Main(string[] args) {
             try {

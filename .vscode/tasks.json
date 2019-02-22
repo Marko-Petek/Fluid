@@ -8,8 +8,8 @@
             "args": [
                 "msbuild",
                 "Fluid.sln",
-                "/p:DefineConstants=REPORT",
-                "/t:Rebuild"
+                "/p:DefineConstants=REPORT;Configuration=DEBUG",
+                "/t:Rebuild",
             ],
             "problemMatcher": "$msCompile",
             "group": {

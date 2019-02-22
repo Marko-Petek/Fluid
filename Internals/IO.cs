@@ -2,24 +2,77 @@ using System;
 using System.IO;
 using System.Text;
 using System.Globalization;
-using static System.Console;
 using static System.Char;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
+using static Fluid.Internals.Operations;
 
 namespace Fluid.Internals
 {
     public static class IO
     {
+        public static void Write<T>(T[] array, StreamWriter sw) where T : struct {
+            int loop = array.Length - 1;
+            sw.Write('{');
+            for(int i = 0; i < loop; ++i) {
+                sw.Write($"{array[i].ToString()}, ");
+            }
+            sw.Write($"{array[loop]}}}");
+        }
+
+        public static void Write<T>(T[][] array, StreamWriter sw) where T : struct {
+            int loop = array.Length - 1;
+            sw.Write('{');
+            for(int i = 0; i < loop; ++i) {
+                Write(array[i], sw);
+                sw.Write(", ");
+            }
+            Write(array[loop], sw);
+            sw.Write('}');
+        }
+
+        public static void Write<T>(T[][][] array, StreamWriter sw) where T : struct {
+            int loop = array.Length - 1;
+            sw.Write('{');
+            for(int i = 0; i < loop; ++i) {
+                Write(array[i], sw);
+                sw.Write(", ");
+            }
+            Write(array[loop], sw);
+            sw.Write('}');
+        }
+
+        public static void Write<T>(T[][][][] array, StreamWriter sw) where T : struct {
+            int loop = array.Length - 1;
+            sw.Write('{');
+            for(int i = 0; i < loop; ++i) {
+                Write(array[i], sw);
+                sw.Write(", ");
+            }
+            Write(array[loop], sw);
+            sw.Write('}');
+        }
+
+        public static void Write<T>(T[][][][][] array, StreamWriter sw) where T : struct {
+            int loop = array.Length - 1;
+            sw.Write('{');
+            for(int i = 0; i < loop; ++i) {
+                Write(array[i], sw);
+                sw.Write(", ");
+            }
+            Write(array[loop], sw);
+            sw.Write('}');
+        }
+
         public static void Print<T>(this SparseRow<T> sparseRow)
         where T : struct, IEquatable<T> {
-            WriteLine(sparseRow.ToString());
+            Console.WriteLine(sparseRow.ToString());
         }
 
         public static void Print<T>(this SparseMat<T> sparseMatrix)
         where T : struct, IEquatable<T> {
-            WriteLine(sparseMatrix.ToString());
+            Console.WriteLine(sparseMatrix.ToString());
         }
 
         public static void WriteFile<T>(this List<List<T>> table, string fileName) {
@@ -342,21 +395,21 @@ namespace Fluid.Internals
 
             for(int i = 0; i < rowCount - 1; ++i) {
                 colCount = array[i].Length;
-                Write("{");
+                Console.Write("{");
 
                 for(int j = 0; j < colCount - 1; ++j) {
-                    Write($"{array[i][j].ToString()}, ");
+                    Console.Write($"{array[i][j].ToString()}, ");
                 }
-                WriteLine($"{array[i][colCount - 1].ToString()}}},");
+                Console.WriteLine($"{array[i][colCount - 1].ToString()}}},");
             }
             colCount = array[rowCount - 1].Length;
-                Write("{");
+                Console.Write("{");
 
                 for(int j = 0; j < colCount - 1; ++j) {
-                    Write($"{array[rowCount - 1][j].ToString()}, ");
+                    Console.Write($"{array[rowCount - 1][j].ToString()}, ");
                 }
-                WriteLine($"{array[rowCount - 1][colCount - 1].ToString()}}}");
-                Write("}");
+                Console.WriteLine($"{array[rowCount - 1][colCount - 1].ToString()}}}");
+                Console.Write("}");
         }
     }
 }

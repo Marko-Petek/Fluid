@@ -39,3 +39,81 @@
                                                                       rogram.cs                                          
 22:36     Program started.                                  0         Seminar/C#/NodeCreation/P  Main              24    
                                                                       rogram.cs                                          
+13:13     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0263    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:18     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0676    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:18     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0785    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:18     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0855    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:20     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,18      Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:20     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,115     Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:21     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0586    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:22     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0982    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:22     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,149     Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:25     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0694    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:30     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0831    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:39     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,18      Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:42     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0943    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+13:44     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0793    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:45     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0974    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:46     Program started.                                 0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                     rogram.cs                                          
+          Created an array!                                0,0742    Seminar/C#/NodeCreation/P  Main              39    
+                                                                     rogram.cs                                          
+13:59     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0619    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+14:08     Program started.                                                             0         Seminar/C#/NodeCreation/Program.cs        Main              24    
+          Created an array!                                                            0,0258    Seminar/C#/NodeCreation/Program.cs        Main              39    
+14:10     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,0275    Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          
+14:49     Program started.                                0         Seminar/C#/NodeCreation/P  Main              24    
+                                                                    rogram.cs                                          
+          Created an array!                               0,026     Seminar/C#/NodeCreation/P  Main              39    
+                                                                    rogram.cs                                          

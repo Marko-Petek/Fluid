@@ -80,12 +80,28 @@ namespace Fluid.Internals
         }
 
         /// <summary>Writes an IEnumerable to hard drive.</summary><param name="enumerable">Enumerable to write to HD.</param>
-        public void Write(IEnumerable enumerable) {
-            Writer.Write(enumerable.ToString());                    // We count on the fact that enumerable overrides its ToString method.
+        public void Write<T>(T[] array) where T : struct {
+            IO.Write(array, Writer);
+            Writer.Flush();
+        }
+
+        public void Write<T>(T[][] array) where T : struct {
+            IO.Write(array, Writer);
+            Writer.Flush();
+        }
+
+        public void Write<T>(T[][][] array) where T : struct {
+            IO.Write(array, Writer);
+            Writer.Flush();
+        }
+
+        public void Write<T>(T[][][][] array) where T : struct {
+            IO.Write(array, Writer);
+            Writer.Flush();
         }
 
         /// <summary>Writes an IEnumerable to hard drive.</summary><param name="enumerable">Enumerable to write to HD.</param>
-        public void Write(IEnumerable enumerable, string pathOrName) {
+        public void Write<T>(T[] array, string pathOrName) where T : struct {
             
             if(IsName(pathOrName)) {
                 File = pathOrName;
@@ -93,9 +109,43 @@ namespace Fluid.Internals
             else {
                 FullPath = pathOrName;
             }
-            Write(enumerable);
+            Write(array);
         }
 
+        public void Write<T>(T[][] array, string pathOrName) where T : struct {
+            
+            if(IsName(pathOrName)) {
+                File = pathOrName;
+            }
+            else {
+                FullPath = pathOrName;
+            }
+            Write(array);
+        }
+
+        public void Write<T>(T[][][] array, string pathOrName) where T : struct {
+            
+            if(IsName(pathOrName)) {
+                File = pathOrName;
+            }
+            else {
+                FullPath = pathOrName;
+            }
+            Write(array);
+        }
+
+        public void Write<T>(T[][][][] array, string pathOrName) where T : struct {
+            
+            if(IsName(pathOrName)) {
+                File = pathOrName;
+            }
+            else {
+                FullPath = pathOrName;
+            }
+            Write(array);
+        }
+
+        /// <summary>Checks whether a string is a full path or only a file name.</summary><param name="pathOrName">String to check.</param>
         bool IsName(string pathOrName) {
             var stringArray = pathOrName.Split('/');
 

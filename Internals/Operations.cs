@@ -15,7 +15,7 @@ namespace Fluid.Internals
         }
 
         /// <summary>N-1 times repeat {loopCode, sharedCode} and finally {endCode, sharedCode} once.</summary><param name="N">Number of pair calls.</param><param name="loopCode">Called only inside for loop as first in pair.</param><param name="sharedCode">Called inside for loop and at end as second in pair.</param><param name="endCode">Called only at end as first in pair.</param>
-        public static void ForV1(int N, Action loopCode, Action sharedCode, Action endCode) {
+        public static void For1(int N, Action loopCode, Action sharedCode, Action endCode) {
 
             for(int i = 0; i < N-1; ++i) {
                 loopCode();
@@ -26,7 +26,7 @@ namespace Fluid.Internals
         }
 
         /// <summary>N-1 times repeat {sharedCode, loopCode} and finally {sharedCode, endCode} once.</summary><param name="N">Number of pair calls.</param><param name="sharedCode">Called inside for loop and at end as first in pair.</param><param name="loopCode">Called only inside for loop as second in pair.</param><param name="endCode">Called only at end as second in pair.</param>
-        public static void ForV2(int N, Action sharedCode, Action loopCode, Action endCode) {
+        public static void For2(int N, Action sharedCode, Action loopCode, Action endCode) {
 
             for(int i = 0; i < N-1; ++i) {
                 sharedCode();
@@ -37,7 +37,7 @@ namespace Fluid.Internals
         }
 
         /// <summary>N-1 times repeat {sharedCode, loopCode} and finally {sharedCode, endCode} once.</summary><param name="N">Number of pair calls.</param><param name="sharedCode">Called inside for loop and at end as first in pair.</param><param name="loopCode">Called only inside for loop as second in pair.</param><param name="endCode">Called only at end as second in pair.</param>
-        public static void ForV3(int init, int N, Action sharedCode, Action<int> loopCode, Action endCode) {
+        public static void For3(int init, int N, Action sharedCode, Action<int> loopCode, Action endCode) {
 
             for(int i = init; i < N-1; ++i) {
                 sharedCode();
@@ -48,7 +48,7 @@ namespace Fluid.Internals
         }
 
         /// <summary>N-1 times repeat {sharedCode, loopCode} and finally {sharedCode, endCode} once.</summary><param name="N">Number of pair calls.</param><param name="sharedCode">Called inside for loop and at end as first in pair.</param><param name="loopCode">Called only inside for loop as second in pair.</param><param name="endCode">Called only at end as second in pair.</param>
-        public static void ForV4(int init, int N, Action<int> sharedCode, Action<int> loopCode, Action endCode) {
+        public static void For4(int init, int N, Action<int> sharedCode, Action<int> loopCode, Action endCode) {
 
             for(int i = init; i < N-1; ++i) {
                 sharedCode(i);
@@ -72,7 +72,7 @@ namespace Fluid.Internals
                 sourceString.CopyTo(0, chars, firstLineIndent, wrapLength - firstLineIndent);
                 int charIndex = wrapLength;                                                                         // Character in chars array which we are currently modifying. Next is zeroth character on second line.
 
-                ForV3(1, nLines,
+                For3(1, nLines,
                     sharedCode: () => {
                         chars[charIndex] = '\n';                                                                        // Add new line.
                         ++charIndex;
