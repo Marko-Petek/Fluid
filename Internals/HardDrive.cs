@@ -70,10 +70,11 @@ namespace Fluid.Internals
         public HardDrive() {
             var assembly = Assembly.GetExecutingAssembly();
             var dllLocation = assembly.Location;
-            string[] splitDllLoc = dllLocation.Split('/');
+            _File = new FileInfo(dllLocation);
+            _Directory = new DirectoryInfo(File.DirectoryName);
+            var parent = Directory.Parent;
 
-            int i = splitDllLoc.Length - 1;
-            while(splitDllLoc[i] != "Fluid") {
+            while(Directory.Parent != null) {
 
                 
                 if(i-- == 0)                                                // Path did not contain the word "Fluid".
