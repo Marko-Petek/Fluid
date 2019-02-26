@@ -1,0 +1,28 @@
+16:13     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0155    Seminar/C#/NodeCreation/P  Main              27    
+                                                                     rogram.cs                                          
+16:14     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0153    Seminar/C#/NodeCreation/P  Main              27    
+                                                                     rogram.cs                                          
+16:19     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          13    
+          Created an array!                                                            0,0151    Seminar/C#/NodeCreation/Program.cs        Main              27    
+16:22     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0153    Seminar/C#/NodeCreation/P  Main              27    
+                                                                     rogram.cs                                          
+          Exiting application.                             0,0012    Seminar/C#/NodeCreation/P  Main              36    
+                                                                     rogram.cs                                          
+16:23     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0154    Seminar/C#/NodeCreation/P  Main              27    
+                                                                     rogram.cs                                          
+          Exiting application.                             0,00121   Seminar/C#/NodeCreation/P  Main              36    
+                                                                     rogram.cs                                          
+16:37     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0151    Seminar/C#/NodeCreation/P  NodeCreation      26    
+                                                                     rogram.cs                                          
+          Exiting application.                             0,00129   Seminar/C#/NodeCreation/P  Main              43    
+                                                                     rogram.cs                                          
+16:39     Program started.                                 0         Internals/Toolbox.cs       Reporter          13    
+          Created an array!                                0,0175    Seminar/C#/NodeCreation/P  NodeCreation      26    
+                                                                     rogram.cs                                          
+          Exiting application.                             0,00116   Seminar/C#/NodeCreation/P  Main              43    
+                                                                     rogram.cs                                          

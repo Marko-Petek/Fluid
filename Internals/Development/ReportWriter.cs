@@ -10,24 +10,25 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Collections;
 using static Fluid.Internals.Development.AppReporter;
 using static Fluid.Internals.Operations;
+using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Development
 {
     /// <summary>Writes out messages to console or file as an aesthetic output table.</summary>
-    internal class ReportWriter
+    internal class ReportWriter : IDisposable
     {
         /// <summary>Number of columns (deduced from DefaultColWidths).</summary>
         readonly int _NCols;
         /// <summary>Widths of columns</summary>
         int[] _ColWidths;
         /// <summary>Previously (most recently) reported time.</summary>
-        DateTime _PrevReportedTime;
+        System.DateTime _PrevReportedTime;
 
 
         /// <summary>StringBuilder.</summary>
         StringBuilder StrBuilder { get; } = new StringBuilder(500);
         /// <summary>Writes messages to file.</summary><param name="FileInfo("log.txt"">Log file.</param>
-        StreamWriter Writer { get; }
+        FileWriter FileWriter { get; }
 
         AppReporter AppReporter { get; }
 
@@ -35,14 +36,14 @@ namespace Fluid.Internals.Development
 
         /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
         public ReportWriter(AppReporter appReporter) {
-            int buffer = Console.BufferWidth - _NCols * 2 - 12;              // spaces, some slack
+            int buffer = System.Console.BufferWidth - _NCols * 2 - 12;              // spaces, some slack
             int remainder = buffer - 8 - 8 - 16 - 4;
             int textWidth = (int)(0.66*remainder);
             int pathWidth = remainder - textWidth;
 
             _ColWidths = new int[] {8, textWidth, 8, pathWidth, 16, 4};
             _NCols = _ColWidths.Length;
-            Writer = new StreamWriter(new FileInfo("log.txt").FullName, true);
+            FileWriter = new FileWriter("report.txt", true);
             AppReporter = appReporter;
             _PrevReportedTime = AppReporter.StartTime;
         }
@@ -53,14 +54,14 @@ namespace Fluid.Internals.Development
             var prevMessageTime = (i != 0) ? AppReporter.Report.Messages[i-1].Time : message.Time;
             List<string> wrappedTime;
 
-            if(i == 0 || message.Time - _PrevReportedTime > TimeSpan.FromMinutes(1))                       // Only display time if it differs from previous time.
+            if(i == 0 || message.Time - _PrevReportedTime > System.TimeSpan.FromMinutes(1))                       // Only display time if it differs from previous time.
                 wrappedTime = message.Time.ToShortTimeString().WrapToLines(_ColWidths[0]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
             else
                 wrappedTime = new List<string> { " " };
 
             _PrevReportedTime = message.Time;
             var wrappedText = message.Text.WrapToLines(_ColWidths[1]);
-            TimeSpan dt = (message.Time - prevMessageTime);
+            System.TimeSpan dt = (message.Time - prevMessageTime);
             var wrappedDT = dt.TotalSeconds.ToString("G3").WrapToLines(_ColWidths[2]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
             var relPath = Regex.Match(message.Path, @"/Fluid/.*").ToString();
             relPath = relPath.Remove(0, 7);
@@ -96,20 +97,23 @@ namespace Fluid.Internals.Development
 
             if((AppReporter.Output & OutputSettings.Console) == OutputSettings.Console) {
                 foreach(var line in formattedLines)
-                    Console.WriteLine(line);
+                    TB.Console.WriteLine(line);
             }
 
             if((AppReporter.Output & OutputSettings.File) == OutputSettings.File) {
                 
                 foreach(var line in formattedLines)
-                    Writer.WriteLine(line);
+                    FileWriter.WriteLine(line);         // TODO: use TB.Drive
 
-                Writer.Flush();
+                FileWriter.Flush();
             }
         }
 
-        ~ReportWriter() {
-            Writer.Dispose();
+        public void Dispose() {
+            FileWriter.Dispose();
+            System.GC.SuppressFinalize(this);
         }
+
+        ~ReportWriter() => Dispose();
     }
 }
