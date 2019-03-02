@@ -12,14 +12,27 @@ namespace Fluid.Internals
 {
     public static class IO
     {
+        static CultureInfo _en_US = new CultureInfo("en-US");
+
         /// <summary>Write a 1D array with specified TextWriter.</summary><param name="array1d">1D array.</param><param name="tw">TextWriter which writes to an underlying stream.</param>
         public static void Write<T>(this T[] array1d, TextWriter tw) {
             int loop = array1d.Length - 1;
             tw.Write('{');
             for(int i = 0; i < loop; ++i) {
-                tw.Write($"{array1d[i].ToString()}, ");
+                //tw.Write($"{array1d[i].ToString("G17")}, ");
+                tw.Write(String.Format(
+                    _en_US,
+                    "{0:G17}, ",
+                    array1d[i])
+                );
             }
-            tw.Write($"{array1d[loop].ToString()}}}");
+            //tw.Write($"{array1d[loop].ToString():G17}}}");
+            tw.Write(String.Format(
+                _en_US, 
+                "{0:G17}{1}",
+                array1d[loop],
+                "}")
+            );
         }
         /// <summary>Write a 2D array with specified TextWriter.</summary><param name="array1d">2D array.</param><param name="tw">TextWriter which writes to an underlying stream.</param>
         public static void Write<T>(this T[][] array2d, TextWriter tw) {
@@ -108,55 +121,6 @@ namespace Fluid.Internals
         }
 
         // TODO: Finish SparseMatrixInt and write IO for it.
-
-        // public static void ConsoleWrite<T>(this SparseRow<T> sparseRow)
-        // where T : struct, IEquatable<T> {
-        //     Console.WriteLine(sparseRow.ToString());
-        // }
-
-        // public static void ConsoleWrite<T>(this SparseMat<T> sparseMatrix)
-        // where T : struct, IEquatable<T> {
-        //     Console.WriteLine(sparseMatrix.ToString());
-        // }
-
-        // public static void WriteFile<T>(this List<List<T>> table, string fileName) {
-
-        //     int rowCount = table.Count;
-        //     int colCount;
-        //     FileInfo file = new FileInfo(fileName);
-
-        //     using(StreamWriter sw = new StreamWriter(file.FullName, false)) {
-
-        //         for(int i = 0; i < rowCount; ++i) {
-        //             colCount = table[i].Count;
-
-        //             for(int j = 0; j < colCount; ++j) {
-        //                     sw.WriteLine(table[i][j].ToString());
-        //             }
-        //         }
-        //     }
-        // }
-
-        // public static void WriteFile<T>(this T[][][] table, string fileName) {
-
-        //     int rowCount = table.Length;
-        //     int colCount;
-        //     FileInfo file = new FileInfo(fileName);
-
-        //     using(StreamWriter sw = new StreamWriter(file.FullName, false)) {
-
-        //         for(int row = 0; row < rowCount; ++row) {
-        //             colCount = table[row].Length;
-
-        //             for(int col = 0; col < colCount; ++col) {
-
-        //                 for(int k = 0; k < 5; ++k) {
-        //                     sw.WriteLine(table[row][col][k].ToString());
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
 
         /// <summary>Reads Mathematica exported integrals needed to compute stiffness matrix which are produced by a single element of rectangular grid.</summary><param name="relativePath">Path to exported integrals.</param><remarks>[j][k][n][m] = [12 basis functions][12-j basis functions][5 term parts][5 term parts]</remarks>
         public static double[][][][] ReadRectStiffnessIntegrals(string relativePath) {
@@ -431,29 +395,5 @@ namespace Fluid.Internals
             }
             return results;
         }
-
-        // public static void Print<T>(this T[][] array) {
-
-        //     int rowCount = array.Length;
-        //     int colCount;
-
-        //     for(int i = 0; i < rowCount - 1; ++i) {
-        //         colCount = array[i].Length;
-        //         Console.Write("{");
-
-        //         for(int j = 0; j < colCount - 1; ++j) {
-        //             Console.Write($"{array[i][j].ToString()}, ");
-        //         }
-        //         Console.WriteLine($"{array[i][colCount - 1].ToString()}}},");
-        //     }
-        //     colCount = array[rowCount - 1].Length;
-        //         Console.Write("{");
-
-        //         for(int j = 0; j < colCount - 1; ++j) {
-        //             Console.Write($"{array[rowCount - 1][j].ToString()}, ");
-        //         }
-        //         Console.WriteLine($"{array[rowCount - 1][colCount - 1].ToString()}}}");
-        //         Console.Write("}");
-        // }
     }
 }

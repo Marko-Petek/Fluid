@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
-using static System.Linq.Enumerable;
+using static System.Math;
+
 using Fluid.Internals;
 using TB = Fluid.Internals.Toolbox;
 
@@ -11,17 +12,42 @@ namespace Fluid.Seminar.NodeCreation
     {
         static void NodeCreation() {
 
-            var mainNodes2 = (                          // Create a table of Nodes for instructive example.
-                from row in Range(-5,11)
+            var nodes = (                                                                   // Create a table of Nodes for instructive example.
+                from row in Enumerable.Range(0,10)
                 select (
-                    from col in Range(-5,11)
-                    select new double[] {col * (3.0/5), row * (3.0/5)}
+                    from col in Enumerable.Range(0,10)
+                    select new double[] {-3.0 + col * (6.0/9), -3.0 + row * (6.0/9)}
                 ).ToArray()
             ).ToArray();
 
-            TB.Reporter.Write("Created an array!");
-            TB.FileWriter.SetFile("Seminar/Mathematica/instructiveNodes.txt", false);
-            TB.FileWriter.WriteLine(mainNodes2);
+            TB.Reporter.Write("Created nodes array.");
+            TB.FileWriter.SetFile("Seminar/Mathematica/nodes.txt", false);
+            TB.FileWriter.WriteLine(nodes);
+            TB.Reporter.Write($"Written nodes array to {TB.FileWriter.File.FullName}");
+            TB.Rng.SetRange(-0.16, 0.16);                                                     // Set RNG range.
+
+            var transNodes = (
+                from row in nodes.Take(9).Skip(1)
+                select (
+                    from col in row.Take(9).Skip(1)
+                    select new double[] {col[0] + TB.Rng.Double(), col[1] + TB.Rng.Double()}
+                ).ToArray()
+            ).ToArray();
+
+            var transNodes2 = (
+                transNodes.Select( (row,i) =>
+                    Enumerable.Repeat(nodes[i+1][0], 1).Concat(row).Append(nodes[i+1][9]).ToArray()
+                )
+            ).ToArray();
+
+            var transNodes3 = (
+                Enumerable.Repeat(nodes[0], 1).Concat(transNodes2).Append(nodes[9]).ToArray()
+            ).ToArray();
+
+            TB.Reporter.Write("Created transNodes array.");
+            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes.txt", false);
+            TB.FileWriter.WriteLine(transNodes3);
+            TB.Reporter.Write($"Written transNodes array to {TB.FileWriter.File.FullName}");
         }
 
 

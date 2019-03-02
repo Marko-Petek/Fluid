@@ -39,50 +39,6 @@ namespace Fluid.Internals
         }
 
         public const string DefaultFileName = "output.txt";
-        // public string AppDirPath { get; set; }
-        // string _DirPath;
-
-        // public string DirPath {
-        //     get => _DirPath;
-        //     set {
-        //         if(_DirPath != value) {
-        //             _DirPath = value;
-        //             _FullPath = value + "/" + FilePath;
-        //             _Writer?.Dispose();
-        //             _Writer = new StreamWriter(_FullPath);
-        //         }
-        //     }
-        // }
-        // string _FilePath;
-
-        // public string FilePath {
-        //     get => _FilePath;
-        //     set {
-        //         if(_FilePath != value) {
-        //             _FilePath = value;
-        //             _FullPath = DirPath + "/" + value;
-        //             _Writer?.Dispose();
-        //             _Writer = new StreamWriter(_FullPath);
-        //         }
-        //     }
-        // }
-        // string _FullPath;
-        
-        // string FullPath {
-        //     get => _FullPath;
-        //     set {
-        //         if(_FullPath != value) {
-        //             _FullPath = value;
-        //             var splitPath = value.Split('/').Skip(1);
-        //             var dir = splitPath.Take(splitPath.Count() - 1).Select(word => "/" + word);
-        //             _DirPath = String.Concat(dir);
-        //             var file = splitPath.TakeLast(1);
-        //             _FilePath = String.Concat(file);
-        //             _Writer?.Dispose();
-        //             _Writer = new StreamWriter(FullPath);
-        //         }
-        //     }
-        // }
 
         StreamWriter _Writer;
         StreamWriter Writer => _Writer;
@@ -90,9 +46,13 @@ namespace Fluid.Internals
         /// <summary>Indicates whether a setting that requires reinitialization of StreamWriter has changed.</summary>
         bool SettingsChanged { get; set; }
 
+
+
         /// <summary>Writes data to hard drive.</summary>
         public FileWriter() : this(DefaultFileName, true) {
         }
+
+
 
         /// <summary>Writes data to hard drive.</summary>
         public FileWriter(string path, bool append) {
@@ -180,45 +140,6 @@ namespace Fluid.Internals
 
             IO.Write(array6d, Writer);
         }
-
-        // /// <summary>Write a 1D array to hard drive.</summary><param name="array1d">1D array.</param>
-        // public void Write<T>(T[] array1d, string name, bool append = true) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     Append = append;
-        //     File = new FileInfo(filePath);
-
-        //     IO.Write<T>(array1d, Writer);
-        // }
-        // /// <summary>Writes a 2D array to hard drive.</summary><param name="array2d">2D array to write to HD.</param>
-        // public void Write<T>(T[][] array2d, string name) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     var fileInfo = new FileInfo(filePath);
-        //     IO.Write<T>(array2d, Writer);
-        // }
-        // /// <summary>Writes a 3D array to hard drive.</summary><param name="array3d">3D array to write to HD.</param>
-        // public void Write<T>(T[][][] array3d, string name) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     var fileInfo = new FileInfo(filePath);
-        //     IO.Write<T>(array3d, Writer);
-        // }
-        // /// <summary>Writes a 4D array to hard drive.</summary><param name="array4d">4D array to write to HD.</param>
-        // public void Write<T>(T[][][][] array4d, string name) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     var fileInfo = new FileInfo(filePath);
-        //     IO.Write<T>(array4d, Writer);
-        // }
-        // /// <summary>Writes a 5D array to hard drive.</summary><param name="array5d">5D array to write to HD.</param>
-        // public void Write<T>(T[][][][][] array5d, string name) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     var fileInfo = new FileInfo(filePath);
-        //     IO.Write<T>(array5d, Writer);
-        // }
-        // /// <summary>Writes a 6D array to hard drive.</summary><param name="array6d">6D array to write to HD.</param>
-        // public void Write<T>(T[][][][][][] array6d, string name) {
-        //     string filePath = Path.Join(Directory.FullName, name);
-        //     var fileInfo = new FileInfo(filePath);
-        //     IO.Write<T>(array6d, Writer);
-        // }
 
         /// <summary>Write a 1D array to hard drive and append a NewLine.</summary><param name="array1d"> 1D array to write to HD.</param>
         public void WriteLine<T>(T[] array1d) {
