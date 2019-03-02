@@ -385,3 +385,104 @@
           /transNodes.txt                                                                                                
           Exiting application.                              2,68E−05  Seminar/C#/NodeCreation/P  Main              65    
                                                                       rogram.cs                                          
+16:01     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                        0,0274    Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                /Program.cs                                      
+          Written nodes array to /home/marko/Dokumen  0,00293   Seminar/C#/NodeCreation  NodeCreation      26    
+          ti/Fluid/Seminar/Mathematica/nodes.txt                /Program.cs                                      
+16:12     Program started.                             0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                         0,025     Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                 /Program.cs                                      
+          Written nodes array to /home/marko/Dokument  0,00227   Seminar/C#/NodeCreation  NodeCreation      26    
+          i/Fluid/Seminar/Mathematica/nodes.txt                  /Program.cs                                      
+16:14     Program started.                             0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                         0,022     Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                 /Program.cs                                      
+          Written nodes array to /home/marko/Dokument  0,00244   Seminar/C#/NodeCreation  NodeCreation      26    
+          i/Fluid/Seminar/Mathematica/nodes.txt                  /Program.cs                                      
+16:19     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                        0,0153    Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                /Program.cs                                      
+          Written nodes array to /home/marko/Dokumen  0,00182   Seminar/C#/NodeCreation  NodeCreation      26    
+          ti/Fluid/Seminar/Mathematica/nodes.txt                /Program.cs                                      
+          Created transNodes array.                   0,00353   Seminar/C#/NodeCreation  NodeCreation      55    
+                                                                /Program.cs                                      
+          Written transNodes array to /home/marko/Do  0,000335  Seminar/C#/NodeCreation  NodeCreation      58    
+          kumenti/Fluid/Seminar/Mathematica/transNod            /Program.cs                                      
+          es.txt                                                                                                 
+          Exiting application.                        4,44E−05  Seminar/C#/NodeCreation  Main              73    
+                                                                /Program.cs                                      
+16:20     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                        0,0164    Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                /Program.cs                                      
+          Written nodes array to /home/marko/Dokumen  0,00182   Seminar/C#/NodeCreation  NodeCreation      26    
+          ti/Fluid/Seminar/Mathematica/nodes.txt                /Program.cs                                      
+          Created transNodes array.                   0,00329   Seminar/C#/NodeCreation  NodeCreation      55    
+                                                                /Program.cs                                      
+          Written transNodes array to /home/marko/Do  0,00034   Seminar/C#/NodeCreation  NodeCreation      58    
+          kumenti/Fluid/Seminar/Mathematica/transNod            /Program.cs                                      
+          es.txt                                                                                                 
+          Exiting application.                        4,62E−05  Seminar/C#/NodeCreation  Main              73    
+                                                                /Program.cs                                      
+17:55     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                        0,0155    Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                /Program.cs                                      
+          Written nodes array to /home/marko/Dokumen  0,00188   Seminar/C#/NodeCreation  NodeCreation      26    
+          ti/Fluid/Seminar/Mathematica/nodes.txt                /Program.cs                                      
+          Created transNodes array.                   0,00319   Seminar/C#/NodeCreation  NodeCreation      55    
+                                                                /Program.cs                                      
+          Written transNodes array to /home/marko/Do  0,000344  Seminar/C#/NodeCreation  NodeCreation      58    
+          kumenti/Fluid/Seminar/Mathematica/transNod            /Program.cs                                      
+          es.txt                                                                                                 
+          Exiting application.                        5,27E−05  Seminar/C#/NodeCreation  Main              73    
+                                                                /Program.cs                                      
+17:57     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Created nodes array.                        0,0154    Seminar/C#/NodeCreation  NodeCreation      23    
+                                                                /Program.cs                                      
+          Written nodes array to /home/marko/Dokumen  0,00218   Seminar/C#/NodeCreation  NodeCreation      26    
+          ti/Fluid/Seminar/Mathematica/nodes.txt                /Program.cs                                      
+          Created transNodes array.                   0,00495   Seminar/C#/NodeCreation  NodeCreation      55    
+                                                                /Program.cs                                      
+          Written transNodes array to /home/marko/Do  0,000422  Seminar/C#/NodeCreation  NodeCreation      58    
+          kumenti/Fluid/Seminar/Mathematica/transNod            /Program.cs                                      
+          es.txt                                                                                                 
+          Exiting application.                        4,88E−05  Seminar/C#/NodeCreation  Main              73    
+                                                                /Program.cs                                      
+18:09     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written nodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica/node  0,0172    Seminar/C#/NodeCreation/Program.cs        NodeCreation      25    
+          s.txt                                                                                                                                                    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,00471   Seminar/C#/NodeCreation/Program.cs        NodeCreation      66    
+          /nodes3dF.txt                                                                                                                                            
+          Exiting application.                                                         9,45E−05  Seminar/C#/NodeCreation/Program.cs        Main              81    
+18:26     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written nodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica/node  0,0173    Seminar/C#/NodeCreation/Program.cs        NodeCreation      25    
+          s.txt                                                                                                                                                    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0066    Seminar/C#/NodeCreation/Program.cs        NodeCreation      82    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,000823  Seminar/C#/NodeCreation/Program.cs        Main              106   
+18:30     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written nodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica/node  0,0173    Seminar/C#/NodeCreation/Program.cs        NodeCreation      25    
+          s.txt                                                                                                                                                    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,00489   Seminar/C#/NodeCreation/Program.cs        NodeCreation      92    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,000749  Seminar/C#/NodeCreation/Program.cs        Main              119   
+19:12     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0246    Seminar/C#/NodeCreation/Program.cs        NodeCreation      93    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,00119   Seminar/C#/NodeCreation/Program.cs        Main              120   
+19:47     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0241    Seminar/C#/NodeCreation/Program.cs        NodeCreation      93    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,00117   Seminar/C#/NodeCreation/Program.cs        Main              120   
+19:51     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0245    Seminar/C#/NodeCreation/Program.cs        NodeCreation      93    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,00125   Seminar/C#/NodeCreation/Program.cs        Main              120   
+19:52     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,024     Seminar/C#/NodeCreation/Program.cs        NodeCreation      93    
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,00121   Seminar/C#/NodeCreation/Program.cs        Main              120   
+20:42     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0225    Seminar/C#/NodeCreation/Program.cs        NodeCreation      113   
+          /transNodes.txt                                                                                                                                          
+          Exiting application.                                                         0,00133   Seminar/C#/NodeCreation/Program.cs        Main              146   

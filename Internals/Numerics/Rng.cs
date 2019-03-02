@@ -13,7 +13,8 @@ namespace Fluid.Internals.Numerics
         }
 
         public void SetRange(double min, double max) {
-
+            Min = min;
+            Max = max;
         }
 
         public int Int32() => Random.Next((int)Min, (int)Max);

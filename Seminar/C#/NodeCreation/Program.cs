@@ -20,34 +20,115 @@ namespace Fluid.Seminar.NodeCreation
                 ).ToArray()
             ).ToArray();
 
-            TB.Reporter.Write("Created nodes array.");
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodes.txt", false);
-            TB.FileWriter.WriteLine(nodes);
-            TB.Reporter.Write($"Written nodes array to {TB.FileWriter.File.FullName}");
-            TB.Rng.SetRange(-0.16, 0.16);                                                     // Set RNG range.
+            TB.Rng.SetRange(-0.19, 0.19);                                                     // Set RNG range.
 
-            var transNodes = (
-                from row in nodes.Take(9).Skip(1)
-                select (
-                    from col in row.Take(9).Skip(1)
-                    select new double[] {col[0] + TB.Rng.Double(), col[1] + TB.Rng.Double()}
+            var transNodes1 = (
+                nodes.Take(9).Skip(1).
+                Select( row =>
+                    row.Take(9).Skip(1).
+                    Select( col =>
+                        new double[] {col[0] + TB.Rng.Double(), col[1] + TB.Rng.Double()}
+                    ).ToArray()
                 ).ToArray()
             ).ToArray();
 
             var transNodes2 = (
-                transNodes.Select( (row,i) =>
-                    Enumerable.Repeat(nodes[i+1][0], 1).Concat(row).Append(nodes[i+1][9]).ToArray()
+                transNodes1.Select( (row,i) =>
+                    new double[][] {nodes[i+1][0]}.
+                    Concat(row).
+                    Append(nodes[i+1][9]).
+                    ToArray()
                 )
             ).ToArray();
 
-            var transNodes3 = (
-                Enumerable.Repeat(nodes[0], 1).Concat(transNodes2).Append(nodes[9]).ToArray()
+            var transNodes = (
+                new double[][][] {nodes[0]}.
+                Concat(transNodes2).
+                Append(nodes[9]).
+                ToArray()
             ).ToArray();
 
-            TB.Reporter.Write("Created transNodes array.");
+            var nodes3dF = (
+                nodes.Select( row =>
+                    row.Select( col =>
+                        new double[] {col[0], col[1], 0.0}
+                     ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            var transNodes3dF = (
+                transNodes.Select( row =>
+                    row.Select( col =>
+                        new double[] {col[0], col[1], 0.0}
+                     ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            var nodes3dMF = (
+                nodes.Take(7).Skip(3).
+                Select( row =>
+                    row.Take(7).Skip(3).
+                    Select( col =>
+                        new double[] {col[0], col[1], 0.0}
+                    ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            var nodes3dMT = (
+                nodes.Take(7).Skip(3).
+                Select( row =>
+                    row.Take(7).Skip(3).
+                    Select( col =>
+                        new double[] {col[0], col[1], 1.0}
+                    ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            var transNodes3dMF = (
+                transNodes.Take(7).Skip(3).
+                Select( row =>
+                    row.Take(7).Skip(3).
+                    Select( col =>
+                        new double[] {col[0], col[1], 0.0}
+                    ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            var transNodes3dMT = (
+                transNodes.Take(7).Skip(3).
+                Select( row =>
+                    row.Take(7).Skip(3).
+                    Select( col =>
+                        new double[] {col[0], col[1], 1.0}
+                    ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/nodes.txt", false);
+            TB.FileWriter.WriteLine(nodes);
+            //TB.Reporter.Write($"Written nodes array to {TB.FileWriter.File.FullName}");
+
             TB.FileWriter.SetFile("Seminar/Mathematica/transNodes.txt", false);
-            TB.FileWriter.WriteLine(transNodes3);
+            TB.FileWriter.WriteLine(transNodes);
             TB.Reporter.Write($"Written transNodes array to {TB.FileWriter.File.FullName}");
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dF.txt", false);
+            TB.FileWriter.WriteLine(nodes3dF);
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dF.txt", false);
+            TB.FileWriter.WriteLine(transNodes3dF);
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dMF.txt", false);
+            TB.FileWriter.WriteLine(nodes3dMF);
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dMT.txt", false);
+            TB.FileWriter.WriteLine(nodes3dMT);
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dMF.txt", false);
+            TB.FileWriter.WriteLine(transNodes3dMF);
+
+            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dMT.txt", false);
+            TB.FileWriter.WriteLine(transNodes3dMT);
         }
 
 
