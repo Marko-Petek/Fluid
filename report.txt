@@ -486,3 +486,9 @@
           Written transNodes array to /home/marko/Dokumenti/Fluid/Seminar/Mathematica  0,0225    Seminar/C#/NodeCreation/Program.cs        NodeCreation      113   
           /transNodes.txt                                                                                                                                          
           Exiting application.                                                         0,00133   Seminar/C#/NodeCreation/Program.cs        Main              146   
+23:39     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          14    
+          Written transNodes array to /home/marko/Dokumenti/Fizikalne aplikacije/Flu  0,0178    Seminar/C#/NodeCreation/Program.cs       NodeCreation      131   
+          id/Seminar/Mathematica/transNodes.txt                                                                                                                  
+          Exiting application.                                                        0,000964  Seminar/C#/NodeCreation/Program.cs       Main              164   
+23:56     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          14    
+          Exiting application.                                                        0,019     Seminar/C#/NodeCreation/Program.cs       Main              149   

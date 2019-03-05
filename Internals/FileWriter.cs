@@ -76,7 +76,7 @@ namespace Fluid.Internals
             SetFile(path, append);
         }
 
-        public void SetFile(string path, bool append) {
+        public void SetFile(string path, bool append = false) {
             string filePath = Path.Combine(Directory.FullName, path);
             _File = new FileInfo(filePath);
             _Append = append;
