@@ -27,7 +27,7 @@ namespace Fluid.Seminar.NodeCreation
                 ).ToArray()
             ).ToArray();
 
-            TB.Rng.SetRange(-0.19, 0.19);
+            TB.Rng.SetRange(-0.6, 0.6);
 
             var transNodes1 = (
                 nodes.Take(9).Skip(1).Select( row =>
@@ -44,9 +44,20 @@ namespace Fluid.Seminar.NodeCreation
                 )
             ).ToArray();
 
-            var transNodes = (
-                new double[][][] {nodes[0]}.Concat(transNodes2).Append(nodes[9]).
+            var transNodes3 = (
+                (new double[][][] {nodes[0]}).Concat(transNodes2).Append(nodes[9]).
                 ToArray()
+            ).ToArray();
+
+            var transNodes = (
+                transNodes3.Where( (row, i) =>
+                    i % 3 == 0
+                ).
+                Select( row =>
+                    row.Where( (col, j) =>
+                        j % 3 == 0
+                    ).ToArray()
+                )
             ).ToArray();
 
             var transNodesM = (
