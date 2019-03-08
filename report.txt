@@ -498,3 +498,33 @@
           Exiting application.                                                         0,0424    Seminar/C#/NodeCreation/Program.cs        Main              160   
 08:50     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
           Exiting application.                                                         0,041     Seminar/C#/NodeCreation/Program.cs        Main              160   
+12:40     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exception occured:  Could not find a part of the path '/home/marko/Dokument  0,0297    Seminar/C#/NodeCreation/Program.cs        Main              176   
+          i/Fluid/Seminar/NodeCreation/modifiedString.txt'.                                                                                                        
+          Stack trace:     at Interop.ThrowExceptionForIoErrno(ErrorInfo errorInfo, S  0,0202    Seminar/C#/NodeCreation/Program.cs        Main              177   
+          tring path, Boolean isDirectory, Func`2 errorRewriter)
+   at Microsoft.Win3                                                                              
+          2.SafeHandles.SafeFileHandle.Open(String path, OpenFlags flags, Int32 mode)                                                                              
+          
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess ac                                                                              
+          cess, FileShare share, Int32 bufferSize, FileOptions options)
+   at System.                                                                              
+          IO.StreamWriter..ctor(String path, Boolean append, Encoding encoding, Int32                                                                              
+           bufferSize)
+   at Fluid.Internals.FileWriter.InitializeWriter() in /home/m                                                                              
+          arko/Dokumenti/Fluid/Internals/FileWriter.cs:line 89
+   at Fluid.Internals.                                                                              
+          FileWriter.SetFile(String path, Boolean append) in /home/marko/Dokumenti/Fl                                                                              
+          uid/Internals/FileWriter.cs:line 83
+   at Fluid.Seminar.NodeCreation.Progra                                                                              
+          m.StringReplace() in /home/marko/Dokumenti/Fluid/Seminar/C#/NodeCreation/Pr                                                                              
+          ogram.cs:line 166
+   at Fluid.Seminar.NodeCreation.Program.Main(String[] ar                                                                              
+          gs) in /home/marko/Dokumenti/Fluid/Seminar/C#/NodeCreation/Program.cs:line                                                                               
+          173                                                                                                                                                      
+13:06     Program started.                             0         Internals/Toolbox.cs     Reporter          14    
+          Exiting application.                         0,014     Seminar/NodeCreation/Pr  Main              181   
+                                                                 ogram.cs                                         
+13:09     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
+          Exiting application.                        0,0138    Seminar/NodeCreation/Pr  Main              180   
+                                                                ogram.cs                                         

@@ -98,10 +98,10 @@
             "args": [
                 "run",
                 "--project",
-                "${workspaceFolder}/Seminar/C#/NodeCreation/NodeCreation.csproj"
+                "${workspaceFolder}/Seminar/NodeCreation/NodeCreation.csproj"
             ],
             "options": {
-                "cwd": "./Seminar/C#/NodeCreation"
+                "cwd": "./Seminar/NodeCreation"
             },
             "problemMatcher": "$msCompile",
             "group": "none"
