@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static System.Math;
 
 using Fluid.Internals;
@@ -61,8 +62,8 @@ namespace Fluid.Seminar.NodeCreation
             ).ToArray();
 
             var transNodesM = (
-                transNodes.Take(7).Skip(3).Select(col =>
-                    col.Take(7).Skip(3).ToArray()
+                transNodes.Take(3).Skip(1).Select(col =>
+                    col.Take(3).Skip(1).ToArray()
                 ).ToArray()
             ).ToArray();
 
@@ -99,16 +100,16 @@ namespace Fluid.Seminar.NodeCreation
             ).ToArray();
 
             var transNodes3dMF = (
-                transNodes.Take(7).Skip(3).Select( row =>
-                    row.Take(7).Skip(3).Select( col =>
+                transNodes.Take(3).Skip(1).Select( row =>
+                    row.Take(3).Skip(1).Select( col =>
                         new double[] {col[0], col[1], 0.0}
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
 
             var transNodes3dMT = (
-                transNodes.Take(7).Skip(3).Select( row =>
-                    row.Take(7).Skip(3).Select( col =>
+                transNodes.Take(3).Skip(1).Select( row =>
+                    row.Take(3).Skip(1).Select( col =>
                         new double[] {col[0], col[1], 1.0}
                     ).ToArray()
                 ).ToArray()
@@ -145,6 +146,9 @@ namespace Fluid.Seminar.NodeCreation
             TB.FileWriter.WriteLine(transNodes3dMT);
         }
 
+        public static void StringFormation() {
+
+        }
 
 
         static void Main(string[] args) {
@@ -161,5 +165,14 @@ namespace Fluid.Seminar.NodeCreation
                 TB.FileWriter.Flush();
             }
         }
+
+        /// <summary>First shape function.</summary><param name="eps">X-like coordinate on reference rectangle.</param><param name="eta">y-like coordinate on reference rectangle.</param>
+        static double S1(double eps, double eta) => 0.25*(1 - eps)*(1 - eta);
+        /// <summary>Second shape function.</summary><param name="eps">X-like coordinate on reference rectangle.</param><param name="eta">y-like coordinate on reference rectangle.</param>
+        static double S2(double eps, double eta) => 0.25*(1 + eps)*(1 - eta);
+        /// <summary>Third shape function.</summary><param name="eps">X-like coordinate on reference rectangle.</param><param name="eta">y-like coordinate on reference rectangle.</param>
+        static double S3(double eps, double eta) => 0.25*(1 + eps)*(1 + eta);
+        /// <summary>Fourth shape function.</summary><param name="eps">X-like coordinate on reference rectangle.</param><param name="eta">y-like coordinate on reference rectangle.</param>
+        static double S4(double eps, double eta) => 0.25*(1 - eps)*(1 + eta);
     }
 }

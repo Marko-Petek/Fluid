@@ -496,3 +496,5 @@
           Exiting application.                                                         0,0342    Seminar/C#/NodeCreation/Program.cs        Main              160   
 00:38     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
           Exiting application.                                                         0,0424    Seminar/C#/NodeCreation/Program.cs        Main              160   
+08:50     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,041     Seminar/C#/NodeCreation/Program.cs        Main              160   
