@@ -13,89 +13,115 @@ namespace Fluid.Seminar.NodeCreation
     {
         static void NodeCreation() {
 
-            var nodes = (
+            var nodes = (                                                                       // 10 by 10 array of nodes on a regular lattice.
                 Enumerable.Range(0,10).Select( row =>
                     Enumerable.Range(0,10).Select( col =>
                         new double[] {-3.0 + col * (6.0/9), -3.0 + row * (6.0/9)}
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodes.txt");
+            string dir = "Seminar/Mathematica/";
+            string ext = ".txt";
+            TB.FileWriter.SetFile(dir + nameof(nodes) + ext);
             TB.FileWriter.WriteLine(nodes);
 
-            var nodesM = (
+            var nodesM = (                                                                      // Only the mid 2 by 2 = 4 nodes on a regular lattice.
                 nodes.Take(7).Skip(3).Select(col =>
                     col.Take(7).Skip(3)
                     .ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodesM.txt");
+            TB.FileWriter.SetFile(dir + nameof(nodesM) + ext);
             TB.FileWriter.WriteLine(nodesM);
 
             TB.Rng.SetRange(-0.6, 0.6);
 
             var transNodesCM = (                                                            // C = element corner nodes (only nodes on corners of elements)
-                nodes.Skip(3).Take(1).Skip(2).Take(1).Select( row =>                        // Pick only those nodes that we will be moving. Take 2 inner rows (3,6).
-                    row.Skip(3).Take(1).Skip(2).Take(1).Select( col =>                      // Take 2 inner nodes from each row (3,6).
+                nodes.Skip(3).Take(4).Where( (col, j) => j % 3 == 0 ).Select( row =>                        // Pick only those nodes that we will be moving. Take 2 inner rows (3,6).
+                    row.Skip(3).Take(4).Where( (col, j) => j % 3 == 0).Select( col =>                      // Take 2 inner nodes from each row (3,6).
                         new double[] {col[0] + TB.Rng.Double(), col[1] + TB.Rng.Double()}
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/transNodesCM.txt");
+            TB.FileWriter.SetFile(dir + nameof(transNodesCM) + ext);
             TB.FileWriter.WriteLine(transNodesCM);
 
             var transNodesC1 = (                                                             // Reassemble the rows (including static nodes).
                 transNodesCM.Select( (row,i) =>                                              // Take the newly created array.
-                    new double[][] {nodes[3*i][0]}.Concat(row).Append(nodes[3*i][9]).       // Attach a static node to the left and a static node to the right of each row.
+                    new double[][] {nodes[3*i + 1][0]}.Concat(row).Append(nodes[3*i + 1][9]).       // Attach a static node to the left and a static node to the right of each row.
                     ToArray()
                 )
             ).ToArray();
+            TB.FileWriter.SetFile(dir + nameof(transNodesC1) + ext);
+            TB.FileWriter.WriteLine(transNodesC1);
 
             var transNodesC = (                                                                          // Reassemble the array (including filtered static rows).
                 new double[][][] {
-                    nodes[0].Take(1).Skip(2).Take(1).Skip(2).Take(1).Skip(2).Take(1).ToArray()          // Append first filtered row.
+                    nodes[0].Where( (col, i) => i % 3 == 0 ).ToArray()          // Append first filtered row.
                 }.    
                 Concat(transNodesC1).
-                Append(nodes[9].Take(1).Skip(2).Take(1).Skip(2).Take(1).Skip(2).Take(1).ToArray())      // Append last filtered row.
+                Append(nodes[9].Where( (col, i) => i % 3 == 0 ).ToArray())      // Append last filtered row.
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/transNodesC.txt");
+            TB.FileWriter.SetFile(dir + nameof(transNodesC) + ext);
             TB.FileWriter.WriteLine(transNodesC);
 
             var transNodesCByElms = Enumerable.Range(0,3).Select( row =>                                // Groups of 4 corner nodes for each element.
                 Enumerable.Range(0,3).Select( col =>
                     new double[][] {
-                        (double[])transNodesC[row + 1][col].Clone(),
-                        (double[])transNodesC[row + 1][col + 1].Clone(),
+                        (double[])transNodesC[row][col].Clone(),
                         (double[])transNodesC[row][col + 1].Clone(),
-                        (double[])transNodesC[row][col].Clone()
+                        (double[])transNodesC[row + 1][col + 1].Clone(),
+                        (double[])transNodesC[row + 1][col].Clone()
                     }
                 ).ToArray()
             ).ToArray();
+            TB.FileWriter.SetFile(dir + nameof(transNodesCByElms) + ext);
+            TB.FileWriter.WriteLine(transNodesCByElms);
 
             var transNodesByElms = transNodesCByElms.Select( row =>
                 row.Select( elm =>
-                    new double[][] {
-                        elm[0], TrueCoords(new double[] {-1.0/3, -1}, elm), TrueCoords(new double[] {1.0/3, -1}, elm), elm[1],
-                        TrueCoords(new double[] {-1, -1.0/3}, elm), TrueCoords(new double[] {-1.0/3, -1.0/3}, elm), TrueCoords(new double[] {1.0/3, -1.0/3}, elm), TrueCoords(new double[] {1, -1.0/3}, elm),
-                        TrueCoords(new double[] {-1, 1.0/3}, elm), TrueCoords(new double[] {-1.0/3, 1.0/3}, elm), TrueCoords(new double[] {1.0/3, 1.0/3}, elm), TrueCoords(new double[] {1, 1.0/3}, elm),
-                        elm[3], TrueCoords(new double[] {-1.0/3, 1}, elm), TrueCoords(new double[] {1.0/3, 1}, elm), elm[2]
+                    new double[][][] {
+                        new double[][] {elm[0], TrueCoords(new double[] {-1.0/3, -1}, elm), TrueCoords(new double[] {1.0/3, -1}, elm), elm[1]},
+                        new double[][] {TrueCoords(new double[] {-1, -1.0/3}, elm), TrueCoords(new double[] {-1.0/3, -1.0/3}, elm), TrueCoords(new double[] {1.0/3, -1.0/3}, elm), TrueCoords(new double[] {1, -1.0/3}, elm)},
+                        new double[][] {TrueCoords(new double[] {-1, 1.0/3}, elm), TrueCoords(new double[] {-1.0/3, 1.0/3}, elm), TrueCoords(new double[] {1.0/3, 1.0/3}, elm), TrueCoords(new double[] {1, 1.0/3}, elm)},
+                        new double[][] {elm[3], TrueCoords(new double[] {-1.0/3, 1}, elm), TrueCoords(new double[] {1.0/3, 1}, elm), elm[2]}
                     }
                 ).ToArray()
             ).ToArray();
-            // TB.FileWriter.SetFile("Seminar/Mathematica/transNodes.txt");
-            // TB.FileWriter.WriteLine(transNodes);
+            TB.FileWriter.SetFile(dir + nameof(transNodesByElms) + ext);
+            TB.FileWriter.WriteLine(transNodesByElms);
 
             var transNodes = Enumerable.Range(0,10).Select( row =>                  // Create an empty 10 by 10 array.
                 Enumerable.Range(0,10).Select( col =>
-                    new double[2]
+                    new double[2] {0.0, 0.0}
                 ).ToArray()
             ).ToArray();
 
-            transNodesByElms.Select( (row, i) =>
-                row.Select( (elm, j) =>
-                    transNodes[3*j][3*i]
-                )
-            );
+            Enumerable.Range(0,3).Select( i =>                                    // This will fill the lower left part of the new array.
+                Enumerable.Range(0,3).Select( j =>
+                    Enumerable.Range(0,3).Select( k =>
+                        Enumerable.Range(0,3).Select( m => 
+                            transNodes[3*i + k][3*j + m] = (double[])transNodesByElms[i][j][k][m].Clone()
+                        ).ToArray()
+                    ).ToArray()
+                ).ToArray()
+            ).ToArray();
+
+            Enumerable.Range(0,3).Select( i =>                                      // Over 3 elements in last row.
+                Enumerable.Range(0,3).Select( j => {                                  // Over 3 nodes in last row of each element.
+                    transNodes[9][3*i + j] = transNodesByElms[2][i][3][j];          // Add the upper most row.
+                    transNodes[3*i + j][9] = transNodesByElms[i][2][j][3];          // Add the right most col.
+                    return j;
+                }).ToArray()
+            ).ToArray();
+
+            transNodes[9][9] = transNodesByElms[2][2][3][3];                        // Assign the last corner element.
+            TB.FileWriter.SetFile(dir + nameof(transNodes) + ext);
+            TB.FileWriter.WriteLine(transNodes);
+
+
+            var transNodesM = transNodes.Where( (row, i) => i > 2 && i < 7          // Take only middle nodes.
+                ).Where( (col, j) => j > 2 && j < 7).ToArray();
 
             var nodes3dF = (
                 nodes.Select( row =>
@@ -104,7 +130,7 @@ namespace Fluid.Seminar.NodeCreation
                      ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dF.txt");
+            TB.FileWriter.SetFile(dir + nameof(nodes3dF) + ext);
             TB.FileWriter.WriteLine(nodes3dF);
 
             var transNodes3dF = (
@@ -114,7 +140,7 @@ namespace Fluid.Seminar.NodeCreation
                      ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dF.txt");
+            TB.FileWriter.SetFile(dir + nameof(transNodes3dF) + ext);
             TB.FileWriter.WriteLine(transNodes3dF);
 
             var nodes3dMF = (
@@ -124,7 +150,7 @@ namespace Fluid.Seminar.NodeCreation
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dMF.txt");
+            TB.FileWriter.SetFile(dir + nameof(nodes3dMF) + ext);
             TB.FileWriter.WriteLine(nodes3dMF);
 
             var nodes3dMT = (
@@ -134,7 +160,7 @@ namespace Fluid.Seminar.NodeCreation
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/nodes3dMT.txt");
+            TB.FileWriter.SetFile(dir + nameof(nodes3dMT) + ext);
             TB.FileWriter.WriteLine(nodes3dMT);
 
             var transNodes3dMF = (
@@ -144,7 +170,7 @@ namespace Fluid.Seminar.NodeCreation
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dMF.txt");
+            TB.FileWriter.SetFile(dir + nameof(transNodes3dMF) + ext);
             TB.FileWriter.WriteLine(transNodes3dMF);
 
             var transNodes3dMT = (
@@ -154,7 +180,7 @@ namespace Fluid.Seminar.NodeCreation
                     ).ToArray()
                 ).ToArray()
             ).ToArray();
-            TB.FileWriter.SetFile("Seminar/Mathematica/transNodes3dMT.txt");
+            TB.FileWriter.SetFile(dir + nameof(transNodes3dMT) + ext);
             TB.FileWriter.WriteLine(transNodes3dMT);
         }
 
@@ -181,7 +207,7 @@ namespace Fluid.Seminar.NodeCreation
 
         static void Main(string[] args) {
             try {  
-                StringReplace();
+                NodeCreation();
             }
             catch(Exception exc) {
                 TB.Reporter.Write($"Exception occured:  {exc.Message}");

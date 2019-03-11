@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using static Fluid.Internals.Development.AppReporter;
 
@@ -99,7 +100,7 @@ namespace Fluid.Internals
                 InitializeWriter();
 
             IO.Write(array1d, Writer);
-        } 
+        }
 
         /// <summary>Writes a 2D array to hard drive.</summary><param name="array1d">2D array to write to HD.</param>
         public void Write<T>(T[][] array2d) {

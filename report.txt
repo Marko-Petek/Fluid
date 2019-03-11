@@ -528,3 +528,68 @@
 13:09     Program started.                            0         Internals/Toolbox.cs     Reporter          14    
           Exiting application.                        0,0138    Seminar/NodeCreation/Pr  Main              180   
                                                                 ogram.cs                                         
+16:27     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,0138    Seminar/NodeCreation/Program.cs           Main              211   
+16:33     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exception occured:  Index was outside the bounds   0,0255    Seminar/NodeCreation/Progr  Main              207   
+          of the array.                                                am.cs                                               
+          Stack trace:     at Fluid.Internals.IO.Write[T](T  0,0172    Seminar/NodeCreation/Progr  Main              208   
+          [][][] array3d, TextWriter tw) in /home/marko/Dok            am.cs                                               
+          umenti/Fluid/Internals/IO.cs:line 56
+   at Fluid.                                                                
+          Internals.IO.WriteLine[T](T[][][] array3d, TextWr                                                                
+          iter tw) in /home/marko/Dokumenti/Fluid/Internals                                                                
+          /IO.cs:line 104
+   at Fluid.Internals.FileWriter.                                                                
+          WriteLine[T](T[][][] array3d) in /home/marko/Doku                                                                
+          menti/Fluid/Internals/FileWriter.cs:line 165
+   a                                                                
+          t Fluid.Seminar.NodeCreation.Program.NodeCreation                                                                
+          () in /home/marko/Dokumenti/Fluid/Seminar/NodeCre                                                                
+          ation/Program.cs:line 45
+   at Fluid.Seminar.Node                                                                
+          Creation.Program.Main(String[] args) in /home/mar                                                                
+          ko/Dokumenti/Fluid/Seminar/NodeCreation/Program.c                                                                
+          s:line 204                                                                                                       
+16:42     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0267    Seminar/NodeCreation/Progr  Main              212   
+                                                                       am.cs                                               
+17:02     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0273    Seminar/NodeCreation/Progr  Main              212   
+                                                                       am.cs                                               
+17:32     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0313    Seminar/NodeCreation/Progr  Main              212   
+                                                                       am.cs                                               
+17:35     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+17:36     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0271    Seminar/NodeCreation/Progr  Main              213   
+                                                                       am.cs                                               
+17:38     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0271    Seminar/NodeCreation/Progr  Main              214   
+                                                                       am.cs                                               
+17:43     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,0321    Seminar/NodeCreation/Program.cs           Main              216   
+17:45     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0313    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+17:56     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0298    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+17:57     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0278    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+18:04     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0282    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+18:12     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,028     Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+18:13     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0283    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+18:16     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0287    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
+18:17     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0328    Seminar/NodeCreation/Progr  Main              218   
+                                                                       am.cs                                               
