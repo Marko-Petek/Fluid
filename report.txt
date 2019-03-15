@@ -593,3 +593,48 @@
 18:17     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
           Exiting application.                               0,0328    Seminar/NodeCreation/Progr  Main              218   
                                                                        am.cs                                               
+19:56     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,0324    Seminar/NodeCreation/Program.cs           Main              218   
+20:01     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,0332    Seminar/NodeCreation/Program.cs           Main              218   
+20:08     Program started.                                                             0         Internals/Toolbox.cs                      Reporter          14    
+          Exiting application.                                                         0,0386    Seminar/NodeCreation/Program.cs           Main              216   
+12:29     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0444    Seminar/NodeCreation/Progr  Main              219   
+                                                                       am.cs                                               
+12:43     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0327    Seminar/NodeCreation/Progr  Main              223   
+                                                                       am.cs                                               
+12:47     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0353    Seminar/NodeCreation/Progr  Main              223   
+                                                                       am.cs                                               
+12:53     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,036     Seminar/NodeCreation/Progr  Main              219   
+                                                                       am.cs                                               
+12:56     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0402    Seminar/NodeCreation/Progr  Main              215   
+                                                                       am.cs                                               
+13:03     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0353    Seminar/NodeCreation/Progr  Main              215   
+                                                                       am.cs                                               
+13:30     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0359    Seminar/NodeCreation/Progr  Main              215   
+                                                                       am.cs                                               
+13:52     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0364    Seminar/NodeCreation/Progr  Main              223   
+                                                                       am.cs                                               
+13:57     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0377    Seminar/NodeCreation/Progr  Main              226   
+                                                                       am.cs                                               
+14:12     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0428    Seminar/NodeCreation/Progr  Main              224   
+                                                                       am.cs                                               
+14:14     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0377    Seminar/NodeCreation/Progr  Main              224   
+                                                                       am.cs                                               
+14:32     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,0464    Seminar/NodeCreation/Progr  Main              216   
+                                                                       am.cs                                               
+11:35     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
+          Exiting application.                               0,106     Seminar/NodeCreation/Progr  Main              216   
+                                                                       am.cs                                               
