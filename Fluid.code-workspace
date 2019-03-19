@@ -13,7 +13,7 @@
 		"editor.fontSize": 14,
 		"editor.snippetSuggestions": "none",
 		"git.enableSmartCommit": true,
-		"jupyter.appendResults": true,
+		//"jupyter.appendResults": true,
 		"latex-workshop.view.pdf.viewer": "tab",
 		"python.jediEnabled": false,
 		"python.linting.pylintEnabled": true,
@@ -29,6 +29,7 @@
 			"TODO": {},
 			"FIXME": {}
 		},
+		//"window.titleBarStyle": "custom",
 		"window.zoomLevel": 1.8,
 		"workbench.colorTheme": "Visual Studio Light",
 		"workbench.colorCustomizations": {

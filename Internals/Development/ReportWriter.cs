@@ -43,7 +43,7 @@ namespace Fluid.Internals.Development
 
             _ColWidths = new int[] {8, textWidth, 8, pathWidth, 16, 4};
             _NCols = _ColWidths.Length;
-            FileWriter = new FileWriter("report.txt", true);
+            FileWriter = new FileWriter("", "report", ".txt", true);
             AppReporter = appReporter;
             _PrevReportedTime = AppReporter.StartTime;
         }

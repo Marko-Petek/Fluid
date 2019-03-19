@@ -11,107 +11,37 @@ namespace Fluid.Internals
 {
     /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 
     /// see results written on HD (empty RAM buffer to HD).</summary>
-    public class FileWriter : IDisposable
+    public class FileWriter : FileRWBase, IDisposable
     {
-        PotentialChanges SettingsChanges = PotentialChanges.None;
+        StreamWriter _Writer;
+        StreamWriter Writer => _Writer;
 
-        event EventHandler SettingsChanged;
-
-        protected virtual void OnSettingsChanged() {
-            if(SettingsChanged != null) {
-                SettingsChanged(this, EventArgs.Empty);
-                SettingsChanged = null;                                 // Remove all subscribers.
-                Writer?.Dispose();                                      // Dispose old writer if it exists.
-                _Writer = new StreamWriter(File.FullName, Append);
-            }
+        protected override void ResetUnmanagedResource() {
+            Writer?.Dispose();                                      // Dispose old writer if it exists.
+            _Writer = new StreamWriter(File.FullName, Append);
         }
-
-        FileInfo _File;
-        public FileInfo File  => _File;
-
-        DirectoryInfo _AppDirectory;
-        DirectoryInfo AppDirectory => _AppDirectory;
-
-        DirectoryInfo _Directory;
-        DirectoryInfo Directory => _Directory;
-
-        string _DirPath;
-        string DirPath => _DirPath;
-
-        string _FileNameNoExt;
-        string FileNameNoExt => _FileNameNoExt;
-
-        string _FileExt;
-        string FileExt => _FileExt;
 
         bool _Append;
         /// <summary>Whether Writer should append to currently set file or overwrite it.</summary>
         public bool Append => _Append;
 
-        public const string DefaultDirPath = "";
-        public const string DefaultFileName = "output";
-        public const string DefaultExt = ".txt";
         public const bool DefaultAppend = false;
-
-        StreamWriter _Writer;
-        StreamWriter Writer => _Writer;
 
 
         /// <summary>Writes data to hard drive.</summary>
-        public FileWriter(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string ext = DefaultExt, bool append = DefaultAppend) {
-            var assembly = Assembly.GetExecutingAssembly();
-            var dllLocation = assembly.Location;
-            _File = new FileInfo(dllLocation);
-            _AppDirectory = new DirectoryInfo(File.DirectoryName);
-            var parent = AppDirectory.Parent;
-
-            while(true) {                                                           // Search for a directory named Fluid.
-                if(parent.Name == "Fluid") {
-                    _AppDirectory = parent;
-                    break;
-                }
-                parent = parent.Parent;
-
-                if(parent == null)                                                  // null == when root is reached.
-                    throw new DirectoryNotFoundException(
-                        @"Could not find directory named Fluid above directory containing dll.");
-            }
-            SettingsChanged += DirChanged;
-            SettingsChanged += FileChanged;
+        public FileWriter(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string ext = DefaultExt, bool append = DefaultAppend) :
+        base(dirPath, fileNameNoExt, ext) {
+            _Append = append;
             OnSettingsChanged();
         }
 
-        void DirChanged(object sender, EventArgs e) {
-            _Directory = new DirectoryInfo(Path.Combine(AppDirectory.FullName, DirPath));
-        }
-
-        /// <summary>Crate a new StreamWriter with currently specified settings. Properly disposes an existing writer (if any).</summary>
-        void FileChanged(object sender, EventArgs e) {
-            string filePath = Path.Combine(Directory.FullName, $"{FileNameNoExt}{FileExt}");
-            _File = new FileInfo(filePath);
-        }
 
         void AppendChanged(object sender, EventArgs e) {
         }
 
-        public void SetDir(string dirPath) {
-            _DirPath = dirPath;
-
-            if(SettingsChanged == null) {            // DirPath has to be applied first.
-                SettingsChanged += DirChanged;
-            }
-            else {
-                SettingsChanged = DirChanged + SettingsChanged;
-            }
-        }
-
-        public void SetDir() => SetDir(AppDirectory.FullName);
-
         // dirPath can be relative or absolute
-        public void SetFile(string fileNameNoExt, string fileExt, bool append = DefaultAppend) {
-            _FileNameNoExt = fileNameNoExt;
-            _FileExt = fileExt;
-            SettingsChanged += FileChanged;
+        public void SetFile(string fileNameNoExt, string fileExt, bool append) {
+            base.SetFile(fileNameNoExt, fileExt);
             _Append = append;
             SettingsChanged += AppendChanged;
         }
@@ -126,7 +56,7 @@ namespace Fluid.Internals
             SetFile(fileNameNoExt, fileExt, append);
         }
 
-        /// <summary>Immediatelly rrite any RAM buffered data to hard drive.</summary>
+        /// <summary>Immediatelly write any RAM buffered data to hard drive.</summary>
         public void Flush() => Writer.Flush();
 
         /// <summary>Writes a 1D array to hard drive.</summary><param name="array1d"> 1D array to write to HD.</param>
@@ -299,13 +229,5 @@ namespace Fluid.Internals
         }
 
         ~FileWriter() => Dispose();
-
-        [Flags] enum PotentialChanges {
-            None =      0,
-            DirPath =   1 << 0,
-            FileName =  1 << 1,
-            FileExt =   1 << 2,
-            Append =    1 << 3
-        }
     }
 }

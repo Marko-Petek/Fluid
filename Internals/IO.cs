@@ -1,9 +1,12 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Globalization;
 using static System.Char;
 
+using TB = Fluid.Internals.Toolbox;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Operations;
@@ -121,8 +124,15 @@ namespace Fluid.Internals
         }
 
 
-        public static T[] Read<T>(TextReader tr) {
-            
+        // TODO: Write methods that read/parse arrays (ReadArray1d, ReadArray2d, ...).
+
+        /// <summary>Read the underlying stream to the end and store it into a string. Then go looking for 1d array and parse it.</summary><param name="tr">TextReader which owns a stream.</param>
+        public static T[] ReadArray1d<T>(TextReader tr) {
+            string source = tr.ReadToEnd();
+            var arrayMatch = Regex.Match(source, @"\{.*}");
+            TB.Reporter.Write(arrayMatch.Value);
+
+            return new T[] {};
         }
 
         // TODO: Finish SparseMatrixInt and write IO for it.
