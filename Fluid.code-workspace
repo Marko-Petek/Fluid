@@ -102,7 +102,7 @@
 		"zenMode.hideActivityBar": true,
 
 		"[csharp]": {
-			"editor.codeLens": false,
+			"editor.codeLens": true,
 			"editor.lineNumbers": "on"
 		},
 		"[latex]": {

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using static System.Math;
 
 using Fluid.Internals.Collections;
@@ -114,6 +116,13 @@ namespace Fluid.Internals
                 lines.Add(source);
             
             return lines;
+        }
+
+        /// <summary>The string representation must already be in the correct form.</summary><param name="str">String representation of array.</param>
+        public static double[] ParseDoubleArray1d(string str) {
+            var matches = Regex.Matches(str, @"\d+\.?\d*");
+            var array = matches.Select( match => Double.Parse(match.Value)).ToArray();
+            return array;
         }
     }
 }

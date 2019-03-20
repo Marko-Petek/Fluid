@@ -32,4 +32,16 @@ namespace FluidDynamics
         
     }
 }
+
+//"preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Tests",
+            // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            //"justMyCode": false
+            "enableStepFiltering": false
 #endif

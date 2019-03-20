@@ -9,7 +9,7 @@ namespace Fluid.Internals.Development
     // TODO: Put this into Toolbox.
 
     /// <summary>A class which simplifies exception coding.</summary>
-    public static class Assert
+    public class Assert
     {
         public static void True(bool cond, string msg = "Assert.True failed.") {
             if(!cond)

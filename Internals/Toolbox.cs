@@ -9,6 +9,7 @@ namespace Fluid.Internals
 {
     public static class Toolbox
     {
+        public static Assert Assert { get; } = new Assert();
         public static FileReader FileReader { get; } = new FileReader();
         public static FileWriter FileWriter { get; } = new FileWriter();
         public static Console Console { get; } = new Console();

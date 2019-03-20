@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 using static Fluid.Internals.Development.AppReporter;
 
@@ -14,23 +15,30 @@ namespace Fluid.Internals
         StreamReader _Reader;
         StreamReader Reader => _Reader;
 
-        event EventHandler SettingsChanged;
 
-        protected void OnSettingsChanged() {
-            if(SettingsChanged != null) {
-                SettingsChanged(this, EventArgs.Empty);
-                SettingsChanged = null;                                 // Remove all subscribers.
-                Writer?.Dispose();                                      // Dispose old writer if it exists.
-                _Writer = new StreamWriter(File.FullName, Append);
-            }
+        protected override void ResetUnmanagedResource() {
+            Reader?.Dispose();                                                  // Dispose old reader if it exists.
+            _Reader = new StreamReader(File.FullName, Encoding.UTF8);
+        }
+
+
+        public FileReader(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string fileExt = DefaultExt) :
+        base(dirPath, fileNameNoExt, fileExt) {
+            OnSettingsChanged();
+        }
+
+
+        public double[] ReadDoubleArray1d() {
+            OnSettingsChanged();
+            return IO.ReadDoubleArray1d(Reader);
         }
 
 
         public void Dispose() {
-            Writer.Dispose();
+            Reader.Dispose();
             GC.SuppressFinalize(this);
         }
 
-        ~FileWriter() => Dispose();
+        ~FileReader() => Dispose();
     }
 }

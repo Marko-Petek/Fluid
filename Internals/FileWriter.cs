@@ -29,8 +29,8 @@ namespace Fluid.Internals
 
 
         /// <summary>Writes data to hard drive.</summary>
-        public FileWriter(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string ext = DefaultExt, bool append = DefaultAppend) :
-        base(dirPath, fileNameNoExt, ext) {
+        public FileWriter(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string fileExt = DefaultExt, bool append = DefaultAppend) :
+        base(dirPath, fileNameNoExt, fileExt) {
             _Append = append;
             OnSettingsChanged();
         }

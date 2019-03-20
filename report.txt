@@ -638,3 +638,29 @@
 11:35     Program started.                                   0         Internals/Toolbox.cs        Reporter          14    
           Exiting application.                               0,106     Seminar/NodeCreation/Progr  Main              216   
                                                                        am.cs                                               
+16:51     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+16:53     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+17:07     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+17:08     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+17:10     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+17:16     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+17:17     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}             0,0132    Internals/IO.cs        ReadArray1d       133   
+18:02     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}            6,4       Internals/IO.cs        ReadDoubleArray1  133   
+                                                                                    d                       
+18:03     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}            12,2      Internals/IO.cs        ReadDoubleArray1  133   
+                                                                                    d                       
+18:15     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}            11,8      Internals/IO.cs        ReadDoubleArray1  133   
+                                                                                    d                       
+18:23     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}             0,014     Internals/IO.cs        ReadDoubleArray1  133   
+                                                                                     d                       
+18:26     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+18:26     Program started.                         0         Internals/Toolbox.cs   Reporter          16    
+18:31     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+18:37     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
+          {0, 7, 3, 8, 2, 4, 9, 11, 15}             0,0137    Internals/IO.cs        ReadDoubleArray1  133   
+                                                                                     d                       

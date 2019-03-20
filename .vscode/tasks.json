@@ -68,9 +68,13 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/Tests/Tests.csproj"
+                "${workspaceFolder}/Tests/Tests.csproj",
+                "--no-build"
             ],
             "problemMatcher": "$msCompile",
+            "options": {
+                ""
+            },
             "group": {
                 "kind": "test",
                 "isDefault": true

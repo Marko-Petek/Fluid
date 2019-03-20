@@ -16,10 +16,11 @@ namespace Fluid.Internals
             if(SettingsChanged != null) {
                 SettingsChanged(this, EventArgs.Empty);
                 SettingsChanged = null;
-                ResetUnmanagedResource()
+                ResetUnmanagedResource();
             }
         }
 
+        /// <summary>Reset underlying Stream.</summary>
         protected abstract void ResetUnmanagedResource();
 
         FileInfo _File;
@@ -46,11 +47,14 @@ namespace Fluid.Internals
 
 
         /// <summary>Writes data to hard drive.</summary>
-        public FileRWBase(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string ext = DefaultExt) {
+        public FileRWBase(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string fileExt = DefaultExt) {
             var assembly = Assembly.GetExecutingAssembly();
             var dllLocation = assembly.Location;
             _File = new FileInfo(dllLocation);
             _AppDirectory = new DirectoryInfo(File.DirectoryName);
+            _DirPath = DefaultDirPath;
+            _FileNameNoExt = fileNameNoExt;
+            _FileExt = fileExt;
             var parent = AppDirectory.Parent;
 
             while(true) {                                                           // Search for a directory named Fluid.
@@ -84,12 +88,10 @@ namespace Fluid.Internals
         public void SetDir(string dirPath) {
             _DirPath = dirPath;
 
-            if(SettingsChanged == null) {            // DirPath has to be applied first.
+            if(SettingsChanged == null)            // DirPath has to be applied first.
                 SettingsChanged += DirChanged;
-            }
-            else {
+            else
                 SettingsChanged = DirChanged + SettingsChanged;
-            }
         }
 
         public void SetDir() => SetDir(AppDirectory.FullName);
