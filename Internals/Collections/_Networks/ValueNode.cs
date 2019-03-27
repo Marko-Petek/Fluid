@@ -8,7 +8,7 @@ namespace Fluid.Internals.Collections
         T _Value;
         public T Value => _Value;
 
-        public ValueNode(RankedNode leader, T value) : base(Enumerable.Repeat(leader, 1), leader) {
+        public ValueNode(RankedNode leader, T value) : base(leader) {
             _Value = value;
         }
     }

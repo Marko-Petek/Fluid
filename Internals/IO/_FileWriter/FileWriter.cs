@@ -11,7 +11,7 @@ namespace Fluid.Internals.IO
 {
     /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 
     /// see results written on HD (empty RAM buffer to HD).</summary>
-    public class FileWriter : FileRWBase, IDisposable
+    public partial class FileWriter : FileRWBase, IDisposable
     {
         StreamWriter _Writer;
         StreamWriter Writer => _Writer;

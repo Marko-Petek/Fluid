@@ -21,21 +21,31 @@ namespace Fluid.Internals.IO {
             }
 
             void Recursion(RankedNode startNode) {
-                int count = startNode.Peers.Count;              // We need the count to know when we are about to reach the last member.
+                int nSubordinates;
                 int i = 0;
+
+                if(startNode.Leader != null)
+                    nSubordinates = startNode.Peers.Count - 1;              // We need the count to know when we are about to reach the last member.
+                else
+                    nSubordinates = startNode.Peers.Count;
                 tw.Write('{');
 
-                foreach(var node in startNode.Peers.Keys) {
+                foreach(var node in startNode.Subordinates) {
                      
                     if(node is ValueNode<T> vNode)                                  // This is a value node.
-                        tw.Write(((ValueNode<RankedNode>)node).Value.ToString());   // Write its value.
+                        tw.Write(((ValueNode<T>)node).Value.ToString());            // Write its value.
                     else                                                            // This is not a value node.
                         Recursion(node);                                            // Re-enter recursion.                            
 
-                    if(++i < count)                                                 // We have more than one node left in this group.
+                    if(++i < nSubordinates)                                     // We have more than one node left in this group.
                         tw.Write(", ");                                             // So add a comma and space.
                 }
                 tw.Write('}');
         }   }
+
+        public static void WriteLine<T>(this Hierarchy<T> hier, TextWriter tw) {
+            Write(hier, tw);
+            tw.WriteLine();
+        }
     }
 }

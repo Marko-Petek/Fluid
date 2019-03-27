@@ -9,22 +9,29 @@ namespace Fluid.Internals.Collections
         public RankedNode Leader { get; set;}
         public SubordinateCollection Subordinates { get; }
 
-        public RankedNode(SCG.IEnumerable<RankedNode> peers, RankedNode leader) : base(peers) {
-            Leader = leader;
+        public RankedNode() : base() {
             Subordinates = new SubordinateCollection(this);
+        }
+        public RankedNode(RankedNode leader) : this() {
+            Leader = leader;
+            Connect(leader);
+        }
+        public RankedNode(SCG.IEnumerable<RankedNode> peers, RankedNode leader) : this() {
+            Leader = leader;
+            Connect(peers);
         }
 
 
         public class SubordinateCollection : SCG.IEnumerable<RankedNode> {
             RankedNode Node { get; }
 
-            public SubordinateCollection(RankedNode leader) {
-                Node = leader;
+            public SubordinateCollection(RankedNode node) {
+                Node = node;
             }
 
             public SCG.IEnumerator<RankedNode> GetEnumerator() {
                 foreach(var rankedNode in Node.Peers.Keys)
-                    if(rankedNode != Node)
+                    if(rankedNode != Node?.Leader)
                         yield return rankedNode;
             }
 

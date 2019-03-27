@@ -664,3 +664,25 @@
 18:37     Program started.                          0         Internals/Toolbox.cs   Reporter          16    
           {0, 7, 3, 8, 2, 4, 9, 11, 15}             0,0137    Internals/IO.cs        ReadDoubleArray1  133   
                                                                                      d                       
+10:34     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:36     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:43     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:47     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:53     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:55     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+10:59     Program started.                                  0         Internals/Toolbox.cs        Reporter          17    
+11:27     Program started.                            0         Internals/Toolbox.cs    Reporter          17    
+13:57     Program started.                            0         Internals/Toolbox.cs    Reporter          17    
+14:02     Program started.                            0         Internals/Toolbox.cs    Reporter          17    
+14:11     Program started.                            0         Internals/Toolbox.cs    Reporter          17    
+14:17     Program started.                            0         Internals/Toolbox.cs    Reporter          17    
+14:20     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:23     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:24     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:31     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:35     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:37     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:39     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:41     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:45     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+14:48     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
