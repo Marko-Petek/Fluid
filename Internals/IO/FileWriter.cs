@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 using static Fluid.Internals.Development.AppReporter;
 
-namespace Fluid.Internals
+namespace Fluid.Internals.IO
 {
     /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 
     /// see results written on HD (empty RAM buffer to HD).</summary>

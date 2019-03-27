@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 using static Fluid.Internals.Development.AppReporter;
 
-namespace Fluid.Internals
+namespace Fluid.Internals.IO
 {
     /// <summary>dot dot dot</summary>
     public abstract class FileRWBase

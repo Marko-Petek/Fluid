@@ -2,7 +2,7 @@ using System;
 using static System.Math;
 
 using Fluid.Internals.Collections;
-using Fluid.Internals.Meshing;
+using Msh = Fluid.Internals.Meshing;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow
@@ -85,13 +85,13 @@ namespace Fluid.ChannelFlow
             }
             return constraintCount;
 
-            void SetObstructionConstraints(ref Node nodeRef) {
+            void SetObstructionConstraints(ref Msh.Node nodeRef) {
                 nodeRef.Constrainedness(0) = true;                                  // u, 0 is set implicitly for both u and v due to them being value types.
                 nodeRef.Constrainedness(1) = true;                                  // v
                 constraintCount += 2;
             }
 
-            void SetCornerInletConstraints(ref Node nodeRef) {                         // Applied to corners of elements.
+            void SetCornerInletConstraints(ref Msh.Node nodeRef) {                         // Applied to corners of elements.
                 nodeRef.Constrainedness(0) = true;                                     // u = (4*v0/w)*y*(1-y/w)
                 nodeRef.Var(0)._value = (4*v0/w) * nodeRef.GetY() * (1.0 - nodeRef.GetY()/w);
                 nodeRef.Constrainedness(1) = true;                                     // v = 0
@@ -101,7 +101,7 @@ namespace Fluid.ChannelFlow
                 constraintCount += 4;
             }
 
-            void SetSideInletConstraints(ref Node nodeRef9, ref Node nodeRef8, ref Node nodeRef7, ref Node nodeRef6) {
+            void SetSideInletConstraints(ref Msh.Node nodeRef9, ref Msh.Node nodeRef8, ref Msh.Node nodeRef7, ref Msh.Node nodeRef6) {
                 double u9 = nodeRef9.Var(0)._value;
                 double h8 = (4*v0/w) * nodeRef8.GetY() * (1.0 - nodeRef8.GetY()/w);
                 double h7 = (4*v0/w) * nodeRef7.GetY() * (1.0 - nodeRef7.GetY()/w);

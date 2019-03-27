@@ -7,17 +7,17 @@ using static System.Char;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Meshing;
+using Msh = Fluid.Internals.Meshing;
 using static Fluid.ChannelFlow.Program;
 using static Fluid.Internals.Operations;
 using static Fluid.Internals.Numerics.MatrixOperations;
-using static Fluid.Internals.IO;
+using static Fluid.Internals.IO.IO;
 
 
 namespace Fluid.ChannelFlow
 {   
     /// <summary>TFI block representing a quarter of square mesh surrounding obstruction.</summary>
-    public abstract class ObstructionBlock : TfiBlock
+    public abstract class ObstructionBlock : Msh.TfiBlock
     {
         protected ChannelFlow _channelFlow;
         /// <summary>Main mesh.</summary>
@@ -68,7 +68,7 @@ namespace Fluid.ChannelFlow
             _diagonalProjection = 0.5*(channelMesh.GetWidth() - Sqrt(2)*channelMesh.GetObstructionRadius());
             _C = (2.0 / (Sqrt(2.0) - rat)) * ( 0.25 * PI * rat) / b;
             _k = (2.0 / (Sqrt(2.0) - rat)) * (1 / b - PI * rat / (4.0 * b));
-            _nodes = new Node[24][][];
+            _nodes = new Msh.Node[24][][];
         }
         
 
@@ -81,14 +81,14 @@ namespace Fluid.ChannelFlow
             double c = 0.9821550974;         // TODO: this is hardcoded for element density = 20. Make automatic. This coefficient makes sure that last eta falls on square border. 
             double NextEta(double previousEta) => (_C + previousEta) / (1.0 - c * _k);
             double nextEta = NextEta(eta);
-            Node twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight;
-            var nodes = new List<Node[][]>(24);            // 23 rows
-            Node[][] constantEtaArray;
+            Msh.Node twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight;
+            var nodes = new List<Msh.Node[][]>(24);            // 23 rows
+            Msh.Node[][] constantEtaArray;
             int nVars = _mainMesh.GetVariableCount();
             int col;
 
             while(eta <= 1.0) {                                     // Move vertically upwards.
-                constantEtaArray = new Node[21][];                  // We need 21 (20 elements cols) nodes at constant eta. We will be writing positions here in next loop.
+                constantEtaArray = new Msh.Node[21][];                  // We need 21 (20 elements cols) nodes at constant eta. We will be writing positions here in next loop.
                 nodes.Add(constantEtaArray);
                 ksi = 0.0;
                 nextKsi = 1.0 / _channelMesh.GetElementDensity();
@@ -100,7 +100,7 @@ namespace Fluid.ChannelFlow
                     corner = CreateNode(ksi, eta);
                     thirdRight = CreateNode(ksi + (nextKsi - ksi) / 3.0, eta);
                     twoThirdsRight = CreateNode(ksi + 2.0 * (nextKsi - ksi) / 3.0, eta);
-                    constantEtaArray[col] = new Node[] {twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight};
+                    constantEtaArray[col] = new Msh.Node[] {twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight};
                     ksi += 1.0 / _channelMesh.GetElementDensity();              // Increase ksi.
                     nextKsi += 1.0 / _channelMesh.GetElementDensity();
                     ++col;
@@ -108,16 +108,16 @@ namespace Fluid.ChannelFlow
                 twoThirdsAbove = CreateNode(1.0, eta + 2.0 * (nextEta - eta) / 3.0);     // Create final three positions in row.
                 thirdAbove = CreateNode(1.0, eta + (nextEta - eta) / 3.0);
                 corner = CreateNode(1.0, eta);
-                constantEtaArray[col] = new Node[] {
+                constantEtaArray[col] = new Msh.Node[] {
                     twoThirdsAbove, thirdAbove, corner,
-                    new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0)
+                    new Msh.Node(Double.NaN, Double.NaN, 0), new Msh.Node(Double.NaN, Double.NaN, 0)
                 };
                 eta = nextEta;                                                                  // Increase eta.
                 nextEta = NextEta(nextEta);
             }
             ksi = 0.0;                                                  // Finalize the top-most row of nodes with current eta and nextEta = 1.0.
             nextKsi = 1.0 / _channelMesh.GetElementDensity();
-            constantEtaArray = new Node[21][];
+            constantEtaArray = new Msh.Node[21][];
             nodes.Add(constantEtaArray);
             col = 0;                                            // Reset col counter.
 
@@ -125,8 +125,8 @@ namespace Fluid.ChannelFlow
                 corner = CreateNode(ksi, 1.0);
                 thirdRight = CreateNode(ksi + (nextKsi - ksi) / 3.0, 1.0);
                 twoThirdsRight = CreateNode(ksi + 2.0 * (nextKsi - ksi) / 3.0, 1.0);
-                constantEtaArray[col] = new Node[] {
-                    new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0),
+                constantEtaArray[col] = new Msh.Node[] {
+                    new Msh.Node(Double.NaN, Double.NaN, 0), new Msh.Node(Double.NaN, Double.NaN, 0),
                     corner, thirdRight, twoThirdsRight
                 };
                 ksi += 1.0 / _channelMesh.GetElementDensity();                                  // Increase ksi.
@@ -134,10 +134,10 @@ namespace Fluid.ChannelFlow
                 ++col;
             }
             corner = CreateNode(1.0, 1.0);                                             // Now add one final point.
-            constantEtaArray[col] = new Node[] {
-                new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0),
+            constantEtaArray[col] = new Msh.Node[] {
+                new Msh.Node(Double.NaN, Double.NaN, 0), new Msh.Node(Double.NaN, Double.NaN, 0),
                 corner,
-                new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0)
+                new Msh.Node(Double.NaN, Double.NaN, 0), new Msh.Node(Double.NaN, Double.NaN, 0)
             };
             _rowCount = nodes.Count - 1;                                           // Update row and column counts.
             _colCount = 20;                             // TODO: Recode this hard-code.

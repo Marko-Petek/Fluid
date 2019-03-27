@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Fluid.Internals
+namespace Fluid.Internals.IO
 {
     /// <summary>Contains methods which write out nicely formatted values to console.</summary>
     public class Console

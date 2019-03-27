@@ -4,7 +4,7 @@ using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Meshing;
+using Msh = Fluid.Internals.Meshing;
 using static Fluid.Internals.Development.AppReporter;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 using static Fluid.ChannelFlow.Program;
@@ -12,7 +12,7 @@ using static Fluid.ChannelFlow.Program;
 namespace Fluid.ChannelFlow
 {
     /// <summary>Block structured mesh covering whole channel. Channel length is 4 times its width.</summary>
-    public class ChannelMesh : BlockStructuredMesh
+    public class ChannelMesh : Msh.BlockStructuredMesh
     {
         /// <summary>SubMesh right of square submesh.</summary>
         RightBlock _rightBlock;
@@ -71,7 +71,7 @@ namespace Fluid.ChannelFlow
         /// <summary>East quarter of square submesh.</summary>
         public EastBlock GetEastBlock() => _eastBlock;
         /// <summary>SubMesh right of square submesh.</summary>
-        public RectangularBlock GetRightBlock() => _rightBlock;
+        public Msh.RectangularBlock GetRightBlock() => _rightBlock;
         /// <summary>Number of positions that nodes reside at.</summary>
         public int GetPositionCount() => _positionCount;
         /// <summary>Set number of positions that nodes reside at.</summary>
@@ -104,7 +104,7 @@ namespace Fluid.ChannelFlow
                 4 * _width, _width,
                 _width, _width
             );
-            _nodes = new Node[15620];                                                       Reporter.Write($"Created global array of nodes of length {_nodes.Length}.", Verbose); Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+            _nodes = new Msh.Node[15620];                                                       Reporter.Write($"Created global array of nodes of length {_nodes.Length}.", Verbose); Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
             _southBlock = new SouthBlock(this, channelFlow);                                Reporter.Write("Constructing WestBlock.", Verbose);
             _westBlock = new WestBlock(this, channelFlow, _southBlock);                     Reporter.Write("Constructing NorthBlock.", Verbose);
             _northBlock = new NorthBlock(this, channelFlow, _westBlock);                    /* Integral values get imported with static constructor of ObstructionBlock. */  Reporter.Write("Constructing EastBlock.", Verbose);

@@ -1,7 +1,6 @@
 using System;
 
 namespace Fluid.Internals.Collections {
-
     internal class DummyRowDouble : SparseRowDouble, IDummyRow<double>
     {
         SparseMat<double> _Owner;

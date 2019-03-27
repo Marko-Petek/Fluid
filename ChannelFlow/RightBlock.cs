@@ -4,7 +4,7 @@ using static System.Math;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
-using static Fluid.Internals.IO;
+using static Fluid.Internals.IO.IO;
 using static Fluid.Internals.Operations;
 using static Fluid.Internals.Numerics.MatrixOperations;
 

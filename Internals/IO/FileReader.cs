@@ -8,7 +8,7 @@ using System.Text;
 
 using static Fluid.Internals.Development.AppReporter;
 
-namespace Fluid.Internals
+namespace Fluid.Internals.IO
 {
     public class FileReader : FileRWBase, IDisposable
     {

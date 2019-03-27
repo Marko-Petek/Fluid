@@ -32,9 +32,9 @@ namespace Fluid.ChannelFlow
                     while(pos._x < width) {
                         pos._x += segmentLength;
                         v = mesh.Solution(ref pos, 0, 1);
-                        if(!Double.IsNaN(v[0])) {                                                               // Write only values inside domain.
+
+                        if(!Double.IsNaN(v[0]))                                                               // Write only values inside domain.
                             sw.Write($", {{{pos.ToString()}, {{{v[0].ToString()},{v[1].ToString()}}}}}");
-                        }
                     }
                     pos._y += segmentLength;
                 }

@@ -119,10 +119,24 @@ namespace Fluid.Internals
         }
 
         /// <summary>The string representation must already be in the correct form.</summary><param name="str">String representation of array.</param>
-        public static double[] ParseDoubleArray1d(string str) {
-            var matches = Regex.Matches(str, @"\d+\.?\d*");
+        public static double[] ParseLowestArrayDimToDouble(string str) {
+            var matches = Regex.Matches(str, @"(?<=\{)\d+\.?\d*(?=})");
             var array = matches.Select( match => Double.Parse(match.Value)).ToArray();
             return array;
+        }
+
+        /// <summary>See Fluid/Sketches/ParseHigherArrayDim.svg.</summary>
+        public static (int[] rectLvls, int[][] nonRectLvls) GetArrayDimStructure(string str) {
+
+            throw new NotImplementedException();
+
+            // MatchCollection matches;
+            // string
+
+            // do {
+            //     matches = Regex.Matches(str, @"");
+            // }
+            // while();
         }
     }
 }

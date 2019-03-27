@@ -2,7 +2,7 @@ using System;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Meshing;
+using Msh = Fluid.Internals.Meshing;
 using static Fluid.Internals.Development.AppReporter;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 using static Fluid.ChannelFlow.Program;
@@ -123,7 +123,7 @@ namespace Fluid.ChannelFlow
     public static class SparseRowHelper
     {
         /// <summary>Transfer values from this SparseRow to specified nodes array.</summary><param name="sparseRow">Source SparseRow of values.</param><param name="nodes">Receiving Node[] array of values.</param>
-        public static void UpdateNodeArray(this SparseRow<double> sparseRow, Node[] nodes) {
+        public static void UpdateNodeArray(this SparseRow<double> sparseRow, Msh.Node[] nodes) {
             int nodeCount = nodes.Length;
             int nVars = nodes[0].Vars.Length;
 

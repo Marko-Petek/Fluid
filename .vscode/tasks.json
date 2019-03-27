@@ -72,9 +72,6 @@
                 "--no-build"
             ],
             "problemMatcher": "$msCompile",
-            "options": {
-                ""
-            },
             "group": {
                 "kind": "test",
                 "isDefault": true
