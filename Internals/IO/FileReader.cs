@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Fluid.Internals.Collections;
 using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals.IO
@@ -31,6 +32,11 @@ namespace Fluid.Internals.IO
         public double[] ReadDoubleArray1d() {
             OnSettingsChanged();
             return IO.ReadDoubleArray1d(Reader);
+        }
+
+        public Hierarchy<double> ReadHierarchyDbl() {
+            OnSettingsChanged();
+            return IO.ReadHierarchyDbl(Reader);
         }
 
 

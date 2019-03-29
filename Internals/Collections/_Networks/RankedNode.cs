@@ -24,6 +24,7 @@ namespace Fluid.Internals.Collections
 
         public class SubordinateCollection : SCG.IEnumerable<RankedNode> {
             RankedNode Node { get; }
+            public int Count => (Node.Leader != null) ? (Node.Peers.Count - 1) : Node.Peers.Count;
 
             public SubordinateCollection(RankedNode node) {
                 Node = node;

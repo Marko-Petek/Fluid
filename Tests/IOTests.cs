@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using Xunit;
 
 using Fluid.Internals;
+using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
 using TB = Fluid.Internals.Toolbox;
 
@@ -24,18 +26,36 @@ namespace Fluid.Tests
             var node1 = new RankedNode(node4);
             var node2 = new ValueNode<int>(node1, 6);
             var node3 = new ValueNode<int>(node1, 3);
+            var node8 = new RankedNode(node4);
+            var node9 = new ValueNode<int>(node8, 5);
+            var node10 = new ValueNode<int>(node8, 2);
             
             var hier = new Hierarchy<int>(node4);
-            TB.FileWriter.SetDirAndFile("Tests", nameof(hier), ".txt");
-            TB.FileWriter.WriteLine(hier);
+            // TB.FileWriter.SetDirAndFile("Tests", nameof(hier), ".txt");
+            // TB.FileWriter.WriteLine(hier);
 
             hier.MakeTopNode(node5);
-            TB.FileWriter.WriteLine(hier);
+            // TB.FileWriter.WriteLine(hier);
 
             hier.MakeTopNode(node4);
-            TB.FileWriter.WriteLine(hier);
+            // TB.FileWriter.WriteLine(hier);
 
-            TB.FileWriter.Flush();
+            // TB.FileWriter.Flush();
+
+            var strw = new StringWriter();
+            IO.Write(hier, strw);
+            Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
+        }
+
+        [Fact] public void HierarchyInput() {
+            TB.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
+            var hierWriteBack = TB.FileReader.ReadHierarchyDbl();
+            //TB.FileWriter.SetDirAndFile("Tests", nameof(hierWriteBack), ".txt");
+            //TB.FileWriter.WriteLine(hierWriteBack);
+            //TB.FileWriter.Flush();
+            var strw = new StringWriter();
+            IO.Write(hierWriteBack, strw);
+            Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
         }
     }
 }
