@@ -44,9 +44,11 @@ namespace Fluid.Internals.IO {
       }
 
       public static Hierarchy<T> ReadHierarchy<T>(TextReader tr) {
-         var types = new Type[] { typeof(string) };
+         var nFI = new NumberFormatInfo();
+         nFI.NumberDecimalSeparator = ".";
+         var types = new Type[] { typeof(string), typeof(IFormatProvider) };
          var parseMethod = typeof(T).GetMethod("Parse", types);
-         var parse = (Func<string,T>) Delegate.CreateDelegate(typeof(Func<string,T>), parseMethod);
+         var parse = (Func<string,IFormatProvider,T>) Delegate.CreateDelegate(typeof(Func<string,IFormatProvider,T>), parseMethod);
          var wholeStr = tr.ReadToEnd();
          var sb = new StringBuilder(@"(\w+\.?\w*|", 300);
          sb.Append(@"\{                     ");
@@ -82,58 +84,12 @@ namespace Fluid.Internals.IO {
                if(newMatch.Value[0] == '{')                                            // If it was a non-value node.
                   Recursion(newMatch.Value, new RankedNode(nodeAbove));
                else                                                                    // If it was a value node.
-                  new ValueNode<T>(nodeAbove, parse(newMatch.Value));
+                  new ValueNode<T>(nodeAbove, parse(newMatch.Value, nFI));
 
                newMatch = newMatch.NextMatch();
          }  }
       }
-      // public static Hierarchy<int> ReadHierarchyInt(TextReader tr) {
-      //    var wholeStr = tr.ReadToEnd();
-      //    var sb = new StringBuilder(@"(\w+\.?\w*|", 300);
-      //    sb.Append(@"\{                     ");
-      //    sb.Append(@"  (?>                  ");
-      //    sb.Append(@"      [^{}]+           ");
-      //    sb.Append(@"    |                  ");
-      //    sb.Append(@"      \{ (?<DEPTH>)    ");
-      //    sb.Append(@"    |                  ");
-      //    sb.Append(@"      }  (?<-DEPTH>)   ");
-      //    sb.Append(@"  )*                   ");
-      //    sb.Append(@"  (?(DEPTH)(?!))       ");
-      //    sb.Append(@"}                      ");
-      //    sb.Append(@")");                                    // The end of an alternator from first line.
-      //    var matcher = new Regex(sb.ToString(), RegexOptions.IgnorePatternWhitespace, new TimeSpan(0,0,1));
-      //    var firstMatch = matcher.Match(wholeStr);
 
-      //    if(firstMatch.Success) {                                     // Now check elements inside it.
-      //          var topNode = new RankedNode();
-      //          var hier = new Hierarchy<int>(topNode);
-      //          Recursion(firstMatch.Value, topNode);
-      //          return hier;
-      //    }
-      //    else
-      //          return null;
-
-      //    void Recursion(string prevMatched, RankedNode nodeAbove) {                    
-      //          var sb2 = new StringBuilder(prevMatched, 300);
-      //          sb2.Remove(prevMatched.Length - 1, 1).Remove(0,1);     // Strip it of outer braces.
-      //          prevMatched = sb2.ToString();                          // Now it is without outer braces.
-      //          Match newMatch = matcher.Match(prevMatched);           // Match either first value or braces
-               
-      //          while(newMatch.Success) {                                                   // If there was anything inside at all.
-      //             if(newMatch.Value[0] == '{')                                            // If it was a non-value node.
-      //                Recursion(newMatch.Value, new RankedNode(nodeAbove));
-      //             else                                                                    // If it was a value node.
-      //                new ValueNode<double>(nodeAbove, Int32.Parse(newMatch.Value));
-
-      //             newMatch = newMatch.NextMatch();
-      // }   }   }
-
-      // public static void Test<T>() {
-      //    var flags = BindingFlags.Public | BindingFlags.Static;
-      //    var types = new Type[] { typeof(string) };
-      //    var parseMethod = typeof(T).GetMethod("Parse", types);
-      //    var parse = (Func<string,T>) Delegate.CreateDelegate(typeof(Func<string,T>), parseMethod);
-      // }
 
    }
 }

@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     39456,       1155]
-NotebookOptionsPosition[     39126,       1140]
-NotebookOutlinePosition[     39492,       1156]
-CellTagsIndexPosition[     39449,       1153]
+NotebookDataLength[     40382,       1212]
+NotebookOptionsPosition[     40052,       1197]
+NotebookOutlinePosition[     40418,       1213]
+CellTagsIndexPosition[     40375,       1210]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -23,10 +23,11 @@ Cell[BoxData[{
   RowBox[{"SetDirectory", "[", 
    RowBox[{"NotebookDirectory", "[", "]"}], "]"}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"nodes", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<nodes.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+  RowBox[{
+   RowBox[{"nodes", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<nodes.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "10", "*", "10", " ", "nodes", " ", "on", " ", "a", " ", "Cartesian", " ", 
@@ -36,28 +37,33 @@ Cell[BoxData[{
       RowBox[{"-", "3"}], ",", "3"}], "]"}], 
     RowBox[{"x", "[", 
      RowBox[{
-      RowBox[{"-", "3"}], ",", "3"}], "]"}]}], " ", "*)"}], "\n", 
-  RowBox[{"nodesM", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<nodesM.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+      RowBox[{"-", "3"}], ",", "3"}], "]"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"nodesM", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<nodesM.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{
     "Only", " ", "the", " ", "mid", " ", "8", "*", "8", " ", "nodes"}], ",", 
     " ", 
     RowBox[{"excluding", " ", "those", " ", "on", " ", 
-     RowBox[{"boundary", "."}]}]}], " ", "*)"}], "\n", 
-  RowBox[{"transNodes", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<transNodes.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+     RowBox[{"boundary", "."}]}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"transNodes", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<transNodes.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "4", "*", "4", " ", "nodes", " ", "with", " ", "the", " ", "mid", " ", "2",
      "*", "2", " ", "randomly", " ", "offset", " ", "by", " ", "a", " ", 
     "small", " ", 
-    RowBox[{"amount", "."}]}], " ", "*)"}], "\n", 
+    RowBox[{"amount", "."}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"transNodesC", "=", 
    RowBox[{
     RowBox[{"Import", "[", "\"\<transNodesC.txt\>\"", "]"}], "//", 
@@ -68,114 +74,130 @@ Cell[BoxData[{
     RowBox[{"Import", "[", "\"\<transNodesCM.txt\>\"", "]"}], "//", 
     "ToExpression"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"transNodesM", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<transNodesM.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+  RowBox[{
+   RowBox[{"transNodesM", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<transNodesM.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "The", " ", "mid", " ", "8", "*", "8", " ", "randomly", " ", "offset", " ", 
-    RowBox[{"nodes", "."}]}], " ", "*)"}], "\n", 
-  RowBox[{"lines1", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+    RowBox[{"nodes", "."}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"lines1", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "10"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "10"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";"}], 
+  
   RowBox[{"(*", " ", 
    RowBox[{
    "Horizontal", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodes", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"lines2", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+    RowBox[{"nodes", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"lines2", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"10", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"10", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";"}], 
+  
   RowBox[{"(*", " ", 
    RowBox[{
    "Vertical", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodes", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"lines", " ", "=", " ", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"lines1", ",", "lines2"}], "}"}], ",", "1"}], "]"}]}], ";", 
+    RowBox[{"nodes", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"lines", " ", "=", " ", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"lines1", ",", "lines2"}], "}"}], ",", "1"}], "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "All", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodes", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"linesM1", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+    RowBox[{"nodes", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"linesM1", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "4"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "4"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "Horizontal", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodesM", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"linesM2", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+    RowBox[{"nodesM", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"linesM2", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes", "[", 
+          RowBox[{"[", 
+           RowBox[{"4", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes", "[", 
-         RowBox[{"[", 
-          RowBox[{"4", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "Vertical", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodesM", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"linesM", "=", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"linesM1", ",", "linesM2"}], "}"}], ",", "1"}], "]"}]}], ";", 
+    RowBox[{"nodesM", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"linesM", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"linesM1", ",", "linesM2"}], "}"}], ",", "1"}], "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "All", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodesM", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"nodesM", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"transLines1", " ", "=", " ", 
    RowBox[{"Table", "[", 
     RowBox[{"(*", " ", 
@@ -217,20 +239,22 @@ Cell[BoxData[{
          RowBox[{"j", ",", "1", ",", "4"}], "}"}]}], "]"}], "]"}], ",", "\n", 
      "\t", 
      RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "\n", "]"}]}], 
-  ";"}], "\n", 
+      RowBox[{"i", ",", "1", ",", "4"}], "}"}]}], "\n", "]"}]}], ";"}], "\n", 
+
  RowBox[{
-  RowBox[{"transLines", "=", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"transLines1", ",", "transLines2"}], "}"}], ",", "1"}], "]"}]}],
-   ";", 
+  RowBox[{
+   RowBox[{"transLines", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"transLines1", ",", "transLines2"}], "}"}], ",", "1"}], 
+     "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "All", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"transNodes", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"transNodes", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"transLinesM1", "=", 
    RowBox[{"Table", "[", 
     RowBox[{"(*", " ", 
@@ -272,20 +296,22 @@ Cell[BoxData[{
          RowBox[{"j", ",", "1", ",", "2"}], "}"}]}], "]"}], "]"}], ",", "\n", 
      "\t", 
      RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "2"}], "}"}]}], "\n", "]"}]}], 
-  ";"}], "\n", 
+      RowBox[{"i", ",", "1", ",", "2"}], "}"}]}], "\n", "]"}]}], ";"}], "\n", 
+
  RowBox[{
-  RowBox[{"transLinesM", "=", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"transLinesM1", ",", "transLinesM2"}], "}"}], ",", "1"}], 
-    "]"}]}], ";", 
+  RowBox[{
+   RowBox[{"transLinesM", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"transLinesM1", ",", "transLinesM2"}], "}"}], ",", "1"}], 
+     "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
    "All", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"transNodesM", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"transNodesM", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"lightSquares", "=", 
    RowBox[{"{", "\n", "\t", 
     RowBox[{
@@ -742,10 +768,11 @@ Cell[BoxData[{
           RowBox[{"4", ",", "2"}], "]"}], "]"}]}], "}"}], "]"}]}], "\n", 
     "}"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"nodes3dF", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<nodes3dF.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+  RowBox[{
+   RowBox[{"nodes3dF", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<nodes3dF.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -756,12 +783,14 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "0", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], " ", "*)"}], 
-  "\n", 
-  RowBox[{"nodes3dMF", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<nodes3dMF.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], " ", 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"nodes3dMF", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<nodes3dMF.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -772,12 +801,14 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "0", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], " ", "*)"}], 
-  "\n", 
-  RowBox[{"nodes3dMT", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<nodes3dMT.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], " ", 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"nodes3dMT", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<nodes3dMT.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -788,12 +819,14 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "1", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"T", " ", "=", " ", "top"}], ")"}], "."}]}]}], " ", "*)"}], 
-  "\n", 
-  RowBox[{"transNodes3dF", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<transNodes3dF.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+       RowBox[{"T", " ", "=", " ", "top"}], ")"}], "."}]}]}], " ", 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"transNodes3dF", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<transNodes3dF.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -804,12 +837,14 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "0", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], "*)"}], "\n", 
-  
-  RowBox[{"transNodes3dMF", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<transNodes3dMF.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"transNodes3dMF", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<transNodes3dMF.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -820,12 +855,14 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "0", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], "*)"}], "\n", 
-  
-  RowBox[{"transNodes3dMT", " ", "=", " ", 
-   RowBox[{
-    RowBox[{"Import", "[", "\"\<transNodes3dMT.txt\>\"", "]"}], "//", 
-    "ToExpression"}]}], ";", 
+       RowBox[{"F", " ", "=", " ", "floor"}], ")"}], "."}]}]}], 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"transNodes3dMT", " ", "=", " ", 
+    RowBox[{
+     RowBox[{"Import", "[", "\"\<transNodes3dMT.txt\>\"", "]"}], "//", 
+     "ToExpression"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{
     RowBox[{"'", 
@@ -836,47 +873,55 @@ Cell[BoxData[{
     RowBox[{"set", " ", "to", " ", "1", " ", 
      RowBox[{
       RowBox[{"(", 
-       RowBox[{"T", " ", "=", " ", "top"}], ")"}], "."}]}]}], "*)"}], "\n", 
-  RowBox[{"lines3d1", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+       RowBox[{"T", " ", "=", " ", "top"}], ")"}], "."}]}]}], "*)"}]}], "\n", 
+
+ RowBox[{
+  RowBox[{
+   RowBox[{"lines3d1", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes3dF", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes3dF", "[", 
+          RowBox[{"[", 
+           RowBox[{"i", ",", "10"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes3dF", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "1"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes3dF", "[", 
-         RowBox[{"[", 
-          RowBox[{"i", ",", "10"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";"}], 
+  
   RowBox[{"(*", " ", 
    RowBox[{
    "Horizontal", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}], "\n", 
-  RowBox[{"lines3d2", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"Line", "[", 
+    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"lines3d2", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Line", "[", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"nodes3dF", "[", 
+          RowBox[{"[", 
+           RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
+         RowBox[{"nodes3dF", "[", 
+          RowBox[{"[", 
+           RowBox[{"10", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
       RowBox[{"{", 
-       RowBox[{
-        RowBox[{"nodes3dF", "[", 
-         RowBox[{"[", 
-          RowBox[{"1", ",", "i"}], "]"}], "]"}], ",", 
-        RowBox[{"nodes3dF", "[", 
-         RowBox[{"[", 
-          RowBox[{"10", ",", "i"}], "]"}], "]"}]}], "}"}], "]"}], ",", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";", 
+       RowBox[{"i", ",", "1", ",", "10", ",", "3"}], "}"}]}], "]"}]}], ";"}], 
+  
   RowBox[{"(*", " ", 
    RowBox[{
    "Vertical", " ", "lines", " ", "corresponding", " ", "to", " ", "grid", 
     " ", 
     RowBox[{"for", " ", "'"}], 
-    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"lines3d3", "=", 
    RowBox[{"Flatten", "[", 
     RowBox[{"(*", " ", 
@@ -904,16 +949,18 @@ Cell[BoxData[{
         RowBox[{"j", ",", "1", ",", "4"}], "}"}]}], "]"}], ",", "\n", "1"}], 
     "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"lines3d", "=", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"lines3d1", ",", "lines3d2"}], "}"}], ",", "1"}], "]"}]}], ";", 
-  
+  RowBox[{
+   RowBox[{"lines3d", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"lines3d1", ",", "lines3d2"}], "}"}], ",", "1"}], "]"}]}], 
+   ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{"All", " ", "lines", " ", "corresponding", " ", "to", " ", 
     RowBox[{"grid", " ", "'"}], 
-    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"nodes3dF", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"lines3dMSpec", "=", 
    RowBox[{"Flatten", "[", 
     RowBox[{"(*", " ", 
@@ -1012,18 +1059,20 @@ Cell[BoxData[{
         RowBox[{"j", ",", "1", ",", "4"}], "}"}]}], "]"}], ",", "\n", "1"}], 
     "]"}]}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"transLines3d", "=", 
-   RowBox[{"Flatten", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{"transLines3d1", ",", "transLines3d2"}], "}"}], ",", "1"}], 
-    "]"}]}], ";", 
+  RowBox[{
+   RowBox[{"transLines3d", "=", 
+    RowBox[{"Flatten", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"transLines3d1", ",", "transLines3d2"}], "}"}], ",", "1"}], 
+     "]"}]}], ";"}], 
   RowBox[{"(*", " ", 
    RowBox[{"All", " ", "lines", " ", "corresponding", " ", "to", " ", 
     RowBox[{"grids", " ", "'"}], 
     RowBox[{"transNodes3dF", "'"}], " ", 
     RowBox[{"and", " ", "'"}], 
-    RowBox[{"transNodes3dT", "'"}]}], " ", "*)"}], "\n", 
+    RowBox[{"transNodes3dT", "'"}]}], " ", "*)"}]}], "\n", 
+ RowBox[{
   RowBox[{"transLines3d3Spec", "=", 
    RowBox[{"transLines3d3", "=", 
     RowBox[{"Flatten", "[", 
@@ -1109,22 +1158,29 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"nZXGridLines", "=", "4"}], ";"}], "\n", 
  RowBox[{
-  RowBox[{"zXGridLines", "=", 
-   RowBox[{"Table", "[", 
-    RowBox[{
-     RowBox[{"{", 
-      RowBox[{
+  RowBox[{
+   RowBox[{"zXGridLines", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"{", 
        RowBox[{
         RowBox[{
-         FractionBox["6", 
-          RowBox[{"nZXGridLines", "-", "1"}]], " ", "i"}], "-", "3"}], ",", 
-       RowBox[{"Directive", "[", 
-        RowBox[{
-         RowBox[{"Thickness", "[", "0.003", "]"}], ",", "Black"}], "]"}]}], 
-      "}"}], ",", " ", 
-     RowBox[{"{", 
-      RowBox[{"i", ",", "0", ",", 
-       RowBox[{"nZXGridLines", "-", "1"}]}], "}"}]}], "]"}]}], ";", "     ", 
+         RowBox[{
+          FractionBox["6", 
+           RowBox[{"nZXGridLines", "-", "1"}]], " ", "i"}], "-", "3"}], ",", 
+        RowBox[{"Directive", "[", 
+         RowBox[{
+          RowBox[{"Thickness", "[", "0.003", "]"}], ",", "Black"}], "]"}]}], 
+       "}"}], ",", " ", 
+      RowBox[{"{", 
+       RowBox[{"i", ",", "0", ",", 
+        RowBox[{"nZXGridLines", "-", "1"}]}], "}"}]}], "]"}]}], ";"}], 
+  "\n"}], "\n", 
+ RowBox[{
+  RowBox[{"std", "=", 
+   RowBox[{"1.2", " ", 
+    RowBox[{"1", "/", "3"}]}]}], ";"}], "\n", 
+ RowBox[{
   RowBox[{"(*", " ", 
    RowBox[{
    "Grid", " ", "line", " ", "positions", " ", "and", " ", "their", " ", 
@@ -1135,7 +1191,8 @@ Cell[BoxData[{
   3.7616352140946302`*^9, 3.76163526777456*^9}, {3.761635349469952*^9, 
   3.761635363587934*^9}, {3.761635612408826*^9, 3.761635667883977*^9}, {
   3.761642800351026*^9, 3.7616428012937937`*^9}, {3.76164375032096*^9, 
-  3.7616437649409103`*^9}},ExpressionUUID->"a2d23beb-9a99-4179-bdbc-\
+  3.7616437649409103`*^9}, {3.7629645891669207`*^9, 
+  3.762964607391141*^9}},ExpressionUUID->"a2d23beb-9a99-4179-bdbc-\
 f2ce92ef99a7"]
 },
 WindowSize->{1920, 1043},
@@ -1155,7 +1212,7 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 38564, 1118, 3671, "Input", "ExpressionUUID" -> \
+Cell[558, 20, 39490, 1175, 3616, "Input", "ExpressionUUID" -> \
 "a2d23beb-9a99-4179-bdbc-f2ce92ef99a7"]
 }
 ]

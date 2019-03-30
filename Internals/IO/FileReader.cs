@@ -39,6 +39,16 @@ namespace Fluid.Internals.IO
          return IO.ReadHierarchy<T>(Reader);
       }
 
+      public Array ReadArray<T>() {
+         OnSettingsChanged();
+         (var succ, var arr) = IO.ReadHierarchy<T>(Reader).ConvertToArray();
+         
+         if(succ)
+            return arr;
+         else
+            throw new IOException("Failure when reading array.");
+      }
+
       // public Hierarchy<int> ReadHierarchyInt() {
       //    OnSettingsChanged();
       //    return IO.ReadHierarchyInt(Reader);

@@ -706,3 +706,16 @@
 16:03     Program started.                         0         Internals/Toolbox.cs   Reporter          17    
 16:41     Program started.                         0         Internals/Toolbox.cs   Reporter          17    
 19:38     Program started.                         0         Internals/Toolbox.cs   Reporter          17    
+19:51     Program started.                         0         Internals/Toolbox.cs   Reporter          17    
+20:17     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+          Exception occured:  blah                                                    0,0179    Seminar/NodeCreation/Program.cs          Main              197   
+          Stack trace:     at Fluid.Seminar.NodeCreation.Program.Main(String[] args)  0,0169    Seminar/NodeCreation/Program.cs          Main              198   
+           in /home/marko/Dokumenti/Fluid/Seminar/NodeCreation/Program.cs:line 193                                                                               
+20:19     Program started.                                                            0         Internals/Toolbox.cs                     Reporter          17    
+          Exception occured: blah                                                     0,0182    Seminar/NodeCreation/Program.cs          Main              197   
+          Stack trace:   at Fluid.Seminar.NodeCreation.Program.Main(String[] args) i  0,0244    Seminar/NodeCreation/Program.cs          Main              198   
+          n /home/marko/Dokumenti/Fluid/Seminar/NodeCreation/Program.cs:line 193                                                                                 
+20:48     Program started.                     0         Internals/Toolbox.c  Reporter          17    
+                                                         s                                            
+          Exiting application.                 0,0676    Seminar/NodeCreatio  Main              209   
+                                                         n/Program.cs                                 
