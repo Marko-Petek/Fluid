@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     16719,        334]
-NotebookOptionsPosition[     16017,        309]
-NotebookOutlinePosition[     16382,        325]
-CellTagsIndexPosition[     16339,        322]
+NotebookDataLength[     18666,        383]
+NotebookOptionsPosition[     17493,        346]
+NotebookOutlinePosition[     17858,        362]
+CellTagsIndexPosition[     17815,        359]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,32 +21,33 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{"Graphics", "[", "\n", "\t", 
-  RowBox[{
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"RGBColor", "[", "\"\<#a4f2f1\>\"", "]"}], ",", " ", 
-     RowBox[{"Opacity", "[", "0.6", "]"}], ",", "\n", "\t\t", "lightSquares", 
-     ",", "\n", "\t\t", "Black", ",", "\n", "\t\t", "darkSquares", ",", "\n", 
-     "\t\t", 
-     RowBox[{"Thickness", "[", "0.009", "]"}], ",", 
-     RowBox[{"Opacity", "[", "1.0", "]"}], ",", "\n", "\t\t", "lines", ",", 
-     "\n", "\t\t", "Red", ",", 
-     RowBox[{"PointSize", "[", "0.02", "]"}], ",", "\n", "\t\t", 
-     RowBox[{"Point", "[", 
-      RowBox[{"Flatten", "[", 
-       RowBox[{"nodes", ",", "1"}], "]"}], "]"}]}], "\n", "\t", "}"}], ",", 
-   "\n", "\t", 
-   RowBox[{"Axes", "\[Rule]", "True"}], ",", "\n", "\t", 
-   RowBox[{"AxesOrigin", "\[Rule]", 
-    RowBox[{"{", 
+ RowBox[{"layout2d", "=", 
+  RowBox[{"Graphics", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"-", "3.2"}], ",", 
-      RowBox[{"-", "3.2"}]}], "}"}]}], ",", "\n", "\t", 
-   RowBox[{"AxesStyle", "\[Rule]", 
-    RowBox[{"Directive", "[", 
-     RowBox[{"26", ",", " ", "Black"}], "]"}]}], ",", "\n", "\t", 
-   RowBox[{"ImageSize", "\[Rule]", "500"}]}], "\n", "]"}]], "Input",
+      RowBox[{"RGBColor", "[", "\"\<#a4f2f1\>\"", "]"}], ",", " ", 
+      RowBox[{"Opacity", "[", "0.6", "]"}], ",", "\n", "\t\t", "lightSquares",
+       ",", "\n", "\t\t", "Black", ",", "\n", "\t\t", "darkSquares", ",", 
+      "\n", "\t\t", 
+      RowBox[{"Thickness", "[", "0.009", "]"}], ",", 
+      RowBox[{"Opacity", "[", "1.0", "]"}], ",", "\n", "\t\t", "lines", ",", 
+      "\n", "\t\t", "Red", ",", 
+      RowBox[{"PointSize", "[", "0.02", "]"}], ",", "\n", "\t\t", 
+      RowBox[{"Point", "[", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"nodes", ",", "1"}], "]"}], "]"}]}], "\n", "\t", "}"}], ",", 
+    "\n", "\t", 
+    RowBox[{"Axes", "\[Rule]", "True"}], ",", "\n", "\t", 
+    RowBox[{"AxesOrigin", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "3.2"}], ",", 
+       RowBox[{"-", "3.2"}]}], "}"}]}], ",", "\n", "\t", 
+    RowBox[{"AxesStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"26", ",", " ", "Black"}], "]"}]}], ",", "\n", "\t", 
+    RowBox[{"ImageSize", "\[Rule]", "500"}]}], "\n", "]"}]}]], "Input",
  CellChangeTimes->{{3.7592356266175623`*^9, 3.759235968158757*^9}, {
    3.759251027048026*^9, 3.759251167049019*^9}, {3.759251199497261*^9, 
    3.7592512032709827`*^9}, {3.759251258676188*^9, 3.759251263999308*^9}, {
@@ -58,8 +59,9 @@ Cell[BoxData[
    3.760957974804652*^9, 3.760958036195212*^9}, {3.760958654804847*^9, 
    3.7609587025645037`*^9}, {3.760960683559415*^9, 3.760960695691146*^9}, {
    3.760960809583088*^9, 3.760960812828586*^9}, {3.7609608440778427`*^9, 
-   3.760960844753757*^9}, {3.76096088848213*^9, 
-   3.7609609299442587`*^9}},ExpressionUUID->"3c358a63-c378-4f8a-8a3b-\
+   3.760960844753757*^9}, {3.76096088848213*^9, 3.7609609299442587`*^9}, {
+   3.763197308207823*^9, 
+   3.763197315628717*^9}},ExpressionUUID->"3c358a63-c378-4f8a-8a3b-\
 d99ab8faefe3"],
 
 Cell[BoxData[
@@ -143,47 +145,66 @@ Cell[BoxData[
    3.760958016488614*^9}, {3.7609586566387367`*^9, 3.7609587036477327`*^9}, 
    3.760960696792042*^9, 3.76096082017689*^9, 3.760960933883996*^9, 
    3.761306962713747*^9, 3.761313519687089*^9, 3.761405813153166*^9, 
-   3.761467719121876*^9, 3.761471584250248*^9, 
-   3.761635390324751*^9},ExpressionUUID->"56161042-0c82-44f3-8e70-\
-82548363b6ee"]
+   3.761467719121876*^9, 3.761471584250248*^9, 3.761635390324751*^9, {
+   3.762964207226502*^9, 3.762964231968202*^9}, 
+   3.763197357903442*^9},ExpressionUUID->"df73b57d-5d79-42e2-931d-\
+d6991bc9d8e6"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[BoxData[
- RowBox[{"Graphics", "[", "\n", "\t", 
-  RowBox[{
-   RowBox[{"{", "\n", "\t\t", 
-    RowBox[{
-     RowBox[{"RGBColor", "[", "\"\<#a4f2f1\>\"", "]"}], ",", " ", 
-     RowBox[{"Opacity", "[", "0.6", "]"}], ",", "\n", "\t\t", 
-     "transLightSquares", ",", "\n", "\t\t", "Black", ",", 
-     RowBox[{"Thickness", "[", "0.009", "]"}], ",", "\n", "\t\t", 
-     "transDarkSquares", ",", "\n", "\t\t", 
-     RowBox[{"Opacity", "[", "1", "]"}], ",", "\n", "\t\t", "transLines", ",",
-      "\n", "\t\t", "Red", ",", 
-     RowBox[{"PointSize", "[", "0.02", "]"}], ",", "\n", "\t\t", 
-     RowBox[{"Point", "[", 
-      RowBox[{"Flatten", "[", 
-       RowBox[{"transNodes", ",", "1"}], "]"}], "]"}]}], "\n", "\t", "}"}], 
-   ",", "\n", "\t", 
-   RowBox[{"Axes", "\[Rule]", "True"}], ",", "\n", "\t", 
-   RowBox[{"AxesOrigin", "\[Rule]", 
-    RowBox[{"{", 
+ RowBox[{"Export", "[", 
+  RowBox[{"\"\<layout2d.png\>\"", ",", " ", "layout2d", ",", 
+   RowBox[{"ImageResolution", "\[Rule]", "90"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.763197348327746*^9, 3.7631973512266703`*^9}, {
+  3.763197400386858*^9, 3.763197417930716*^9}, {3.763197606006357*^9, 
+  3.7631976165064783`*^9}},ExpressionUUID->"a97f9de3-586a-4a62-95d3-\
+098ab0eb58ae"],
+
+Cell[BoxData["\<\"layout2d.png\"\>"], "Output",
+ CellChangeTimes->{3.76319743203477*^9, 
+  3.763197618848815*^9},ExpressionUUID->"1f95a641-a188-438e-b50e-\
+5fe706fc0a33"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"layout2dTrans", "=", 
+  RowBox[{"Graphics", "[", "\n", "\t", 
+   RowBox[{
+    RowBox[{"{", "\n", "\t\t", 
      RowBox[{
-      RowBox[{"-", "3.2"}], ",", 
-      RowBox[{"-", "3.2"}]}], "}"}]}], ",", "\n", "\t", 
-   RowBox[{"AxesStyle", "\[Rule]", 
-    RowBox[{"Directive", "[", 
-     RowBox[{"26", ",", " ", "Black"}], "]"}]}], ",", "\n", "\t", 
-   RowBox[{"ImageSize", "\[Rule]", "500"}]}], "\n", "]"}]], "Input",
+      RowBox[{"RGBColor", "[", "\"\<#a4f2f1\>\"", "]"}], ",", " ", 
+      RowBox[{"Opacity", "[", "0.6", "]"}], ",", "\n", "\t\t", 
+      "transLightSquares", ",", "\n", "\t\t", "Black", ",", 
+      RowBox[{"Thickness", "[", "0.009", "]"}], ",", "\n", "\t\t", 
+      "transDarkSquares", ",", "\n", "\t\t", 
+      RowBox[{"Opacity", "[", "1", "]"}], ",", "\n", "\t\t", "transLines", 
+      ",", "\n", "\t\t", "Red", ",", 
+      RowBox[{"PointSize", "[", "0.02", "]"}], ",", "\n", "\t\t", 
+      RowBox[{"Point", "[", 
+       RowBox[{"Flatten", "[", 
+        RowBox[{"transNodes", ",", "1"}], "]"}], "]"}]}], "\n", "\t", "}"}], 
+    ",", "\n", "\t", 
+    RowBox[{"Axes", "\[Rule]", "True"}], ",", "\n", "\t", 
+    RowBox[{"AxesOrigin", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"-", "3.2"}], ",", 
+       RowBox[{"-", "3.2"}]}], "}"}]}], ",", "\n", "\t", 
+    RowBox[{"AxesStyle", "\[Rule]", 
+     RowBox[{"Directive", "[", 
+      RowBox[{"26", ",", " ", "Black"}], "]"}]}], ",", "\n", "\t", 
+    RowBox[{"ImageSize", "\[Rule]", "500"}]}], "\n", "]"}]}]], "Input",
  CellChangeTimes->{
   3.760959123306126*^9, {3.760960197675465*^9, 3.760960200190855*^9}, {
    3.760960353409881*^9, 3.760960386246467*^9}, {3.7610359444118137`*^9, 
    3.76103595647198*^9}, {3.761036223672682*^9, 3.7610362324585733`*^9}, 
    3.761036286835894*^9, {3.761306999149302*^9, 3.761307026407921*^9}, {
-   3.761313731559936*^9, 
-   3.761313762736479*^9}},ExpressionUUID->"a23c5591-c07f-4e25-8075-\
+   3.761313731559936*^9, 3.761313762736479*^9}, {3.763197441737377*^9, 
+   3.763197448765476*^9}},ExpressionUUID->"a23c5591-c07f-4e25-8075-\
 080c287b0f72"],
 
 Cell[BoxData[
@@ -302,9 +323,25 @@ Cell[BoxData[
    3.761313692730886*^9}, {3.761313738798658*^9, 3.761313763805839*^9}, 
    3.7614058194826117`*^9, 3.7614677217232447`*^9, 3.76146878787534*^9, 
    3.761469031265576*^9, 3.7614715881867027`*^9, 3.7614716724050627`*^9, 
-   3.761472769068071*^9, 
-   3.761635393433304*^9},ExpressionUUID->"c793d92b-4113-4fe1-a90c-\
-de228a224272"]
+   3.761472769068071*^9, 3.761635393433304*^9, 3.7629642345038357`*^9, 
+   3.7631974710156317`*^9},ExpressionUUID->"b88d9bb0-378c-4c0d-8cbb-\
+1e1a1f7564a5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Export", "[", 
+  RowBox[{"\"\<layout2dTrans.png\>\"", ",", " ", "layout2dTrans", ",", 
+   RowBox[{"ImageResolution", "\[Rule]", "90"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.76319746516299*^9, 3.763197476654212*^9}, 
+   3.763197626982129*^9},ExpressionUUID->"23d58cd0-1175-447d-a2a1-\
+24e66c52c168"],
+
+Cell[BoxData["\<\"layout2dTrans.png\"\>"], "Output",
+ CellChangeTimes->{3.763197478584217*^9, 
+  3.763197628988514*^9},ExpressionUUID->"c49aad10-220a-4ac4-a98d-\
+0d6f6442ad4c"]
 }, Open  ]]
 },
 WindowSize->{1920, 1043},
@@ -325,16 +362,28 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[580, 22, 2095, 40, 545, "Input", "ExpressionUUID" -> \
+Cell[580, 22, 2200, 42, 545, "Input", "ExpressionUUID" -> \
 "3c358a63-c378-4f8a-8a3b-d99ab8faefe3"],
-Cell[2678, 64, 4933, 83, 808, "Output", "ExpressionUUID" -> \
-"56161042-0c82-44f3-8e70-82548363b6ee"]
+Cell[2783, 66, 5005, 84, 808, "Output", "ExpressionUUID" -> \
+"df73b57d-5d79-42e2-931d-d6991bc9d8e6"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[7648, 152, 1588, 34, 545, "Input", "ExpressionUUID" -> \
+Cell[7825, 155, 393, 7, 49, "Input", "ExpressionUUID" -> \
+"a97f9de3-586a-4a62-95d3-098ab0eb58ae"],
+Cell[8221, 164, 170, 3, 71, "Output", "ExpressionUUID" -> \
+"1f95a641-a188-438e-b50e-5fe706fc0a33"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8428, 172, 1694, 35, 545, "Input", "ExpressionUUID" -> \
 "a23c5591-c07f-4e25-8075-080c287b0f72"],
-Cell[9239, 188, 6762, 118, 841, "Output", "ExpressionUUID" -> \
-"c793d92b-4113-4fe1-a90c-de228a224272"]
+Cell[10125, 209, 6810, 118, 808, "Output", "ExpressionUUID" -> \
+"b88d9bb0-378c-4c0d-8cbb-1e1a1f7564a5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16972, 332, 326, 6, 49, "Input", "ExpressionUUID" -> \
+"23d58cd0-1175-447d-a2a1-24e66c52c168"],
+Cell[17301, 340, 176, 3, 71, "Output", "ExpressionUUID" -> \
+"c49aad10-220a-4ac4-a98d-0d6f6442ad4c"]
 }, Open  ]]
 }
 ]

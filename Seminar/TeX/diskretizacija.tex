@@ -1,6 +1,6 @@
 \section{Diskretizacija problema}
 
-Za reševanje problema z računalnikom moramo abs\-trakt\-no zastavitev problema \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami diskretizirati. Domena $\Omega$ kljub omejenosti vsebuje neskončno število točk, v katerih obstajajo funkcijske vrednosti: funkcije so na domeni $\Omega$ povsod goste. To lastnost funkcij želimo ohraniti, hkrati pa iskanje omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
+Za numerično reševanje problema moramo abs\-trakt\-no zastavitev problema \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami diskretizirati. Domena $\Omega$ kljub omejenosti vsebuje neskončno število točk, v katerih obstajajo funkcijske vrednosti: funkcije so na domeni $\Omega$ povsod goste. To lastnost funkcij želimo ohraniti, hkrati pa iskanje omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
 \begin{IEEEeqnarray*}{rc}
     \hspace{16mm} \Phi_i(\mathbf{x}) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
 \end{IEEEeqnarray*}
@@ -13,15 +13,16 @@ Predstavljamo si jih kot hribčke na domeni $\Omega$. Problemu omejimo število 
 S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Naslikajmo idejo na skrajno preprosti kvadratni domeni $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo s šestnajstimi vozlišči (slika \ref{fig:regionAndNodeFunctions}a) in nad njimi napnemo prav toliko vozliščnih funkcij z nastavljivimi višinami $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
 
 \begin{figure}[ht]
+   \centering
     \begin{subfigure}[b]{0.42\textwidth}
         \centering
-        \includegraphics[height=67mm]{Slike/undeformedRegion.png}
-        \vspace{6mm}
+        \includegraphics[height=60mm]{Slike/layout2d}
+        \vspace{5mm}
         \caption{}
     \end{subfigure}
-    \begin{subfigure}[b]{0.55\textwidth}
+    \begin{subfigure}[b]{0.53\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/undeformedNodeFs.png}
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3d}
         \caption{}
     \end{subfigure}
     \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le štiri osrednje vozliščne funkcije.}
@@ -39,15 +40,16 @@ To je enostavno dokler so vsi elementi iste oblike in velikosti, kot na sliki \r
  Segmente vozliščnih funkcij $\Phi_6, \, \Phi_7, \, \Phi_{10}$ in $\Phi_{11}$, ki se nahajajo neposredno nad elementom 5, proglasimo za \textbf{elementarne funkcije} $\phi_{5 j}(\bm\chi)$ tega elementa (slika \ref{fig:sumAndShapeFunctions}b). Tako lahko funkcijo $\mathbf{v}$ na
 
 \begin{figure}[ht]
+   \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/sumOfNodeFs.png}
-        \vspace{6mm}
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElm}
+        \vspace{0mm}
         \caption{}
     \end{subfigure}
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/undeformedShapeFsFar.png}
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElmMod}
         \caption{}
     \end{subfigure}
     \caption{(a) vsota vozliščnih funkcij s slike \ref{fig:regionAndNodeFunctions}b in (b) elementarne funkcije, ki pripadajo elementu 5.}
@@ -55,24 +57,38 @@ To je enostavno dokler so vsi elementi iste oblike in velikosti, kot na sliki \r
 \end{figure}
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[height=80mm]{Slike/deformedRegion.png}
-\end{figure}
-
-\begin{figure}[ht]
+   \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/undeformedShapeFs.png}
-        \vspace{6mm}
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3dSparse}
+        \vspace{0mm}
         \caption{}
     \end{subfigure}
-    \begin{subfigure}[b]{0.48\textwidth}
+    \begin{subfigure}[b]{0.46\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/deformedShapeFs.png}
+        \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3d}
         \caption{}
     \end{subfigure}
     \caption{}
     \label{fig:shapeFs}
+\end{figure}
+
+\begin{figure}[ht]
+   \centering
+   \begin{subfigure}[b]{0.40\textwidth}
+       \centering
+       \includegraphics[width=0.94\textwidth]{Slike/layout2dTrans}
+       \vspace{4mm}
+       \caption{}
+   \end{subfigure}
+   \hspace{3mm}
+   \begin{subfigure}[b]{0.55\textwidth}
+       \centering
+       \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3dTrans}
+       \caption{}
+   \end{subfigure}
+   \caption{}
+   \label{fig:shapeFs}
 \end{figure}
 
 še vedno  Z natančno analitično izpeljavo se prebijemo do izjave \eqref{eq:LsfemVariationalStatement}, od tod dalje pa moramo iskanje funkcije $\mathbf{u(x)}$ z neskončno prostostnimi stopnjami poenostaviti v iskanje funkcije s končnim številom prostostnih stopenj $N$. 
