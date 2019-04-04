@@ -1,10 +1,102 @@
 \section{Diskretizacija problema}
 
-Za numerično reševanje problema moramo abs\-trakt\-no zastavitev problema \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stopnjami diskretizirati. Domena $\Omega$ kljub omejenosti vsebuje neskončno število točk, v katerih obstajajo funkcijske vrednosti: funkcije so na domeni $\Omega$ povsod goste. To lastnost funkcij želimo ohraniti, hkrati pa iskanje omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
+Večina literature iz teorije \texttt{FEM} obravnava skalarne funkcije s stališča funkcionalne analize - kot vektorje. Enačbe iz prejšnjega poglavja bi v takšnem zapisu izgledale preprosteje. Omenjen pristop bi dodal novo plast konceptov, ki bi jih moral bralec predhodno razumeti, zato smo se ga za zaćetek izognili. Eden takšnih konceptov je koncept prostostnih stopenj funkcije. Razlaga diskretizacije problema je brez njega precej otežena, zato bomo tukaj na hitro opisali bistvo vektorske obravnave funkcij.
+
+Predstavljajmo si dobro poznani 3D vektorski prostor. Osnovni gradniki vsakega vektorja so trije bazni vektroji. Tri komponente vektorja opisujejo delež prisotnosti pripadajočega baznega vektorja. S takšnim prostorom lahko opišemo vse možne diskretne skalarne funkcije, katerih domena sestoji le iz treh točk (slika \ref{fig:discreteExample}a). Vsaka konfiguracija treh skalarjev ustreza eni točki v našem 3D prostoru, ki ga posledično imenujemo funkcijski prostor. Dimenzija funkcijskega prostora je torej povezana z gostoto vzorčenja domene. Če na domeno postavimo trinajst točk (slika \ref{fig:discreteExample}b), bomo za opis vseh možnih konfiguracij potrebovali trinajst-dimenzionalni vektorski prostor. Če na domeno postavimo neskončno točk, kar storimo pri obravnavi zveznih funkcij (slika \ref{fig:discreteExample}c), bomo potrebovali neskončno dimenzionalni vektorski prostor. In kaj so potem bazni vektorji našega prostora? To so $\delta$ funkcije, postavljene v ustreznih točkah domene.
+
+\begin{figure}[ht]
+   \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.94\textwidth]{Slike/discreteExample}
+        \vspace{0mm}
+        \caption{}
+    \end{subfigure}
+    \hspace{0mm}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=0.94\textwidth]{Slike/discreteExample2}
+        \caption{}
+    \end{subfigure}
+    \hspace{0mm}
+    \begin{subfigure}[b]{0.32\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/discreteExample3}
+      \caption{}
+  \end{subfigure}
+    \caption{Funkcije, ki živijo v (a) 3D, (b) 13D in (c) $\infty$-D funkcijskem (vektorskem) prostoru.}
+    \label{fig:discreteExample}
+\end{figure}
+
+Na komponente vektorja gledamo kot na \textbf{prostostne stopnje}, katerih vrednosti lahko poljubno nastavljamo. Funkcijo $f$ (slika \ref{fig:discreteExample}a) zapišemo s komponentami in baznimi vektorji kot:
+\begin{equation}
+   \ket{f} =
+   \begin{pmatrix}
+      \mkern1mu 0,68 & 1,00, & 0,68 \mkern1mu
+   \end{pmatrix}
+   \begin{pmatrix}
+      \mkern1mu \delta(x) \\
+      \delta(x-6) \\
+      \delta(x-12) \mkern1mu
+   \end{pmatrix}
+   =
+   \mkern2mu 0,68 \, \delta(x) + 1,00 \, \delta(x-6) + 0,68 \, \delta(x-12)
+   \ ,
+   \label{eq:discreteF}
+\end{equation}
+Funkcijo $g$ (slika \ref{fig:discreteExample}b) zapišemo s komponentami in baznimi vektorji kot:
+\begin{equation}
+   \ket{g} =
+   \begin{pmatrix}
+      \mkern1mu 0,68 & 0,76 & \cdots & 0,68 \mkern1mu
+   \end{pmatrix}
+   \begin{pmatrix}
+      \delta(x) \\
+      \delta(x-1) \\
+      \vdots \\
+      \delta(x-12)
+   \end{pmatrix}
+   =
+   \mkern2mu 0,68 \, \delta(x) + 0,76 \, \delta(x-1) + ... + 0,68 \, \delta(x-12)
+   \ .
+   \label{eq:discreteG}
+\end{equation}
+Še vedno veljajo vsa pravila vektorskih prostorov. Tako je na primer skalarni produkt funkcije $\ket{f}$ same s seboj enak:
+\begin{equation}
+   \bra{f}\ket{f} =
+   \begin{pmatrix}
+      \mkern1mu 0,68 & 1,00, & 0,68 \mkern1mu
+   \end{pmatrix}
+   \begin{pmatrix}
+      0,68 \\
+      1,00 \\
+      0,68
+   \end{pmatrix}
+   =
+   1,92 \ .
+\end{equation}
+Skalarni produkt je definiran le za funkciji, ki se nahajta znotraj istega funkcijskega prostora. Pri zvezni funkciji $h$ (slika \ref{fig:discreteExample}c) komponent in baznih vektorjev ne moremo našteti, ker jih je neštevno neskončno. Kljub temu lahko vektor, ki zastopa $h$, izrazimo abstraktno po istem principu, kot smo to storili v diskretnih primerih \eqref{eq:discreteF} in \eqref{eq:discreteG}. Diskretno vsoto členov pretvorimo v zvezno vsoto (integral):
+\begin{equation}
+   \ket{h} = \int_{0}^{12} h(x_0) \mkern3mu \delta(x-x_0) \mkern5mu \text{d}x_0 = h(x) \text{ na območju } x \in [0, 12] \ .
+\end{equation}
+Skalarni produkt dveh zveznih funkcij je po analogiji enak:
+\begin{equation}
+   \bra{h}\ket{h} =
+   \int_0^{12} h(x) \mkern2mu h(x) \mkern5mu \text{d}x \ .
+\end{equation}
+Če skalarne funkcije predstavimo kot vektorje, kako potem v istem smislu predstavimo vektorske funkcije (ki slikajo v več skalarnih spremenljivk)? Tako, da vsako komponento (skalarno funkcijo) posebej zapišemo kot vektor iz funkcijskega prostora. Tako dobimo vektor vektorjev, oz. matriko. Zdaj vidimo, zakaj smo temelje \texttt{FEM} opisali brez uporabe omenjenih konceptov. Zahtevnost zapisov enačb se zmanjša na račun povečane zahteve po predstavljivosti s strani bralca. Kot primer v novem jeziku zapišimo variacijsko izjavo \eqref{eq:LsfemVariationalStatement}:
+\begin{equation}
+		\bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern2mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}\mkern1mu} \ = \,
+		0 \ , \hspace{5mm} \forall \mathbf{v} \ .
+	\label{eq:LsfemVariationalStatementNew}
+\end{equation}
+To izgleda veliko bolje, kajne?
+
+Za numerično reševanje problema moramo abs\-trakt\-no zastavitev \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stop\-nja\-mi diskretizirati. Iskanje želimo omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
 \begin{IEEEeqnarray*}{rc}
     \hspace{16mm} \Phi_i(\mathbf{x}) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
 \end{IEEEeqnarray*}
-Predstavljamo si jih kot hribčke na domeni $\Omega$. Problemu omejimo število prostostnih stopenj tako, da dopustimo le obstoj tistih funkcij $v(\mathbf{x})$, ki so superpozicija vozliščnih funkcij. To so funkcije, ki jih lahko zapišemo kot vrsto vozliščnih funkcij $\Phi_i(\mathbf{x})$ s koeficienti $v_i$:
+Neskončno število neskončno ozkih stolpičev smo zamenjali s končnim številom ($N$) končno ozkih grbin. Problemu omejimo število prostostnih stopenj tako, da dopustimo le obstoj tistih funkcij $v(\mathbf{x})$, ki so superpozicija vozliščnih funkcij. To so funkcije, ki jih lahko zapišemo kot vrsto vozliščnih funkcij $\Phi_i(\mathbf{x})$ s koeficienti $v_i$:
 \vspace{-3mm}
 \begin{equation}
     v(\mathbf{x}) = \sum_{i = 1}^N v_i  \mkern3mu \Phi_i(\mathbf{x}) \ .
@@ -16,17 +108,35 @@ S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Na
    \centering
     \begin{subfigure}[b]{0.42\textwidth}
         \centering
-        \includegraphics[height=60mm]{Slike/layout2d}
-        \vspace{5mm}
+        \includegraphics[width=0.94\textwidth]{Slike/layout2d}
+        \vspace{0mm}
         \caption{}
     \end{subfigure}
-    \begin{subfigure}[b]{0.53\textwidth}
+    \hspace{5mm}
+    \begin{subfigure}[b]{0.42\textwidth}
         \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3d}
+        \includegraphics[width=0.94\textwidth]{Slike/layout2dTrans}
         \caption{}
     \end{subfigure}
     \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le štiri osrednje vozliščne funkcije.}
     \label{fig:regionAndNodeFunctions}
+\end{figure}
+
+\begin{figure}[ht]
+   \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3d}
+        \vspace{0mm}
+        \caption{}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.46\textwidth}
+        \centering
+        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3dSparse}
+        \caption{}
+    \end{subfigure}
+    \caption{}
+    \label{fig:shapeFs}
 \end{figure}
 
 Štirikotne ploskvice, ki nastanejo s postavitvijo vozlišč, imenujemo \textbf{elementi}. Nobena vozliščna funkcija $\Phi_i$ ne sme pokrivati elementov, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
@@ -58,31 +168,14 @@ To je enostavno dokler so vsi elementi iste oblike in velikosti, kot na sliki \r
 
 \begin{figure}[ht]
    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3dSparse}
-        \vspace{0mm}
-        \caption{}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.46\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3d}
-        \caption{}
-    \end{subfigure}
-    \caption{}
-    \label{fig:shapeFs}
-\end{figure}
-
-\begin{figure}[ht]
-   \centering
-   \begin{subfigure}[b]{0.40\textwidth}
+   \begin{subfigure}[b]{0.44\textwidth}
        \centering
-       \includegraphics[width=0.94\textwidth]{Slike/layout2dTrans}
-       \vspace{4mm}
+       \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3d}
+       \vspace{0mm}
        \caption{}
    \end{subfigure}
    \hspace{3mm}
-   \begin{subfigure}[b]{0.55\textwidth}
+   \begin{subfigure}[b]{0.45\textwidth}
        \centering
        \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3dTrans}
        \caption{}
