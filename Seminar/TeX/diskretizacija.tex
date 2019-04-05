@@ -2,7 +2,7 @@
 
 Večina literature iz teorije \texttt{FEM} obravnava skalarne funkcije s stališča funkcionalne analize - kot vektorje. Enačbe iz prejšnjega poglavja bi v takšnem zapisu izgledale preprosteje. Omenjen pristop bi dodal novo plast konceptov, ki bi jih moral bralec predhodno razumeti, zato smo se ga za zaćetek izognili. Eden takšnih konceptov je koncept prostostnih stopenj funkcije. Razlaga diskretizacije problema je brez njega precej otežena, zato bomo tukaj na hitro opisali bistvo vektorske obravnave funkcij.
 
-Predstavljajmo si dobro poznani 3D vektorski prostor. Osnovni gradniki vsakega vektorja so trije bazni vektroji. Tri komponente vektorja opisujejo delež prisotnosti pripadajočega baznega vektorja. S takšnim prostorom lahko opišemo vse možne diskretne skalarne funkcije, katerih domena sestoji le iz treh točk (slika \ref{fig:discreteExample}a). Vsaka konfiguracija treh skalarjev ustreza eni točki v našem 3D prostoru, ki ga posledično imenujemo funkcijski prostor. Dimenzija funkcijskega prostora je torej povezana z gostoto vzorčenja domene. Če na domeno postavimo trinajst točk (slika \ref{fig:discreteExample}b), bomo za opis vseh možnih konfiguracij potrebovali trinajst-dimenzionalni vektorski prostor. Če na domeno postavimo neskončno točk, kar storimo pri obravnavi zveznih funkcij (slika \ref{fig:discreteExample}c), bomo potrebovali neskončno dimenzionalni vektorski prostor. In kaj so potem bazni vektorji našega prostora? To so $\delta$ funkcije, postavljene v ustreznih točkah domene.
+V znanem 3D vektorskem prostoru so osnovni gradniki trije bazni vektorji. S takšnim prostorom lahko opišemo vse možne diskretne skalarne funkcije, katerih domena sestoji le iz treh točk (slika \ref{fig:discreteExample}a). Vsaka konfiguracija treh skalarjev ustreza eni točki v našem 3D prostoru, ki ga posledično imenujemo funkcijski prostor. Dimenzija funkcijskega prostora je torej povezana z gostoto vzorčenja domene. Če na domeno postavimo trinajst točk (slika \ref{fig:discreteExample}b), bomo za opis vseh možnih konfiguracij potrebovali trinajst-dimenzionalni vektorski prostor. Če na domeno postavimo neskončno točk, kar storimo pri obravnavi zveznih funkcij (slika \ref{fig:discreteExample}c), bomo potrebovali neskončno dimenzionalni vektorski prostor. In kaj so potem bazni vektorji našega prostora? To so $\delta$ funkcije, postavljene v ustreznih točkah domene.
 
 \begin{figure}[ht]
    \centering
@@ -28,7 +28,7 @@ Predstavljajmo si dobro poznani 3D vektorski prostor. Osnovni gradniki vsakega v
     \label{fig:discreteExample}
 \end{figure}
 
-Na komponente vektorja gledamo kot na \textbf{prostostne stopnje}, katerih vrednosti lahko poljubno nastavljamo. Funkcijo $f$ (slika \ref{fig:discreteExample}a) zapišemo s komponentami in baznimi vektorji kot:
+Na dimenzije vektorja gledamo kot na \textbf{prostostne stopnje}, katerih vrednosti lahko poljubno nastavljamo. Funkcijo $f$ (slika \ref{fig:discreteExample}a) zapišemo s komponentami in baznimi vektorji kot:
 \begin{equation}
    \ket{f} =
    \begin{pmatrix}
@@ -75,7 +75,7 @@ Funkcijo $g$ (slika \ref{fig:discreteExample}b) zapišemo s komponentami in bazn
    =
    1,92 \ .
 \end{equation}
-Skalarni produkt je definiran le za funkciji, ki se nahajta znotraj istega funkcijskega prostora. Pri zvezni funkciji $h$ (slika \ref{fig:discreteExample}c) komponent in baznih vektorjev ne moremo našteti, ker jih je neštevno neskončno. Kljub temu lahko vektor, ki zastopa $h$, izrazimo abstraktno po istem principu, kot smo to storili v diskretnih primerih \eqref{eq:discreteF} in \eqref{eq:discreteG}. Diskretno vsoto členov pretvorimo v zvezno vsoto (integral):
+Skalarni produkt je definiran le za funkciji znotraj istega funkcijskega prostora. Pri zvezni funkciji $h$ (slika \ref{fig:discreteExample}c) komponent in baznih vektorjev ne moremo našteti, ker jih je neštevno neskončno. Kljub temu lahko funkcijski vektor izrazimo analogno, kot smo to storili v diskretnih primerih \eqref{eq:discreteF} in \eqref{eq:discreteG}. Diskretno vsoto členov pretvorimo v zvezno vsoto (integral):
 \begin{equation}
    \ket{h} = \int_{0}^{12} h(x_0) \mkern3mu \delta(x-x_0) \mkern5mu \text{d}x_0 = h(x) \text{ na območju } x \in [0, 12] \ .
 \end{equation}
@@ -84,7 +84,7 @@ Skalarni produkt dveh zveznih funkcij je po analogiji enak:
    \bra{h}\ket{h} =
    \int_0^{12} h(x) \mkern2mu h(x) \mkern5mu \text{d}x \ .
 \end{equation}
-Če skalarne funkcije predstavimo kot vektorje, kako potem v istem smislu predstavimo vektorske funkcije (ki slikajo v več skalarnih spremenljivk)? Tako, da vsako komponento (skalarno funkcijo) posebej zapišemo kot vektor iz funkcijskega prostora. Tako dobimo vektor vektorjev, oz. matriko. Zdaj vidimo, zakaj smo temelje \texttt{FEM} opisali brez uporabe omenjenih konceptov. Zahtevnost zapisov enačb se zmanjša na račun povečane zahteve po predstavljivosti s strani bralca. Kot primer v novem jeziku zapišimo variacijsko izjavo \eqref{eq:LsfemVariationalStatement}:
+Če skalarne funkcije predstavimo kot funkcijske vektorje, kako potem na isti način predstavimo vektorske funkcije (ki slikajo v več skalarnih spremenljivk)? Tako, da vsako komponento (skalarno funkcijo) posebej zapišemo kot funkcijski vektor. Tako dobimo vektor vektorjev, oz. matriko. Zdaj vidimo, zakaj smo temelje \texttt{FEM} opisali brez uporabe omenjenih konceptov. Zahtevnost zapisov enačb se zmanjša na račun povečane zahteve po predstavljivosti zapisov. Kot primer v novem jeziku zapišimo variacijsko izjavo \eqref{eq:LsfemVariationalStatement}:
 \begin{equation}
 		\bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern2mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}\mkern1mu} \ = \,
 		0 \ , \hspace{5mm} \forall \mathbf{v} \ .
@@ -94,12 +94,12 @@ To izgleda veliko bolje, kajne?
 
 Za numerično reševanje problema moramo abs\-trakt\-no zastavitev \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stop\-nja\-mi diskretizirati. Iskanje želimo omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
 \begin{IEEEeqnarray*}{rc}
-    \hspace{16mm} \Phi_i(\mathbf{x}) \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
+    \hspace{16mm} \ket{\Phi_i} \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
 \end{IEEEeqnarray*}
 Neskončno število neskončno ozkih stolpičev smo zamenjali s končnim številom ($N$) končno ozkih grbin. Problemu omejimo število prostostnih stopenj tako, da dopustimo le obstoj tistih funkcij $v(\mathbf{x})$, ki so superpozicija vozliščnih funkcij. To so funkcije, ki jih lahko zapišemo kot vrsto vozliščnih funkcij $\Phi_i(\mathbf{x})$ s koeficienti $v_i$:
 \vspace{-3mm}
 \begin{equation}
-    v(\mathbf{x}) = \sum_{i = 1}^N v_i  \mkern3mu \Phi_i(\mathbf{x}) \ .
+    \ket{v} = \sum_{i = 1}^N v_i \ket{\Phi_i} \ .
     \label{eq:nodalSeries}
 \end{equation}
 S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Naslikajmo idejo na skrajno preprosti kvadratni domeni $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo s šestnajstimi vozlišči (slika \ref{fig:regionAndNodeFunctions}a) in nad njimi napnemo prav toliko vozliščnih funkcij z nastavljivimi višinami $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
@@ -143,7 +143,7 @@ S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Na
 
 Ozrimo se na variacijsko izjavo \eqref{eq:LsfemVariationalStatement} ter si predstavljajmo funkcije $\mathbsf{A}(\mathbf{x}), \mathbf{u(x)}, \mathbf{v(x)}$ in $\mathbf{f(x)}$ zapisane v smislu razvoja po vozliščnih funkcijah \eqref{eq:nodalSeries}. Zaslutimo, da bomo računali prekrivne integrale vozliščnih funkcij:
 \begin{equation}
-    \int \mkern-2mu \Phi_i(\mathbf{x}) \mkern4mu \Phi_j(\mathbf{x}) \mkern4mu \ud \Omega \ .
+    \bra{\Phi_i}\ket{\Phi_j} \ .
 \end{equation}
 To je enostavno dokler so vsi elementi iste oblike in velikosti, kot na sliki \ref{fig:regionAndNodeFunctions}. Takrat je dovolj, da izračunamo prekrivne integrale za vozlišča enega elementa. Kaj pa, če želimo uporabljati elemente poljubne oblike? Kako naj čim učinkoviteje, če so elementi poljubne oblike
 
@@ -200,3 +200,16 @@ Potem omejimo Diskretizacija problema
 
 Galerkin, Najmanših kvadratov \cite{JiangB-LSFEM}
 Basic lemma of variational principles: Temeljni lema variacijskih načel.
+
+
+\begin{equation}
+   \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \phi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \phi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \phi^{d0} \frac{\pd}{\pd x_c}\right) \left(u^g_m \mkern1mu \phi^{g0}\right) - f^h \mkern1mu \phi^{h0}}
+\end{equation}
+
+\begin{equation}
+   \sum_i \bra{A^{ab}_{jk} v^c_k \phi^{a0} \phi^{cb}}\ket{A^{de}_{jm} u^g_m \phi^{d0} \phi^{ge} - f^h_j \phi^{h0}}
+\end{equation}
+
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^h_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{h0}} \mkern2mu \right) = 0
+\end{equation}

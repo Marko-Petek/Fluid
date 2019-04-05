@@ -30,6 +30,16 @@ kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa re
 	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \ ,
 \label{eq:funcDerivative}
 \end{equation*}
+\begin{equation*}
+	\frac{\ud I}{\ud \varepsilon} \,
+	=
+	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \,
+	=
+	\, \bra{\frac{\ud F}{\ud \widetilde{\mathbf{w}}}}\ket{\frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon}} \,
+	=
+	\, \bra{\frac{\ud F}{\ud \widetilde{\mathbf{w}}}}\ket{\mkern1mu \mathbf{v} \mkern-1mu} \ ,
+\label{eq:funcDerivative}
+\end{equation*}
 nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celoten izraz enačimo z nič:
 \begin{equation*}
 	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \,
@@ -38,10 +48,24 @@ nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celote
 	=
 	\, 0 \ .
 \end{equation*}
+\begin{equation*}
+	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \,
+	=
+	\, \lim_{\varepsilon \rightarrow 0} \bra{\frac{\ud F\big(\widetilde{\mathbf{w}}(\mathbf{x}, \varepsilon)\big)}{\ud \widetilde{\mathbf{w}}}}\ket{\mkern1mu \mathbf{v(\mathbf{x})} \mkern-1mu} \,
+	=
+	\, 0 \ .
+\end{equation*}
 Limita deluje le na prvi člen v integrandu, zato se variacijska izjava glasi:
 \begin{equation}
 	\boxed{\, \vphantom{\bigg)^2_3}
 		\int_{\Omega} \, \lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
+	}
+	\hspace{1.3cm} \texttt{variacijska izjava} \ .
+	\label{eq:variationalStatement}
+\end{equation}
+\begin{equation}
+	\boxed{\, \vphantom{\bigg)^2_3}
+		\bra{\lim_{\varepsilon \rightarrow 0} \frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}}\ket{\mkern1mu \mathbf{v} \mkern-1mu} \, = \, 0 \ , \quad \forall \ket{\mathbf{v}}\,
 	}
 	\hspace{1.3cm} \texttt{variacijska izjava} \ .
 	\label{eq:variationalStatement}
@@ -57,9 +81,19 @@ $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \t
 	}\hspace{20mm} \texttt{vektor ostanka .}
 	\label{eq:residual}
 \end{equation}
+\begin{equation}
+	\hspace{10mm} \boxed{\, \vphantom{\big(}
+		\ket{\mathbf{R}} \, = \, \mathbsf{A} \ket{\mathbf{w}} - \ket{\mathbf{f}} \,
+	}\hspace{20mm} \texttt{vektor ostanka .}
+	\label{eq:residual}
+\end{equation}
 Poskusna funkcija $\mathbf{w(x)}$, za katero je ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
 \begin{equation}
 	\hspace{21mm} \int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu \mathbf{v(x)} \ \ud \Omega \, = \, 0 \hspace{13mm} \texttt{načelo metode uteženih ostankov .}
+	\label{eq:GfemStatement}
+\end{equation}
+\begin{equation}
+	\hspace{21mm} \bra{\mathbf{R}}\ket{\mathbf{v}} \, = \, 0 \hspace{13mm} \texttt{načelo metode uteženih ostankov .}
 	\label{eq:GfemStatement}
 \end{equation}
 Pristop se imenuje \textbf{metoda uteženih ostankov} in nas za sebi-adjungirane ter pozitivno-definitne $\mathbsf{A}\mathbf{(x)}$ pripelje do istega sistema algebrajskih enačb kot \texttt{RRFEM}. Uporabimo pa ga lahko tudi za sisteme \texttt{PDE}, ki ne posedujejo teh lastnosti, zato daje vtis posplošitve \texttt{RRFEM}. Akademiki so pričakovali, da bo \texttt{GFEM} v dinamiki tekočin enako uspešna, kot je bila \texttt{RRFEM} v gradbenem inženirstvu, a se to ni zgodilo \cite{JiangB-LSFEM}. Ko $\mathbsf{A}$ ni sebi-adjungiran, namreč načelo \eqref{eq:GfemStatement} ni nujno zvesto osnovnemu problemu \texttt{PDE}. Metoda v tem primeru ne poseduje lastnosti najboljšega približka in v rešitvi se pogostokrat pojavijo lažne oscilacije (\emph{wiggles}). Teh se je mogoče znebiti le s hudimi izboljšavami mreže, kar očitno okrnjuje praktičnost metode. Zato sta metoda končnih diferenc in metoda končnih volumnov v dinamiki tekočin še vedno v modi.
@@ -71,12 +105,26 @@ Podobno kot pri \texttt{GFEM} se tudi pri \texttt{LSFEM} opremo na vektor ostank
 	\mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R\big(w(x)\big)} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
 	\label{eq:squareOfResidual}
 \end{equation}
+\begin{equation}
+	F\big(\mathbf{w}\big)
+	=
+	\bra{\mathbf{R\big(w\big)}}\ket{\mathbf{R\big(w\big)}} \hspace{1.3cm} \texttt{kvadrat vektorja ostanka ,}
+	\label{eq:squareOfResidual}
+\end{equation}
 in tako se funkcional, ki ga minimiziramo, glasi:
 \begin{equation}
 	\boxed{
 		\, I\big[\mathbf{w(x)}\big]
 		=
 		\int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-2mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{R\big(w(x)\big)} \ \ud \Omega \,
+	}
+	\hspace{1.3cm} \texttt{funkcional LSFEM ,}
+\end{equation}
+\begin{equation}
+	\boxed{
+		\, I\big[\ket{\mathbf{w}}\big]
+		=
+		\bra{\mathbf{R\big(w\big)}}\ket{\mathbf{R\big(w\big)}} \,
 	}
 	\hspace{1.3cm} \texttt{funkcional LSFEM ,}
 \end{equation}
@@ -91,6 +139,16 @@ od koder dobi metoda svoje ime. Želimo dobiti variacijsko izjavo za ta specifi�
 	\, = \mkern5mu
 	2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{\widetilde{w}} - \mathbf{f})^\mathsf{T} \mkern-5mu \cdot \mkern-2mu \mathbsf{A}
 \end{equation*}
+\begin{equation*}
+	\hspace{-10mm}
+	\bra{\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}}
+	\mkern1mu = \,
+	\bra{\frac{\ud \! \bra{\mathbf{R(\widetilde{w})}}\ket{\mathbf{R(\widetilde{w})}}}{\ud \mathbf{\widetilde{w}}}}
+	= \mkern3mu
+	2 \bra{\mathbf{R(\widetilde{w})} \frac{\ud \mathbf{R(\widetilde{w})}}{\ud \mathbf{\widetilde{w}}}}
+	\, = \mkern5mu
+	2 \bra{\mathbsf{A} \! \cdot \! \mathbf{\widetilde{w}} - \mathbf{f}} \mathbsf{A}
+\end{equation*}
 ter nato limito, ko gre $\varepsilon$ proti nič:
 \begin{equation*}
 	\hspace{-7mm}
@@ -100,15 +158,34 @@ ter nato limito, ko gre $\varepsilon$ proti nič:
 	=
 	\mkern5mu 2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-4mu \cdot \mkern-2mu \mathbsf{A} \ .
 \end{equation*}
+\begin{equation*}
+	\hspace{-7mm}
+	\lim_{\varepsilon \rightarrow 0} \bra{\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}}}
+	=
+	\mkern5mu \lim_{\varepsilon \rightarrow 0} \ 2 \mkern1mu \bra{\mathbsf{A} \! \cdot \! (\mathbf{u} \mkern-2mu + \mkern-2mu \varepsilon \mathbf{v}) - \mathbf{f}\big)} \mathbsf{A}\,
+	=
+	\mkern5mu 2 \mkern1mu \bra{\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}} \mathbsf{A} \ .
+\end{equation*}
 Variacijska izjava za minimizacijo funkcionala \texttt{LSFEM} se zato glasi:
 \begin{equation*}
 	\int_{\Omega} 2 \mkern1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f})^\mathsf{T} \mkern-4.5mu \cdot \mkern-1mu (\mathbsf{A} \! \cdot \! \mathbf{v}) \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})} \ . \vphantom{\Biggr{)}}
+\end{equation*}
+\begin{equation*}
+	2 \mkern1mu \bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f} \mkern2mu}\ket{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v}} \, = \, 0 \ , \quad \forall \ket{\mathbf{v}} \ . \vphantom{\Biggr{)}}
 \end{equation*}
 Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem produktu, s čemer rezultata ne spremenimo) ter delimo z dve:
 \begin{equation}
 	\boxed{\
 		\int_{\Omega} \, (\mathbsf{A} \! \cdot \! \mathbf{v})^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu (\mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}) \ \ud \Omega \, = \,
 		0 \ , \hspace{5mm} \forall \mathbf{v} \vphantom{\bigg{)}} \
+	}
+	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
+	\label{eq:LsfemVariationalStatement}
+\end{equation}
+\begin{equation}
+	\boxed{\
+		\bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern1mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f} \mkern2mu} \, = \,
+		0 \ , \hspace{5mm} \forall \ket{\mathbf{v}} \vphantom{\bigg{)}} \
 	}
 	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
 	\label{eq:LsfemVariationalStatement}
