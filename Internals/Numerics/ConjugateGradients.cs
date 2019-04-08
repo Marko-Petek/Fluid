@@ -18,9 +18,18 @@ namespace Fluid.Internals.Numerics
 
         /// <summary>Finds and returns solution of system as a SparseRow.</summary><param name="initialGuess">A SparseRow with same width as solution. Provides starting point in phase space.</param><param name="maximumResidual">Value of residual at which iterative solution process stops.</param>
         public SparseRowDouble GetSolution(SparseRowDouble initialGuess, double maximumResidual) {
-            var d = new SparseRowDouble[2] {_b - _A * initialGuess, new SparseRowDouble(_b.Width, 10)};
-            var r = new SparseRowDouble[2] {d[0], new SparseRowDouble(_b.Width, 10)};
-            var x = new SparseRowDouble[2] {new SparseRowDouble(d[0]), new SparseRowDouble(_b.Width, 10)};
+            var d = new SparseRowDouble[2] {
+               _b - _A * initialGuess,                      // Difference between intial forcing vector and Ax of initial solution.
+               new SparseRowDouble(_b.Width, 10)
+            };
+            var r = new SparseRowDouble[2] {
+               d[0],
+               new SparseRowDouble(_b.Width, 10)
+            };
+            var x = new SparseRowDouble[2] {
+               new SparseRowDouble(d[0]),
+               new SparseRowDouble(_b.Width, 10)
+            };
             double alfa;
             double beta;
             SparseRowDouble ADotDi;
