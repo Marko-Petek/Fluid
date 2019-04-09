@@ -20,7 +20,7 @@ namespace Fluid.ChannelFlow
                 
             CreateNodes();
             _constraintCount = ApplyConstraints();
-            _channelMesh.SetConstraintCount(_channelMesh.GetConstraintCount() + _constraintCount);
+            _ChannelMesh.SetConstraintCount(_ChannelMesh.GetConstraintCount() + _constraintCount);
             MoveNodesToMainMesh();
         }
 
@@ -29,7 +29,7 @@ namespace Fluid.ChannelFlow
         protected override Pos CalcUpperBoundaryPos(double ksi) {
 
             ref var upperLeft = ref _quadrilateral._uL;
-            double x = upperLeft._x - ksi * _channelMesh.GetWidth();
+            double x = upperLeft._x - ksi * _ChannelMesh.GetWidth();
             double y = upperLeft._y;
             
             return new Pos(x,y);
@@ -97,7 +97,7 @@ namespace Fluid.ChannelFlow
         }
 
         void MoveNodesToMainMesh() {
-            int posCount = _channelMesh.GetPositionCount();                         // mapping
+            int posCount = _ChannelMesh.GetPositionCount();                         // mapping
             var blockToGlobal = new int[_rowCount + 1][][];
             int row = 0, col = 0;
                                                     
@@ -108,14 +108,14 @@ namespace Fluid.ChannelFlow
                 while(col < _colCount) {                                            // Col 0 - 19.
                     blockToGlobal[row][col] = new int[5];
                     for(int node = 0; node < 5; ++node) {
-                        _channelMesh.Node(posCount) = GetNodeCmp(row,col,node);
+                        _ChannelMesh.Node(posCount) = GetNodeCmp(row,col,node);
                         blockToGlobal[row][col][node] = posCount++;
                     }
                     ++col;
                 }
                 blockToGlobal[row][col] = new int[5];
                 for(int node = 0; node < 3; ++node) {
-                    _channelMesh.Node(posCount) = GetNodeCmp(row,col,node);
+                    _ChannelMesh.Node(posCount) = GetNodeCmp(row,col,node);
                     blockToGlobal[row][col][node] = posCount++;
                 }
                 for(int node = 3; node < 5; ++node) {                           // Col 20.
@@ -132,7 +132,7 @@ namespace Fluid.ChannelFlow
                     blockToGlobal[row][col][node] = Int32.MinValue;
                 }
                 for(int node = 2; node < 5; ++node) {
-                    _channelMesh.Node(posCount) = GetNodeCmp(row,col,node);
+                    _ChannelMesh.Node(posCount) = GetNodeCmp(row,col,node);
                     blockToGlobal[row][col][node] = posCount++;
                 }
                 ++col;
@@ -141,13 +141,13 @@ namespace Fluid.ChannelFlow
             for(int node = 0; node < 2; ++node) {
                 blockToGlobal[row][col][node] = Int32.MinValue;
             }
-            _channelMesh.Node(posCount) = GetNodeCmp(row,col,2);
+            _ChannelMesh.Node(posCount) = GetNodeCmp(row,col,2);
             blockToGlobal[row][col][2] = posCount++;
             for(int node = 3; node < 5; ++node) {
                 blockToGlobal[row][col][node] = Int32.MinValue;
             }
             SetCompactPosIndexToGlobalPosIndexMap(blockToGlobal);        // Apply local to field.
-            _channelMesh.SetPositionCount(posCount);                   // Last global index to pass to next block which will generate local to global mapping.
+            _ChannelMesh.SetPositionCount(posCount);                   // Last global index to pass to next block which will generate local to global mapping.
             _nodes = null;                                              // Free memory on block.
             GetNodeCmp = GetNodeCmpGlobal;                              // Rewire.
             GetNodeStd = GetNodeStdGlobal;

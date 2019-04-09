@@ -4,34 +4,18 @@ using static System.Console;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Development;
-using static Fluid.Internals.Development.AppReporter;
-using static Fluid.ChannelFlow.Program;
+using TB = Fluid.Internals.Toolbox;
 
-namespace Fluid.ChannelFlow
-{    
-    class Program
-    {
-        /// <summary>Program's main reporter.</summary>
-        static AppReporter _Reporter;
-        /// <summary>Program's main reporter.</summary>
-        public static AppReporter Reporter => _Reporter;
+namespace Fluid.ChannelFlow {    
+   class Program {
+      static void Main(string[] args) => TB.EntryPointSetup(() => Config01());
 
-        static void Main(string[] args)
-        {
-            try {
-                Console.OutputEncoding = Encoding.UTF8;
-                _Reporter = new AppReporter(VerbositySettings.Moderate);
-                var flow = new ChannelFlow(1.0, 0.05, 0.001);    // Start with velocity 1.0.
-                Reporter.Write("Solving for a single time step and writing solution to NodeArray.");
-                flow.SolveNextAndAddToNodeArray();
-                Reporter.Write("Writing solution to file.");
-                flow.WriteSolution(5);
-            }
-            catch(Exception exc) {
-                Reporter.Write($"Exception occured:  {exc.Message}");
-                Reporter.Write($"Stack trace:  {exc.StackTrace}");
-                throw exc;                                          // Rethrow.
-            }
-        }
-    }
+      static void Config01() {
+         var flow = new ChannelFlow(1.0, 0.05, 0.001);    // Start with velocity 1.0.
+         TB.Reporter.Write("Solving for a single time step and writing solution to NodeArray.");
+         flow.SolveNextAndAddToNodeArray();
+         TB.Reporter.Write("Writing solution to file.");
+         flow.WriteSolution(5);
+      } 
+   }
 }

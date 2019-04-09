@@ -56,7 +56,7 @@ namespace Fluid.Internals.Meshing
             double yTwoThirdsAbove, yThirdAbove, y, x, xThirdRight, xTwoThirdsRight;
             
             _nodes = new Node[_rowCount + 1][][];                                       // 60 node rows +1 for top row of nodes
-            int nVars = _mainMesh.GetVariableCount();
+            int nVars = _MainMesh.GetVariableCount();
 
             for(int row = 0; row < _rowCount; ++row) {                                          // Move vertically.
                 _nodes[row] = new Node[_colCount + 1][];

@@ -8,6 +8,7 @@ using Fluid.Internals;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Seminar.NodeCreation {
+   // TODO: Make a general pre-main delegate in toolbox.
    class Program {
       static void CreateNodes() {
 
@@ -56,7 +57,8 @@ namespace Fluid.Seminar.NodeCreation {
             transNodesCM.Select( (row, i) =>                                              // Take the newly created array.
                new double[][] {nodesC[i + 1][0]}.Concat(row).Append(nodesC[i + 1][3]).ToArray()       // Attach a static node to the left and a static node to the right of each row.
             ).ToArray();
-         TB.FileWriter.WriteLine(transNodesC1, nameof(transNodesC1));
+         TB.FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(transNodesC1), ".txt");        // Have to set dir for the first time.
+         TB.FileWriter.WriteLine(transNodesC1);
 
          var transNodesC = transNodesC1.Prepend(nodesC[0]).Append(nodesC[3]).ToArray();      // Reassemble the array (including filtered static rows).
          TB.FileWriter.WriteLine(transNodesC, nameof(transNodesC));
@@ -195,21 +197,7 @@ Polygon[{nodes[[7, 7]], nodes[[7, 10]], nodes[[10, 10]],
       }
 
 
-      static void Main(string[] args) {
-         try {  
-            //NodeCreation();
-            CreateDerivedData();
-         }
-         catch(Exception exc) {
-            TB.Reporter.Write($"Exception occured: {exc.Message}");
-            TB.Reporter.Write($"Stack trace:{exc.StackTrace}");
-            throw exc;                                                      // Rethrow.
-         }
-         finally {
-            TB.Reporter.Write("Exiting application.");
-            TB.FileWriter.Flush();
-         }
-      }
+      static void Main(string[] args) => TB.EntryPointSetup(() => CreateDerivedData());
 
       /// <summary>First shape function.</summary>
       static double S1(params double[] refCoords) => 0.25*(1 - refCoords[0])*(1 - refCoords[1]);   // Epsilon, eta.
