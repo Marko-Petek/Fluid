@@ -14,8 +14,8 @@ namespace Fluid.ChannelFlow
             // {{{x1, y1}, {u1, v1}}, {{x2, y2}, {u2, v2}}, ...}
             string fileName = "ChannelFlow/Results/velocityField.txt";
             var file = new FileInfo(fileName);
-            double width = 4 * mesh.GetWidth();                             // Width here = length of channel.
-            double height = mesh.GetWidth();                                // Height here = width of channel.
+            double width = 4 * mesh.Width;                             // Width here = length of channel.
+            double height = mesh.Width;                                // Height here = width of channel.
             double segmentLength =  height / (20.0 * samplingDensity);        // Determine segment length.
             double[] v;
             Pos pos = new Pos();                                            // Current position.

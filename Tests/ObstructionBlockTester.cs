@@ -8,8 +8,8 @@ namespace Fluid.Tests
     public class ObstructionBlockTester : ObstructionBlock
     {
         public ObstructionBlockTester() {
-            _rowCount = 2;
-            _colCount = 2;
+            RowCount = 2;
+            ColCount = 2;
         }
 
         protected override int ApplyConstraints() {

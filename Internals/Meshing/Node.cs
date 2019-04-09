@@ -4,7 +4,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Meshing
 {
-    public struct Node : IEquatable<Node>
+    public struct MeshNode : IEquatable<MeshNode>
     {
         /// <summary>Node's position (x,y).</summary>
         public Pos _pos;
@@ -29,26 +29,26 @@ namespace Fluid.Internals.Meshing
 
 
         /// <summary>Create a Node with specified coordinates and 0.0 values for variables, all of which are set unconstrained.</summary><param name="x">Node's x position.</param><param name="y">Node's y position.</param><param name="nVars">Number of variables.</param>
-        public Node(double x, double y, int nVars) {
+        public MeshNode(double x, double y, int nVars) {
             _pos = new Pos(x,y);
             _vars = new Variable[nVars];
         }
 
-        public Node(Pos pos, int nVars) {
+        public MeshNode(Pos pos, int nVars) {
             _pos = new Pos(pos._x, pos._y);
             _vars = new Variable[nVars];
         }
 
-        public Node(Pos pos, Variable[] vars) {
+        public MeshNode(Pos pos, Variable[] vars) {
             _pos = pos;
             _vars = vars;
         }
 
 
-        public static Node operator + (Node left, Node right) {
+        public static MeshNode operator + (MeshNode left, MeshNode right) {
 
             if(left._pos.Equals(right._pos)) {
-                var result = new Node(left._pos, 8);
+                var result = new MeshNode(left._pos, 8);
 
                 for(int var = 0; var < 8; ++var) {
                     result.Var(var)._value = left.Var(var)._value + right.Var(var)._value;
@@ -71,7 +71,7 @@ namespace Fluid.Internals.Meshing
         }
 
         /// <summary>Compare two nodes based on positions.</summary><param name="other">Other Node to compare to.</param>
-        public bool Equals(Node other) {
+        public bool Equals(MeshNode other) {
             if(_pos.Equals(other._pos)) {
                 return true;
             }

@@ -45,58 +45,58 @@ namespace Fluid.Internals.Meshing
             };
             _height = ury - lly;
             _width = urx - llx;
-            _rowCount = rowCount;
-            _colCount = columnCount;
-            _rowHeight = _height / _rowCount;
-            _colWidth = _width / _colCount;
+            RowCount = rowCount;
+            ColCount = columnCount;
+            _rowHeight = _height / RowCount;
+            _colWidth = _width / ColCount;
         }
 
         protected override void CreateNodes() {
 
             double yTwoThirdsAbove, yThirdAbove, y, x, xThirdRight, xTwoThirdsRight;
             
-            _nodes = new Node[_rowCount + 1][][];                                       // 60 node rows +1 for top row of nodes
-            int nVars = _MainMesh.GetVariableCount();
+            _Nodes = new MeshNode[RowCount + 1][][];                                       // 60 node rows +1 for top row of nodes
+            int nVars = MainMesh.GetVariableCount();
 
-            for(int row = 0; row < _rowCount; ++row) {                                          // Move vertically.
-                _nodes[row] = new Node[_colCount + 1][];
+            for(int row = 0; row < RowCount; ++row) {                                          // Move vertically.
+                _Nodes[row] = new MeshNode[ColCount + 1][];
                 y = _lL._y + row * _rowHeight;
                 yThirdAbove = y + _rowHeight / 3.0;
                 yTwoThirdsAbove = y + 2 * _rowHeight / 3.0;
 
-                for(int col = 0; col < _colCount; ++col) {
+                for(int col = 0; col < ColCount; ++col) {
                     x = _lL._x + col * _colWidth;
                     xThirdRight = x + _colWidth / 3.0;
                     xTwoThirdsRight = x + 2 * _colWidth / 3.0;
-                    _nodes[row][col] = new Node[] {
-                        new Node(x, yTwoThirdsAbove, nVars), new Node(x, yThirdAbove, nVars),
-                        new Node(x,y,nVars), new Node(xThirdRight, y, nVars), new Node(xTwoThirdsRight, y, nVars)
+                    _Nodes[row][col] = new MeshNode[] {
+                        new MeshNode(x, yTwoThirdsAbove, nVars), new MeshNode(x, yThirdAbove, nVars),
+                        new MeshNode(x,y,nVars), new MeshNode(xThirdRight, y, nVars), new MeshNode(xTwoThirdsRight, y, nVars)
                     };
                 }
                 x = _uR._x;                                                       // Add right-most column.
-                _nodes[row][_colCount] = new Node[] {
-                    new Node(x, yTwoThirdsAbove, nVars), new Node(x, yThirdAbove, nVars),
-                    new Node(x, y, nVars), new Node(Double.NaN, Double.NaN, 0),
-                    new Node(Double.NaN, Double.NaN, 0)
+                _Nodes[row][ColCount] = new MeshNode[] {
+                    new MeshNode(x, yTwoThirdsAbove, nVars), new MeshNode(x, yThirdAbove, nVars),
+                    new MeshNode(x, y, nVars), new MeshNode(Double.NaN, Double.NaN, 0),
+                    new MeshNode(Double.NaN, Double.NaN, 0)
                 };
             }
             y = _uR._y;                                                           // Add upper-most row.
-            _nodes[_rowCount] = new Node[_colCount + 1][];
+            _Nodes[RowCount] = new MeshNode[ColCount + 1][];
 
-            for(int col = 0; col < _colCount; ++col) {
+            for(int col = 0; col < ColCount; ++col) {
                 x = _lL._y + col * _colWidth;
                 xThirdRight = x + _colWidth / 3.0;
                 xTwoThirdsRight = x + 2 * _colWidth / 3.0;
-                _nodes[_rowCount][col] = new Node[] {
-                    new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0),
-                    new Node(x,y, nVars), new Node(xThirdRight, y, nVars),
-                    new Node(xTwoThirdsRight, y, nVars)
+                _Nodes[RowCount][col] = new MeshNode[] {
+                    new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
+                    new MeshNode(x,y, nVars), new MeshNode(xThirdRight, y, nVars),
+                    new MeshNode(xTwoThirdsRight, y, nVars)
                 };
             }
-            _nodes[_rowCount][_colCount] = new Node[] {                                 // Add one last point.
-                new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0),
-                new Node(_uR._x, _uR._y, nVars),
-                new Node(Double.NaN, Double.NaN, 0), new Node(Double.NaN, Double.NaN, 0)
+            _Nodes[RowCount][ColCount] = new MeshNode[] {                                 // Add one last point.
+                new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
+                new MeshNode(_uR._x, _uR._y, nVars),
+                new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0)
             };
         }
 

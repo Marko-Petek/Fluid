@@ -11,16 +11,16 @@ namespace Fluid.Internals.Meshing
         /// <summary>Number of independent variables (= number of equations).</summary>
         protected int _variableCount;
         /// <summary>Global vector of node values. Each Node[] array represents variable values at a single position.</summary>
-        protected Node[] _nodes;
+        protected MeshNode[] _nodes;
         /// <summary>Number of constrained variables.</summary>
         protected int _constraintCount;
 
         /// <summary>Global vector of node values. Each Node[] array represents variable values at a single position.</summary>
-        public Node[] Nodes => _nodes;
+        public MeshNode[] Nodes => _nodes;
         /// <summary>Number of independent variables (= number of equations).</summary>
         public int GetVariableCount() => _variableCount;
         /// <summary>Global vector of nodes (positions, variable values, variable constrainedness).</summary>
-        public ref Node Node(int index) => ref _nodes[index];
+        public ref MeshNode Node(int index) => ref _nodes[index];
         /// <summary>Toatal number of constrained variables.</summary>
         public int GetConstraintCount() => _constraintCount;
         /// <summary>Set total number of constrained variables.</summary>

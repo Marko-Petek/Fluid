@@ -50,7 +50,7 @@ namespace Fluid.Internals.Meshing {
          
          return new Pos(x, y);
       }
-      protected Node CreateNode(double ksi, double eta) {
+      protected MeshNode CreateNode(double ksi, double eta) {
          var upperBoundaryPos = CalcUpperBoundaryPos(ksi);
          var lowerBoundaryPos = CalcLowerBoundaryPos(ksi);
          var leftBoundaryPos = CalcLeftBoundaryPos(eta);
@@ -65,7 +65,7 @@ namespace Fluid.Internals.Meshing {
                   (1 - ksi)*(1 - eta)*_quadrilateral._lL._y - (1 - ksi)*eta*_quadrilateral._uL._y -
                   (1 - eta)*ksi*_quadrilateral._lR._y - ksi*eta*_quadrilateral._uR._y;
 
-         return new Node(x, y, _MainMesh.GetVariableCount());
+         return new MeshNode(x, y, MainMesh.GetVariableCount());
       }
    }
 }

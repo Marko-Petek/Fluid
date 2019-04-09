@@ -10,16 +10,16 @@ namespace Fluid.Internals.Meshing
     /// <summary>A quadrilateral element.</summary>
     public struct QuadElement
     {
-        public Node[] _nodes;
+        public MeshNode[] _nodes;
 
         /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="lL">Lower left vertex position.</param><param name="lR">Lower right vertex position.</param><param name="uR">Upper right vertex position.</param><param name="uL">Upper left vertex position.</param>
         public QuadElement(
-            ref Node n0, ref Node n1, ref Node n2,
-            ref Node n3, ref Node n4, ref Node n5,
-            ref Node n6, ref Node n7, ref Node n8,
-            ref Node n9, ref Node n10, ref Node n11) {
+            ref MeshNode n0, ref MeshNode n1, ref MeshNode n2,
+            ref MeshNode n3, ref MeshNode n4, ref MeshNode n5,
+            ref MeshNode n6, ref MeshNode n7, ref MeshNode n8,
+            ref MeshNode n9, ref MeshNode n10, ref MeshNode n11) {
 
-                _nodes = new Node[] {
+                _nodes = new MeshNode[] {
                     n0, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11
                 };
         }
