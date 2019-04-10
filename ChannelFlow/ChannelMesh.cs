@@ -43,8 +43,6 @@ namespace Fluid.ChannelFlow {
       public double ObstructionDiameter => RelObstructionDiameter * Width;
       /// <summary>Obstruction radius in real-world units.</summary>
       public double ObstructionRadius => 0.5 * ObstructionDiameter;
-      /// <summary>Obstruction circumference in real-world units.</summary>
-      public double ObstructionCircumference => PI * ObstructionDiameter;
 
 
       /// <summary>Constructs main mesh covering whole channel.</summary><remarks>Parameters cannot yet be changed because currently, element integrals have to be computed outside (e.g.static by Mathematica) which requires manual setup.</remarks>
@@ -74,11 +72,11 @@ namespace Fluid.ChannelFlow {
             4 * Width, Width,
             Width, Width
          );
-         _nodes = new MeshNode[15620];                                               TB.Reporter.Write($"Created global array of nodes of length {_nodes.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
-         SouthBlock = new SouthBlock(this, channelFlow);                                TB.Reporter.Write("Constructing WestBlock.", Verbose);
-         WestBlock = new WestBlock(this, channelFlow, SouthBlock);                     TB.Reporter.Write("Constructing NorthBlock.", Verbose);
-         NorthBlock = new NorthBlock(this, channelFlow, WestBlock);                    /* Integral values get imported with static constructor of ObstructionBlock. */  TB.Reporter.Write("Constructing EastBlock.", Verbose);
-         EastBlock = new EastBlock(this, channelFlow, NorthBlock, SouthBlock);        TB.Reporter.Write("Constructing RightBlock.", Verbose);
+         _nodes = new MeshNode[15620];                                            TB.Reporter.Write($"Created global array of nodes of length {_nodes.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+         SouthBlock = new SouthBlock(this, channelFlow);                          TB.Reporter.Write("Constructing WestBlock.", Verbose);
+         WestBlock = new WestBlock(this, channelFlow, SouthBlock);                TB.Reporter.Write("Constructing NorthBlock.", Verbose);
+         NorthBlock = new NorthBlock(this, channelFlow, WestBlock);               /* Integral values get imported with static constructor of ObstructionBlock. */  TB.Reporter.Write("Constructing EastBlock.", Verbose);
+         EastBlock = new EastBlock(this, channelFlow, NorthBlock, SouthBlock);    TB.Reporter.Write("Constructing RightBlock.", Verbose);
          RightBlock = new RightBlock(this, channelFlow, EastBlock,
             RightRect._lL._x, RightRect._lL._y,
             RightRect._uR._x, RightRect._uR._y,
@@ -88,14 +86,14 @@ namespace Fluid.ChannelFlow {
       }
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-      public SparseMatDouble AssembleStiffnessMatrix(ChannelFlow channelFlow) {             TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+      public SparseMatDouble AssembleStiffnessMatrix(ChannelFlow channelFlow) {              TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
          var stiffnessMatrix = new SparseMatDouble(15_620 * 8, 15_620 * 8, 10_000);
          double dt = channelFlow.Dt;
-         double viscosity = channelFlow.Viscosity;                                      TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
-         SouthBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
-         WestBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
-         NorthBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);      TB.Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
-         EastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
+         double viscosity = channelFlow.Viscosity;                                           TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
+         SouthBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
+         WestBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);        TB.Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
+         NorthBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
+         EastBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);        TB.Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
          RightBlock.AddContributionsToStiffnessMatrix(stiffnessMatrix, dt, viscosity);
          return stiffnessMatrix;
       }
@@ -126,7 +124,7 @@ namespace Fluid.ChannelFlow {
       }
       /// <summary>Returns solution (only specified variables) at any specified point inside solution domain which is [0,width]x[0,4*width]. Returns a set of double.NaN values for a point outside the domain.</summary><param name="pos">Position in terms of x ans y.</param><param name="vars">Desired variables in terms of variable indices.</param>
       public override double[] Solution(ref Pos pos, params int[] vars) {
-         if(SouthBlock.IsPointInside(ref pos))                            // First determine if specified point is inside any block at all.
+         if(SouthBlock.IsPointInside(ref pos))                                // First determine if specified point is inside any block at all.
             return SouthBlock.Solution(ref pos, vars);
          else if(EastBlock.IsPointInside(ref pos))
             return EastBlock.Solution(ref pos, vars);
@@ -136,7 +134,7 @@ namespace Fluid.ChannelFlow {
             return WestBlock.Solution(ref pos, vars);
          else if(RightBlock.IsPointInside(ref pos))
             return RightBlock.Solution(ref pos, vars);
-         else {                                                              // Return Double.NaN for points outside domain.
+         else {                                                               // Return Double.NaN for points outside domain.
             var outsideDomain = new double[vars.Length];
             for(int i = 0; i < vars.Length; ++i)
                outsideDomain[i] = double.NaN;

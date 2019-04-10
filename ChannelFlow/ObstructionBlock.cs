@@ -71,45 +71,44 @@ namespace Fluid.ChannelFlow {
       /// <summary>Fill node positions list.</summary>
       protected override void CreateNodes() {
          double ksi;
-         double nextKsi;   // 20
+         double nextKsi;                                                            // 20
          double eta = 0.0;
-         double c = 0.9821550974;         // TODO: this is hardcoded for element density = 20. Make automatic. This coefficient makes sure that last eta falls on square border. 
+         double c = 0.9821550974;                                                   // Coefficient makes sure that last eta falls on square border. Hardcoded for element density = 20.
          double NextEta(double previousEta) => (C + previousEta) / (1.0 - c*K);
          double nextEta = NextEta(eta);
          MeshNode twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight;
-         var nodes = new List<MeshNode[][]>(24);            // 23 rows
+         var nodes = new List<MeshNode[][]>(24);                                    // 23 rows
          MeshNode[][] constantEtaArray;
          int nVars = MainMesh.GetVariableCount();
          int col;
-
-         while(eta <= 1.0) {                                     // Move vertically upwards.
-            constantEtaArray = new MeshNode[21][];                  // We need 21 (20 elements cols) nodes at constant eta. We will be writing positions here in next loop.
+         while(eta <= 1.0) {                                                        // Move vertically upwards.
+            constantEtaArray = new MeshNode[21][];                                  // We need 21 (20 elements cols) nodes at constant eta. We will be writing positions here in next loop.
             nodes.Add(constantEtaArray);
             ksi = 0.0;
             nextKsi = 1.0 / ChannelMesh.ElementDensity;
-            col = 0;                                            // Reset col counter.
-            while(ksi <= 1.0) {                             // Move horizontally right.
+            col = 0;                                                                // Reset col counter.
+            while(ksi <= 1.0) {                                                     // Move horizontally right.
                twoThirdsAbove = CreateNode(ksi, eta + 2.0 * (nextEta - eta) / 3.0);
                thirdAbove = CreateNode(ksi, eta + (nextEta - eta) / 3.0);
                corner = CreateNode(ksi, eta);
                thirdRight = CreateNode(ksi + (nextKsi - ksi) / 3.0, eta);
                twoThirdsRight = CreateNode(ksi + 2.0 * (nextKsi - ksi) / 3.0, eta);
                constantEtaArray[col] = new MeshNode[] {twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight};
-               ksi += 1.0 / ChannelMesh.ElementDensity;              // Increase ksi.
+               ksi += 1.0 / ChannelMesh.ElementDensity;                             // Increase ksi.
                nextKsi += 1.0 / ChannelMesh.ElementDensity;
                ++col;
             }
-            twoThirdsAbove = CreateNode(1.0, eta + 2.0 * (nextEta - eta) / 3.0);     // Create final three positions in row.
+            twoThirdsAbove = CreateNode(1.0, eta + 2.0 * (nextEta - eta) / 3.0);    // Create final three positions in row.
             thirdAbove = CreateNode(1.0, eta + (nextEta - eta) / 3.0);
             corner = CreateNode(1.0, eta);
             constantEtaArray[col] = new MeshNode[] {
                twoThirdsAbove, thirdAbove, corner,
                new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0)
             };
-            eta = nextEta;                                                                  // Increase eta.
+            eta = nextEta;                                                          // Increase eta.
             nextEta = NextEta(nextEta);
          }
-         ksi = 0.0;                                                  // Finalize the top-most row of nodes with current eta and nextEta = 1.0.
+         ksi = 0.0;                                                                 // Finalize the top-most row of nodes with current eta and nextEta = 1.0.
          nextKsi = 1.0 / ChannelMesh.ElementDensity;
          constantEtaArray = new MeshNode[21][];
          nodes.Add(constantEtaArray);
@@ -133,7 +132,7 @@ namespace Fluid.ChannelFlow {
             new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0)
          };
          RowCount = nodes.Count - 1;                                           // Update row and column counts.
-         ColCount = 20;                             // TODO: Recode this hard-code.
+         ColCount = 20;
          //_nodes = new Node[][][]
          _Nodes = nodes.ToArray();
       }
@@ -141,14 +140,13 @@ namespace Fluid.ChannelFlow {
       /// <summary>Export positions of left half of obstruction block. We shall integrate over each element in Mathematica. Requires even number of elements on side.</summary><remarks>Suggestion: introduce 2D integrator into this program and automatize process.</remarks>
       public void WriteLeftHalfOnly(string fileName) {
          FileInfo file = new FileInfo(fileName);
-
          using(StreamWriter sw = new StreamWriter(file.FullName, false)) {
             sw.WriteLine("{");
-            for(int i = 0; i < RowCount - 1; ++i) {                        // Over all rows.
+            for(int i = 0; i < RowCount - 1; ++i) {                                 // Over all rows.
             sw.Write("{");
                for(int j = ColCount/2; j < ColCount - 1; ++j) {
                   sw.Write("{");
-                  for(int k = 0; k < 9; k+=3)                                  // We only need corners for integration.
+                  for(int k = 0; k < 9; k+=3)                                       // We only need corners for integration.
                      sw.Write($"{{{GetNodeStd(i,j,k).ToString()}}}, ");
                   sw.Write($"{{{GetNodeStd(i,j,9).ToString()}}}}}, ");
                }
@@ -172,7 +170,6 @@ namespace Fluid.ChannelFlow {
             sw.Write("}");
          }
       }
-
       /// <summary>A getter that fetches an integral from compact integrals array based on intuitive indices we specify.</summary><param name="row">Obstruction block row (0 to 22).</param><param name="col">Obstruction block column (0 to 39).</param><param name="j">First overlapping basis function (0 to 11).</param><param name="k">Second overlapping basis function (0 to 11).</param><param name="n">First term index (0 to 4).</param><param name="m">Second term index (0 to 4).</param>
       protected double GetStiffnessIntegral(int row, int col, int j, int k, int n, int m) {
          if(row < 0)
@@ -187,7 +184,6 @@ namespace Fluid.ChannelFlow {
                transCol = 9 - col;
                transJ = (15 - j) % 12;
                transK = (15 - k) % 12;                                    // Account fot the fact that k is always such that [j][k] forms an upper left triangular matrix.
-               
                if(transJ > transK) {                           // j has to be smaller than k at entry.
                   Swap<int>(ref j, ref k);
                   transJ = (15 - j) % 12;
@@ -237,11 +233,11 @@ namespace Fluid.ChannelFlow {
 
       /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       public override void AddContributionsToStiffnessMatrix(SparseMatDouble A, double dt, double ni) {
-         for(int row = 0; row < 23; ++row) {
+         for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col) {
                TB.Reporter.Write($"Element ({row},{col}).");
                AddElementContributionToStiffnessMatrix(A, row, col, dt, ni);
-         }  }
+            }
       }
 
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
@@ -249,8 +245,7 @@ namespace Fluid.ChannelFlow {
          double[][] subResult;
          int globalRowBelt;                                              // Starting index of an octuple of rows which represent variable values at a single position.
          int globalColBelt;
-
-         for(int j = 0; j < 12; ++j) {                                   // Over first basis function.
+         for(int j = 0; j < 12; ++j)                                   // Over first basis function.
             for(int k = j; k < 12; ++k) {                               // Over second basis function.
                subResult = SubMatrix(row, col, j, k, dt, ni);          // 8 x 8 matrix which has to be added to global stiffness matrix.
                globalRowBelt = GlobalPositionIndexStd(row, col, j);
@@ -259,11 +254,11 @@ namespace Fluid.ChannelFlow {
                if(this is WestBlock && ((row == 0 && col == 0) || (row == 0 && col == 1)))
                   TB.Reporter.Write("Writing from element matrix to global matrix.");
 
-               for(int subResultRow = 0; subResultRow < 8; ++subResultRow) {
+               for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
                   for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.
                      A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] += subResult[subResultRow][subResultCol];
                      A[globalColBelt * 8 + subResultCol][globalRowBelt * 8 + subResultRow] += subResult[subResultRow][subResultCol];
-         }  }  }  }
+            }     }
       }
       /// <summary>Creates an 8 x 8 submatrix of a 96 x 96 element matrix for some choice of j,k = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function. k >= j</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><remarks>Is only valid for k >= j. Make use of fact that for a fixed element (fixed row and col) submatrix at (j,k) is equal to submatrix at (k,j).</remarks>
       double[][] SubMatrix(int row, int col, int j, int k, double dt, double ni) {
@@ -289,14 +284,12 @@ namespace Fluid.ChannelFlow {
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
       }
-
       /// <summary>Add whole block's contribution to global forcing vector.</summary><param name="b">Gloabal forcing vector.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       public override void AddContributionsToForcingVector(SparseRowDouble b, double dt, double ni) {
          for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col)
                AddElementContributionToForcingVector(b, row, col, dt, ni);
       }
-
       /// <summary>Add contribution from element at specified row and col to global forcing vector.</summary><param name="b">Global forcing vector.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       void AddElementContributionToForcingVector(SparseRowDouble b, int row, int col, double dt, double ni) {
          double[] subVector;
@@ -308,7 +301,6 @@ namespace Fluid.ChannelFlow {
                b[globalRowBelt * 8 + subResultRow] += subVector[subResultRow];
          }
       }
-
       /// <summary>Creates an 8 element subvector of a 96 element forcing vector  for some choice of j = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><param name=x>Previous values of variables at point (row,col,j).</param>
       double[] SubVector(int row, int col, int j, double dt, double ni) {
          var subVector = new double[8];

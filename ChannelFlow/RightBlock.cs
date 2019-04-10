@@ -4,7 +4,7 @@ using static System.Math;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
-using static Fluid.Internals.IO.IO;
+using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Operations;
 using static Fluid.Internals.Numerics.MatrixOperations;
 
@@ -21,9 +21,13 @@ namespace Fluid.ChannelFlow {
       /// <summary>Basis function overlap integrals over a single element, since all elements are the same.</summary><remarks>[j][n] = [12 basis funcs][5 terms]</remarks>
       static double[][] RectForcingIntegrals => _RectForcingIntegrals;
 
-      static RightBlock() {            // TODO: Change reading mechanism to modern approach.
-         _RectStiffnessIntegrals = ReadRectStiffnessIntegrals("./Input/rectElementStiffnessIntegrals.txt");
-         _RectForcingIntegrals = ReadRectForcingIntegrals("./Input/rectElementForcingIntegrals.txt");
+      static RightBlock() {
+         TB.FileReader.SetDirAndFile(@"ChannelFlow/Input", "rectElementStiffnessIntegrals", ".txt");
+         _RectStiffnessIntegrals = (double[][][][]) TB.FileReader.ReadArray<double>();
+         TB.FileReader.SetFile("rectElementForcingIntegrals", ".txt");
+         _RectForcingIntegrals = (double[][]) TB.FileReader.ReadArray<double>();
+         //_RectStiffnessIntegrals = ReadRectStiffnessIntegrals("./Input/rectElementStiffnessIntegrals.txt");
+         //_RectForcingIntegrals = ReadRectForcingIntegrals("./Input/rectElementForcingIntegrals.txt");
       }
 
       /// <summary>Create a Cartesian mesh block.</summary><param name="channelMesh">Mesh block's owner.</param><param name="lowerLeftX">Lower left corner x coordinate.</param><param name="lowerLeftY">Lower left corner y coordinate.</param><param name="upperRightX">Upper right corner x coordinate.</param><param name="upperRightY">Upper right corner y coordinate.</param><param name="rowCount">Number of elements in y direction.</param><param name="columnCount">Number of elements in x direction.</param>
