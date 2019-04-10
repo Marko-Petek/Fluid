@@ -38,11 +38,9 @@ namespace Fluid.Internals.IO
          OnSettingsChanged();
          return IO.ReadHierarchy<T>(Reader);
       }
-
       public Array ReadArray<T>() {
          OnSettingsChanged();
          (var succ, var arr) = IO.ReadHierarchy<T>(Reader).ConvertToArray();
-         
          if(succ)
             return arr;
          else

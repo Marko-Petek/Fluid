@@ -1,3 +1,4 @@
+#if false
 using System;
 
 namespace Fluid.Internals.Collections {
@@ -23,3 +24,4 @@ namespace Fluid.Internals.Collections {
         //internal override SparseRow<int> CreateSparseRow(SparseRowInt source) => new DummyRowInt(source);
     }
 }
+#endif

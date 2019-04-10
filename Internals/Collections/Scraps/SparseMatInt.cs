@@ -1,5 +1,5 @@
+#if false
 using System;
-
 namespace Fluid.Internals.Collections
 {
     public class SparseMatInt : SparseMat<int>
@@ -34,3 +34,4 @@ namespace Fluid.Internals.Collections
         public new SparseRowInt this[int i] => (SparseRowInt) base[i];
     }
 }
+#endif
