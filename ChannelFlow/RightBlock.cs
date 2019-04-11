@@ -9,6 +9,8 @@ using static Fluid.Internals.Operations;
 using static Fluid.Internals.Numerics.MatrixOperations;
 
 namespace Fluid.ChannelFlow {
+   using SparseMat = SparseMat<double,DblArithmetic>;
+   using SparseRow = SparseRow<double,DblArithmetic>;
    public sealed class RightBlock : RectangularBlock {
       ChannelFlow ChannelFlow { get; }
       ChannelMesh ChannelMesh { get; }
@@ -39,8 +41,8 @@ namespace Fluid.ChannelFlow {
             ChannelMesh = channelMesh;
             ChannelFlow = channelFlow;
             CreateNodes();
-            ConstraintCount = ApplyConstraints();
-            ChannelMesh.SetConstraintCount(ChannelMesh.GetConstraintCount() + ConstraintCount);
+            NConstraints = ApplyConstraints();
+            ChannelMesh.NConstraints += NConstraints;
             MoveNodesToMainMesh(eastBlock);
       }
 
@@ -49,29 +51,29 @@ namespace Fluid.ChannelFlow {
          int col = 0;
          while(col < ColCount) {                                            // Col 0 - 59
             for(int element = 2; element < 5; ++element) {                  // Upper Channel boundary.
-               GetNodeCmp(20, col, element).Constrainedness(0) = true;     // u
-               GetNodeCmp(20, col, element).Constrainedness(1) = true;     // v
-               GetNodeCmp(20, col, element).Constrainedness(2) = true;     // a
-               GetNodeCmp(20, col, element).Constrainedness(4) = true;     // c
+               NodeCmt(20, col, element).Constrainedness(0) = true;     // u
+               NodeCmt(20, col, element).Constrainedness(1) = true;     // v
+               NodeCmt(20, col, element).Constrainedness(2) = true;     // a
+               NodeCmt(20, col, element).Constrainedness(4) = true;     // c
                constraintCount += 4;
             }
             for(int element = 2; element < 5; ++element) {                  // Lower Channel boundary.
-               GetNodeCmp(0, col, element).Constrainedness(0) = true;      // u
-               GetNodeCmp(0, col, element).Constrainedness(1) = true;      // v
-               GetNodeCmp(0, col, element).Constrainedness(2) = true;      // a
-               GetNodeCmp(0, col, element).Constrainedness(4) = true;      // c
+               NodeCmt(0, col, element).Constrainedness(0) = true;      // u
+               NodeCmt(0, col, element).Constrainedness(1) = true;      // v
+               NodeCmt(0, col, element).Constrainedness(2) = true;      // a
+               NodeCmt(0, col, element).Constrainedness(4) = true;      // c
                constraintCount += 4;
             }
             ++col;
          }                                                                   // Col 60
-         GetNodeCmp(20, col, 2).Constrainedness(0) = true;                   // Channel boundary, u.
-         GetNodeCmp(20, col, 2).Constrainedness(1) = true;                   // v
-         GetNodeCmp(20, col, 2).Constrainedness(2) = true;                   // a
-         GetNodeCmp(20, col, 2).Constrainedness(4) = true;                   // c
-         GetNodeCmp(0, col, 2).Constrainedness(0) = true;                    // Channel boundary, u.
-         GetNodeCmp(0, col, 2).Constrainedness(1) = true;                    // v
-         GetNodeCmp(0, col, 2).Constrainedness(2) = true;                    // a
-         GetNodeCmp(0, col, 2).Constrainedness(4) = true;                    // c
+         NodeCmt(20, col, 2).Constrainedness(0) = true;                   // Channel boundary, u.
+         NodeCmt(20, col, 2).Constrainedness(1) = true;                   // v
+         NodeCmt(20, col, 2).Constrainedness(2) = true;                   // a
+         NodeCmt(20, col, 2).Constrainedness(4) = true;                   // c
+         NodeCmt(0, col, 2).Constrainedness(0) = true;                    // Channel boundary, u.
+         NodeCmt(0, col, 2).Constrainedness(1) = true;                    // v
+         NodeCmt(0, col, 2).Constrainedness(2) = true;                    // a
+         NodeCmt(0, col, 2).Constrainedness(4) = true;                    // c
          constraintCount += 8;
          return constraintCount;
       }
@@ -80,7 +82,7 @@ namespace Fluid.ChannelFlow {
          var blockToGlobal = new int[RowCount + 1][][];
          int row = 0;
          int col = 0;
-         var eastMap = eastBlock.CompactPosIndexToGlobalPosIndexMap;           // We will need EastBlock's map.
+         var eastMap = eastBlock.CmtInxToGblInxMap;           // We will need EastBlock's map.
          while(row < 20) {                                                   // Row 0 - 19
             blockToGlobal[row] = new int[ColCount + 1][];
             col = 0;                           
@@ -89,21 +91,21 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][1] = eastMap[23][19 - row][4];
             blockToGlobal[row][col][2] = eastMap[23][20 - row][2];
             for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             col = 1;
             while(col < ColCount) {                                             // Col 1 - 59
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
-                  ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+                  ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                   blockToGlobal[row][col][node] = posCount++;
                }
                ++col;
             }
             blockToGlobal[row][col] = new int[5];                               // Col 60, last col.
             for(int node = 0; node < 3; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             for(int node = 3; node < 5; ++node)
@@ -117,7 +119,7 @@ namespace Fluid.ChannelFlow {
                blockToGlobal[row][col][node] = Int32.MinValue;
          blockToGlobal[row][col][2] = eastMap[23][0][2];
          for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
          }
          col = 1;
@@ -126,7 +128,7 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             ++col;
@@ -134,15 +136,15 @@ namespace Fluid.ChannelFlow {
          blockToGlobal[row][col] = new int[5];                                   // Col 60
          for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-         ChannelMesh.Node(posCount) = GetNodeCmp(row, col, 2);
+         ChannelMesh.Node(posCount) = NodeCmt(row, col, 2);
          blockToGlobal[row][col][2] = posCount++;                             // Last position to be added.
          for(int node = 3; node < 5; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-         _CompactPosIndexToGlobalPosIndexMap = blockToGlobal;
+         _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;                          // In our case, this now has to be 15 620.
          _Nodes = null;                                                  // Free memory on block.
-         GetNodeCmp = GetNodeCmpGlobal;                                  // Rewire.
-         GetNodeStd = GetNodeStdGlobal;
+         NodeCmt = NodeCmtGlobal;                                  // Rewire.
+         NodeStd = NodeStdGlobal;
       }
       /// <summary>Get an overlap integral of basis functions j and k. Get term n, m.</summary><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function.</param><param name="n">Factor row.</param><param name="m">Factor column.</param>
       double GetStiffnessIntegral(int j, int k, int n, int m) {
@@ -156,21 +158,21 @@ namespace Fluid.ChannelFlow {
       double GetForcingIntegral(int j, int n) {
          return _RectForcingIntegrals[j][n];
       }
-      public override void AddContributionsToStiffnessMatrix(SparseMatDouble A, double dt, double ni) {
+      public override void AddContribsToSfsMatrix(SparseMat A, double dt, double ni) {
          for(int row = 0; row < 20; ++row)
             for(int col = 0; col < 60; ++col)
-               AddElementContributionToStiffnessMatrix(A, row, col, dt, ni);
+               AddEmtContribToSfsMatrix(A, row, col, dt, ni);
       }
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      void AddElementContributionToStiffnessMatrix(SparseMatDouble A, int row, int col, double dt, double ni) {
+      void AddEmtContribToSfsMatrix(SparseMat A, int row, int col, double dt, double ni) {
          double[][] subResult;
          int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
          int globalColBelt;
          for(int j = 0; j < 12; ++j)                               // Over first basis function.
             for(int k = j; k < 12; ++k) {                           // Over second basis function.
                subResult = SubMatrix(row, col, j, k, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
-               globalRowBelt = GlobalPositionIndexStd(row, col, j);
-               globalColBelt = GlobalPositionIndexStd(row, col, k);
+               globalRowBelt = GblInxFromStdInx(row, col, j);
+               globalColBelt = GblInxFromStdInx(row, col, k);
                for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
                   for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.
                      A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] += subResult[subResultRow][subResultCol];
@@ -182,8 +184,8 @@ namespace Fluid.ChannelFlow {
          double[][][][] A = new double[2][][][];                                 // For two nodes j and k. Next dimension contains 3 elements: A0, A1, A2.
          for(int i = 0; i < 8; ++i)
                subMatrix[i] = new double[8];
-         ref var node1 = ref GetNodeStd(row, col, j);
-         ref var node2 = ref GetNodeStd(row, col, k);
+         ref var node1 = ref NodeStd(row, col, j);
+         ref var node2 = ref NodeStd(row, col, k);
          A[0] = new double[3][][];                                               // Create operators for node1. For 3 different matrices A0, A1, A2.
          A[0][0] = NodeOperatorMatrix0(ref node1, dt, ni);
          Transpose(ref A[0][0]);
@@ -203,18 +205,18 @@ namespace Fluid.ChannelFlow {
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
       }
       /// <summary>Add whole block's contribution to global forcing vector.</summary><param name="b">Gloabal forcing vector.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public override void AddContributionsToForcingVector(SparseRowDouble b, double dt, double ni) {
+      public override void AddContribsToFcgVector(SparseRow b, double dt, double ni) {
          for(int row = 0; row < 20; ++row)
             for(int col = 0; col < 60; ++col)
-               AddElementContributionToForcingVector(b, row, col, dt, ni);
+               AddEmtContribToFcgVector(b, row, col, dt, ni);
       }
       /// <summary>Add contribution from element at specified row and col to global forcing vector.</summary><param name="b">Global forcing vector.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      void AddElementContributionToForcingVector(SparseRowDouble b, int row, int col, double dt, double ni) {
+      void AddEmtContribToFcgVector(SparseRow b, int row, int col, double dt, double ni) {
          double[] subVector;
          int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
          for(int j = 0; j < 12; ++j) {                               // Over basis functions.
                subVector = SubVector(row, col, j, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
-               globalRowBelt = GlobalPositionIndexStd(row, col, j);
+               globalRowBelt = GblInxFromStdInx(row, col, j);
                for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
                   b[globalRowBelt * 8 + subResultRow] += subVector[subResultRow];
          }
@@ -222,7 +224,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Creates an 8 element subvector of a 96 element forcing vector  for some choice of j = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><param name=x>Previous values of variables at point (row,col,j).</param>
       double[] SubVector(int row, int col, int j, double dt, double ni) {
          var subVector = new double[8];
-         ref var node = ref GetNodeStd(row, col, j);
+         ref var node = ref NodeStd(row, col, j);
          var A = new double[3][][];                                                      // For three different operators A.            
          A[0] = NodeOperatorMatrix0(ref node, dt, ni);                // Create 3 different matrices A0, A1, A2.
          Transpose(ref A[0]);

@@ -33,7 +33,7 @@ namespace Fluid.Internals.Collections {
 
 
       /// <summary>Split matrix on left and right part. Return right part. Element at specified virtual index will be part of right part.</summary><param name="virtJ">Index of element at which to split. This element will be part of right matrix.</param>
-      protected SparseMat<T,TArith> SplitAtCol(int virtJ) {
+      public SparseMat<T,TArith> SplitAtCol(int virtJ) {
          int remWidth = Width - virtJ;
          var removedRightPart = new SparseMat<T,TArith>(remWidth, Height);
          Width = virtJ;                                                 // Adjust width of this Matrix.
@@ -44,7 +44,7 @@ namespace Fluid.Internals.Collections {
          return removedRightPart;
       }
       /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified virtual index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
-      protected SparseMat<T,TArith> SplitAtRow(int virtI) {
+      public SparseMat<T,TArith> SplitAtRow(int virtI) {
          int remWidth = Width;
          int removedHeight = Height - virtI;
          var removedMatrix = new SparseMat<T,TArith>(Width, removedHeight);
@@ -93,70 +93,56 @@ namespace Fluid.Internals.Collections {
             }
          }
       }
-      /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="leftMat">Left operand.</param><param name="rightMat">Right operand.</param>
-      public static SparseMat<T,TArith> operator + (SparseMat<T,TArith> leftMat, SparseMat<T,TArith> rightMat) {
-         TB.Assert.AreEqual(leftMat.Width, rightMat.Width);             // Check that width and height of operands match.
-         TB.Assert.AreEqual(leftMat.Height, rightMat.Height);
-         var rightRowDict = (SCG.Dictionary<int,SparseRow<T,TArith>>) new SparseMat<T,TArith>(rightMat);                     // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used.
-         //SCG.Dictionary<int,T> leftRowDict;
-         SCG.Dictionary<int,T> rightElmDict;
-         T rightRowElm;
-         foreach(var leftMatKVPair in leftMat) {
-            //leftRowDict = (SCG.Dictionary<int,T>) leftKVPair.Value;
-            if(rightRowDict.TryGetValue(leftMatKVPair.Key, out SparseRow<T,TArith> rightRow)) {        // Right row counterpart exists.
-               rightElmDict = (SCG.Dictionary<int,T>) rightRow;
-               foreach(var leftRowElm in leftMatKVPair.Value) {
-                  rightRowElm = Arith.Add(rightRow[leftRowElm.Key], leftRowElm.Value);
-                  if(!rightRowElm.Equals(default(T)))                               // Not zero.
-                     rightElmDict[leftRowElm.Key] = rightRowElm;
-                  else                                      // temp == 0 && resultRow[kvPair.Key] != 0
-                     rightElmDict.Remove(leftRowElm.Key);
-               }
+      /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="lMat">Left operand.</param><param name="rMat">Right operand.</param>
+      public static SparseMat<T,TArith> operator +
+         (SparseMat<T,TArith> lMat, SparseMat<T,TArith> rMat) {
+            TB.Assert.AreEqual(lMat.Width, rMat.Width);                                         // Check that width and height of operands match.
+            TB.Assert.AreEqual(lMat.Height, rMat.Height);
+            var rMatAsDict = (SCG.Dictionary<int,SparseRow<T,TArith>>)                          // Copy right operand. Result will appear here.
+               new SparseMat<T,TArith>(rMat);                                                   // Upcast to dictionary so that Dictionary's indexer is used.
+            SCG.Dictionary<int,T> rMatRowAsDict;
+            T rMatRowEmt;
+            foreach(var lMatKVPair in lMat) {
+               if(rMatAsDict.TryGetValue(lMatKVPair.Key, out SparseRow<T,TArith> rMatRow)) {    // Right row counterpart exists.
+                  rMatRowAsDict = (SCG.Dictionary<int,T>) rMatRow;
+                  foreach(var lMatRowKVPair in lMatKVPair.Value) {
+                     rMatRowEmt = Arith.Add(rMatRow[lMatRowKVPair.Key], lMatRowKVPair.Value);
+                     if(!rMatRowEmt.Equals(default(T)))                                         // Not zero.
+                        rMatRowAsDict[lMatRowKVPair.Key] = rMatRowEmt;
+                     else
+                        rMatRowAsDict.Remove(lMatRowKVPair.Key);
+               }  }
+               else                                                                             // Right row counterpart does not exist (zeros).
+                  rMatAsDict.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value));
             }
-            else                                                          // Right row counterpart does not exist (zeros).
-               rightRowDict.Add(leftMatKVPair.Key, new SparseRow<T,TArith>(leftMatKVPair.Value));
-         }
-         return rightRowDict;
+            return (SparseMat<T,TArith>) rMatAsDict;
       }
-
-      public static SparseRowDouble operator * (SparseMatDouble mat, SparseRowDouble row) {
-         Assert.AreEqual(mat.Width, row.Width);                                  // Check that matrix and row can be multiplied.
-
-         // 1) Go through each row in left matrix. Rows that do not exist, create no entries in result row.
-         // 2) Move over each element in row i, check its virtual index, then search for an element with
-         //      matching virtual index in right row.
-         // 3) Add all such contributions to element with virtual index i in right row.
-         // 4) Return result row.
-
-         int matrixRowCount = mat.Count;                                         // Number of occupied (non-zero) rows.
-         var resultRow = new SparseRowDouble(mat.Height, matrixRowCount);
-         double temp;
-
-         foreach(var rowPair in mat) {
-               temp = 0.0;
-
-               foreach(var colPair in rowPair.Value) {
-                  if(row.TryGetValue(colPair.Key, out double rowElm))
-                     temp += colPair.Value * rowElm;
+      public static SparseRow<T,TArith> operator *
+         (SparseMat<T,TArith> lMat, SparseRow<T,TArith> rRow) {
+            TB.Assert.AreEqual(lMat.Width, rRow.Width);                                // Check that matrix and row can be multiplied.
+            int matrixRowCount = lMat.Count;                                         
+            var resultRow = new SparseRow<T,TArith>(lMat.Height, lMat.Count);          // lMat.Count = # of non-zero rows.
+            T sum;
+            foreach(var lMatKVPair in lMat) {                                          // Go through each row in lMat. Rows that do not exist, create no entries in result row.
+               sum = default(T);
+               foreach(var lMatRowKVPair in lMatKVPair.Value) {                        // Move over each element in lMatRow.
+                  if(rRow.TryGetValue(lMatRowKVPair.Key, out T rRowEmt))               // Check its index then search for an element with matching index in rRow.
+                     sum = Arith.Add(sum, Arith.Mul(lMatRowKVPair.Value, rRowEmt));    // sum += lMatRowKVPair.Value * rRowEmt; ~~> Add all such contributions to emt with same index in rRow.
                }
-               resultRow[rowPair.Key] = temp;
-         }
-         return resultRow;
+               resultRow[lMatKVPair.Key] = sum;
+            }
+            return resultRow;
       }
-
-      public static SparseRowDouble operator * (SparseRowDouble row, SparseMatDouble mat) {
-         Assert.AreEqual(mat.Width, row.Width);                                  // Check that matrix and row can be multiplied.
-         var resultRow = new SparseRowDouble(mat.Height, mat.Width);
-
-         foreach(var matRow in mat) {
-
-               foreach(var matCol in matRow.Value) {
-
-                  if(row.TryGetValue(matCol.Key, out var leftRowElm))
-                     resultRow[matRow.Key] += leftRowElm * matCol.Value;
-               }
-         }
-         return resultRow;
+      public static SparseRow<T,TArith> operator *
+         (SparseRow<T,TArith> lRow, SparseMat<T,TArith> rMat) {
+            TB.Assert.AreEqual(rMat.Width, lRow.Width);                                      // Check that matrix and row can be multiplied.
+            var resultRow = new SparseRow<T,TArith>(rMat.Height, rMat.Width);
+            foreach(var rMatKVPair in rMat)
+               foreach(var rMatRowEmt in rMatKVPair.Value)
+                  if(lRow.TryGetValue(rMatRowEmt.Key, out T lRowEmt))
+                     resultRow[rMatKVPair.Key] = Arith.Add(
+                        resultRow[rMatKVPair.Key], Arith.Mul(lRowEmt, rMatRowEmt.Value));    // resultRow[rMatKVPair.Key] += lRowEmt * rMatRowEmt.Value;
+            return resultRow;
       }
    }
 }

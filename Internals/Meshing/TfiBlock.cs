@@ -65,7 +65,7 @@ namespace Fluid.Internals.Meshing {
                   (1 - ksi)*(1 - eta)*_quadrilateral._lL._y - (1 - ksi)*eta*_quadrilateral._uL._y -
                   (1 - eta)*ksi*_quadrilateral._lR._y - ksi*eta*_quadrilateral._uR._y;
 
-         return new MeshNode(x, y, MainMesh.GetVariableCount());
+         return new MeshNode(x, y, MainMesh.NVars);
       }
    }
 }

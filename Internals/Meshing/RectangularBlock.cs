@@ -56,7 +56,7 @@ namespace Fluid.Internals.Meshing
             double yTwoThirdsAbove, yThirdAbove, y, x, xThirdRight, xTwoThirdsRight;
             
             _Nodes = new MeshNode[RowCount + 1][][];                                       // 60 node rows +1 for top row of nodes
-            int nVars = MainMesh.GetVariableCount();
+            int nVars = MainMesh.NVars;
 
             for(int row = 0; row < RowCount; ++row) {                                          // Move vertically.
                 _Nodes[row] = new MeshNode[ColCount + 1][];
@@ -115,7 +115,7 @@ namespace Fluid.Internals.Meshing
 
             for(int var = 0; var < nVars; ++var) {                        // For each specified variable.
                 for(int node = 0; node < 12; ++node) {
-                    result[var] += Phi[node](ksi,eta) * GetNodeStd(yCount, xCount, node).Var(vars[var])._value;
+                    result[var] += Phi[node](ksi,eta) * NodeStd(yCount, xCount, node).Var(vars[var])._value;
                 }
             }
             return result;

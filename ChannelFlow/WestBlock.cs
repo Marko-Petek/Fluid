@@ -17,8 +17,8 @@ namespace Fluid.ChannelFlow {
          channelMesh.LeftSquare._lL._x, channelMesh.LeftSquare._lL._y) {
          
          CreateNodes();
-         ConstraintCount = ApplyConstraints();
-         ChannelMesh.SetConstraintCount(ChannelMesh.GetConstraintCount() + ConstraintCount);
+         NConstraints = ApplyConstraints();
+         ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
          MoveNodesToMainMesh(southBlock);
       }
 
@@ -59,13 +59,13 @@ namespace Fluid.ChannelFlow {
                                                                               // Row 0 (obstruction).
          for(int col = 0; col < ColCount; ++col) {                              // Col 0 - 20
             for(int std = 0; std < 3; ++std)                                  // Obstruction boundary.
-               SetObstructionConstraints(ref GetNodeCmp(0, col, std));
-            SetCornerInletConstraints(ref GetNodeStd(22, col, 9));          // Row 22 (inlet), upper left corner. Set only corner nodes first for inlet. They are non-zero and if side node are to be set correctly, corner nodes must be set correctly first.
+               SetObstructionConstraints(ref NodeCmt(0, col, std));
+            SetCornerInletConstraints(ref NodeStd(22, col, 9));          // Row 22 (inlet), upper left corner. Set only corner nodes first for inlet. They are non-zero and if side node are to be set correctly, corner nodes must be set correctly first.
          }
-         SetObstructionConstraints(ref GetNodeStd(0, 19, 3));                    // Lower right corner.
-         SetCornerInletConstraints(ref GetNodeStd(22, 19, 6));                   // Upper right corner.
+         SetObstructionConstraints(ref NodeStd(0, 19, 3));                    // Lower right corner.
+         SetCornerInletConstraints(ref NodeStd(22, 19, 6));                   // Upper right corner.
          for(int col = 0; col < ColCount; ++col)                          // Row 0 (obstruction). Now set side nodes for inlet.
-            SetSideInletConstraints(ref GetNodeStd(22, col, 9), ref GetNodeStd(22, col, 8), ref GetNodeStd(22, col, 7), ref GetNodeStd(22, col, 6));
+            SetSideInletConstraints(ref NodeStd(22, col, 9), ref NodeStd(22, col, 8), ref NodeStd(22, col, 7), ref NodeStd(22, col, 6));
          return constraintCount;
 
          void SetObstructionConstraints(ref MeshNode nodeRef) {
@@ -111,7 +111,7 @@ namespace Fluid.ChannelFlow {
          var blockToGlobal = new int[RowCount + 1][][];
          int row = 0;
          int col = 0;
-         var southMap = southBlock.CompactPosIndexToGlobalPosIndexMap;      // We will need SouthBlock's map.
+         var southMap = southBlock.CmtInxToGblInxMap;      // We will need SouthBlock's map.
          while(row < RowCount) {                                     // Rows 0 - 22
             blockToGlobal[row] = new int[ColCount + 1][];
             col = 0;
@@ -119,21 +119,21 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 3; ++node)
                blockToGlobal[row][col][node] = southMap[row][20][node];
             for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             col = 1;
             while(col < ColCount) {                                     // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
-                  ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+                  ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                   blockToGlobal[row][col][node] = posCount++;
                }
                ++col;
             }
             blockToGlobal[row][col] = new int[5];                      // Col 20
             for(int node = 0; node < 3; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             for(int node = 3; node < 5; ++node)
@@ -147,7 +147,7 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][node] = Int32.MinValue;
          blockToGlobal[row][col][2] = southMap[row][20][2];    // Take in node from Col 20 of SouthBlock.
          for(int node = 3; node < 5; ++node) {
-            ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+            ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
             blockToGlobal[row][col][node] = posCount++;
          }
          col = 1;
@@ -156,7 +156,7 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = GetNodeCmp(row, col, node);
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++;
             }
             ++col;
@@ -164,15 +164,15 @@ namespace Fluid.ChannelFlow {
          blockToGlobal[row][col] = new int[5];                           // Col 20
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
-         ChannelMesh.Node(posCount) = GetNodeCmp(row, col, 2);
+         ChannelMesh.Node(posCount) = NodeCmt(row, col, 2);
          blockToGlobal[row][col][2] = posCount++;
          for(int node = 3; node < 5; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
-         _CompactPosIndexToGlobalPosIndexMap = blockToGlobal;
+         _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.
-         GetNodeCmp = GetNodeCmpGlobal;                              // Rewire.
-         GetNodeStd = GetNodeStdGlobal;
+         NodeCmt = NodeCmtGlobal;                              // Rewire.
+         NodeStd = NodeStdGlobal;
       }
    }
 }

@@ -16,15 +16,14 @@ namespace Fluid.Internals.Collections {
          /// <summary>Matrix in which this SparseRow resides.</summary>
          public SparseMat<T,TArith> SparseMat { get; set; }
 
-         // Do not use constructors. Use factory methods, overrides are crucial for DummyRow.
          /// <summary>Does not assigns width. User of this constructor must do it manually.</summary>
          protected SparseRow() : base() {}
          /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param><param name="capacity">Initial capacity.</param>
-         protected SparseRow(int width, int capacity = 6) : base(capacity) {
+         public SparseRow(int width, int capacity = 6) : base(capacity) {
             Width = width;
          }
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
-         protected SparseRow(SparseRow<T,TArith> source) : base(source.Count) {
+         public SparseRow(SparseRow<T,TArith> source) : base(source.Count) {
             foreach(var pair in source)
                Add(pair.Key, pair.Value);
          }
@@ -59,20 +58,16 @@ namespace Fluid.Internals.Collections {
          public void SwapElms(int virtIndex1, int virtIndex2) {
             bool firstExists = TryGetValue(virtIndex1, out T val1);
             bool secondExists = TryGetValue(virtIndex2, out T val2);
-            if(firstExists) {
+            if(firstExists)
                if(secondExists) {
                   this[virtIndex1] = val2;
-                  this[virtIndex2] = val1;
-               }
+                  this[virtIndex2] = val1; }
                else {
-                  Remove(virtIndex1);             // Element at virtIndex1 becomes 0 and is removed.
-                  Add(virtIndex2, val1);
-               }
-            }
+                  Remove(virtIndex1);                                   // Element at virtIndex1 becomes 0 and is removed.
+                  Add(virtIndex2, val1); }
             else if(secondExists) {
                Add(virtIndex1, val2);
-               Remove(virtIndex2);
-            }                                   // Else nothing happens, both are 0.
+               Remove(virtIndex2); }                                   // Else nothing happens, both are 0.
          }
          /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
          public void ApplySwaps(SparseMat<int,IntArithmetic> swapMatrix) {
@@ -95,48 +90,44 @@ namespace Fluid.Internals.Collections {
          /// <summary>New indexer definition (hides Dictionary's indexer). Returns 0 for non-existing elements.</summary>
          public new T this[int i] {
             get {
-               TryGetValue(i, out T val);         // Outputs zero if value not found.
-               return val;
-            }
+               TryGetValue(i, out T val);                               // Outputs zero if value not found.
+               return val; }
             set {
-               if(!value.Equals(default(T))) {                 // Value different from 0.
-                  if(this is DummyRow<T,TArith> dummyRow) {    // Try downcasting to DummyRow.
-                     var newRow = CreateSparseRow(Width);      // Add new row to its owner and add value to it.
+               if(!value.Equals(default(T)))                            // Value different from 0.
+                  if(this is DummyRow<T,TArith> dummyRow) {             // Try downcasting to DummyRow.
+                     var newRow = CreateSparseRow(Width);               // Add new row to its owner and add value to it.
                      newRow.Add(i, value);
-                     dummyRow.SparseMat.Add(dummyRow.Index, newRow);
-                  }            
+                     dummyRow.SparseMat.Add(dummyRow.Index, newRow); }
                   else
-                     base[i] = value;                          // Indexers adds or modifies if entry already exists.
-               }
+                     base[i] = value;                                   // Indexers adds or modifies if entry already exists.
                else
-                  Remove(i);                                   // Remove if value set is 0.
-            }
+                  Remove(i); }                                           // Remove if value set is 0.
          }
-         public static SparseRow<T,TArith> operator +(SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
-            var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-            T temp;
-            foreach(var kvPair in left) {
-               resultRow.TryGetValue(kvPair.Key, out T val);                  // Then add to existing value.
-               temp = Arith.Add(kvPair.Value, val);
-               if(!temp.Equals(default(T)))                                   // Not zero.
-                  resultRow[kvPair.Key] = temp;      // Add to result. Upcast to dictionary so that Dictionary's indexer is used.
-               else                                                           // Zero.
-                  resultRow.Remove(kvPair.Key);
-            }
-            return (SparseRow<T,TArith>) resultRow;
+         public static SparseRow<T,TArith> operator +
+            (SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
+               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+               T temp;
+               foreach(var kvPair in left) {
+                  resultRow.TryGetValue(kvPair.Key, out T val);                  // Then add to existing value.
+                  temp = Arith.Add(kvPair.Value, val);
+                  if(!temp.Equals(default(T)))                                   // Not zero.
+                     resultRow[kvPair.Key] = temp;      // Add to result. Upcast to dictionary so that Dictionary's indexer is used.
+                  else                                                           // Zero.
+                     resultRow.Remove(kvPair.Key); }
+               return (SparseRow<T,TArith>) resultRow;
          }
-         public static SparseRow<T,TArith> operator -(SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
-            var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(left);     // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-            T temp;
-            foreach(var kvPair in right) {
-               resultRow.TryGetValue(kvPair.Key, out T val);               // val is 0, if key does not exist
-               temp = Arith.Sub(val, kvPair.Value);
-               if(!temp.Equals(default(T)))
-                  resultRow[kvPair.Key] = temp;
-               else
-                  resultRow.Remove(kvPair.Key);
-            }
-            return (SparseRow<T,TArith>) resultRow;
+         public static SparseRow<T,TArith> operator -
+            (SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
+               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(left);     // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+               T temp;
+               foreach(var kvPair in right) {
+                  resultRow.TryGetValue(kvPair.Key, out T val);               // val is 0, if key does not exist
+                  temp = Arith.Sub(val, kvPair.Value);
+                  if(!temp.Equals(default(T)))
+                     resultRow[kvPair.Key] = temp;
+                  else
+                     resultRow.Remove(kvPair.Key); }
+               return (SparseRow<T,TArith>) resultRow;
          }
          /// <summary>Dot (scalar) product.</summary>
          public static T operator *(SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
@@ -146,24 +137,21 @@ namespace Fluid.Internals.Collections {
                   result = Arith.Add(result, Arith.Mul(kvPair.Value, val));
             return result;
          }
-
          public static SparseRow<T,TArith> operator *(T left, SparseRow<T,TArith> right) {
-               if(!left.Equals(default(T))) {                                                // Not zero.
-                  var result = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);      // Upcast to dictionary so that Dictionary's indexer is used.
-
-                  foreach(var key in result.Keys)
-                     result[key] = Arith.Mul(result[key], left); //result[key] *= left;
-                  return (SparseRow<T,TArith>)result;
-               }
-               else                                                                          // Zero.
-                  return new SparseRow<T,TArith>(right.Width);                               // Return empty row.
+            if(!left.Equals(default(T))) {                                                // Not zero.
+               var result = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);      // Upcast to dictionary so that Dictionary's indexer is used.
+               foreach(var key in result.Keys)
+                  result[key] = Arith.Mul(result[key], left); //result[key] *= left;
+               return (SparseRow<T,TArith>)result; }
+            else                                                                          // Zero.
+               return new SparseRow<T,TArith>(right.Width);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public T NormSqr() {
-               T result = default(T);
-               foreach(var val in this.Values)
-                  result = Arith.Add(result, Arith.Mul(val,val));
-               return result;
+            T result = default(T);
+            foreach(var val in this.Values)
+               result = Arith.Add(result, Arith.Mul(val,val));
+            return result;
          }
    }
 }
