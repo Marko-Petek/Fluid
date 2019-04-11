@@ -134,7 +134,6 @@ namespace Fluid.ChannelFlow {
          //_nodes = new Node[][][]
          _Nodes = nodes.ToArray();
       }
-
       /// <summary>Export positions of left half of obstruction block. We shall integrate over each element in Mathematica. Requires even number of elements on side.</summary><remarks>Suggestion: introduce 2D integrator into this program and automatize process.</remarks>
       public void WriteLeftHalfOnly(string fileName) {
          FileInfo file = new FileInfo(fileName);

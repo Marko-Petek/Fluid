@@ -14,12 +14,14 @@ namespace Fluid.Internals {
       public static IO.FileReader FileReader { get; } = new IO.FileReader();
       public static IO.FileWriter FileWriter { get; } = new IO.FileWriter();
       public static IO.Console Console { get; } = new IO.Console();
-      public static AppReporter Reporter { get; } = new AppReporter(VerbositySettings.Moderate);
+      public static AppReporter Reporter { get; set; }
       public static Rng Rng { get; } = new Rng();
 
-      public static void EntryPointSetup(Action main) {
+      /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
+      public static void EntryPointSetup(Action main, VerbositySettings verbosity = VerbositySettings.Moderate) {
          try {
             System.Console.OutputEncoding = Encoding.UTF8;
+            Reporter = new AppReporter(verbosity);
             main();
          }
          catch(Exception exc) {

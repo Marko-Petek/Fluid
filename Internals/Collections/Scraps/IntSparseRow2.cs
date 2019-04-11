@@ -174,7 +174,6 @@ namespace Fluid.Internals.Collections
             }
         }
 
-        // TODO: 3.XII.  Finish + operator implementation.
         /// <summary>Creates an IntSparseRow that is a sum of two IntSparseRows.</summary><param name="left">Left operand.</param><param name="right">Right operand.</param>
         public static IntSparseRow operator + (IntSparseRow left, IntSparseRow right) {
             Assert.AreEqual(left.Width, right.Width, Comparers.Int);                     // Check that rows are the same width.
@@ -218,7 +217,6 @@ namespace Fluid.Internals.Collections
                             else if(op1._E[i].VirtIndex == op2._E[i].VirtIndex){                         // Matching element with explicitColIndex[i] found in operand j.
                                 resultRow.Add(op1._E[i] + op2._E[j]);
                                 ++j;
-                                // TODO: 4.XII. Make sure i < count ... probably: if(++i < Count)
                                 // if(j < op2.Count) {
                                 //     virtColIndex[j] = operands[j]._E[realColIndex[j]].VirtIndex;
                                 // }
@@ -479,7 +477,7 @@ namespace Fluid.Internals.Collections
             IntSparseElm[] removed = new IntSparseElm[removedCount];
             
             for(int i = 0; i < removedCount; ++i) {             // Construct array that we will return.
-                BeforeElementExit(i);                           // FIXME: Return and check whether this is needed.
+                BeforeElementExit(i);
                 removed[i] = _E[j + i];
             }
             for(int i = k + 1; i < _Count; ++i) {               // Refill hole. Shift elements remaining on right side of hole (removed range) to right.

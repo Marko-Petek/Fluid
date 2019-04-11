@@ -6,7 +6,9 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
-   public class SparseRow<T,TArith> : SCG.Dictionary<int,T>
+
+   public class SparseRow<T,TArith> : SCG.Dictionary<int,T>,
+      IEquatable<SparseRow<T,TArith>>                                         // So that we can equate two SparseRows via the Equals method.
       where T : IEquatable<T>, new()
       where TArith : IArithmetic<T>, new() {
          /// <summary>Contains arithmetic operations.</summary>
@@ -95,7 +97,7 @@ namespace Fluid.Internals.Collections {
             set {
                if(!value.Equals(default(T)))                            // Value different from 0.
                   if(this is DummyRow<T,TArith> dummyRow) {             // Try downcasting to DummyRow.
-                     var newRow = CreateSparseRow(Width);               // Add new row to its owner and add value to it.
+                     var newRow = new SparseRow<T,TArith>(Width);               // Add new row to its owner and add value to it.
                      newRow.Add(i, value);
                      dummyRow.SparseMat.Add(dummyRow.Index, newRow); }
                   else
@@ -152,6 +154,13 @@ namespace Fluid.Internals.Collections {
             foreach(var val in this.Values)
                result = Arith.Add(result, Arith.Mul(val,val));
             return result;
+         }
+
+         public bool Equals(SparseRow<T,TArith> other) {
+            foreach(var rowKVPair in this)
+               if(!(other.TryGetValue(rowKVPair.Key, out T val) && rowKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
+                  return false;
+            return true;
          }
    }
 }
