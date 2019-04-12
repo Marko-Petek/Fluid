@@ -3,7 +3,7 @@ using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Numerics.MatrixOperations;
+using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Meshing {
    using SparseMat = SparseMat<double,DblArithmetic>;
@@ -154,38 +154,38 @@ namespace Fluid.Internals.Meshing {
          int nRows = RowCount;                                                      // Row count of current frame.
          int nCols = ColCount;
          var vertices = new Pos[4];
-         vertices[0] = NodeStd(startRow, startCol, 0)._pos;
-         vertices[1] = NodeStd(startRow, endCol, 3)._pos;
-         vertices[2] = NodeStd(endRow, endCol, 6)._pos;
-         vertices[3] = NodeStd(endRow, startCol, 9)._pos;
+         vertices[0] = NodeStd(startRow, startCol, 0)._Pos;
+         vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
+         vertices[2] = NodeStd(endRow, endCol, 6)._Pos;
+         vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
          int newEndRow = 0;
          int newEndCol = 0;
          while(nRows > 1 || nCols > 1) {                                            // As long as we have not narrowed our frame down to a single element.
             if(nRows > 1) {
                newEndRow = startRow + nRows/2 - 1;                                  // Set row at half frame width as end. No problem if nRows is odd.
-               vertices[3] = NodeStd(newEndRow, startCol, 9)._pos;                  // New upper left.
-               vertices[2] = NodeStd(newEndRow, endCol, 6)._pos;                    // New upper right.
-               if(pos.IsInsidePolygon(ref vertices)) {
+               vertices[3] = NodeStd(newEndRow, startCol, 9)._Pos;                  // New upper left.
+               vertices[2] = NodeStd(newEndRow, endCol, 6)._Pos;                    // New upper right.
+               if(pos.IsInsidePolygon(vertices)) {
                   endRow = newEndRow;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._pos;                  // UL
-                  vertices[2] = NodeStd(endRow, endCol, 6)._pos; }                  // UR
+                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;                  // UL
+                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }                  // UR
                else {
                   startRow = newEndRow + 1;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._pos;                // LL
-                  vertices[1] = NodeStd(startRow, endCol, 3)._pos; }                // LR
+                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos;                // LL
+                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos; }                // LR
                nRows = endRow - startRow + 1; }
             if(nCols > 1) {
                newEndCol = startCol + nCols/2 - 1;
-               vertices[1] = NodeStd(startRow, newEndCol, 3)._pos;                  // new LR.
-               vertices[2] = NodeStd(endRow, newEndCol, 6)._pos;
-               if(pos.IsInsidePolygon(ref vertices)) {
+               vertices[1] = NodeStd(startRow, newEndCol, 3)._Pos;                  // new LR.
+               vertices[2] = NodeStd(endRow, newEndCol, 6)._Pos;
+               if(pos.IsInsidePolygon(vertices)) {
                   endCol = newEndCol;
-                  vertices[1] = NodeStd(startRow, endCol, 3)._pos;
-                  vertices[2] = NodeStd(endRow, endCol, 6)._pos; }
+                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
+                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }
                else {
                   startCol = newEndCol + 1;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._pos;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._pos; }
+                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
+                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos; }
                nCols = endCol - startCol + 1;
          }  }                                                                        // At this point startCol and endCol have to be the same.
          var quadElm = CreateQuadElement(startRow, startCol);                        // Quadrilateral that contains sought after point.
@@ -194,8 +194,8 @@ namespace Fluid.Internals.Meshing {
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>
-      QuadElement CreateQuadElement(int stdRow, int stdCol) {
-         var quadElm = new QuadElement(
+      MeshElement CreateQuadElement(int stdRow, int stdCol) {
+         var quadElm = new MeshElement(
             ref NodeStd(stdRow, stdCol, 0),
             ref NodeStd(stdRow, stdCol, 1),
             ref NodeStd(stdRow, stdCol, 2),

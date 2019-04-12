@@ -23,7 +23,7 @@ namespace Fluid.Tests {
             new Pos(1.0, -1.0),
             new Pos(2.0, 1.0),
             new Pos(-2.0, 1.0) };                             
-         Assert.True(point.IsInsidePolygon(ref vertices));
+         Assert.True(point.IsInsidePolygon(vertices));
       }
 
       [InlineData(-2.0, 0.0)] [InlineData(2.0, 0.0)] [InlineData(0.0, 1.5)] [InlineData(0.0, -1.5)]
@@ -34,7 +34,7 @@ namespace Fluid.Tests {
             new Pos(1.0, -1.0),
             new Pos(2.0, 1.0),
             new Pos(-2.0, 1.0) };     
-         Assert.True(!point.IsInsidePolygon(ref vertices));
+         Assert.True(!point.IsInsidePolygon(vertices));
       }
 
       [InlineData(1, 0)] [InlineData(1.1, 0.2)] [InlineData(3.9, 0.99)] [InlineData(1.01, 0.99)]
@@ -46,7 +46,7 @@ namespace Fluid.Tests {
             new Pos(4,0),
             new Pos(4,1),
             new Pos(1,1) };
-         Assert.True(point.IsInsidePolygon(ref vertices));
+         Assert.True(point.IsInsidePolygon(vertices));
       }
       // TODO: Test IsInsidePolygon method more.
       [InlineData(0.35, 0.0)]
@@ -57,7 +57,7 @@ namespace Fluid.Tests {
             new Pos(4,0),
             new Pos(4,1),
             new Pos(1,1) };
-         Assert.False(point.IsInsidePolygon(ref vertices));
+         Assert.False(point.IsInsidePolygon(vertices));
       }
    }
 }

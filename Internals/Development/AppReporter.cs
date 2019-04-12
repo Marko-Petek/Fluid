@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using static System.Math;
 
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
-using static Fluid.Internals.Operations;
+using static Fluid.Internals.Ops;
 
 namespace Fluid.Internals.Development {
     /// <summary>Writes program's progression either to a file, to console or both.</summary>

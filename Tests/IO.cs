@@ -7,7 +7,7 @@ using Fluid.Internals;
 using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
 using TB = Fluid.Internals.Toolbox;
-using static Fluid.Internals.ArrayOperations;
+using static Fluid.Internals.AryOps;
 
 namespace Fluid.Tests {
    public class IOTest {

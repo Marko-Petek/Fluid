@@ -6,7 +6,7 @@ namespace Fluid.Internals.Meshing {
    /// <summary>Custom boundary trans-finite interpolated (TFI) submesh block. Boundaries appear as virtual functions of a single arc lenght parameter.</summary>
    public abstract class TfiBlock : MeshBlock {
       /// <summary>Positions of block's corners.</summary>
-      protected Quadrilateral _quadrilateral;
+      protected Tetragon _quadrilateral;
 
       /// <summary>For testing purposes only.</summary>
       public TfiBlock() {
@@ -20,7 +20,7 @@ namespace Fluid.Internals.Meshing {
          double ulx, double uly
       )
       : base(mainMesh) {
-         _quadrilateral = new Quadrilateral(llx, lly,
+         _quadrilateral = new Tetragon(llx, lly,
                lrx, lry, urx, ury, ulx, uly);
       }
 
@@ -39,14 +39,14 @@ namespace Fluid.Internals.Meshing {
          var leftBoundaryPos = CalcLeftBoundaryPos(eta);
          var rightBoundaryPos = CalcRightBoundaryPos(eta);
 
-         var x = (1 - ksi)*leftBoundaryPos._x  +  ksi*rightBoundaryPos._x  + 
-                  (1 - eta)*lowerBoundaryPos._x  +  eta*upperBoundaryPos._x  -  
-                  (1 - ksi)*(1 - eta)*_quadrilateral._lL._x - (1 - ksi)*eta*_quadrilateral._uL._x -
-                  (1 - eta)*ksi*_quadrilateral._lR._x - ksi*eta*_quadrilateral._uR._x;
-         var y = (1 - ksi)*leftBoundaryPos._y  +  ksi*rightBoundaryPos._y  + 
-                  (1 - eta)*lowerBoundaryPos._y  +  eta*upperBoundaryPos._y  -  
-                  (1 - ksi)*(1 - eta)*_quadrilateral._lL._y - (1 - ksi)*eta*_quadrilateral._uL._y -
-                  (1 - eta)*ksi*_quadrilateral._lR._y - ksi*eta*_quadrilateral._uR._y;
+         var x = (1 - ksi)*leftBoundaryPos.X  +  ksi*rightBoundaryPos.X  + 
+                  (1 - eta)*lowerBoundaryPos.X  +  eta*upperBoundaryPos.X  -  
+                  (1 - ksi)*(1 - eta)*_quadrilateral._LL.X - (1 - ksi)*eta*_quadrilateral._UL.X -
+                  (1 - eta)*ksi*_quadrilateral._LR.X - ksi*eta*_quadrilateral._UR.X;
+         var y = (1 - ksi)*leftBoundaryPos.Y  +  ksi*rightBoundaryPos.Y  + 
+                  (1 - eta)*lowerBoundaryPos.Y  +  eta*upperBoundaryPos.Y  -  
+                  (1 - ksi)*(1 - eta)*_quadrilateral._LL.Y - (1 - ksi)*eta*_quadrilateral._UL.Y -
+                  (1 - eta)*ksi*_quadrilateral._LR.Y - ksi*eta*_quadrilateral._UR.Y;
          
          return new Pos(x, y);
       }
@@ -56,14 +56,14 @@ namespace Fluid.Internals.Meshing {
          var leftBoundaryPos = CalcLeftBoundaryPos(eta);
          var rightBoundaryPos = CalcRightBoundaryPos(eta);
 
-         var x = (1 - ksi)*leftBoundaryPos._x  +  ksi*rightBoundaryPos._x  + 
-                  (1 - eta)*lowerBoundaryPos._x  +  eta*upperBoundaryPos._x  -  
-                  (1 - ksi)*(1 - eta)*_quadrilateral._lL._x - (1 - ksi)*eta*_quadrilateral._uL._x -
-                  (1 - eta)*ksi*_quadrilateral._lR._x - ksi*eta*_quadrilateral._uR._x;
-         var y = (1 - ksi)*leftBoundaryPos._y  +  ksi*rightBoundaryPos._y  + 
-                  (1 - eta)*lowerBoundaryPos._y  +  eta*upperBoundaryPos._y  -  
-                  (1 - ksi)*(1 - eta)*_quadrilateral._lL._y - (1 - ksi)*eta*_quadrilateral._uL._y -
-                  (1 - eta)*ksi*_quadrilateral._lR._y - ksi*eta*_quadrilateral._uR._y;
+         var x = (1 - ksi)*leftBoundaryPos.X  +  ksi*rightBoundaryPos.X  + 
+                  (1 - eta)*lowerBoundaryPos.X  +  eta*upperBoundaryPos.X  -  
+                  (1 - ksi)*(1 - eta)*_quadrilateral._LL.X - (1 - ksi)*eta*_quadrilateral._UL.X -
+                  (1 - eta)*ksi*_quadrilateral._LR.X - ksi*eta*_quadrilateral._UR.X;
+         var y = (1 - ksi)*leftBoundaryPos.Y  +  ksi*rightBoundaryPos.Y  + 
+                  (1 - eta)*lowerBoundaryPos.Y  +  eta*upperBoundaryPos.Y  -  
+                  (1 - ksi)*(1 - eta)*_quadrilateral._LL.Y - (1 - ksi)*eta*_quadrilateral._UL.Y -
+                  (1 - eta)*ksi*_quadrilateral._LR.Y - ksi*eta*_quadrilateral._UR.Y;
 
          return new MeshNode(x, y, MainMesh.NVars);
       }

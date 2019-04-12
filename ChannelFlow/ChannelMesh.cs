@@ -30,11 +30,11 @@ namespace Fluid.ChannelFlow {
       /// <summary>Number of elements per square submesh side.</summary>
       public int ElementDensity { get; }
       /// <summary>Corners of right rectangular block.</summary>
-      protected Quadrilateral RightRect { get; }
+      protected Tetragon RightRect { get; }
       /// <summary>Corners of left square block.</summary>
-      public Quadrilateral LeftSquare { get; protected set; }
+      public Tetragon LeftSquare { get; protected set; }
       /// <summary>Corners of largest possible square inside circular obstruction.</summary>
-      public Quadrilateral ObstructionRect { get; protected set; }
+      public Tetragon ObstructionRect { get; protected set; }
       /// <summary>Number of positions that nodes reside at.</summary>
       public int PositionCount { get; set; }
       /// <summary>Obstruction's center x coordinate.</summary>
@@ -54,20 +54,20 @@ namespace Fluid.ChannelFlow {
             Width = width;
             RelObstructionDiameter = relObstructionDiameter;
             ElementDensity = elementDensity;
-            LeftSquare = new Quadrilateral(                                                // Fixed.
+            LeftSquare = new Tetragon(                                                // Fixed.
                0.0, 0.0,
                Width, 0.0, 
                Width, Width,
                0.0, Width
             );
             double tiltedRadiusX = 0.5 * Sqrt(2.0) * ObstructionRadius;                // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
-            ObstructionRect = new Quadrilateral(                                           // Fixed.
+            ObstructionRect = new Tetragon(                                           // Fixed.
                ObstructionX - tiltedRadiusX, ObstructionY - tiltedRadiusX,
                ObstructionX + tiltedRadiusX, ObstructionY - tiltedRadiusX,
                ObstructionX + tiltedRadiusX, ObstructionY + tiltedRadiusX,
                ObstructionX - tiltedRadiusX, ObstructionY + tiltedRadiusX
             );
-            RightRect = new Quadrilateral(                                                 // Fixed.
+            RightRect = new Tetragon(                                                 // Fixed.
                Width, 0.0,
                4 * Width, 0.0,
                4 * Width, Width,
@@ -79,8 +79,8 @@ namespace Fluid.ChannelFlow {
             NorthBlock = new NorthBlock(this, channelFlow, WestBlock);               /* Integral values get imported with static constructor of ObstructionBlock. */  TB.Reporter.Write("Constructing EastBlock.", Verbose);
             EastBlock = new EastBlock(this, channelFlow, NorthBlock, SouthBlock);    TB.Reporter.Write("Constructing RightBlock.", Verbose);
             RightBlock = new RightBlock(this, channelFlow, EastBlock,
-               RightRect._lL._x, RightRect._lL._y,
-               RightRect._uR._x, RightRect._uR._y,
+               RightRect._LL.X, RightRect._LL.Y,
+               RightRect._UR.X, RightRect._UR.Y,
                20, 60
             );                                                                       TB.Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
             WriteCornerPositionsOfRectElement();

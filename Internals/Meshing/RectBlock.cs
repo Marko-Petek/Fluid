@@ -2,7 +2,7 @@ using System;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Meshing.QuadElement;
+using static Fluid.Internals.Meshing.MeshElement;
 
 namespace Fluid.Internals.Meshing {
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>
@@ -37,9 +37,9 @@ namespace Fluid.Internals.Meshing {
          _uR = new Pos(urx, ury);
          _vertices = new Pos[4] {
                _lL,
-               new Pos(_uR._x, _lL._y),
+               new Pos(_uR.X, _lL.Y),
                _uR,
-               new Pos(_lL._x, _uR._y)
+               new Pos(_lL.X, _uR.Y)
          };
          _height = ury - lly;
          _width = urx - llx;
@@ -55,26 +55,26 @@ namespace Fluid.Internals.Meshing {
          int nVars = MainMesh.NVars;
          for(int row = 0; row < RowCount; ++row) {                                                 // Move vertically.
             _Nodes[row] = new MeshNode[ColCount + 1][];
-            y = _lL._y + row * _rowHeight;
+            y = _lL.Y + row * _rowHeight;
             yThirdAbove = y + _rowHeight / 3.0;
             yTwoThirdsAbove = y + 2 * _rowHeight / 3.0;
             for(int col = 0; col < ColCount; ++col) {
-               x = _lL._x + col * _colWidth;
+               x = _lL.X + col * _colWidth;
                xThirdRight = x + _colWidth / 3.0;
                xTwoThirdsRight = x + 2 * _colWidth / 3.0;
                _Nodes[row][col] = new MeshNode[] {
                   new MeshNode(x, yTwoThirdsAbove, nVars), new MeshNode(x, yThirdAbove, nVars),
                   new MeshNode(x,y,nVars), new MeshNode(xThirdRight, y, nVars),
                   new MeshNode(xTwoThirdsRight, y, nVars) }; }
-            x = _uR._x;                                                                            // Add right-most column.
+            x = _uR.X;                                                                            // Add right-most column.
             _Nodes[row][ColCount] = new MeshNode[] {
                new MeshNode(x, yTwoThirdsAbove, nVars), new MeshNode(x, yThirdAbove, nVars),
                new MeshNode(x, y, nVars), new MeshNode(Double.NaN, Double.NaN, 0),
                new MeshNode(Double.NaN, Double.NaN, 0) }; }
-         y = _uR._y;                                                                               // Add upper-most row.
+         y = _uR.Y;                                                                               // Add upper-most row.
          _Nodes[RowCount] = new MeshNode[ColCount + 1][];
          for(int col = 0; col < ColCount; ++col) {
-            x = _lL._y + col * _colWidth;
+            x = _lL.Y + col * _colWidth;
             xThirdRight = x + _colWidth / 3.0;
             xTwoThirdsRight = x + 2 * _colWidth / 3.0;
             _Nodes[RowCount][col] = new MeshNode[] {
@@ -83,13 +83,13 @@ namespace Fluid.Internals.Meshing {
                new MeshNode(xTwoThirdsRight, y, nVars) }; }
          _Nodes[RowCount][ColCount] = new MeshNode[] {                                             // Add one last point.
             new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
-            new MeshNode(_uR._x, _uR._y, nVars),
+            new MeshNode(_uR.X, _uR.Y, nVars),
             new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0) };
       }
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">X and y coordinates of desired point.</param><param name="vars">Indices of variables we wish to retrieve.</param>
       public override double[] Solution(ref Pos pos, params int[] vars) {
-         double blockX = pos._x - _lL._x;                            // Local coordinates with lower left corner as origin.
-         double blockY = pos._y - _lL._y;
+         double blockX = pos.X - _lL.X;                            // Local coordinates with lower left corner as origin.
+         double blockY = pos.Y - _lL.Y;
          double normX = blockX / _width;                             // Get normalized x coordinate: interval [0,1].
          double normY = blockY / _height;
          int xCount = (int)(blockX / _colWidth);                     // Calculate how many times element's width fits in normX.
@@ -106,7 +106,7 @@ namespace Fluid.Internals.Meshing {
 
       /// <summary>Determine whether a point is inside this Rectangle.</summary><param name="pos">Point's position.</param>
       public override bool IsPointInside(ref Pos pos) {
-         return pos.IsInsidePolygon(ref _vertices);
+         return pos.IsInsidePolygon(_vertices);
       }
    }
 }

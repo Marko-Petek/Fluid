@@ -5,8 +5,8 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
 using TB = Fluid.Internals.Toolbox;
-using static Fluid.Internals.Operations;
-using static Fluid.Internals.Numerics.MatrixOperations;
+using static Fluid.Internals.Ops;
+using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.ChannelFlow {
    using SparseMat = SparseMat<double,DblArithmetic>;
@@ -147,7 +147,7 @@ namespace Fluid.ChannelFlow {
          NodeStd = NodeStdGlobal;
       }
       /// <summary>Get an overlap integral of basis functions j and k. Get term n, m.</summary><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function.</param><param name="n">Factor row.</param><param name="m">Factor column.</param>
-      double GetStiffnessIntegral(int j, int k, int n, int m) {
+      double GetSfsIntegral(int j, int k, int n, int m) {
          if(k < j)
                Swap(ref j, ref k);                                                     // Account fot the fact that k is always such that [j][k] forms an upper left triangular matrix.
          k -= j; 
@@ -188,18 +188,18 @@ namespace Fluid.ChannelFlow {
          ref var node2 = ref NodeStd(row, col, k);
          A[0] = new double[3][][];                                               // Create operators for node1. For 3 different matrices A0, A1, A2.
          A[0][0] = NodeOperatorMatrix0(ref node1, dt, ni);
-         Transpose(ref A[0][0]);
+         A[0][0].Transpose();
          A[0][1] = NodeOperatorMatrix1(ref node1, dt, ni);
-         Transpose(ref A[0][1]);
+         A[0][1].Transpose();
          A[0][2] = NodeOperatorMatrix1(ref node1, dt, ni);
-         Transpose(ref A[0][2]);
+         A[0][2].Transpose();
          A[1] = new double[3][][];                                                   // Create operators for node1.
          A[1][0] = NodeOperatorMatrix0(ref node2, dt, ni);
          A[1][1] = NodeOperatorMatrix1(ref node2, dt, ni);
          A[1][2] = NodeOperatorMatrix1(ref node2, dt, ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               AddTo(ref subMatrix, Times(GetStiffnessIntegral(j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
+               subMatrix.Add(Mul(GetSfsIntegral(j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
          return subMatrix;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
@@ -227,11 +227,11 @@ namespace Fluid.ChannelFlow {
          ref var node = ref NodeStd(row, col, j);
          var A = new double[3][][];                                                      // For three different operators A.            
          A[0] = NodeOperatorMatrix0(ref node, dt, ni);                // Create 3 different matrices A0, A1, A2.
-         Transpose(ref A[0]);
+         A[0].Transpose();
          A[1] = NodeOperatorMatrix1(ref node, dt, ni);
-         Transpose(ref A[1]);
+         A[1].Transpose();
          A[2] = NodeOperatorMatrix1(ref node, dt, ni);
-         Transpose(ref A[2]);
+         A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
          double[][] fCoeffs = new double[8][];                                           // Coefficients accompanying terms in f vector.
          fCoeffs[0] = new double[4] {-node.Var(6)._value, ni*node.Var(2)._value, ni*node.Var(3)._value, -node.Var(0)._value * node.Var(2)._value - node.Var(1)._value * node.Var(3)._value};
@@ -245,22 +245,22 @@ namespace Fluid.ChannelFlow {
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
                for(int matCol = 0; matCol < 2; ++matCol) {
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetStiffnessIntegral(j,j,n,0) +   // A[pick matrix][pick row][pick col]
-                        fCoeffs[0][1] * (GetStiffnessIntegral(j,j,n,1) + GetStiffnessIntegral(j,j,n,2)) +
-                        fCoeffs[0][2] * (GetStiffnessIntegral(j,j,n,3) + GetStiffnessIntegral(j,j,n,4)) +
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(j,j,n,0) +   // A[pick matrix][pick row][pick col]
+                        fCoeffs[0][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,2)) +
+                        fCoeffs[0][2] * (GetSfsIntegral(j,j,n,3) + GetSfsIntegral(j,j,n,4)) +
                         fCoeffs[0][3] * GetForcingIntegral(j,n));
                }
-               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoeffs[2][0] * GetStiffnessIntegral(j,j,n,0) + 
-                  fCoeffs[2][1] * (GetStiffnessIntegral(j,j,n,1) + GetStiffnessIntegral(j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoeffs[3][0] * GetStiffnessIntegral(j,j,n,0) + 
-                  fCoeffs[3][1] * (GetStiffnessIntegral(j,j,n,2) + GetStiffnessIntegral(j,j,n,4)));
+               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoeffs[2][0] * GetSfsIntegral(j,j,n,0) + 
+                  fCoeffs[2][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoeffs[3][0] * GetSfsIntegral(j,j,n,0) + 
+                  fCoeffs[3][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
                for(int matCol = 4; matCol < 6; ++matCol)
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetStiffnessIntegral(j,j,n,0) + 
-                     fCoeffs[matCol][1] * (GetStiffnessIntegral(j,j,n,1) + GetStiffnessIntegral(j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][6] * (fCoeffs[6][0] * GetStiffnessIntegral(j,j,n,0) + 
-                  fCoeffs[6][1] * (GetStiffnessIntegral(j,j,n,2) + GetStiffnessIntegral(j,j,n,4)));
-               aTf[vecRow] += A[NewN(n)][vecRow][7] * (fCoeffs[7][0] * (GetStiffnessIntegral(j,j,n,1) + GetStiffnessIntegral(j,j,n,3)) +
-                  fCoeffs[7][1] * (GetStiffnessIntegral(j,j,n,2) + GetStiffnessIntegral(j,j,n,4)));
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(j,j,n,0) + 
+                     fCoeffs[matCol][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][6] * (fCoeffs[6][0] * GetSfsIntegral(j,j,n,0) + 
+                  fCoeffs[6][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
+               aTf[vecRow] += A[NewN(n)][vecRow][7] * (fCoeffs[7][0] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)) +
+                  fCoeffs[7][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
             }
          return aTf;
 

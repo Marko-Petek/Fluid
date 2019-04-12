@@ -10,7 +10,7 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Collections;
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.AppReporter;
-using static Fluid.Internals.Operations;
+using static Fluid.Internals.Ops;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Development {

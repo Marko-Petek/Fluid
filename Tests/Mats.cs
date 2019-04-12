@@ -16,7 +16,7 @@ namespace Fluid.Tests
             new double[3] { 1.0/ 6, 0.0, 0.0   },
             new double[3] {    0.0, 0.5, 0.0   },
             new double[3] {    0.0, 0.0, 0.125 } };
-         Assert.True(ArrayOperations.Equals(matrix, expectedResult, epsilon));
+         Assert.True(AryOps.Equals(matrix, expectedResult, epsilon));
       }
       [Fact] public void InvertMatrix2() {
          double[][] matrix2 = new double[3][] {
@@ -29,7 +29,7 @@ namespace Fluid.Tests
             new double[3] {-2.0/7, 11.0/42, 1.0/21},
             new double[3] { 3.0/7, 4.0/21, -5.0/21},
             new double[3] { 1.0/7, -3.0/14, 1.0/7} };
-         Assert.True(ArrayOperations.Equals(matrix2, expectedResult2, epsilon));
+         Assert.True(AryOps.Equals(matrix2, expectedResult2, epsilon));
       }
    }
 }

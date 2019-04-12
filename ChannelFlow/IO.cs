@@ -26,17 +26,17 @@ namespace Fluid.ChannelFlow
                 if(!Double.IsNaN(v[0]))
                     sw.Write($"{{{pos.ToString()}, {{{v[0].ToString()},{v[1].ToString()}}}}}");
 
-                while(pos._y < height) {
-                    pos._x = 0.0;
+                while(pos.Y < height) {
+                    pos.X = 0.0;
 
-                    while(pos._x < width) {
-                        pos._x += segmentLength;
+                    while(pos.X < width) {
+                        pos.X += segmentLength;
                         v = mesh.Solution(ref pos, 0, 1);
 
                         if(!Double.IsNaN(v[0]))                                                               // Write only values inside domain.
                             sw.Write($", {{{pos.ToString()}, {{{v[0].ToString()},{v[1].ToString()}}}}}");
                     }
-                    pos._y += segmentLength;
+                    pos.Y += segmentLength;
                 }
                 sw.Write("}");
             }
