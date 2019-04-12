@@ -36,9 +36,34 @@ namespace Fluid.Internals.Collections {
             Height = source.Height;
          }
 
+         public static SparseMat<T,TArith> CreateFromArray(T[][] arr) {
+            int nRows = arr.Length;
+            int nCols = arr[0].Length;
+            var sparseMat = new SparseMat<T,TArith>(nCols, nRows, nCols*nRows);
+            for(int i = 0; i < nRows; ++i)
+               for(int j = 0; j < nCols; ++j)
+                  sparseMat[i][j] = arr[i][j];
+            return sparseMat;
+         }
+         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int nRows) {
+            int nCols = arr.Length / nRows;
+            var sparseMat = new SparseMat<T,TArith>(nCols, nRows, nCols*nRows);
+            for(int i = 0; i < nRows; ++i)
+               for(int j = 0; j < nCols; ++j)
+                  sparseMat[i][j] = arr[i*nRows + j];
+            return sparseMat;
+         }
 
+         public static SparseMat<T,TArith> CreateFromSpan(Span<T> slice, int nRows) {
+            int nCols = slice.Length / nRows;
+            var sparseMat = new SparseMat<T,TArith>(nCols, nRows, nCols*nRows);
+            for(int i = 0; i < nRows; ++i)
+               for(int j = 0; j < nCols; ++j)
+                  sparseMat[i][j] = slice[i*nRows + j];
+            return sparseMat;
+         }
          /// <summary>Split matrix on left and right part. Return right part. Element at specified virtual index will be part of right part.</summary><param name="virtJ">Index of element at which to split. This element will be part of right matrix.</param>
-         public SparseMat<T,TArith> SplitAtCol(int virtJ) {
+         public SparseMat<T,TArith> SplitAtCol(int virtJ) {// TODO: Test
             int remWidth = Width - virtJ;
             var removedRightPart = new SparseMat<T,TArith>(remWidth, Height);
             Width = virtJ;                                                 // Adjust width of this Matrix.
@@ -49,7 +74,7 @@ namespace Fluid.Internals.Collections {
             return removedRightPart;
          }
          /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified virtual index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
-         public SparseMat<T,TArith> SplitAtRow(int virtI) {
+         public SparseMat<T,TArith> SplitAtRow(int virtI) {//TODO: Test
             int remWidth = Width;
             int removedHeight = Height - virtI;
             var removedMatrix = new SparseMat<T,TArith>(Width, removedHeight);
@@ -59,33 +84,29 @@ namespace Fluid.Internals.Collections {
             }
             return removedMatrix;
          }
-         /// <summary>Swap rows with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="virtI">Virtual index of first row to swap.</param><param name="virtJ">Virtual index of second row to swap.</param>
-         public void SwapRows(int virtI, int virtJ) {
-            if(TryGetValue(virtI, out var row1)) {                            // Row 1 exists.
-               if(TryGetValue(virtJ, out var row2)) {                         // Row 2 exists.
-                  base[virtI] = row2;
-                  base[virtJ] = row1;
-               }
+         /// <summary>Swap rows with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="inx1">Virtual index of first row to swap.</param><param name="inx2">Virtual index of second row to swap.</param>
+         public void SwapRows(int inx1, int inx2) {
+            if(TryGetValue(inx1, out SparseRow<T,TArith> row1))               // Row 1 exists.
+               if(TryGetValue(inx2, out SparseRow<T,TArith> row2)) {          // Row 2 exists.
+                  base[inx1] = row2;
+                  base[inx2] = row1; }
                else {                                                         // Row 2 does not exist.
-                  Remove(virtI);
-                  base[virtJ] = row1;
-               }
-            }
+                  Remove(inx1);
+                  base[inx2] = row1; }
             else                                                              // Row 1 does not exist.
-               if(TryGetValue(virtJ, out var row2)) {                         // Row 2 exists.
-                  base[virtI] = row2;
-                  Remove(virtJ);
-               }
+               if(TryGetValue(inx2, out var row2)) {                          // Row 2 exists.
+                  Remove(inx2);
+                  base[inx1] = row2; }
          }
-         /// <summary>Swap columns with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="virtI">Virtual index of first column to swap.</param><param name="virtJ">Virtual index of second column to swap.</param>
-         public void SwapCols(int virtI, int virtJ) {
-            foreach(var row in this)
-               row.Value.SwapElms(virtI, virtJ);
+         /// <summary>Swap columns with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="inx1">Virtual index of first column to swap.</param><param name="inx2">Virtual index of second column to swap.</param>
+         public void SwapCols(int inx1, int inx2) {
+            foreach(var matKVPair in this)
+               matKVPair.Value.SwapElms(inx1, inx2);              // Swap elms of row.
          }
-         public void ApplyColSwaps(SparseMat<int,IntArithmetic> swapMatrix) {
-            foreach(var rowKVPair in swapMatrix)
-               foreach(var colKVPair in rowKVPair.Value)
-                  SwapCols(rowKVPair.Key, colKVPair.Key);
+         public void ApplyColSwaps(SparseMat<int,IntArithmetic> swapMatrix) {//TODO: Test ApplyColSwaps.
+            foreach(var matKVPair in swapMatrix)
+               foreach(var rowKVPair in matKVPair.Value)
+                  SwapCols(matKVPair.Key, rowKVPair.Key);
          }
          public new SparseRow<T,TArith> this[int i] {
             get {
@@ -94,9 +115,7 @@ namespace Fluid.Internals.Collections {
                else {
                   DummyRow.SparseMat = this;
                   DummyRow.Index = i;
-                  return (SparseRow<T,TArith>)DummyRow;
-               }
-            }
+                  return (SparseRow<T,TArith>)DummyRow; } }
          }
          /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="lMat">Left operand.</param><param name="rMat">Right operand.</param>
          public static SparseMat<T,TArith> operator +
@@ -118,24 +137,21 @@ namespace Fluid.Internals.Collections {
                            rMatRowAsDict.Remove(lMatRowKVPair.Key);
                   }  }
                   else                                                                             // Right row counterpart does not exist (zeros).
-                     rMatAsDict.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value));
-               }
+                     rMatAsDict.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value)); }
                return (SparseMat<T,TArith>) rMatAsDict;
          }
          public static SparseRow<T,TArith> operator *
             (SparseMat<T,TArith> lMat, SparseRow<T,TArith> rRow) {
-               TB.Assert.AreEqual(lMat.Width, rRow.Width);                                // Check that matrix and row can be multiplied.
+               TB.Assert.AreEqual(lMat.Width, rRow.Width);                                 // Check that matrix and row can be multiplied.
                int matrixRowCount = lMat.Count;                                         
-               var resultRow = new SparseRow<T,TArith>(lMat.Height, lMat.Count);          // lMat.Count = # of non-zero rows.
+               var resultRow = new SparseRow<T,TArith>(lMat.Height, lMat.Count);           // lMat.Count = # of non-zero rows.
                T sum;
-               foreach(var lMatKVPair in lMat) {                                          // Go through each row in lMat. Rows that do not exist, create no entries in result row.
+               foreach(var lMatKVPair in lMat) {                                           // Go through each row in lMat. Rows that do not exist, create no entries in result row.
                   sum = default(T);
-                  foreach(var lMatRowKVPair in lMatKVPair.Value) {                        // Move over each element in lMatRow.
-                     if(rRow.TryGetValue(lMatRowKVPair.Key, out T rRowEmt))               // Check its index then search for an element with matching index in rRow.
-                        sum = Arith.Add(sum, Arith.Mul(lMatRowKVPair.Value, rRowEmt));    // sum += lMatRowKVPair.Value * rRowEmt; ~~> Add all such contributions to emt with same index in rRow.
-                  }
-                  resultRow[lMatKVPair.Key] = sum;
-               }
+                  foreach(var lMatRowKVPair in lMatKVPair.Value) {                         // Move over each element in lMatRow.
+                     if(rRow.TryGetValue(lMatRowKVPair.Key, out T rRowEmt))                // Check its index then search for an element with matching index in rRow.
+                        sum = Arith.Add(sum, Arith.Mul(lMatRowKVPair.Value, rRowEmt)); }   // sum += lMatRowKVPair.Value * rRowEmt; ~~> Add all such contributions to emt with same index in rRow.
+                  resultRow[lMatKVPair.Key] = sum; }
                return resultRow;
          }
          public static SparseRow<T,TArith> operator *
@@ -156,5 +172,5 @@ namespace Fluid.Internals.Collections {
                   return false;
             return true;
          }
-      }
+   }
 }

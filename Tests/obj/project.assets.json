@@ -2,195 +2,6 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v2.2": {
-      "Avalonia/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia.Remote.Protocol": "0.7.0-build451-beta",
-          "JetBrains.Annotations": "10.3.0",
-          "Serilog": "2.5.0",
-          "Serilog.Sinks.Debug": "1.0.0",
-          "Serilog.Sinks.Trace": "2.1.0",
-          "System.ComponentModel.Annotations": "4.5.0",
-          "System.Memory": "4.5.1",
-          "System.Reactive": "4.0.0",
-          "System.ValueTuple": "4.5.0"
-        },
-        "compile": {
-          "lib/netcoreapp2.0/Avalonia.Animation.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Base.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Controls.dll": {},
-          "lib/netcoreapp2.0/Avalonia.DesignerSupport.dll": {},
-          "lib/netcoreapp2.0/Avalonia.DesktopRuntime.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Diagnostics.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Input.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Interactivity.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Layout.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Logging.Serilog.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Markup.Xaml.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Markup.dll": {},
-          "lib/netcoreapp2.0/Avalonia.OpenGL.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Styling.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Themes.Default.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Visuals.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.0/Avalonia.Animation.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Base.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Controls.dll": {},
-          "lib/netcoreapp2.0/Avalonia.DesignerSupport.dll": {},
-          "lib/netcoreapp2.0/Avalonia.DesktopRuntime.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Diagnostics.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Input.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Interactivity.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Layout.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Logging.Serilog.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Markup.Xaml.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Markup.dll": {},
-          "lib/netcoreapp2.0/Avalonia.OpenGL.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Styling.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Themes.Default.dll": {},
-          "lib/netcoreapp2.0/Avalonia.Visuals.dll": {}
-        },
-        "build": {
-          "build/_._": {}
-        }
-      },
-      "Avalonia.Desktop/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "Avalonia.Direct2D1": "0.7.0-build451-beta",
-          "Avalonia.Gtk3": "0.7.0-build451-beta",
-          "Avalonia.Native": "0.7.0-build451-beta",
-          "Avalonia.Skia": "0.7.0-build451-beta",
-          "Avalonia.Win32": "0.7.0-build451-beta"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Desktop.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Desktop.dll": {}
-        }
-      },
-      "Avalonia.Direct2D1/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "JetBrains.Annotations": "10.3.0",
-          "SharpDX": "4.0.1",
-          "SharpDX.DXGI": "4.0.1",
-          "SharpDX.Direct2D1": "4.0.1",
-          "SharpDX.Direct3D11": "4.0.1",
-          "System.Reactive": "4.0.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Direct2D1.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Direct2D1.dll": {}
-        }
-      },
-      "Avalonia.Gtk3/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Gtk3.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Gtk3.dll": {}
-        }
-      },
-      "Avalonia.Native/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "SharpGen.Runtime.COM": "1.1.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Native.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Native.dll": {}
-        },
-        "build": {
-          "build/netstandard2.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/osx/native/libAvaloniaNative.dylib": {
-            "assetType": "native",
-            "rid": "osx"
-          }
-        }
-      },
-      "Avalonia.Remote.Protocol/0.7.0-build451-beta": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Remote.Protocol.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Remote.Protocol.dll": {}
-        }
-      },
-      "Avalonia.Skia/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "Avalonia.Skia.Linux.Natives": "1.60.0.1",
-          "SkiaSharp": "1.60.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Skia.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Skia.dll": {}
-        }
-      },
-      "Avalonia.Skia.Linux.Natives/1.60.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.0.1",
-          "SkiaSharp": "[1.60.0]"
-        },
-        "compile": {
-          "lib/netcoreapp1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp1.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/linux-x64/native/libSkiaSharp.so": {
-            "assetType": "native",
-            "rid": "linux-x64"
-          }
-        }
-      },
-      "Avalonia.Win32/0.7.0-build451-beta": {
-        "type": "package",
-        "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "System.Drawing.Common": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Avalonia.Win32.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Avalonia.Win32.dll": {}
-        }
-      },
-      "JetBrains.Annotations/10.3.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.1.0"
-        },
-        "compile": {
-          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/JetBrains.Annotations.dll": {}
-        }
-      },
       "Microsoft.CodeCoverage/15.8.0": {
         "type": "package",
         "compile": {
@@ -756,24 +567,6 @@
           }
         }
       },
-      "Microsoft.Win32.SystemEvents/4.5.0": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "2.0.0"
-        },
-        "compile": {
-          "ref/netstandard2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.dll": {
-            "assetType": "runtime",
-            "rid": "win"
-          }
-        }
-      },
       "NETStandard.Library/2.0.3": {
         "type": "package",
         "dependencies": {
@@ -833,167 +626,6 @@
         },
         "runtime": {
           "lib/netstandard1.0/_._": {}
-        }
-      },
-      "Serilog/2.5.0": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.CSharp": "4.0.1",
-          "System.Collections": "4.0.11",
-          "System.Collections.NonGeneric": "4.0.1",
-          "System.Dynamic.Runtime": "4.0.11",
-          "System.Globalization": "4.0.11",
-          "System.Linq": "4.1.0",
-          "System.Reflection": "4.1.0",
-          "System.Reflection.Extensions": "4.0.1",
-          "System.Runtime": "4.1.0",
-          "System.Runtime.Extensions": "4.1.0",
-          "System.Text.RegularExpressions": "4.1.0",
-          "System.Threading": "4.0.11"
-        },
-        "compile": {
-          "lib/netstandard1.3/Serilog.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.3/Serilog.dll": {}
-        }
-      },
-      "Serilog.Sinks.Debug/1.0.0": {
-        "type": "package",
-        "dependencies": {
-          "Serilog": "2.5.0",
-          "System.Diagnostics.Debug": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard1.0/Serilog.Sinks.Debug.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/Serilog.Sinks.Debug.dll": {}
-        }
-      },
-      "Serilog.Sinks.Trace/2.1.0": {
-        "type": "package",
-        "dependencies": {
-          "Serilog": "2.0.0",
-          "System.Diagnostics.TraceSource": "4.0.0"
-        },
-        "compile": {
-          "lib/netstandard1.3/Serilog.Sinks.Trace.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.3/Serilog.Sinks.Trace.dll": {}
-        }
-      },
-      "SharpDX/4.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.App": "1.0.5"
-        },
-        "compile": {
-          "lib/netcoreapp1.0/SharpDX.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp1.0/SharpDX.dll": {}
-        }
-      },
-      "SharpDX.Direct2D1/4.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.App": "1.0.5",
-          "SharpDX": "4.0.1",
-          "SharpDX.DXGI": "4.0.1"
-        },
-        "compile": {
-          "lib/netcoreapp1.0/SharpDX.Direct2D1.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp1.0/SharpDX.Direct2D1.dll": {}
-        }
-      },
-      "SharpDX.Direct3D11/4.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.App": "1.0.5",
-          "SharpDX": "4.0.1",
-          "SharpDX.DXGI": "4.0.1"
-        },
-        "compile": {
-          "lib/netcoreapp1.0/SharpDX.Direct3D11.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp1.0/SharpDX.Direct3D11.dll": {}
-        }
-      },
-      "SharpDX.DXGI/4.0.1": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.App": "1.0.5",
-          "SharpDX": "4.0.1"
-        },
-        "compile": {
-          "lib/netcoreapp1.0/SharpDX.DXGI.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp1.0/SharpDX.DXGI.dll": {}
-        }
-      },
-      "SharpGen.Runtime/1.1.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Memory": "4.5.0",
-          "System.Runtime.CompilerServices.Unsafe": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/SharpGen.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/SharpGen.Runtime.dll": {}
-        },
-        "build": {
-          "build/_._": {}
-        },
-        "buildMultiTargeting": {
-          "buildMultiTargeting/_._": {}
-        }
-      },
-      "SharpGen.Runtime.COM/1.1.0": {
-        "type": "package",
-        "dependencies": {
-          "NETStandard.Library": "1.6.1",
-          "SharpGen.Runtime": "1.1.0",
-          "System.Memory": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard1.1/SharpGen.Runtime.COM.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.1/SharpGen.Runtime.COM.dll": {}
-        },
-        "build": {
-          "build/netstandard1.1/_._": {}
-        }
-      },
-      "SkiaSharp/1.60.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.3/SkiaSharp.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.3/SkiaSharp.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/osx/native/libSkiaSharp.dylib": {
-            "assetType": "native",
-            "rid": "osx"
-          },
-          "runtimes/win7-x64/native/libSkiaSharp.dll": {
-            "assetType": "native",
-            "rid": "win7-x64"
-          },
-          "runtimes/win7-x86/native/libSkiaSharp.dll": {
-            "assetType": "native",
-            "rid": "win7-x86"
-          }
         }
       },
       "System.AppContext/4.1.0": {
@@ -1106,15 +738,6 @@
           "lib/netstandard1.3/System.ComponentModel.dll": {}
         }
       },
-      "System.ComponentModel.Annotations/4.5.0": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.0/_._": {}
-        }
-      },
       "System.ComponentModel.EventBasedAsync/4.0.11": {
         "type": "package",
         "dependencies": {
@@ -1170,12 +793,12 @@
           "lib/netstandard1.5/System.ComponentModel.TypeConverter.dll": {}
         }
       },
-      "System.Diagnostics.Debug/4.3.0": {
+      "System.Diagnostics.Debug/4.0.11": {
         "type": "package",
         "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0",
-          "Microsoft.NETCore.Targets": "1.1.0",
-          "System.Runtime": "4.3.0"
+          "Microsoft.NETCore.Platforms": "1.0.1",
+          "Microsoft.NETCore.Targets": "1.0.1",
+          "System.Runtime": "4.1.0"
         },
         "compile": {
           "ref/netstandard1.3/System.Diagnostics.Debug.dll": {}
@@ -1288,29 +911,6 @@
         },
         "compile": {
           "ref/netstandard1.5/_._": {}
-        }
-      },
-      "System.Drawing.Common/4.5.0": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "2.0.0",
-          "Microsoft.Win32.SystemEvents": "4.5.0"
-        },
-        "compile": {
-          "ref/netstandard2.0/System.Drawing.Common.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/System.Drawing.Common.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/unix/lib/netcoreapp2.0/System.Drawing.Common.dll": {
-            "assetType": "runtime",
-            "rid": "unix"
-          },
-          "runtimes/win/lib/netcoreapp2.0/System.Drawing.Common.dll": {
-            "assetType": "runtime",
-            "rid": "win"
-          }
         }
       },
       "System.Dynamic.Runtime/4.0.11": {
@@ -1459,15 +1059,6 @@
           "lib/netstandard1.6/System.Linq.Expressions.dll": {}
         }
       },
-      "System.Memory/4.5.1": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.1/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.1/_._": {}
-        }
-      },
       "System.ObjectModel/4.0.12": {
         "type": "package",
         "dependencies": {
@@ -1517,18 +1108,6 @@
         },
         "runtime": {
           "lib/netstandard1.3/System.Private.DataContractSerialization.dll": {}
-        }
-      },
-      "System.Reactive/4.0.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime.InteropServices.WindowsRuntime": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/System.Reactive.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/System.Reactive.dll": {}
         }
       },
       "System.Reflection/4.1.0": {
@@ -1664,23 +1243,14 @@
           "ref/netstandard1.0/System.Resources.ResourceManager.dll": {}
         }
       },
-      "System.Runtime/4.3.0": {
+      "System.Runtime/4.1.0": {
         "type": "package",
         "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0",
-          "Microsoft.NETCore.Targets": "1.1.0"
+          "Microsoft.NETCore.Platforms": "1.0.1",
+          "Microsoft.NETCore.Targets": "1.0.1"
         },
         "compile": {
           "ref/netstandard1.5/System.Runtime.dll": {}
-        }
-      },
-      "System.Runtime.CompilerServices.Unsafe/4.5.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll": {}
         }
       },
       "System.Runtime.Extensions/4.1.0": {
@@ -1742,18 +1312,6 @@
             "assetType": "runtime",
             "rid": "win"
           }
-        }
-      },
-      "System.Runtime.InteropServices.WindowsRuntime/4.3.0": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.3.0"
-        },
-        "compile": {
-          "ref/netstandard1.0/System.Runtime.InteropServices.WindowsRuntime.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.3/System.Runtime.InteropServices.WindowsRuntime.dll": {}
         }
       },
       "System.Runtime.Loader/4.0.0": {
@@ -1898,15 +1456,6 @@
         },
         "runtime": {
           "lib/netstandard1.3/System.Threading.ThreadPool.dll": {}
-        }
-      },
-      "System.ValueTuple/4.5.0": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.0/_._": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.11": {
@@ -2134,8 +1683,6 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.2",
         "dependencies": {
-          "Avalonia": "0.7.0-build451-beta",
-          "Avalonia.Desktop": "0.7.0-build451-beta",
           "Internals": "1.0.0"
         },
         "compile": {
@@ -2158,300 +1705,6 @@
     }
   },
   "libraries": {
-    "Avalonia/0.7.0-build451-beta": {
-      "sha512": "qxR633nfB8QHxLL9OhtaoheX1aXPLWuWJ/iqiy41RRI9m4/zLubbhShMslCltk04A7GMQnqVsGUddRfXVEM0uA==",
-      "type": "package",
-      "path": "avalonia/0.7.0-build451-beta",
-      "hasTools": true,
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.nuspec",
-        "build/Avalonia.props",
-        "lib/net461/Avalonia.Animation.dll",
-        "lib/net461/Avalonia.Animation.pdb",
-        "lib/net461/Avalonia.Animation.xml",
-        "lib/net461/Avalonia.Base.dll",
-        "lib/net461/Avalonia.Base.pdb",
-        "lib/net461/Avalonia.Base.xml",
-        "lib/net461/Avalonia.Controls.dll",
-        "lib/net461/Avalonia.Controls.pdb",
-        "lib/net461/Avalonia.Controls.xml",
-        "lib/net461/Avalonia.DesignerSupport.dll",
-        "lib/net461/Avalonia.DesignerSupport.pdb",
-        "lib/net461/Avalonia.DesignerSupport.xml",
-        "lib/net461/Avalonia.DesktopRuntime.dll",
-        "lib/net461/Avalonia.DesktopRuntime.pdb",
-        "lib/net461/Avalonia.DesktopRuntime.xml",
-        "lib/net461/Avalonia.Diagnostics.dll",
-        "lib/net461/Avalonia.Diagnostics.pdb",
-        "lib/net461/Avalonia.Diagnostics.xml",
-        "lib/net461/Avalonia.Input.dll",
-        "lib/net461/Avalonia.Input.pdb",
-        "lib/net461/Avalonia.Input.xml",
-        "lib/net461/Avalonia.Interactivity.dll",
-        "lib/net461/Avalonia.Interactivity.pdb",
-        "lib/net461/Avalonia.Interactivity.xml",
-        "lib/net461/Avalonia.Layout.dll",
-        "lib/net461/Avalonia.Layout.pdb",
-        "lib/net461/Avalonia.Layout.xml",
-        "lib/net461/Avalonia.Logging.Serilog.dll",
-        "lib/net461/Avalonia.Logging.Serilog.pdb",
-        "lib/net461/Avalonia.Logging.Serilog.xml",
-        "lib/net461/Avalonia.Markup.Xaml.dll",
-        "lib/net461/Avalonia.Markup.Xaml.pdb",
-        "lib/net461/Avalonia.Markup.Xaml.xml",
-        "lib/net461/Avalonia.Markup.dll",
-        "lib/net461/Avalonia.Markup.pdb",
-        "lib/net461/Avalonia.Markup.xml",
-        "lib/net461/Avalonia.OpenGL.dll",
-        "lib/net461/Avalonia.OpenGL.pdb",
-        "lib/net461/Avalonia.OpenGL.xml",
-        "lib/net461/Avalonia.Styling.dll",
-        "lib/net461/Avalonia.Styling.pdb",
-        "lib/net461/Avalonia.Styling.xml",
-        "lib/net461/Avalonia.Themes.Default.dll",
-        "lib/net461/Avalonia.Themes.Default.pdb",
-        "lib/net461/Avalonia.Themes.Default.xml",
-        "lib/net461/Avalonia.Visuals.dll",
-        "lib/net461/Avalonia.Visuals.pdb",
-        "lib/net461/Avalonia.Visuals.xml",
-        "lib/netcoreapp2.0/Avalonia.Animation.dll",
-        "lib/netcoreapp2.0/Avalonia.Animation.pdb",
-        "lib/netcoreapp2.0/Avalonia.Animation.xml",
-        "lib/netcoreapp2.0/Avalonia.Base.dll",
-        "lib/netcoreapp2.0/Avalonia.Base.pdb",
-        "lib/netcoreapp2.0/Avalonia.Base.xml",
-        "lib/netcoreapp2.0/Avalonia.Controls.dll",
-        "lib/netcoreapp2.0/Avalonia.Controls.pdb",
-        "lib/netcoreapp2.0/Avalonia.Controls.xml",
-        "lib/netcoreapp2.0/Avalonia.DesignerSupport.dll",
-        "lib/netcoreapp2.0/Avalonia.DesignerSupport.pdb",
-        "lib/netcoreapp2.0/Avalonia.DesignerSupport.xml",
-        "lib/netcoreapp2.0/Avalonia.DesktopRuntime.dll",
-        "lib/netcoreapp2.0/Avalonia.DesktopRuntime.pdb",
-        "lib/netcoreapp2.0/Avalonia.DesktopRuntime.xml",
-        "lib/netcoreapp2.0/Avalonia.Diagnostics.dll",
-        "lib/netcoreapp2.0/Avalonia.Diagnostics.pdb",
-        "lib/netcoreapp2.0/Avalonia.Diagnostics.xml",
-        "lib/netcoreapp2.0/Avalonia.Input.dll",
-        "lib/netcoreapp2.0/Avalonia.Input.pdb",
-        "lib/netcoreapp2.0/Avalonia.Input.xml",
-        "lib/netcoreapp2.0/Avalonia.Interactivity.dll",
-        "lib/netcoreapp2.0/Avalonia.Interactivity.pdb",
-        "lib/netcoreapp2.0/Avalonia.Interactivity.xml",
-        "lib/netcoreapp2.0/Avalonia.Layout.dll",
-        "lib/netcoreapp2.0/Avalonia.Layout.pdb",
-        "lib/netcoreapp2.0/Avalonia.Layout.xml",
-        "lib/netcoreapp2.0/Avalonia.Logging.Serilog.dll",
-        "lib/netcoreapp2.0/Avalonia.Logging.Serilog.pdb",
-        "lib/netcoreapp2.0/Avalonia.Logging.Serilog.xml",
-        "lib/netcoreapp2.0/Avalonia.Markup.Xaml.dll",
-        "lib/netcoreapp2.0/Avalonia.Markup.Xaml.pdb",
-        "lib/netcoreapp2.0/Avalonia.Markup.Xaml.xml",
-        "lib/netcoreapp2.0/Avalonia.Markup.dll",
-        "lib/netcoreapp2.0/Avalonia.Markup.pdb",
-        "lib/netcoreapp2.0/Avalonia.Markup.xml",
-        "lib/netcoreapp2.0/Avalonia.OpenGL.dll",
-        "lib/netcoreapp2.0/Avalonia.OpenGL.pdb",
-        "lib/netcoreapp2.0/Avalonia.OpenGL.xml",
-        "lib/netcoreapp2.0/Avalonia.Styling.dll",
-        "lib/netcoreapp2.0/Avalonia.Styling.pdb",
-        "lib/netcoreapp2.0/Avalonia.Styling.xml",
-        "lib/netcoreapp2.0/Avalonia.Themes.Default.dll",
-        "lib/netcoreapp2.0/Avalonia.Themes.Default.pdb",
-        "lib/netcoreapp2.0/Avalonia.Themes.Default.xml",
-        "lib/netcoreapp2.0/Avalonia.Visuals.dll",
-        "lib/netcoreapp2.0/Avalonia.Visuals.pdb",
-        "lib/netcoreapp2.0/Avalonia.Visuals.xml",
-        "lib/netstandard2.0/Avalonia.Animation.dll",
-        "lib/netstandard2.0/Avalonia.Animation.pdb",
-        "lib/netstandard2.0/Avalonia.Animation.xml",
-        "lib/netstandard2.0/Avalonia.Base.dll",
-        "lib/netstandard2.0/Avalonia.Base.pdb",
-        "lib/netstandard2.0/Avalonia.Base.xml",
-        "lib/netstandard2.0/Avalonia.Controls.dll",
-        "lib/netstandard2.0/Avalonia.Controls.pdb",
-        "lib/netstandard2.0/Avalonia.Controls.xml",
-        "lib/netstandard2.0/Avalonia.DesignerSupport.dll",
-        "lib/netstandard2.0/Avalonia.DesignerSupport.pdb",
-        "lib/netstandard2.0/Avalonia.DesignerSupport.xml",
-        "lib/netstandard2.0/Avalonia.Diagnostics.dll",
-        "lib/netstandard2.0/Avalonia.Diagnostics.pdb",
-        "lib/netstandard2.0/Avalonia.Diagnostics.xml",
-        "lib/netstandard2.0/Avalonia.Input.dll",
-        "lib/netstandard2.0/Avalonia.Input.pdb",
-        "lib/netstandard2.0/Avalonia.Input.xml",
-        "lib/netstandard2.0/Avalonia.Interactivity.dll",
-        "lib/netstandard2.0/Avalonia.Interactivity.pdb",
-        "lib/netstandard2.0/Avalonia.Interactivity.xml",
-        "lib/netstandard2.0/Avalonia.Layout.dll",
-        "lib/netstandard2.0/Avalonia.Layout.pdb",
-        "lib/netstandard2.0/Avalonia.Layout.xml",
-        "lib/netstandard2.0/Avalonia.Logging.Serilog.dll",
-        "lib/netstandard2.0/Avalonia.Logging.Serilog.pdb",
-        "lib/netstandard2.0/Avalonia.Logging.Serilog.xml",
-        "lib/netstandard2.0/Avalonia.Markup.Xaml.dll",
-        "lib/netstandard2.0/Avalonia.Markup.Xaml.pdb",
-        "lib/netstandard2.0/Avalonia.Markup.Xaml.xml",
-        "lib/netstandard2.0/Avalonia.Markup.dll",
-        "lib/netstandard2.0/Avalonia.Markup.pdb",
-        "lib/netstandard2.0/Avalonia.Markup.xml",
-        "lib/netstandard2.0/Avalonia.OpenGL.dll",
-        "lib/netstandard2.0/Avalonia.OpenGL.pdb",
-        "lib/netstandard2.0/Avalonia.OpenGL.xml",
-        "lib/netstandard2.0/Avalonia.Styling.dll",
-        "lib/netstandard2.0/Avalonia.Styling.pdb",
-        "lib/netstandard2.0/Avalonia.Styling.xml",
-        "lib/netstandard2.0/Avalonia.Themes.Default.dll",
-        "lib/netstandard2.0/Avalonia.Themes.Default.pdb",
-        "lib/netstandard2.0/Avalonia.Themes.Default.xml",
-        "lib/netstandard2.0/Avalonia.Visuals.dll",
-        "lib/netstandard2.0/Avalonia.Visuals.pdb",
-        "lib/netstandard2.0/Avalonia.Visuals.xml",
-        "tools/net461/designer/Avalonia.Designer.HostApp.exe",
-        "tools/netcoreapp2.0/designer/Avalonia.Designer.HostApp.dll"
-      ]
-    },
-    "Avalonia.Desktop/0.7.0-build451-beta": {
-      "sha512": "ybkLrWusvVNKzLXXBrY7b8+1u/IXoOk9Yu8Y1DvSA1KR6d3DfMYiDvRLYtSD4cei124Onc3vZl1nFjqExhVJrg==",
-      "type": "package",
-      "path": "avalonia.desktop/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.desktop.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.desktop.nuspec",
-        "lib/netstandard2.0/Avalonia.Desktop.dll",
-        "lib/netstandard2.0/Avalonia.Desktop.pdb",
-        "lib/netstandard2.0/Avalonia.Desktop.xml"
-      ]
-    },
-    "Avalonia.Direct2D1/0.7.0-build451-beta": {
-      "sha512": "OmB98gNRJAl//R+4GT7Op5PlJZxAFWBwumSZdqfbjlvRlQdr+nkpqeuPpnYBpjbwGCnYZsp0do8UaSwWC660eg==",
-      "type": "package",
-      "path": "avalonia.direct2d1/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.direct2d1.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.direct2d1.nuspec",
-        "lib/netstandard2.0/Avalonia.Direct2D1.dll",
-        "lib/netstandard2.0/Avalonia.Direct2D1.pdb",
-        "lib/netstandard2.0/Avalonia.Direct2D1.xml"
-      ]
-    },
-    "Avalonia.Gtk3/0.7.0-build451-beta": {
-      "sha512": "/6gjWB01an6VlsBJ+QwpK4uTEFD2F+POxAwB1C8NOB7azCN16gc3QU4PBOwahRKICGb4aKrAOfWfhc+J4ckkKw==",
-      "type": "package",
-      "path": "avalonia.gtk3/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.gtk3.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.gtk3.nuspec",
-        "lib/netstandard2.0/Avalonia.Gtk3.dll",
-        "lib/netstandard2.0/Avalonia.Gtk3.pdb",
-        "lib/netstandard2.0/Avalonia.Gtk3.xml"
-      ]
-    },
-    "Avalonia.Native/0.7.0-build451-beta": {
-      "sha512": "qtNu9IXzopjDZcsYovvktgdLOMwa84U+s/1y2AIfm89cyihtr5NZOzlCPH8IIUwvuHUVM7YIDZmHwQS8Fwhmmg==",
-      "type": "package",
-      "path": "avalonia.native/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.native.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.native.nuspec",
-        "build/netstandard2.0/Avalonia.Native.BindMapping.xml",
-        "build/netstandard2.0/Avalonia.Native.props",
-        "buildMultiTargeting/netstandard2.0/Avalonia.Native.BindMapping.xml",
-        "buildMultiTargeting/netstandard2.0/Avalonia.Native.props",
-        "lib/netstandard2.0/Avalonia.Native.dll",
-        "lib/netstandard2.0/Avalonia.Native.pdb",
-        "lib/netstandard2.0/Avalonia.Native.xml",
-        "runtimes/osx/native/libAvaloniaNative.dylib"
-      ]
-    },
-    "Avalonia.Remote.Protocol/0.7.0-build451-beta": {
-      "sha512": "mAqZ/jjYdCBN1+qo1H14Tam7LL2Jw5uqwn4HGpn6XwkA7eBr2xq5iBLS3JRadIeSr9Xj6eep1VJ8XPyeG99qIg==",
-      "type": "package",
-      "path": "avalonia.remote.protocol/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.remote.protocol.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.remote.protocol.nuspec",
-        "lib/netstandard2.0/Avalonia.Remote.Protocol.dll",
-        "lib/netstandard2.0/Avalonia.Remote.Protocol.pdb",
-        "lib/netstandard2.0/Avalonia.Remote.Protocol.xml"
-      ]
-    },
-    "Avalonia.Skia/0.7.0-build451-beta": {
-      "sha512": "aNrUbn8M77IaSXwCqvUY2HQkKXhHEfeNNQXCGS7e5I9EKkrHtxKgFlAuCZzxDK5IZDwrw2XUowu9zHn+ts5i0w==",
-      "type": "package",
-      "path": "avalonia.skia/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.skia.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.skia.nuspec",
-        "lib/netstandard2.0/Avalonia.Skia.dll",
-        "lib/netstandard2.0/Avalonia.Skia.pdb",
-        "lib/netstandard2.0/Avalonia.Skia.xml"
-      ]
-    },
-    "Avalonia.Skia.Linux.Natives/1.60.0.1": {
-      "sha512": "a6Qa9qCGMImwtD2fmio39OsJ2BqZlQuHvRWlSXP+wovDcuMRB0JjN981j0tfYlvJjvCtCAo8Z7piytjnWtJTuw==",
-      "type": "package",
-      "path": "avalonia.skia.linux.natives/1.60.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.skia.linux.natives.1.60.0.1.nupkg.sha512",
-        "avalonia.skia.linux.natives.nuspec",
-        "build/net45/Avalonia.Skia.Linux.Natives.targets",
-        "lib/net45/_._",
-        "lib/netcoreapp1.0/_._",
-        "lib/netstandard1.1/_._",
-        "runtimes/linux-x64/native/libSkiaSharp.so"
-      ]
-    },
-    "Avalonia.Win32/0.7.0-build451-beta": {
-      "sha512": "1qBoHnk3eiOKuuMUVE0cXd9UYlhiwO0QFvdf4Tc6zfIgJ/Z+LAjqG1waj9Jzc7WL0APhAlShKsMF4KfPiWOzfA==",
-      "type": "package",
-      "path": "avalonia.win32/0.7.0-build451-beta",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "avalonia.win32.0.7.0-build451-beta.nupkg.sha512",
-        "avalonia.win32.nuspec",
-        "lib/netstandard2.0/Avalonia.Win32.dll",
-        "lib/netstandard2.0/Avalonia.Win32.pdb",
-        "lib/netstandard2.0/Avalonia.Win32.xml"
-      ]
-    },
-    "JetBrains.Annotations/10.3.0": {
-      "sha512": "0GLU9lwGVXjUNlr9ZIdAgjqLI2Zm/XFGJFaqJ1T1sU+kwfeMLhm68+rblUrNUP9psRl4i8yM7Ghb4ia4oI2E5g==",
-      "type": "package",
-      "path": "jetbrains.annotations/10.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "jetbrains.annotations.10.3.0.nupkg.sha512",
-        "jetbrains.annotations.nuspec",
-        "lib/net/JetBrains.Annotations.dll",
-        "lib/net/JetBrains.Annotations.xml",
-        "lib/netstandard1.0/JetBrains.Annotations.dll",
-        "lib/netstandard1.0/JetBrains.Annotations.xml",
-        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.dll",
-        "lib/portable-net4+sl4+wp7+netcore45/JetBrains.Annotations.xml",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.dll",
-        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/JetBrains.Annotations.xml"
-      ]
-    },
     "Microsoft.CodeCoverage/15.8.0": {
       "sha512": "2hwgoDq1ipHizvgBJG3SBhOnAQlq8eeyk19o2ywauP11+5DjkmDTNUjYglQsHgKKOkvPvCOAaFflQlLbkQnz3Q==",
       "type": "package",
@@ -3217,26 +2470,6 @@
         "runtimes/win/lib/netstandard1.3/Microsoft.Win32.Registry.dll"
       ]
     },
-    "Microsoft.Win32.SystemEvents/4.5.0": {
-      "sha512": "LuI1oG+24TUj1ZRQQjM5Ew73BKnZE5NZ/7eAdh1o8ST5dPhUnJvIkiIn2re3MwnkRy6ELRnvEbBxHP8uALKhJw==",
-      "type": "package",
-      "path": "microsoft.win32.systemevents/4.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/Microsoft.Win32.SystemEvents.dll",
-        "lib/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
-        "microsoft.win32.systemevents.4.5.0.nupkg.sha512",
-        "microsoft.win32.systemevents.nuspec",
-        "ref/net461/Microsoft.Win32.SystemEvents.dll",
-        "ref/netstandard2.0/Microsoft.Win32.SystemEvents.dll",
-        "runtimes/win/lib/netcoreapp2.0/Microsoft.Win32.SystemEvents.dll",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
     "NETStandard.Library/2.0.3": {
       "sha512": "st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
       "type": "package",
@@ -3402,220 +2635,6 @@
         "lib/netstandard1.0/_._",
         "runtime.native.system.4.0.0.nupkg.sha512",
         "runtime.native.system.nuspec"
-      ]
-    },
-    "Serilog/2.5.0": {
-      "sha512": "JwwkgNYNFKT4kQZ3qBV3VqPgchUg1A6FnlFa9hgyanylwBhJ7eTFl3pgLVxijFEb+oHLImRcMaTsMzBt2AG0aQ==",
-      "type": "package",
-      "path": "serilog/2.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/Serilog.dll",
-        "lib/net45/Serilog.xml",
-        "lib/net46/Serilog.dll",
-        "lib/net46/Serilog.xml",
-        "lib/netstandard1.0/Serilog.dll",
-        "lib/netstandard1.0/Serilog.xml",
-        "lib/netstandard1.3/Serilog.dll",
-        "lib/netstandard1.3/Serilog.xml",
-        "serilog.2.5.0.nupkg.sha512",
-        "serilog.nuspec"
-      ]
-    },
-    "Serilog.Sinks.Debug/1.0.0": {
-      "sha512": "WNWAAaEbUm/kMc6bxI0HWGKQpKeeIRqI4mQAf9sg276ICa872aY5AAUe7XDv1I5JZZBq6a28x2PlR5jQT2vUUw==",
-      "type": "package",
-      "path": "serilog.sinks.debug/1.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/netstandard1.0/Serilog.Sinks.Debug.dll",
-        "lib/netstandard1.0/Serilog.Sinks.Debug.xml",
-        "serilog.sinks.debug.1.0.0.nupkg.sha512",
-        "serilog.sinks.debug.nuspec"
-      ]
-    },
-    "Serilog.Sinks.Trace/2.1.0": {
-      "sha512": "VgJNH1F3UOrmI8m32WFS9x5cxmYOrSfc+mLxXFmgN3bG1zg0jRf7jgbBB15NoJjfAn0nJMZgP0Hqx/w0bxKGvQ==",
-      "type": "package",
-      "path": "serilog.sinks.trace/2.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net45/Serilog.Sinks.Trace.dll",
-        "lib/net45/Serilog.Sinks.Trace.xml",
-        "lib/netstandard1.3/Serilog.Sinks.Trace.dll",
-        "lib/netstandard1.3/Serilog.Sinks.Trace.xml",
-        "serilog.sinks.trace.2.1.0.nupkg.sha512",
-        "serilog.sinks.trace.nuspec"
-      ]
-    },
-    "SharpDX/4.0.1": {
-      "sha512": "8YA1VFg1/K8Emb8FEZDobojcv1BLuppVo7CRJQEgA1V748VIMPBru0i0OnsCjLSThzTn7juOvH85qjFL9Grl1w==",
-      "type": "package",
-      "path": "sharpdx/4.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/SharpDX.dll",
-        "lib/net40/SharpDX.xml",
-        "lib/net45/SharpDX.dll",
-        "lib/net45/SharpDX.xml",
-        "lib/netcoreapp1.0/SharpDX.dll",
-        "lib/netcoreapp1.0/SharpDX.xml",
-        "lib/netstandard1.1/SharpDX.dll",
-        "lib/netstandard1.1/SharpDX.xml",
-        "lib/uap10.0/SharpDX.dll",
-        "lib/uap10.0/SharpDX.pri",
-        "lib/uap10.0/SharpDX.xml",
-        "sharpdx.4.0.1.nupkg.sha512",
-        "sharpdx.nuspec"
-      ]
-    },
-    "SharpDX.Direct2D1/4.0.1": {
-      "sha512": "EDBYa9kAG+gaMB4cCH7WNpxS8WijSCejNz/SERs2P1sWEPZZdUiUIruQMjPCdW3lXxT508aYiH2UXHAaZtk00g==",
-      "type": "package",
-      "path": "sharpdx.direct2d1/4.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/SharpDX.Direct2D1.dll",
-        "lib/net40/SharpDX.Direct2D1.xml",
-        "lib/net45/SharpDX.Direct2D1.dll",
-        "lib/net45/SharpDX.Direct2D1.xml",
-        "lib/netcoreapp1.0/SharpDX.Direct2D1.dll",
-        "lib/netcoreapp1.0/SharpDX.Direct2D1.xml",
-        "lib/netstandard1.1/SharpDX.Direct2D1.dll",
-        "lib/netstandard1.1/SharpDX.Direct2D1.xml",
-        "lib/uap10.0/SharpDX.Direct2D1.dll",
-        "lib/uap10.0/SharpDX.Direct2D1.pri",
-        "lib/uap10.0/SharpDX.Direct2D1.xml",
-        "sharpdx.direct2d1.4.0.1.nupkg.sha512",
-        "sharpdx.direct2d1.nuspec"
-      ]
-    },
-    "SharpDX.Direct3D11/4.0.1": {
-      "sha512": "7xIfeAhxPhbPgSiREfFbOOwIWonUt2GHR7XZN5p2DJMWuqjl0+h1oo2/sF+SH/c6D6APjdbt0J+dYSzoV0PA/w==",
-      "type": "package",
-      "path": "sharpdx.direct3d11/4.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/SharpDX.Direct3D11.dll",
-        "lib/net40/SharpDX.Direct3D11.xml",
-        "lib/net45/SharpDX.Direct3D11.dll",
-        "lib/net45/SharpDX.Direct3D11.xml",
-        "lib/netcoreapp1.0/SharpDX.Direct3D11.dll",
-        "lib/netcoreapp1.0/SharpDX.Direct3D11.xml",
-        "lib/netstandard1.1/SharpDX.Direct3D11.dll",
-        "lib/netstandard1.1/SharpDX.Direct3D11.xml",
-        "lib/uap10.0/SharpDX.Direct3D11.dll",
-        "lib/uap10.0/SharpDX.Direct3D11.pri",
-        "lib/uap10.0/SharpDX.Direct3D11.xml",
-        "sharpdx.direct3d11.4.0.1.nupkg.sha512",
-        "sharpdx.direct3d11.nuspec"
-      ]
-    },
-    "SharpDX.DXGI/4.0.1": {
-      "sha512": "Av/kToUkVR1tDtIP9zmDGwCuCtyL04+PP7kes6aABzky1Y9vT03kR7mDeE83gl+E8GUmMMbVXbQ4AG2CVb66sg==",
-      "type": "package",
-      "path": "sharpdx.dxgi/4.0.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net40/SharpDX.DXGI.dll",
-        "lib/net40/SharpDX.DXGI.xml",
-        "lib/net45/SharpDX.DXGI.dll",
-        "lib/net45/SharpDX.DXGI.xml",
-        "lib/netcoreapp1.0/SharpDX.DXGI.dll",
-        "lib/netcoreapp1.0/SharpDX.DXGI.xml",
-        "lib/netstandard1.1/SharpDX.DXGI.dll",
-        "lib/netstandard1.1/SharpDX.DXGI.xml",
-        "lib/uap10.0/SharpDX.DXGI.dll",
-        "lib/uap10.0/SharpDX.DXGI.pri",
-        "lib/uap10.0/SharpDX.DXGI.xml",
-        "sharpdx.dxgi.4.0.1.nupkg.sha512",
-        "sharpdx.dxgi.nuspec"
-      ]
-    },
-    "SharpGen.Runtime/1.1.0": {
-      "sha512": "aho/QykKT1o0MLuxQX3pIJbsBKYW7OGsk7APo3Ne+CGtRvJRbXJBlyxUOqUj34Bznmcbxcdlhl4odnHDNot7HA==",
-      "type": "package",
-      "path": "sharpgen.runtime/1.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/Mapping.xml",
-        "build/SharpGen.Runtime.props",
-        "buildMultiTargeting/SharpGen.Runtime.props",
-        "lib/netstandard1.1/SharpGen.Runtime.dll",
-        "lib/netstandard1.1/SharpGen.Runtime.pdb",
-        "lib/netstandard2.0/SharpGen.Runtime.dll",
-        "lib/netstandard2.0/SharpGen.Runtime.pdb",
-        "sharpgen.runtime.1.1.0.nupkg.sha512",
-        "sharpgen.runtime.nuspec"
-      ]
-    },
-    "SharpGen.Runtime.COM/1.1.0": {
-      "sha512": "XYpT6WX4QWinQ+82Ei+w+d0PDPyJUygyC+g8nRjXi53+Aa2OLh4NzCGYR8pUqta1COYCksOen45g6+VO82PZqQ==",
-      "type": "package",
-      "path": "sharpgen.runtime.com/1.1.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/netstandard1.1/SharpGen.Runtime.COM.BindMapping.xml",
-        "build/netstandard1.1/SharpGen.Runtime.COM.props",
-        "buildMultiTargeting/netstandard1.1/SharpGen.Runtime.COM.BindMapping.xml",
-        "buildMultiTargeting/netstandard1.1/SharpGen.Runtime.COM.props",
-        "lib/netstandard1.1/SharpGen.Runtime.COM.dll",
-        "sharpgen.runtime.com.1.1.0.nupkg.sha512",
-        "sharpgen.runtime.com.nuspec"
-      ]
-    },
-    "SkiaSharp/1.60.0": {
-      "sha512": "HoSNIZH54rinevEhLUWdeclr+H/QdmOp252+Tt07HTXwQyvRl9eW32ga/X7T56wsR855SKprb0RcnBPRCzlqSA==",
-      "type": "package",
-      "path": "skiasharp/1.60.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "build/net45/SkiaSharp.dll.config",
-        "build/net45/SkiaSharp.targets",
-        "lib/MonoAndroid/SkiaSharp.dll",
-        "lib/MonoAndroid/SkiaSharp.xml",
-        "lib/XamarinMac/SkiaSharp.dll",
-        "lib/XamarinMac/SkiaSharp.xml",
-        "lib/XamariniOS/SkiaSharp.dll",
-        "lib/XamariniOS/SkiaSharp.xml",
-        "lib/XamarintvOS/SkiaSharp.dll",
-        "lib/XamarintvOS/SkiaSharp.xml",
-        "lib/XamarinwatchOS/SkiaSharp.dll",
-        "lib/XamarinwatchOS/SkiaSharp.xml",
-        "lib/net45/SkiaSharp.dll",
-        "lib/net45/SkiaSharp.dll.config",
-        "lib/net45/SkiaSharp.xml",
-        "lib/netstandard1.3/SkiaSharp.dll",
-        "lib/netstandard1.3/SkiaSharp.xml",
-        "lib/portable-net45+win8+wpa81+wp8/SkiaSharp.dll",
-        "lib/portable-net45+win8+wpa81+wp8/SkiaSharp.xml",
-        "lib/uap10.0/SkiaSharp.dll",
-        "lib/uap10.0/SkiaSharp.xml",
-        "runtimes/osx/native/libSkiaSharp.dylib",
-        "runtimes/win10-arm/nativeassets/uap10.0/libEGL.dll",
-        "runtimes/win10-arm/nativeassets/uap10.0/libGLESv2.dll",
-        "runtimes/win10-arm/nativeassets/uap10.0/libSkiaSharp.dll",
-        "runtimes/win10-x64/nativeassets/uap10.0/libEGL.dll",
-        "runtimes/win10-x64/nativeassets/uap10.0/libGLESv2.dll",
-        "runtimes/win10-x64/nativeassets/uap10.0/libSkiaSharp.dll",
-        "runtimes/win10-x86/nativeassets/uap10.0/libEGL.dll",
-        "runtimes/win10-x86/nativeassets/uap10.0/libGLESv2.dll",
-        "runtimes/win10-x86/nativeassets/uap10.0/libSkiaSharp.dll",
-        "runtimes/win7-x64/native/libSkiaSharp.dll",
-        "runtimes/win7-x86/native/libSkiaSharp.dll",
-        "skiasharp.1.60.0.nupkg.sha512",
-        "skiasharp.nuspec",
-        "xamarin.interactive/SkiaSharp.Workbooks.dll"
       ]
     },
     "System.AppContext/4.1.0": {
@@ -3960,95 +2979,6 @@
         "system.componentmodel.nuspec"
       ]
     },
-    "System.ComponentModel.Annotations/4.5.0": {
-      "sha512": "UxYQ3FGUOtzJ7LfSdnYSFd7+oEv6M8NgUatatIN2HxNtDdlcvFAf+VIq4Of9cDMJEJC0aSRv/x898RYhB4Yppg==",
-      "type": "package",
-      "path": "system.componentmodel.annotations/4.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/_._",
-        "lib/net461/System.ComponentModel.Annotations.dll",
-        "lib/netcore50/System.ComponentModel.Annotations.dll",
-        "lib/netcoreapp2.0/_._",
-        "lib/netstandard1.4/System.ComponentModel.Annotations.dll",
-        "lib/netstandard2.0/System.ComponentModel.Annotations.dll",
-        "lib/portable-net45+win8/_._",
-        "lib/uap10.0.16299/_._",
-        "lib/win8/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/_._",
-        "ref/net461/System.ComponentModel.Annotations.dll",
-        "ref/net461/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/System.ComponentModel.Annotations.dll",
-        "ref/netcore50/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/de/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/es/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/fr/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/it/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/ja/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/ko/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/ru/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/zh-hans/System.ComponentModel.Annotations.xml",
-        "ref/netcore50/zh-hant/System.ComponentModel.Annotations.xml",
-        "ref/netcoreapp2.0/_._",
-        "ref/netstandard1.1/System.ComponentModel.Annotations.dll",
-        "ref/netstandard1.1/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/de/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/es/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/fr/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/it/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/ja/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/ko/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/ru/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/zh-hans/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.1/zh-hant/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/System.ComponentModel.Annotations.dll",
-        "ref/netstandard1.3/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/de/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/es/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/fr/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/it/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/ja/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/ko/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/ru/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/zh-hans/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.3/zh-hant/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/System.ComponentModel.Annotations.dll",
-        "ref/netstandard1.4/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/de/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/es/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/fr/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/it/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/ja/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/ko/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/ru/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/zh-hans/System.ComponentModel.Annotations.xml",
-        "ref/netstandard1.4/zh-hant/System.ComponentModel.Annotations.xml",
-        "ref/netstandard2.0/System.ComponentModel.Annotations.dll",
-        "ref/netstandard2.0/System.ComponentModel.Annotations.xml",
-        "ref/portable-net45+win8/_._",
-        "ref/uap10.0.16299/_._",
-        "ref/win8/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.componentmodel.annotations.4.5.0.nupkg.sha512",
-        "system.componentmodel.annotations.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
     "System.ComponentModel.EventBasedAsync/4.0.11": {
       "sha512": "Z7SO6vvQIR84daPE4uhaNdef9CjgjDMGYkas8epUhf0U3WGuaGgZ0Mm4QuNycMdbHUY8KEdZrtgxonkAiJaAlA==",
       "type": "package",
@@ -4211,10 +3141,10 @@
         "system.componentmodel.typeconverter.nuspec"
       ]
     },
-    "System.Diagnostics.Debug/4.3.0": {
-      "sha512": "ZUhUOdqmaG5Jk3Xdb8xi5kIyQYAA4PnTNlHx1mu9ZY3qv4ELIdKbnL/akbGaKi2RnNUWaZsAs31rvzFdewTj2g==",
+    "System.Diagnostics.Debug/4.0.11": {
+      "sha512": "w5U95fVKHY4G8ASs/K5iK3J5LY+/dLFd4vKejsnI/ZhBsWS9hQakfx3Zr7lRWKg4tAw9r4iktyvsTagWkqYCiw==",
       "type": "package",
-      "path": "system.diagnostics.debug/4.3.0",
+      "path": "system.diagnostics.debug/4.0.11",
       "files": [
         ".nupkg.metadata",
         "ThirdPartyNotices.txt",
@@ -4274,7 +3204,7 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._",
-        "system.diagnostics.debug.4.3.0.nupkg.sha512",
+        "system.diagnostics.debug.4.0.11.nupkg.sha512",
         "system.diagnostics.debug.nuspec"
       ]
     },
@@ -4558,39 +3488,6 @@
         "ref/xamarinwatchos10/_._",
         "system.diagnostics.tracing.4.1.0.nupkg.sha512",
         "system.diagnostics.tracing.nuspec"
-      ]
-    },
-    "System.Drawing.Common/4.5.0": {
-      "sha512": "AiJFxxVPdeITstiRS5aAu8+8Dpf5NawTMoapZ53Gfirml24p7HIfhjmCRxdXnmmf3IUA3AX3CcW7G73CjWxW/Q==",
-      "type": "package",
-      "path": "system.drawing.common/4.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net461/System.Drawing.Common.dll",
-        "lib/netstandard2.0/System.Drawing.Common.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net461/System.Drawing.Common.dll",
-        "ref/netstandard2.0/System.Drawing.Common.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "runtimes/unix/lib/netcoreapp2.0/System.Drawing.Common.dll",
-        "runtimes/win/lib/netcoreapp2.0/System.Drawing.Common.dll",
-        "system.drawing.common.4.5.0.nupkg.sha512",
-        "system.drawing.common.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
       ]
     },
     "System.Dynamic.Runtime/4.0.11": {
@@ -5079,31 +3976,6 @@
         "system.linq.expressions.nuspec"
       ]
     },
-    "System.Memory/4.5.1": {
-      "sha512": "sDJYJpGtTgx+23Ayu5euxG5mAXWdkDb4+b0rD0Cab0M1oQS9H0HXGPriKcqpXuiJDTV7fTp/d+fMDJmnr6sNvA==",
-      "type": "package",
-      "path": "system.memory/4.5.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/netcoreapp2.1/_._",
-        "lib/netstandard1.1/System.Memory.dll",
-        "lib/netstandard1.1/System.Memory.xml",
-        "lib/netstandard2.0/System.Memory.dll",
-        "lib/netstandard2.0/System.Memory.xml",
-        "ref/netcoreapp2.1/_._",
-        "ref/netstandard1.1/System.Memory.dll",
-        "ref/netstandard1.1/System.Memory.xml",
-        "ref/netstandard2.0/System.Memory.dll",
-        "ref/netstandard2.0/System.Memory.xml",
-        "system.memory.4.5.1.nupkg.sha512",
-        "system.memory.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
-      ]
-    },
     "System.ObjectModel/4.0.12": {
       "sha512": "tAgJM1xt3ytyMoW4qn4wIqgJYm7L7TShRZG4+Q4Qsi2PCcj96pXN7nRywS9KkB3p/xDUjc2HSwP9SROyPYDYKQ==",
       "type": "package",
@@ -5186,27 +4058,6 @@
         "runtimes/aot/lib/netcore50/System.Private.DataContractSerialization.dll",
         "system.private.datacontractserialization.4.1.1.nupkg.sha512",
         "system.private.datacontractserialization.nuspec"
-      ]
-    },
-    "System.Reactive/4.0.0": {
-      "sha512": "yaVAxT2Yl28p9+DupGwj2oPbIOYZUQimOQ+n7N7vML2oofIRj9BmcfD7DHc6FLrNah65EigOgG6U9VnwWEyz5g==",
-      "type": "package",
-      "path": "system.reactive/4.0.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net46/System.Reactive.dll",
-        "lib/net46/System.Reactive.xml",
-        "lib/netstandard2.0/System.Reactive.dll",
-        "lib/netstandard2.0/System.Reactive.xml",
-        "lib/uap10.0.16299/System.Reactive.dll",
-        "lib/uap10.0.16299/System.Reactive.pri",
-        "lib/uap10.0.16299/System.Reactive.xml",
-        "lib/uap10.0/System.Reactive.dll",
-        "lib/uap10.0/System.Reactive.pri",
-        "lib/uap10.0/System.Reactive.xml",
-        "system.reactive.4.0.0.nupkg.sha512",
-        "system.reactive.nuspec"
       ]
     },
     "System.Reflection/4.1.0": {
@@ -5623,10 +4474,10 @@
         "system.resources.resourcemanager.nuspec"
       ]
     },
-    "System.Runtime/4.3.0": {
-      "sha512": "JufQi0vPQ0xGnAczR13AUFglDyVYt4Kqnz1AZaiKZ5+GICq0/1MH/mO/eAJHt/mHW1zjKBJd7kV26SrxddAhiw==",
+    "System.Runtime/4.1.0": {
+      "sha512": "v6c/4Yaa9uWsq+JMhnOFewrYkgdNHNG2eMKuNqRn8P733rNXeRCGvV5FkkjBXn2dbVkPXOsO0xjsEeM1q2zC0g==",
       "type": "package",
-      "path": "system.runtime/4.3.0",
+      "path": "system.runtime/4.1.0",
       "files": [
         ".nupkg.metadata",
         "ThirdPartyNotices.txt",
@@ -5710,35 +4561,8 @@
         "ref/xamarinmac20/_._",
         "ref/xamarintvos10/_._",
         "ref/xamarinwatchos10/_._",
-        "system.runtime.4.3.0.nupkg.sha512",
+        "system.runtime.4.1.0.nupkg.sha512",
         "system.runtime.nuspec"
-      ]
-    },
-    "System.Runtime.CompilerServices.Unsafe/4.5.0": {
-      "sha512": "YrzNWduCDHhUaSRBxHxL11UkM2fD6y8hITHis4/LbQZ6vj3vdRjoH3IoPWWC9uDXK2wHIqn+b5gv1Np/VKyM1g==",
-      "type": "package",
-      "path": "system.runtime.compilerservices.unsafe/4.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.dll",
-        "lib/netcoreapp2.0/System.Runtime.CompilerServices.Unsafe.xml",
-        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
-        "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
-        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
-        "lib/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
-        "lib/uap10.0.16300/_._",
-        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll",
-        "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.xml",
-        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.dll",
-        "ref/netstandard2.0/System.Runtime.CompilerServices.Unsafe.xml",
-        "ref/uap10.0.16300/_._",
-        "system.runtime.compilerservices.unsafe.4.5.0.nupkg.sha512",
-        "system.runtime.compilerservices.unsafe.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
       ]
     },
     "System.Runtime.Extensions/4.1.0": {
@@ -5978,67 +4802,6 @@
         "runtimes/win/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
         "system.runtime.interopservices.runtimeinformation.4.0.0.nupkg.sha512",
         "system.runtime.interopservices.runtimeinformation.nuspec"
-      ]
-    },
-    "System.Runtime.InteropServices.WindowsRuntime/4.3.0": {
-      "sha512": "J4GUi3xZQLUBasNwZnjrffN8i5wpHrBtZoLG+OhRyGo/+YunMRWWtwoMDlUAIdmX0uRfpHIBDSV6zyr3yf00TA==",
-      "type": "package",
-      "path": "system.runtime.interopservices.windowsruntime/4.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/_._",
-        "lib/netcore50/System.Runtime.InteropServices.WindowsRuntime.dll",
-        "lib/netstandard1.3/System.Runtime.InteropServices.WindowsRuntime.dll",
-        "lib/portable-net45+win8+wp8+wpa81/_._",
-        "lib/win8/_._",
-        "lib/wp80/_._",
-        "lib/wpa81/_._",
-        "lib/xamarinios1/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/_._",
-        "ref/netcore50/System.Runtime.InteropServices.WindowsRuntime.dll",
-        "ref/netcore50/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/de/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/es/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/fr/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/it/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/ja/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/ko/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/ru/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/zh-hans/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netcore50/zh-hant/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/System.Runtime.InteropServices.WindowsRuntime.dll",
-        "ref/netstandard1.0/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/de/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/es/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/fr/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/it/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/ja/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/ko/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/ru/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/zh-hans/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/netstandard1.0/zh-hant/System.Runtime.InteropServices.WindowsRuntime.xml",
-        "ref/portable-net45+win8+wp8+wpa81/_._",
-        "ref/win8/_._",
-        "ref/wp80/_._",
-        "ref/wpa81/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "runtimes/aot/lib/netcore50/System.Runtime.InteropServices.WindowsRuntime.dll",
-        "system.runtime.interopservices.windowsruntime.4.3.0.nupkg.sha512",
-        "system.runtime.interopservices.windowsruntime.nuspec"
       ]
     },
     "System.Runtime.Loader/4.0.0": {
@@ -6644,50 +5407,6 @@
         "ref/xamarinwatchos10/_._",
         "system.threading.threadpool.4.0.10.nupkg.sha512",
         "system.threading.threadpool.nuspec"
-      ]
-    },
-    "System.ValueTuple/4.5.0": {
-      "sha512": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ==",
-      "type": "package",
-      "path": "system.valuetuple/4.5.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.TXT",
-        "THIRD-PARTY-NOTICES.TXT",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net461/System.ValueTuple.dll",
-        "lib/net461/System.ValueTuple.xml",
-        "lib/net47/System.ValueTuple.dll",
-        "lib/net47/System.ValueTuple.xml",
-        "lib/netcoreapp2.0/_._",
-        "lib/netstandard1.0/System.ValueTuple.dll",
-        "lib/netstandard1.0/System.ValueTuple.xml",
-        "lib/netstandard2.0/_._",
-        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
-        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.xml",
-        "lib/uap10.0.16299/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net461/System.ValueTuple.dll",
-        "ref/net47/System.ValueTuple.dll",
-        "ref/netcoreapp2.0/_._",
-        "ref/netstandard2.0/_._",
-        "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
-        "ref/uap10.0.16299/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.valuetuple.4.5.0.nupkg.sha512",
-        "system.valuetuple.nuspec",
-        "useSharedDesignerContext.txt",
-        "version.txt"
       ]
     },
     "System.Xml.ReaderWriter/4.0.11": {

@@ -31,51 +31,50 @@ namespace Fluid.Internals.Collections {
          }
 
          /// <summary>Creates an instance of the same (most derived) type as instance on which it is invoked.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
-         public virtual SparseRow<T,TArith> CreateSparseRow(int width, int capacity = 6) => new SparseRow<T,TArith>(width, capacity);
+         public static SparseRow<T,TArith> CreateSparseRow(int width, int capacity = 6) => new SparseRow<T,TArith>(width, capacity);
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
-         public SparseRow<T,TArith> CreateSparseRow(SparseRow<T,TArith> source) => new SparseRow<T,TArith>(source);
+         public static SparseRow<T,TArith> CreateSparseRow(SparseRow<T,TArith> source) => new SparseRow<T,TArith>(source);
          /// <summary>Create a new SparseRow by copying an array.</summary><param name="source">Array to copy.</param>
-         public SparseRow<T,TArith> CreateFromArray(T[] source) {
+         public static SparseRow<T,TArith> CreateFromArray(T[] source) {
             var row = CreateSparseRow(source.Length, source.Length);
             for(int i = 0; i < source.Length; ++i)
-               Add(i, source[i]);
+               row.Add(i, source[i]);
             return row;
          } 
-         /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is put into specified second argument.</summary><param name="virtIndex">Index at which to split. Element at this index will be chopped off and end up as part of returned SparseRow.</param><param name="removedCols">Right remainder will be put in here.</param>
-         public SparseRow<T,TArith> SplitAt(int virtIndex) {
-            var removedCols = new SparseRow<T,TArith>(Width - virtIndex);
-            foreach(var kvPair in this.Where(kvPair => kvPair.Key >= virtIndex)) {
-               removedCols.Add(kvPair.Key, kvPair.Value);                         // Add to right remainder.
-               Remove(kvPair.Key);                                             // Remove from left remainder.
-            }
+         /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is put into specified second argument.</summary><param name="inx">Index at which to split. Element at this index will be chopped off and end up as part of returned SparseRow.</param><param name="removedCols">Right remainder will be put in here.</param>
+         public SparseRow<T,TArith> SplitAt(int inx) {//TODO: Test SplitAt method.
+            var removedCols = new SparseRow<T,TArith>(Width - inx);
+            foreach(var kvPair in this.Where(pair => pair.Key >= inx)) {
+               removedCols.Add(kvPair.Key, kvPair.Value);                         // Add to right remainder.
+               Remove(kvPair.Key); }                                              // Remove from left remainder.
             return removedCols;
          }
          /// <summary>Append specified SparseRow to this one.</summary><param name="rightCols">SparseRow to append.</param>
-         public void MergeWith(SparseRow<T,TArith> rightCols) {
+         public void MergeWith(SparseRow<T,TArith> rightCols) {//TODO: Test MergeWith method.
             Width += rightCols.Width;                                      // Readjust width.
             foreach(var kvPair in rightCols)
                this[kvPair.Key] = kvPair.Value;
          }
-         /// <summary>Swap two elements specified by virtual indices.</summary><param name="virtIndex1">Virtual index of first element.</param><param name="virtIndex2">Virtual index of second element.</param><remarks>Useful for swapping columns.</remarks>
-         public void SwapElms(int virtIndex1, int virtIndex2) {
-            bool firstExists = TryGetValue(virtIndex1, out T val1);
-            bool secondExists = TryGetValue(virtIndex2, out T val2);
+         /// <summary>Swap two elements specified by indices.</summary><param name="inx1">Index of first element.</param><param name="inx2">Index of second element.</param><remarks>Useful for swapping columns.</remarks>
+         public void SwapElms(int inx1, int inx2) {
+            bool firstExists = TryGetValue(inx1, out T val1);
+            bool secondExists = TryGetValue(inx2, out T val2);
             if(firstExists)
                if(secondExists) {
-                  this[virtIndex1] = val2;
-                  this[virtIndex2] = val1; }
+                  this[inx1] = val2;
+                  this[inx2] = val1; }
                else {
-                  Remove(virtIndex1);                                   // Element at virtIndex1 becomes 0 and is removed.
-                  Add(virtIndex2, val1); }
+                  Remove(inx1);                                   // Element at virtIndex1 becomes 0 and is removed.
+                  Add(inx2, val1); }
             else if(secondExists) {
-               Add(virtIndex1, val2);
-               Remove(virtIndex2); }                                   // Else nothing happens, both are 0.
+               Add(inx1, val2);
+               Remove(inx2); }                                   // Else nothing happens, both are 0.
          }
          /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
          public void ApplySwaps(SparseMat<int,IntArithmetic> swapMatrix) {
             foreach(var rowKVPair in swapMatrix)
-               foreach(var colPair in rowKVPair.Value)
-                  SwapElms(rowKVPair.Key, colPair.Key);
+               foreach(var colKVPair in rowKVPair.Value)
+                  SwapElms(rowKVPair.Key, colKVPair.Key);
          }
          // TODO: Move this to IO class perhaps?
          /// <summary>Create a string of form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}..</summary>

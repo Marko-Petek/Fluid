@@ -52,7 +52,7 @@ namespace Fluid.ChannelFlow {
          int stiffnessMatrixWidth = sfsMatrix.Width;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          forcingVector.ApplySwaps(SwapMatrix);                                                           // Swap elements so that constrained elements end up at end.
          int forcingVectorWidth = forcingVector.Width;
-         int nConstraints = ChannelMesh.NConstraints;                                            TB.Reporter.Write("Splitting stiffness matrix along connstrained nodes column.");
+         int nConstraints = ChannelMesh.NConstraints;                                            TB.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
          var sfsMatrixRight = sfsMatrix.SplitAtCol(stiffnessMatrixWidth - nConstraints);     /* Split stiffness matrix vertically. Remember right part. */ TB.Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
          sfsMatrix.SplitAtRow(stiffnessMatrixWidth - nConstraints);                                /* Further split stiffness matrix horizontally. */ TB.Reporter.Write("Applying swaps to solution SparseRow.");
          Solution.ApplySwaps(SwapMatrix);                                                                /* Apply swaps, do not forget to unswap after done. */ TB.Reporter.Write("Splitting previous solution SparseRow.");

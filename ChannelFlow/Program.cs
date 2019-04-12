@@ -9,7 +9,7 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.ChannelFlow {    
    class Program {
-      static void Main(string[] args) => TB.EntryPointSetup(() => Config01(), VerbositySettings.Verbose);
+      static void Main(string[] args) => TB.EntryPointSetup(() => Config01(), VerbositySettings.Moderate);
 
       static void Config01() {
          var flow = new ChannelFlow(1.0, 0.05, 0.001);    // Start with velocity 1.0.

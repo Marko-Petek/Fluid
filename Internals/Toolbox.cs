@@ -11,17 +11,26 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals {
    public static class Toolbox {
-      public static IO.FileReader FileReader { get; } = new IO.FileReader();
-      public static IO.FileWriter FileWriter { get; } = new IO.FileWriter();
-      public static IO.Console Console { get; } = new IO.Console();
-      public static AppReporter Reporter { get; set; }
-      public static Rng Rng { get; } = new Rng();
+      static IO.FileReader _FileReader;
+      public static IO.FileReader FileReader => _FileReader;
+      static IO.FileWriter _FileWriter;
+      public static IO.FileWriter FileWriter => _FileWriter;
+      static IO.Console _Console;
+      public static IO.Console Console => _Console;
+      static AppReporter _Reporter;
+      public static AppReporter Reporter => _Reporter;
+      static Rng _Rng;
+      public static Rng Rng => _Rng;
 
       /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
       public static void EntryPointSetup(Action main, VerbositySettings verbosity = VerbositySettings.Moderate) {
          try {
             System.Console.OutputEncoding = Encoding.UTF8;
-            Reporter = new AppReporter(verbosity);
+            _FileReader = new IO.FileReader();
+            _FileWriter = new IO.FileWriter();
+            _Console = new IO.Console();
+            _Reporter = new AppReporter(verbosity);
+            _Rng = new Rng();
             main();
          }
          catch(Exception exc) {

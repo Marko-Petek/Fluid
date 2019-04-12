@@ -6,7 +6,7 @@ namespace Fluid.Internals.Numerics {
    using SparseRow = SparseRow<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
-   public class ConjGradsSolver {
+   public class ConjGradsSolver {//TODO: Test ConjGradSolver.
       /// <summary>Left-hand side matrix of A x = b.</summary>
       SparseMat A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
@@ -22,16 +22,13 @@ namespace Fluid.Internals.Numerics {
       public SparseRow GetSolution(SparseRow initialGuessRow, double maximumResidual) {
          var d = new SparseRow[2] {
             b - A * initialGuessRow,                      // Difference between intial forcing vector and Ax of initial solution.
-            new SparseRow(b.Width, 10)
-         };
+            new SparseRow(b.Width, 10) };
          var r = new SparseRow[2] {
             d[0],
-            new SparseRow(b.Width, 10)
-         };
+            new SparseRow(b.Width, 10) };
          var x = new SparseRow[2] {
             new SparseRow(d[0]),
-            new SparseRow(b.Width, 10)
-         };
+            new SparseRow(b.Width, 10) };
          double alfa;
          double beta;
          SparseRow ADotDi;

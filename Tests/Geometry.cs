@@ -8,6 +8,7 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
 using Fluid.Tests.Mocks;
+using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    public class GeometryTests {

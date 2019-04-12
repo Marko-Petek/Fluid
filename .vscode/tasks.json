@@ -1,112 +1,84 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Rebuild: REPORT,DEBUG directives",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "msbuild",
-                "Fluid.sln",
-                "/p:DefineConstants=REPORT",
-                "/p:Configuration=Debug",
-                "/t:Rebuild",
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "Rebuild: TEST directive",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "msbuild",
-                "Fluid.sln",
-                "/p:DefineConstants=TEST",
-                "/t:Rebuild"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "Rebuild: No directives",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "msbuild",
-                "Fluid.sln",
-                "/p:DefineConstants=",
-                "/t:Rebuild"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "Build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "Test",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "test",
-                "${workspaceFolder}/Tests/Tests.csproj",
-                "--no-build"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-        },
-        {
-            "label": "Run ChannelFlow",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "run",
-                "--project",
-                "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
-            ],
-            "options": {
-                "cwd": "./ChannelFlow"
-            },
-            "problemMatcher": "$msCompile",
-            "group": "none"
-        },
-        {
-            "label": "Run NodeCreation",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "run",
-                "--project",
-                "${workspaceFolder}/Seminar/NodeCreation/NodeCreation.csproj"
-            ],
-            "options": {
-                "cwd": "./Seminar/NodeCreation"
-            },
-            "problemMatcher": "$msCompile",
-            "group": "none"
-        }
-    ]
+   "version": "2.0.0",
+   "tasks": [
+      {
+         "label": "Rebuild: Debug",
+         "command": "dotnet",
+         "type": "process",
+         "args": ["msbuild", "-p:Configuration=Debug", "-t:Rebuild", "Fluid.sln"],
+         "problemMatcher": "$msCompile",
+         "group": {
+            "kind": "build",
+            "isDefault": true
+         }
+      },
+      {
+         "label": "Rebuild",
+         "command": "dotnet",
+         "type": "process",
+         "args": ["msbuild", "/t:Rebuild", "Fluid.sln"],
+         "problemMatcher": "$msCompile",
+         "group": {
+            "kind": "build",
+            "isDefault": true
+         }
+      },
+      {
+         "label": "Build",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "build"
+         ],
+         "problemMatcher": "$msCompile",
+         "group": {
+            "kind": "build",
+            "isDefault": true
+         }
+      },
+      {
+         "label": "Test",
+         "command": "dotnet",
+         "type": "process",
+         "args": ["test", "${workspaceFolder}/Tests/Tests.csproj"],
+         "options": {
+            "cwd": "./"
+         },
+         "problemMatcher": "$msCompile",
+         "group": {
+            "kind": "test",
+            "isDefault": true
+         },
+      },
+      {
+         "label": "Run ChannelFlow",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "run",
+            "--project",
+            "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj"
+         ],
+         "options": {
+            "cwd": "./ChannelFlow"
+         },
+         "problemMatcher": "$msCompile",
+         "group": "none"
+      },
+      {
+         "label": "Run NodeCreation",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "run",
+            "--project",
+            "${workspaceFolder}/Seminar/NodeCreation/NodeCreation.csproj"
+         ],
+         "options": {
+            "cwd": "./Seminar/NodeCreation"
+         },
+         "problemMatcher": "$msCompile",
+         "group": "none"
+      }
+   ]
 }

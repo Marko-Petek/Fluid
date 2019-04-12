@@ -14,6 +14,6 @@ namespace Fluid.Internals.Collections {
             SparseMat = owner;
          }
 
-         public override SparseRow<T,TArith> CreateSparseRow(int width, int capacity = 1) => new DummyRow<T,TArith>(SparseMat, Width, capacity);
+         //public override SparseRow<T,TArith> CreateSparseRow(int width, int capacity = 1) => new DummyRow<T,TArith>(SparseMat, Width, capacity);
    }
 }

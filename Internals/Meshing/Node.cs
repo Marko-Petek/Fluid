@@ -4,7 +4,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Meshing
 {
-    public struct MeshNode : IEquatable<MeshNode>
+    public struct MeshNode : IEquatable<MeshNode>  //TODO: Fix property names.
     {
         /// <summary>Node's position (x,y).</summary>
         public Pos _pos;

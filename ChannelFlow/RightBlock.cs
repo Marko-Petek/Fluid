@@ -11,7 +11,7 @@ using static Fluid.Internals.Numerics.MatrixOperations;
 namespace Fluid.ChannelFlow {
    using SparseMat = SparseMat<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
-   public sealed class RightBlock : RectangularBlock {
+   public sealed class RightBlock : RectBlock {
       ChannelFlow ChannelFlow { get; }
       ChannelMesh ChannelMesh { get; }
       /// <summary>Basis function overlap integrals over a single element, since all elements are the same.</summary><remarks>[j][k][n][m] = [12 basis funcs][12-j basis funcs][5 terms][5 terms]</remarks>

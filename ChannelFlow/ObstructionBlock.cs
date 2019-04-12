@@ -39,7 +39,7 @@ namespace Fluid.ChannelFlow {
       public static double[][][][] ForcingIntegrals => _ForcingIntegrals;
 
       static ObstructionBlock() {
-         TB.FileReader.SetDirAndFile(@"ChannelFlow/Input", "obstructionStiffnessIntegrals", ".txt");
+         TB.FileReader.SetDirAndFile("ChannelFlow/Input", "obstructionStiffnessIntegrals", ".txt");
          _StiffnessIntegrals = (double[][][][][][]) TB.FileReader.ReadArray<double>();
          TB.FileReader.SetFile("obstructionForcingIntegrals", ".txt");
          _ForcingIntegrals = (double[][][][]) TB.FileReader.ReadArray<double>();
