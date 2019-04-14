@@ -6,7 +6,7 @@ using System.Threading;
 namespace Fluid.Tests
 {
    public class ChannelFlowTest {
-      static ChannelFlowTest() => TB.EntryPointSetup(()=> Thread.Sleep(100));
+      static ChannelFlowTest() => TB.TryInitialize();
       /// <summary>Test transformation from standard block indices to compact block indices.</summary>
       [Fact] public void CmtToStdIndexTransform() {
          var block = new ObstructionBlockMock();

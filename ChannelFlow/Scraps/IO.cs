@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.IO;
 using System.Globalization;
@@ -64,7 +65,7 @@ namespace Fluid.ChannelFlow
 
                 string Magnitude(int node) {
                     ref var nodeRef = ref mesh.Node(node);
-                    double magnitude = Sqrt(Pow(nodeRef.Var(0)._value, 2) + Pow(nodeRef.Var(1)._value, 2));
+                    double magnitude = Sqrt(Pow(nodeRef.Var(0).Val, 2) + Pow(nodeRef.Var(1).Val, 2));
                     return magnitude.ToString(CultureInfo.InvariantCulture);
                 }
             }
@@ -85,3 +86,4 @@ namespace Fluid.ChannelFlow
         }
     }
 }
+#endif

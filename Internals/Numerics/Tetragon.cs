@@ -64,7 +64,7 @@ namespace Fluid.Internals.Numerics {
       double FuncB(in Pos pos) =>
          pos.X * MG().Tr() - pos.Y * MF().Tr() + MC().Det() + MD().Det();
       double FuncC(in Pos pos) =>
-         Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Sum(MA(), MB()).Det());
+         Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Add(MA(), MB()).Det());
       // Matrices to compute inverse transformation of specified element.
       double[][] MA() => new double[2][] {new double[2] {_UL.X, _LR.X},
                                           new double[2] {_UL.Y, _LR.Y} };

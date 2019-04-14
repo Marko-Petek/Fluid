@@ -100,7 +100,7 @@ namespace Fluid.Internals.Meshing {
          double[] result = new double[nVars];
          for(int var = 0; var < nVars; ++var)                        // For each specified variable.
             for(int node = 0; node < 12; ++node)
-               result[var] += Phi[node](ksi,eta)*NodeStd(yCount, xCount, node).Var(vars[var])._value;
+               result[var] += Phi[node](ksi,eta)*NodeStd(yCount, xCount, node).Var(vars[var]).Val;
          return result;
       }
 

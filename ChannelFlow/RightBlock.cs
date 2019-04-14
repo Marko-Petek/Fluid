@@ -199,7 +199,7 @@ namespace Fluid.ChannelFlow {
          A[1][2] = NodeOperatorMatrix1(ref node2, dt, ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               subMatrix.Add(Mul(GetSfsIntegral(j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
+               subMatrix.AddTo(Mul(GetSfsIntegral(j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
          return subMatrix;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
@@ -234,14 +234,14 @@ namespace Fluid.ChannelFlow {
          A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
          double[][] fCoeffs = new double[8][];                                           // Coefficients accompanying terms in f vector.
-         fCoeffs[0] = new double[4] {-node.Var(6)._value, ni*node.Var(2)._value, ni*node.Var(3)._value, -node.Var(0)._value * node.Var(2)._value - node.Var(1)._value * node.Var(3)._value};
-         fCoeffs[1] = new double[4] {-node.Var(7)._value, ni*node.Var(4)._value, -ni*node.Var(2)._value, -node.Var(0)._value * node.Var(4)._value + node.Var(1)._value * node.Var(2)._value};
-         fCoeffs[2] = new double[2] {-node.Var(2)._value, node.Var(0)._value};
-         fCoeffs[3] = new double[2] {-node.Var(3)._value, node.Var(0)._value};
-         fCoeffs[4] = new double[2] {-node.Var(4)._value, node.Var(1)._value};
-         fCoeffs[5] = new double[2] {-node.Var(6)._value, node.Var(5)._value};
-         fCoeffs[6] = new double[2] {-node.Var(7)._value, node.Var(5)._value};
-         fCoeffs[7] = new double[2] {node.Var(7)._value, -node.Var(6)._value};
+         fCoeffs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val, -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
+         fCoeffs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val, -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
+         fCoeffs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
+         fCoeffs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
+         fCoeffs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
+         fCoeffs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
+         fCoeffs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
+         fCoeffs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
                for(int matCol = 0; matCol < 2; ++matCol) {

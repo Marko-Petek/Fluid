@@ -80,8 +80,8 @@ namespace Fluid.ChannelFlow {
             int backVarIndex = back % nVars;
             ref var frontNode = ref ChannelMesh.Node(frontPosIndex);
             ref var backNode = ref ChannelMesh.Node(backPosIndex);
-            if(frontNode.Var(frontVarIndex)._constrained) {                     // Check whether node at the front is constrained.
-               while(backNode.Var(backVarIndex)._constrained) {                // Move to an unconstrained variable.
+            if(frontNode.Var(frontVarIndex).Constrained) {                     // Check whether node at the front is constrained.
+               while(backNode.Var(backVarIndex).Constrained) {                // Move to an unconstrained variable.
                   --back;
                   backPosIndex = back / nVars;
                   backVarIndex = back % nVars;
@@ -100,18 +100,6 @@ namespace Fluid.ChannelFlow {
       // Začetne 
 
       // Robnih vozlov je : 2*(20*3 - 1) + 4*(20*3 - 1) + 2*(20*3 + 1)   +   4 * (20*3 + 1)   + 2 * (60*3)
-      public void WriteSolution(int samplingDensity) => ChannelMesh.WriteVelocityField(samplingDensity);
-   }
-
-   public static class SparseRowHelper
-   {
-      /// <summary>Transfer values from this SparseRow to specified nodes array.</summary><param name="sparseRow">Source SparseRow of values.</param><param name="nodes">Receiving Node[] array of values.</param>
-      public static void UpdateNodeArray(this SparseRow sparseRow, MeshNode[] nodes) {
-         int nodeCount = nodes.Length;
-         int nVars = nodes[0].Vars.Length;
-         for(int i = 0; i < nodeCount; ++i)
-            for(int j = 0; j < nVars; ++j)
-               nodes[i].Var(j)._value += sparseRow[nVars*i + j];
-      }
+      // public void WriteSolution(int samplingDensity) => ChannelMesh.WriteVelocityField(samplingDensity);
    }
 }

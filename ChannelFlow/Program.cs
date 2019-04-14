@@ -16,7 +16,7 @@ namespace Fluid.ChannelFlow {
          TB.Reporter.Write("Solving for a single time step and writing solution to NodeArray.", VerbositySettings.Moderate);
          flow.SolveNextAndAddToNodeArray();
          TB.Reporter.Write("Writing solution to file.");
-         flow.WriteSolution(5);
+         // flow.WriteSolution(5);  // TODO: Write IO for SparseRow.
       } 
    }
 }

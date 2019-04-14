@@ -4,9 +4,9 @@ using System.Globalization;
 namespace Fluid.Internals.Numerics
 {
    /// <summary>Holds position as an x-y pair.</summary>
-   public struct Pos {
-      public double X { get; set; }
-      public double Y { get; set; }
+   public readonly struct Pos {
+      public readonly double X;
+      public readonly double Y;
       
       /// <summary>Create an x-y value pair.</summary><param name="x">X component.</param><param name="y">Y Component.</param>
       public Pos(double x, double y) {

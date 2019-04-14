@@ -12,6 +12,8 @@ using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    public class GeometryTests {
+      static GeometryTests() => TB.TryInitialize();
+
       [InlineData(-0.5, 0.5)]
       [InlineData(0.5, 0.5)]
       [InlineData(0.0, 0.5)]
@@ -58,6 +60,13 @@ namespace Fluid.Tests {
             new Pos(4,1),
             new Pos(1,1) };
          Assert.False(point.IsInsidePolygon(vertices));
+      }
+
+      [Fact] public void StructBehavior() {
+         TB.TryInitialize();
+         Variable var = new Variable(1, true);
+         var.Val = 2;
+         TB.Reporter.Write($"var = {var.ToString()}");
       }
    }
 }

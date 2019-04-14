@@ -33,7 +33,7 @@ namespace Fluid.Internals.Meshing {
          for(int i = 0; i < _Nodes.Length; ++i) {
             for(int j = 0; j < NVars; ++j) {
                index = 8*i + j;
-               sparseRow[index] = _Nodes[i].Var(j)._value; }}
+               sparseRow[index] = _Nodes[i].Var(j).Val; }}
          return sparseRow;
       }
 

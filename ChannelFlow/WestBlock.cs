@@ -75,32 +75,32 @@ namespace Fluid.ChannelFlow {
          }
          void SetCornerInletConstraints(ref MeshNode nodeRef) {                         // Applied to corners of elements.
             nodeRef.Constrainedness(0) = true;                                     // u = (4*v0/w)*y*(1-y/w)
-            nodeRef.Var(0)._value = (4*v0/w) * nodeRef.GetY() * (1.0 - nodeRef.GetY()/w);
+            nodeRef.Var(0).Val = (4*v0/w) * nodeRef.GetY() * (1.0 - nodeRef.GetY()/w);
             nodeRef.Constrainedness(1) = true;                                     // v = 0
             nodeRef.Constrainedness(3) = true;                                     // b = (4*v0/w)*(1-y/w)
-            nodeRef.Var(3)._value = (4*v0/w) * (1.0 - nodeRef.GetY()/w);
+            nodeRef.Var(3).Val = (4*v0/w) * (1.0 - nodeRef.GetY()/w);
             nodeRef.Constrainedness(5) = true;                                     // p = 0
             constraintCount += 4;
          }
          void SetSideInletConstraints(ref MeshNode nodeRef9, ref MeshNode nodeRef8, ref MeshNode nodeRef7, ref MeshNode nodeRef6) {
-            double u9 = nodeRef9.Var(0)._value;
+            double u9 = nodeRef9.Var(0).Val;
             double h8 = (4*v0/w) * nodeRef8.GetY() * (1.0 - nodeRef8.GetY()/w);
             double h7 = (4*v0/w) * nodeRef7.GetY() * (1.0 - nodeRef7.GetY()/w);
-            double u6 = nodeRef6.Var(0)._value;
+            double u6 = nodeRef6.Var(0).Val;
             nodeRef8.Constrainedness(0) = true;                                     // u = (4*v0/w)*y*(1-y/w)
             nodeRef7.Constrainedness(0) = true;
-            nodeRef8.Var(0)._value = 0.25 * (-9 * h7 + 18 * h8 + 2 * u6 - 11 * u9);
-            nodeRef7.Var(0)._value = 0.25 * (18 * h7 - 9 * h8 - 11 * u6 + 2 * u9);
+            nodeRef8.Var(0).Val = 0.25 * (-9 * h7 + 18 * h8 + 2 * u6 - 11 * u9);
+            nodeRef7.Var(0).Val = 0.25 * (18 * h7 - 9 * h8 - 11 * u6 + 2 * u9);
             nodeRef8.Constrainedness(1) = true;                                     // v = 0
             nodeRef7.Constrainedness(1) = true;
-            u9 = nodeRef9.Var(3)._value;
+            u9 = nodeRef9.Var(3).Val;
             h8 = (4*v0/w) * (1.0 - nodeRef8.GetY()/w);
             h7 = (4*v0/w) * (1.0 - nodeRef7.GetY()/w);
-            u6 = nodeRef6.Var(3)._value;
+            u6 = nodeRef6.Var(3).Val;
             nodeRef8.Constrainedness(3) = true;                                     // b = (4*v0/w)*(1-y/w)
             nodeRef7.Constrainedness(3) = true;
-            nodeRef8.Var(3)._value = 0.25 * (-9 * h7 + 18 * h8 + 2 * u6 - 11 * u9);
-            nodeRef7.Var(0)._value = 0.25 * (18 * h7 - 9 * h8 - 11 * u6 + 2 * u9);
+            nodeRef8.Var(3).Val = 0.25 * (-9 * h7 + 18 * h8 + 2 * u6 - 11 * u9);
+            nodeRef7.Var(0).Val = 0.25 * (18 * h7 - 9 * h8 - 11 * u6 + 2 * u9);
             nodeRef8.Constrainedness(5) = true;                                     // p = 0
             nodeRef7.Constrainedness(5) = true;
             constraintCount += 8;

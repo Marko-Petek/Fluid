@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Development;
@@ -11,6 +12,8 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals {
    public static class Toolbox {
+      static bool _Initialized;
+      public static bool Initialized => _Initialized;
       static IO.FileReader _FileReader;
       public static IO.FileReader FileReader => _FileReader;
       static IO.FileWriter _FileWriter;
@@ -31,6 +34,7 @@ namespace Fluid.Internals {
             _Console = new IO.Console();
             _Reporter = new AppReporter(verbosity);
             _Rng = new Rng();
+            _Initialized = true;
             main();
          }
          catch(Exception exc) {
@@ -44,6 +48,10 @@ namespace Fluid.Internals {
          }
       }
 
+      public static void TryInitialize() {
+         if(!Initialized)
+            EntryPointSetup(() => Thread.Sleep(500));
+      }
 
       /// <summary>A class which simplifies exception coding.</summary>
       public static class Assert {

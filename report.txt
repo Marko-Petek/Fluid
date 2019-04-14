@@ -8062,3 +8062,17 @@
 16:17     Program started.                                 0         Internals/Toolbox.cs       EntryPointSetup   32    
 16:22     Program started.                                 0         Internals/Toolbox.cs       EntryPointSetup   32    
 16:23     Program started.                                 0         Internals/Toolbox.cs       EntryPointSetup   32    
+09:36     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:37     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:38     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+          var = {2, True}                          0,0117    Tests/Geometry.cs      StructBehavior    67    
+09:40     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+          var = {2, True}                          0,0118    Tests/Geometry.cs      StructBehavior    67    
+09:41     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:42     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:42     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:43     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   34    
+09:55     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   35    
+10:04     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   35    
+10:05     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   35    
+          var = {2, True}                          0,555     Tests/Geometry.cs      StructBehavior    69    

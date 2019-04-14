@@ -111,8 +111,8 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
       protected double[][] NodeOperatorMatrix0(ref MeshNode node, double dt, double ni) {
          double[][] A = new double[8][] {
-            new double[8] { 1.0/dt + node.Var(2)._value, node.Var(3)._value, node.Var(0)._value, node.Var(1)._value, 0, 0, 1, 0 },
-            new double[8] { node.Var(4)._value, 1.0/dt - node.Var(2)._value, -node.Var(1)._value, 0, node.Var(0)._value, 0, 0, 1 },
+            new double[8] { 1.0/dt + node.Var(2).Val, node.Var(3).Val, node.Var(0).Val, node.Var(1).Val, 0, 0, 1, 0 },
+            new double[8] { node.Var(4).Val, 1.0/dt - node.Var(2).Val, -node.Var(1).Val, 0, node.Var(0).Val, 0, 0, 1 },
             new double[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
             new double[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
             new double[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
@@ -190,7 +190,7 @@ namespace Fluid.Internals.Meshing {
          }  }                                                                        // At this point startCol and endCol have to be the same.
          var quadElm = CreateQuadElement(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadElm.ReferenceSquareCoords(ref pos);
-         double[] funcValues = quadElm.Values(ref squarePos, vars);
+         double[] funcValues = quadElm.Values(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>

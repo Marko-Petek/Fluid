@@ -77,7 +77,7 @@ namespace Fluid.Internals.Numerics {
                mat[i][j] = temp; }
       }
       /// <summary>Add two square matrices.</summary><param name="mat1">Left matrix.</param><param name="mat2">Right matrix.</param>
-      public static double[][] Sum(double[][] mat1, double[][] mat2) {
+      public static double[][] Add(this double[][] mat1, double[][] mat2) {
          int lgh = mat1.Length;
          double[][] result = new double[lgh][];
          for(int i = 0; i < lgh; ++i) {
@@ -87,14 +87,14 @@ namespace Fluid.Internals.Numerics {
          return result;
       }
       /// <summary>Take a matrix and add to it another matrix.</summary><param name="mat1">Matrix to be added to.</param><param name="mat2">Matrix that will be added to addee.</param>
-      public static void Add(this double[][] mat1, double[][] mat2) {
+      public static void AddTo(this double[][] mat1, double[][] mat2) {
          int lgh = mat1.Length;
          for(int i = 0; i < lgh; ++i)
             for(int j = 0; j < lgh; ++j)
                mat1[i][j] += mat2[i][j];
       }
       /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
-      public static double[][] Sub(double[][] mat1, double[][] mat2) {
+      public static double[][] Sub(this double[][] mat1, double[][] mat2) {
          int lgh = mat1.Length;
          double[][] result = new double[lgh][];
          for(int i = 0; i < lgh; ++i) {
