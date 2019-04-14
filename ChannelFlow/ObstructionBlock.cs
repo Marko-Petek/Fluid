@@ -65,7 +65,6 @@ namespace Fluid.ChannelFlow {
             _Nodes = new MeshNode[24][][];
       }
       
-
       /// <summary>Fill node positions list.</summary>
       protected override void CreateNodes() {
          double ksi;
@@ -94,18 +93,15 @@ namespace Fluid.ChannelFlow {
                constantEtaArray[col] = new MeshNode[] {twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight};
                ksi += 1.0 / ChannelMesh.ElementDensity;                             // Increase ksi.
                nextKsi += 1.0 / ChannelMesh.ElementDensity;
-               ++col;
-            }
+               ++col; }
             twoThirdsAbove = CreateNode(1.0, eta + 2.0 * (nextEta - eta) / 3.0);    // Create final three positions in row.
             thirdAbove = CreateNode(1.0, eta + (nextEta - eta) / 3.0);
             corner = CreateNode(1.0, eta);
             constantEtaArray[col] = new MeshNode[] {
                twoThirdsAbove, thirdAbove, corner,
-               new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0)
-            };
+               new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0) };
             eta = nextEta;                                                          // Increase eta.
-            nextEta = NextEta(nextEta);
-         }
+            nextEta = NextEta(nextEta); }
          ksi = 0.0;                                                                 // Finalize the top-most row of nodes with current eta and nextEta = 1.0.
          nextKsi = 1.0 / ChannelMesh.ElementDensity;
          constantEtaArray = new MeshNode[21][];
@@ -117,21 +113,17 @@ namespace Fluid.ChannelFlow {
             twoThirdsRight = CreateNode(ksi + 2.0 * (nextKsi - ksi) / 3.0, 1.0);
             constantEtaArray[col] = new MeshNode[] {
                new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
-               corner, thirdRight, twoThirdsRight
-            };
+               corner, thirdRight, twoThirdsRight };
             ksi += 1.0 / ChannelMesh.ElementDensity;                                  // Increase ksi.
             nextKsi += 1.0 / ChannelMesh.ElementDensity;
-            ++col;
-         }
+            ++col; }
          corner = CreateNode(1.0, 1.0);                                             // Now add one final point.
          constantEtaArray[col] = new MeshNode[] {
             new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
             corner,
-            new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0)
-         };
-         RowCount = nodes.Count - 1;                                           // Update row and column counts.
-         ColCount = 20;
-         //_nodes = new Node[][][]
+            new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0) };
+         NRows = nodes.Count - 1;                                           // Update row and column counts.
+         NCols = 20;
          _Nodes = nodes.ToArray();
       }
       /// <summary>Export positions of left half of obstruction block. We shall integrate over each element in Mathematica. Requires even number of elements on side.</summary><remarks>Suggestion: introduce 2D integrator into this program and automatize process.</remarks>
@@ -139,33 +131,29 @@ namespace Fluid.ChannelFlow {
          FileInfo file = new FileInfo(fileName);
          using(StreamWriter sw = new StreamWriter(file.FullName, false)) {
             sw.WriteLine("{");
-            for(int i = 0; i < RowCount - 1; ++i) {                                 // Over all rows.
+            for(int i = 0; i < NRows - 1; ++i) {                                 // Over all rows.
             sw.Write("{");
-               for(int j = ColCount/2; j < ColCount - 1; ++j) {
+               for(int j = NCols/2; j < NCols - 1; ++j) {
                   sw.Write("{");
                   for(int k = 0; k < 9; k+=3)                                       // We only need corners for integration.
                      sw.Write($"{{{NodeStd(i,j,k).ToString()}}}, ");
-                  sw.Write($"{{{NodeStd(i,j,9).ToString()}}}}}, ");
-               }
+                  sw.Write($"{{{NodeStd(i,j,9).ToString()}}}}}, "); }
                sw.Write("{");
                for(int k = 0; k < 9; k+=3)
-                  sw.Write($"{{{NodeStd(i,ColCount - 1,k).ToString()}}}, ");
-               sw.Write($"{{{NodeStd(i,ColCount - 1,9).ToString()}}}}}");
-               sw.WriteLine("}, ");
-            }
+                  sw.Write($"{{{NodeStd(i,NCols - 1,k).ToString()}}}, ");
+               sw.Write($"{{{NodeStd(i,NCols - 1,9).ToString()}}}}}");
+               sw.WriteLine("}, "); }
             sw.Write("{");
-            for(int j = ColCount/2; j < ColCount - 1; ++j) {
+            for(int j = NCols/2; j < NCols - 1; ++j) {
                sw.Write("{");
                for(int k = 0; k < 9; k+=3)
-                  sw.Write($"{{{NodeStd(RowCount - 1,j,k).ToString()}}}, ");
-               sw.Write($"{{{NodeStd(RowCount - 1,j,9).ToString()}}}}}, ");
-            }
+                  sw.Write($"{{{NodeStd(NRows - 1,j,k).ToString()}}}, ");
+               sw.Write($"{{{NodeStd(NRows - 1,j,9).ToString()}}}}}, "); }
             sw.Write("{");
             for(int k = 0; k < 9; k+=3)
-               sw.Write($"{{{NodeStd(RowCount - 1,ColCount - 1,k).ToString()}}}, ");
-            sw.WriteLine($"{{{NodeStd(RowCount - 1,ColCount - 1,9).ToString()}}}}}}}");
-            sw.Write("}");
-         }
+               sw.Write($"{{{NodeStd(NRows - 1,NCols - 1,k).ToString()}}}, ");
+            sw.WriteLine($"{{{NodeStd(NRows - 1,NCols - 1,9).ToString()}}}}}}}");
+            sw.Write("}"); }
       }
       /// <summary>A getter that fetches an integral from compact integrals array based on intuitive indices we specify.</summary><param name="row">Obstruction block row (0 to 22).</param><param name="col">Obstruction block column (0 to 39).</param><param name="j">First overlapping basis function (0 to 11).</param><param name="k">Second overlapping basis function (0 to 11).</param><param name="n">First term index (0 to 4).</param><param name="m">Second term index (0 to 4).</param>
       protected double GetSfsIntegral(int row, int col, int j, int k, int n, int m) {
@@ -184,21 +172,17 @@ namespace Fluid.ChannelFlow {
                if(transJ > transK) {                           // j has to be smaller than k at entry.
                   Swap<int>(ref j, ref k);
                   transJ = (15 - j) % 12;
-                  transK = (15 - k) % 12; 
-               }
+                  transK = (15 - k) % 12; }
                transK -= transJ;                               // Shift to account for upper fact.
-               return _StiffnessIntegrals[row][transCol][transJ][transK][n][m];
-            }
+               return _StiffnessIntegrals[row][transCol][transJ][transK][n][m]; }
             else if(col < 20) {
                transCol = col - 10;
                if(k < j)
                   Swap(ref j, ref k);
                transK = k - j;                                                     // Account fot the fact that k is always such that [j][k] forms an upper left triangular matrix.
-               return _StiffnessIntegrals[row][transCol][j][transK][n][m];
-            }
+               return _StiffnessIntegrals[row][transCol][j][transK][n][m]; }
             else
-               throw new ArgumentOutOfRangeException("Column index too big, above 19.");
-         }
+               throw new ArgumentOutOfRangeException("Column index too big, above 19."); }
          else
             throw new ArgumentOutOfRangeException("Row index too big, above 22.");
       }
@@ -214,15 +198,12 @@ namespace Fluid.ChannelFlow {
             else if(col < 10) {             // Left side. We have to mirror functions across y axis.
                transCol = 9 - col;
                transJ = (15 - j) % 12;
-               return _ForcingIntegrals[row][transCol][transJ][n];
-            }
+               return _ForcingIntegrals[row][transCol][transJ][n]; }
             else if(col < 20) {
                transCol = col - 10;
-               return _ForcingIntegrals[row][transCol][j][n];
-            }
+               return _ForcingIntegrals[row][transCol][j][n]; }
             else
-               throw new ArgumentOutOfRangeException("Column index too big, above 19.");
-         }
+               throw new ArgumentOutOfRangeException("Column index too big, above 19."); }
          else
             throw new ArgumentOutOfRangeException("Row index too big, above 22.");
       }
@@ -231,8 +212,7 @@ namespace Fluid.ChannelFlow {
          for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col) {
                TB.Reporter.Write($"Element ({row},{col}).");
-               AddEmtContribToSfsMatrix(A, row, col, dt, ni);
-            }
+               AddEmtContribToSfsMatrix(A, row, col, dt, ni); }
       }
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       void AddEmtContribToSfsMatrix(SparseMat A, int row, int col, double dt, double ni) {
@@ -251,8 +231,7 @@ namespace Fluid.ChannelFlow {
                      A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] +=
                         subResult[subResultRow][subResultCol];
                      A[globalColBelt * 8 + subResultCol][globalRowBelt * 8 + subResultRow] +=
-                        subResult[subResultRow][subResultCol];
-            }     }
+                        subResult[subResultRow][subResultCol]; } }
       }
       /// <summary>Creates an 8 x 8 submatrix of a 96 x 96 element matrix for some choice of j,k = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function. k >= j</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><remarks>Is only valid for k >= j. Make use of fact that for a fixed element (fixed row and col) submatrix at (j,k) is equal to submatrix at (k,j).</remarks>
       double[][] SubMatrix(int row, int col, int j, int k, double dt, double ni) {
@@ -261,19 +240,20 @@ namespace Fluid.ChannelFlow {
          for(int i = 0; i < 8; ++i)
             subMatrix[i] = new double[8];
          A[0] = new double[3][][];                                                   // Create operators for node1. For 3 different matrices A0, A1, A2.
-         A[0][0] = NodeOperatorMatrix0(ref NodeStd(row, col, j), dt, ni);
+         A[0][0] = NodeOperatorMat0(NodeStd(row, col, j), dt, ni);
          A[0][0].Transpose();
-         A[0][1] = NodeOperatorMatrix1(ref NodeStd(row, col, j), dt, ni);
+         A[0][1] = NodeOperatorMat1(NodeStd(row, col, j), dt, ni);
          A[0][1].Transpose();
-         A[0][2] = NodeOperatorMatrix1(ref NodeStd(row, col, j), dt, ni);
+         A[0][2] = NodeOperatorMat1(NodeStd(row, col, j), dt, ni);
          A[0][2].Transpose();
          A[1] = new double[3][][];                                                   // Create operators for node1.
-         A[1][0] = NodeOperatorMatrix0(ref NodeStd(row, col, k), dt, ni);
-         A[1][1] = NodeOperatorMatrix1(ref NodeStd(row, col, k), dt, ni);
-         A[1][2] = NodeOperatorMatrix1(ref NodeStd(row, col, k), dt, ni);
+         A[1][0] = NodeOperatorMat0(NodeStd(row, col, k), dt, ni);
+         A[1][1] = NodeOperatorMat1(NodeStd(row, col, k), dt, ni);
+         A[1][2] = NodeOperatorMat1(NodeStd(row, col, k), dt, ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               subMatrix.AddTo(Mul(GetSfsIntegral(row, col, j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
+               subMatrix.AddTo(GetSfsIntegral(row, col, j, k, n, m).Mul(
+                  A[0][NewN(n)].Dot(A[1][NewN(m)])));
          return subMatrix;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
@@ -282,80 +262,86 @@ namespace Fluid.ChannelFlow {
       public override void AddContribsToFcgVector(SparseRow b, double dt, double ni) {
          for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col)
-               AddElementContributionToForcingVector(b, row, col, dt, ni);
+               AddEmtContribToFcgVec(b, row, col, dt, ni);
       }
       /// <summary>Add contribution from element at specified row and col to global forcing vector.</summary><param name="b">Global forcing vector.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      void AddElementContributionToForcingVector(SparseRow b, int row, int col, double dt, double ni) {
-         double[] subVector;
-         int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
+      void AddEmtContribToFcgVec(SparseRow b, int row, int col, double dt, double ni) {
+         double[] subVec;
+         int gblRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
          for(int j = 0; j < 12; ++j) {                               // Over basis functions.
-            subVector = SubVector(row, col, j, dt, ni);             // 8 x 8 matrix which has to be added to global stiffness matrix.
-            globalRowBelt = GblInxFromStdInx(row, col, j);
-            for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
-               b[globalRowBelt * 8 + subResultRow] += subVector[subResultRow];
-         }
+            subVec = SubVec(row, col, j, dt, ni);             // 8 x 8 matrix which has to be added to global stiffness matrix.
+            gblRowBelt = GblInxFromStdInx(row, col, j);
+            for(int subResRowInx = 0; subResRowInx < 8; ++subResRowInx)
+               b[gblRowBelt * 8 + subResRowInx] += subVec[subResRowInx]; }
       }
       /// <summary>Creates an 8 element subvector of a 96 element forcing vector  for some choice of j = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><param name=x>Previous values of variables at point (row,col,j).</param>
-      double[] SubVector(int row, int col, int j, double dt, double ni) {
+      double[] SubVec(int row, int col, int j, double dt, double ni) {
          var subVector = new double[8];
-         ref var node = ref NodeStd(row, col, j);
+         var node = NodeStd(row, col, j);
          var A = new double[3][][];                                                      // For three different operators A.            
-         A[0] = NodeOperatorMatrix0(ref node, dt, ni);                // Create 3 different matrices A0, A1, A2.
+         A[0] = NodeOperatorMat0(node, dt, ni);                // Create 3 different matrices A0, A1, A2.
          A[0].Transpose();
-         A[1] = NodeOperatorMatrix1(ref node, dt, ni);
+         A[1] = NodeOperatorMat1(node, dt, ni);
          A[1].Transpose();
-         A[2] = NodeOperatorMatrix1(ref node, dt, ni);
+         A[2] = NodeOperatorMat2(node, dt, ni);
          A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
-         double[][] fCoeffs = new double[8][];                                           // Coefficients accompanying terms in f vector.
-         fCoeffs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val, -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
-         fCoeffs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val, -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
-         fCoeffs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
-         fCoeffs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
-         fCoeffs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
-         fCoeffs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
-         fCoeffs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
-         fCoeffs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
+         double[][] fCoefs = new double[8][];                                           // Coefficients accompanying terms in f vector.
+         fCoefs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val,
+            -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
+         fCoefs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val,
+            -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
+         fCoefs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
+         fCoefs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
+         fCoefs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
+         fCoefs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
+         fCoefs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
+         fCoefs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
                for(int matCol = 0; matCol < 2; ++matCol)
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(row,col,j,j,n,0) +   // A[pick matrix][pick row][pick col]
-                     fCoeffs[0][1] * (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,2)) +
-                     fCoeffs[0][2] * (GetSfsIntegral(row,col,j,j,n,3) + GetSfsIntegral(row,col,j,j,n,4)) +
-                     fCoeffs[0][3] * GetForcingIntegral(row,col,j,n));
-               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoeffs[2][0] * GetSfsIntegral(row,col,j,j,n,0) + 
-               fCoeffs[2][1] * (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoeffs[3][0] * GetSfsIntegral(row,col,j,j,n,0) + 
-               fCoeffs[3][1] * (GetSfsIntegral(row,col,j,j,n,2) + GetSfsIntegral(row,col,j,j,n,4)));
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoefs[matCol][0] *    // A[pick matrix][pick row][pick col]
+                     GetSfsIntegral(row,col,j,j,n,0) + fCoefs[0][1] *
+                     (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,2)) +
+                     fCoefs[0][2] * (GetSfsIntegral(row,col,j,j,n,3) +
+                     GetSfsIntegral(row,col,j,j,n,4)) + fCoefs[0][3] *
+                     GetForcingIntegral(row,col,j,n));
+               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoefs[2][0] *
+                  GetSfsIntegral(row,col,j,j,n,0) + fCoefs[2][1] *
+                  (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoefs[3][0] *
+                  GetSfsIntegral(row,col,j,j,n,0) + fCoefs[3][1] *
+                  (GetSfsIntegral(row,col,j,j,n,2) + GetSfsIntegral(row,col,j,j,n,4)));
                for(int matCol = 4; matCol < 6; ++matCol)
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(row,col,j,j,n,0) + 
-                     fCoeffs[matCol][1] * (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][6] * (fCoeffs[6][0] * GetSfsIntegral(row,col,j,j,n,0) + 
-               fCoeffs[6][1] * (GetSfsIntegral(row,col,j,j,n,2) + GetSfsIntegral(row,col,j,j,n,4)));
-               aTf[vecRow] += A[NewN(n)][vecRow][7] * (fCoeffs[7][0] * (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)) +
-                  fCoeffs[7][1] * (GetSfsIntegral(row,col,j,j,n,2) + GetSfsIntegral(row,col,j,j,n,4)));
-            }
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoefs[matCol][0] *
+                  GetSfsIntegral(row,col,j,j,n,0) + fCoefs[matCol][1] *
+                  (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][6] * (fCoefs[6][0] *
+                  GetSfsIntegral(row,col,j,j,n,0) + fCoefs[6][1] *
+                  (GetSfsIntegral(row,col,j,j,n,2) + GetSfsIntegral(row,col,j,j,n,4)));
+               aTf[vecRow] += A[NewN(n)][vecRow][7] * (fCoefs[7][0] *
+                  (GetSfsIntegral(row,col,j,j,n,1) + GetSfsIntegral(row,col,j,j,n,3)) +
+                  fCoefs[7][1] * (GetSfsIntegral(row,col,j,j,n,2) +
+                  GetSfsIntegral(row,col,j,j,n,4))); }
          return aTf;
 
-         int NewN(int n) {                       // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
-               return n < 3 ? n : n - 2;
-         }
+         int NewN(int n) => n < 3 ? n : n - 2;                     // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
       }
       /// <summary>Determines whether point is inside Obstruction block which is itself a polygon.</summary><param name="pos">Point's position.</param>
-      public override bool IsPointInside(ref Pos pos) {
-         int nVertices = 2*(RowCount+ColCount);                                // Construct vertices array.
+      public override bool IsPointInside(in Pos pos) {
+         int nVertices = 2*(NRows+NCols);                                // Construct vertices array.
          var vertices = new Pos[nVertices];
          int counter = 0;
-         for(int col = 0; col < ColCount; ++col) {                              // Add vertices on lower edge.
+         for(int col = 0; col < NCols; ++col) {                              // Add vertices on lower edge.
                vertices[counter] = NodeStd(0, col, 0)._Pos;
                ++counter; }
-         for(int row = 0; row < RowCount; ++row) {                              // Add vertices on right edge.
-               vertices[counter] = NodeStd(row, ColCount - 1, 3)._Pos;
+         for(int row = 0; row < NRows; ++row) {                              // Add vertices on right edge.
+               vertices[counter] = NodeStd(row, NCols - 1, 3)._Pos;
                ++counter; }
-         for(int col = ColCount - 1; col > 0; --col) {                          // Add vertices on upper edge.
-               vertices[counter] = NodeStd(RowCount - 1, col, 6)._Pos;
+         for(int col = NCols - 1; col > 0; --col) {                          // Add vertices on upper edge.
+               vertices[counter] = NodeStd(NRows - 1, col, 6)._Pos;
                ++counter; }
-         for(int row = RowCount - 1; row > 0; --row) {                          // Add vertices on left edge.
+         for(int row = NRows - 1; row > 0; --row) {                          // Add vertices on left edge.
                vertices[counter] = NodeStd(row, 0, 9)._Pos;
                ++counter; }
          return pos.IsInsidePolygon(vertices);

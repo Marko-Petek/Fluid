@@ -5,6 +5,7 @@ using Fluid.Internals.Meshing;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Numerics {
+   using dbl = Double;
    /// <summary>A quadrilateral element.</summary>
    public struct Tetragon {
       /// <summary>Lower left vertex position in terms of x and y.</summary>
@@ -15,28 +16,70 @@ namespace Fluid.Internals.Numerics {
       public Pos _UR;
       /// <summary>Upper left vertex position in terms of x and y..</summary>
       public Pos _UL;
+      // Matrices to compute inverse transformation of specified element.
+      double[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
 
-      /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="lL">Lower left vertex position.</param><param name="lR">Lower right vertex position.</param><param name="uR">Upper right vertex position.</param><param name="uL">Upper left vertex position.</param>
-      public Tetragon(in Pos lL, in Pos lR, in Pos uR, in Pos uL) {
-         _LL = lL;
-         _LR = lR;
-         _UR = uR;
-         _UL = uL;
+      /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="ll">Lower left vertex position.</param><param name="lr">Lower right vertex position.</param><param name="ur">Upper right vertex position.</param><param name="ul">Upper left vertex position.</param>
+      public Tetragon(in Pos ll, in Pos lr, in Pos ur, in Pos ul) {
+         _LL = ll;
+         _LR = lr;
+         _UR = ur;
+         _UL = ul;
+         MA = new dbl[2][] {  new dbl[2] {_UL.X, _LR.X},
+                              new dbl[2] {_UL.Y, _LR.Y} };
+         MB = new dbl[2][] {  new dbl[2] {_UR.X, _LL.X},
+                              new dbl[2] {_UR.Y, _LL.Y} };
+         MC = new dbl[2][] {  new dbl[2] {_LR.X, _LL.X},
+                              new dbl[2] {_UL.Y, _UR.Y} };
+         MD = new dbl[2][] {  new dbl[2] {_UL.X, _UR.X},
+                              new dbl[2] {_LR.Y, _LL.Y} };
+         MF = new dbl[2][] {  new dbl[2] {_LR.X - _LL.X, 0.0},
+                              new dbl[2] {0.0 , _UL.X - _UR.X} };
+         MG = new dbl[2][] {  new dbl[2] {_LR.Y - _LL.Y, 0.0},
+                              new dbl[2] {0.0 , _UL.Y - _UR.Y} };
+         MH = new dbl[2][] {  new dbl[2] {_UL.Y + _UR.Y, 0.0},
+                              new dbl[2] {0.0 , -_LR.Y - _LL.Y} };
+         MJ = new dbl[2][] {  new dbl[2] {_UL.X + _UR.X, 0.0},
+                              new dbl[2] {0.0 , -_LR.X - _LL.X} };
+         NA = new dbl[2][] {  new dbl[2] {_UL.X, _UR.X},
+                              new dbl[2] {_UL.Y, _UR.Y} };
+         NB = new dbl[2][] {  new dbl[2] {_LL.X, _LR.X},
+                              new dbl[2] {_LL.Y, _LR.Y} };
       }
-      public Tetragon(double lLX, double lLY, double lRX, double lRY, double uRX, double uRY, double uLX, double uLY) {
-         _LL = new Pos(lLX, lLY);
-         _LR = new Pos(lRX, lRY);
-         _UR = new Pos(uRX, uRY);
-         _UL = new Pos(uLX, uLY);
+      public Tetragon(dbl llx, dbl lly, dbl lrx, dbl lry, dbl urx, dbl ury, dbl ulx, dbl uly) {
+         _LL = new Pos(llx, lly);
+         _LR = new Pos(lrx, lry);
+         _UR = new Pos(urx, ury);
+         _UL = new Pos(ulx, uly);
+         MA = new dbl[2][] {  new dbl[2] {_UL.X, _LR.X},
+                              new dbl[2] {_UL.Y, _LR.Y} };
+         MB = new dbl[2][] {  new dbl[2] {_UR.X, _LL.X},
+                              new dbl[2] {_UR.Y, _LL.Y} };
+         MC = new dbl[2][] {  new dbl[2] {_LR.X, _LL.X},
+                              new dbl[2] {_UL.Y, _UR.Y} };
+         MD = new dbl[2][] {  new dbl[2] {_UL.X, _UR.X},
+                              new dbl[2] {_LR.Y, _LL.Y} };
+         MF = new dbl[2][] {  new dbl[2] {_LR.X - _LL.X, 0.0},
+                              new dbl[2] {0.0 , _UL.X - _UR.X} };
+         MG = new dbl[2][] {  new dbl[2] {_LR.Y - _LL.Y, 0.0},
+                              new dbl[2] {0.0 , _UL.Y - _UR.Y} };
+         MH = new dbl[2][] {  new dbl[2] {_UL.Y + _UR.Y, 0.0},
+                              new dbl[2] {0.0 , -_LR.Y - _LL.Y} };
+         MJ = new dbl[2][] {  new dbl[2] {_UL.X + _UR.X, 0.0},
+                              new dbl[2] {0.0 , -_LR.X - _LL.X} };
+         NA = new dbl[2][] {  new dbl[2] {_UL.X, _UR.X},
+                              new dbl[2] {_UL.Y, _UR.Y} };
+         NB = new dbl[2][] {  new dbl[2] {_LL.X, _LR.X},
+                              new dbl[2] {_LL.Y, _LR.Y} };
       }
 
       /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary><param name="pos">Position in terms of global x and y.</param>
-      public Pos ReferenceSquareCoords(in Pos pos) {
+      public Pos RefSquareCoords(in Pos pos) {
          double a = FuncA(in pos);
          double b = FuncB(in pos);
          double c = FuncC(in pos);
-         double detMALessMB = Sub(MA(), MB()).Det();
-         double detNALessNB = Sub(NA(), NB()).Det();
+         double detMALessMB = MA.Sub(MB).Det();     //Sub(MA(), MB()).Det();
+         double detNALessNB = NA.Sub(NB).Det();     //Sub(NA(), NB()).Det();
          double ksi = 0.0;
          double eta = 0.0;
          if(pos.X*pos.Y >= 0) {                                          // Quadrants I and III.
@@ -60,32 +103,11 @@ namespace Fluid.Internals.Numerics {
          return new Pos(ksi, eta);
       }
       double FuncA(in Pos pos) =>
-         pos.X * MG().Tr() - pos.Y * MF().Tr() + NA().Det() - NB().Det();
+         pos.X * MG.Tr() - pos.Y * MF.Tr() + NA.Det() - NB.Det();
       double FuncB(in Pos pos) =>
-         pos.X * MG().Tr() - pos.Y * MF().Tr() + MC().Det() + MD().Det();
+         pos.X * MG.Tr() - pos.Y * MF.Tr() + MC.Det() + MD.Det();
       double FuncC(in Pos pos) =>
-         Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Add(MA(), MB()).Det());
-      // Matrices to compute inverse transformation of specified element.
-      double[][] MA() => new double[2][] {new double[2] {_UL.X, _LR.X},
-                                          new double[2] {_UL.Y, _LR.Y} };
-      double[][] MB() => new double[2][] {new double[2] {_UR.X, _LL.X},
-                                          new double[2] {_UR.Y, _LL.Y} };
-      double[][] MC() => new double[2][] {new double[2] {_LR.X, _LL.X},
-                                          new double[2] {_UL.Y, _UR.Y} };
-      double[][] MD() => new double[2][] {new double[2] {_UL.X, _UR.X},
-                                          new double[2] {_LR.Y, _LL.Y} };
-      double[][] MF() => new double[2][] {new double[2] {_LR.X - _LL.X, 0.0},
-                                          new double[2] {0.0 , _UL.X - _UR.X} };
-      double[][] MG() => new double[2][] {new double[2] {_LR.Y - _LL.Y, 0.0},
-                                          new double[2] {0.0 , _UL.Y - _UR.Y} };
-      double[][] MH() => new double[2][] {new double[2] {_UL.Y + _UR.Y, 0.0},
-                                          new double[2] {0.0 , -_LR.Y - _LL.Y} };
-      double[][] MJ() => new double[2][] {new double[2] {_UL.X + _UR.X, 0.0},
-                                          new double[2] {0.0 , -_LR.X - _LL.X} };
-      double[][] NA() => new double[2][] {new double[2] {_UL.X, _UR.X},
-                                          new double[2] {_UL.Y, _UR.Y} };
-      double[][] NB() => new double[2][] {new double[2] {_LL.X, _LR.X},
-                                          new double[2] {_LL.Y, _LR.Y} };
+         MA.Sub(MB).Det()*(2*pos.X*MH.Tr() - 2*pos.Y*MJ.Tr() + MA.Add(MB).Det());
       /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
       double DistanceToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in _LL, in _LR);    // Vector from lower left to lower right vertex.

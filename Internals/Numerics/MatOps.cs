@@ -47,7 +47,7 @@ namespace Fluid.Internals.Numerics {
                   mat.Swap<double>(row, rowIndices[i], row, colIndices[i]);
       }
       /// <summary>Dot two matrices.</summary><param name="mat1">Left operand.</param><param name="mat2">Right operand.</param>
-      public static double[][] Dot(double[][] mat1, double[][] mat2) {
+      public static double[][] Dot(this double[][] mat1, double[][] mat2) {
          if(mat1.Length == mat2.Length) {
             double[][] result = new double[mat1.Length][];
             for(int i = 0; i < mat1.Length; ++i) {
@@ -58,7 +58,7 @@ namespace Fluid.Internals.Numerics {
          throw new ArgumentException("The two arrays multiplied have to have the same dimension.");
       }
       /// <summary>Multiply a scalar with a matrix.</summary><param name="dbl">Scalar.</param><param name="mat">Matrix.</param>
-      public static double[][] Mul(double dbl, double[][] mat) {
+      public static double[][] Mul(this double dbl, double[][] mat) {
          double[][] result = new double[mat.Length][];
          for(int i = 0; i < mat.Length; ++i) {
             result[i] = new double[mat[i].Length];

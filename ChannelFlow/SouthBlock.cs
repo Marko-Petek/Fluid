@@ -54,7 +54,7 @@ namespace Fluid.ChannelFlow {
       protected override int ApplyConstraints() {
          int col = 0;
          int constraintsCount = 0;
-         while(col < ColCount) {                                            // Col 0 - 22
+         while(col < NCols) {                                            // Col 0 - 22
             for(int element = 2; element < 5; ++element) {                  // Obstruction boundary.
                NodeCmt(0, col, element).Constrainedness(0) = true;      // u, 0 is set implicitly for both u and v due to them being value types.
                NodeCmt(0, col, element).Constrainedness(1) = true;      // v
@@ -79,12 +79,12 @@ namespace Fluid.ChannelFlow {
       }
       void MoveNodesToMainMesh() {
          int posCount = ChannelMesh.PositionCount;                         // mapping
-         var blockToGlobal = new int[RowCount + 1][][];
+         var blockToGlobal = new int[NRows + 1][][];
          int row = 0, col = 0;                             
-         while(row < RowCount) {                                                // Row 0 - 22.
-            blockToGlobal[row] = new int[ColCount + 1][];
+         while(row < NRows) {                                                // Row 0 - 22.
+            blockToGlobal[row] = new int[NCols + 1][];
             col = 0;
-            while(col < ColCount) {                                            // Col 0 - 19.
+            while(col < NCols) {                                            // Col 0 - 19.
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row,col,node);
@@ -102,8 +102,8 @@ namespace Fluid.ChannelFlow {
             ++row;
          }
          col = 0;                                                    // Row 23.
-         blockToGlobal[row] = new int[ColCount + 1][];
-         while(col < ColCount) {                                         // Col 0 - 19
+         blockToGlobal[row] = new int[NCols + 1][];
+         while(col < NCols) {                                         // Col 0 - 19
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
@@ -123,8 +123,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;        // Apply local to field.
          ChannelMesh.PositionCount = posCount;                   // Last global index to pass to next block which will generate local to global mapping.
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeCmtGlobal;                              // Rewire.
-         NodeStd = NodeStdGlobal;
+         NodeCmt = NodeOnMeshCmt;                              // Rewire.
+         NodeStd = NodeOnMeshStd;
       }
    }
 }

@@ -6,8 +6,8 @@ using Fluid.Internals.Numerics;
 namespace Fluid.Tests.Mocks {
    public class ObstructionBlockMock : ObstructionBlock {
       public ObstructionBlockMock() {
-         RowCount = 2;
-         ColCount = 2;
+         NRows = 2;
+         NCols = 2;
       }
 
       protected override int ApplyConstraints() {
@@ -26,7 +26,7 @@ namespace Fluid.Tests.Mocks {
       protected override Pos CalcUpperBoundaryPos(double eta) {
          throw new NotImplementedException();
       }
-      public override double[] Solution(ref Pos pos, params int[] vars) {
+      public override double[] Solution(in Pos pos, params int[] vars) {
          throw new NotImplementedException();
       }
    }

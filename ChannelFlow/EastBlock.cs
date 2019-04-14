@@ -74,13 +74,13 @@ namespace Fluid.ChannelFlow {
       }
       protected void MoveNodesToMainMesh(NorthBlock northBlock, SouthBlock southBlock) {
          int posCount = ChannelMesh.PositionCount;
-         var blockToGlobal = new int[RowCount + 1][][];
+         var blockToGlobal = new int[NRows + 1][][];
          int row = 0;
          int col = 0;
          var northMap = northBlock.CmtInxToGblInxMap;          // We will need NorthBlock's map.
          var southMap = southBlock.CmtInxToGblInxMap;          // We will also need SouthBlock's map.
-         while(row < RowCount) {                                            // Rows 0 - 22
-            blockToGlobal[row] = new int[ColCount + 1][];
+         while(row < NRows) {                                            // Rows 0 - 22
+            blockToGlobal[row] = new int[NCols + 1][];
             col = 0;
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 3; ++node)                               // Col 0, take in nodes from Col 20 of NorthBlock.
@@ -90,7 +90,7 @@ namespace Fluid.ChannelFlow {
                blockToGlobal[row][col][node] = posCount++;
             }
             col = 1;
-            while(col < ColCount) {                                            // Cols 1 - 19
+            while(col < NCols) {                                            // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
@@ -106,7 +106,7 @@ namespace Fluid.ChannelFlow {
             ++row;
          }
          col = 0;                                                    // Row 23.
-         blockToGlobal[row] = new int[ColCount+1][];
+         blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                           // Col 0, take in node from Col 20 of NorthBlock.
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
@@ -116,7 +116,7 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][node] = posCount++;
          }
          col = 1;
-         while(col < ColCount) {                                         // Cols 1 - 19
+         while(col < NCols) {                                         // Cols 1 - 19
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
@@ -135,8 +135,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeCmtGlobal;                              // Rewire.
-         NodeStd = NodeStdGlobal;
+         NodeCmt = NodeOnMeshCmt;                              // Rewire.
+         NodeStd = NodeOnMeshStd;
       }
    }
 }

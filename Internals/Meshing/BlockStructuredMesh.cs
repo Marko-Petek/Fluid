@@ -38,6 +38,6 @@ namespace Fluid.Internals.Meshing {
       }
 
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
-      public abstract double[] Solution(ref Pos pos, params int[] vars);
+      public abstract double[] Solution(in Pos pos, params int[] vars);
    }
 }

@@ -9,7 +9,7 @@ namespace Fluid.Internals.Meshing {
    using SparseMat = SparseMat<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
    /// <summary>Represents a method that takes three indices and returns a position by reference.</summary>
-   public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
+   //public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
 
    // cmt = compact, std = standard, lcl = local, gbl = global; descriptors connected to position indices.
    /// <summary>A structured submesh that provides access to global node indices via element indices.</summary>
@@ -17,9 +17,9 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Owner mesh. Access to global nodes list.</summary>
       public BlockStructuredMesh MainMesh { get; protected set; }
       /// <summary>Number of rows of elements.</summary>
-      public int RowCount { get; protected set; }
+      public int NRows { get; protected set; }
       /// <summary>Number of columns of elements.</summary>
-      public int ColCount { get; protected set; }
+      public int NCols { get; protected set; }
       /// <summary>Node positions in compact form.</summary>
       protected MeshNode[][][] _Nodes;
       /// <summary>Node positions in compact form.</summary>
@@ -31,58 +31,55 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Number of unique constraints set on this block.</summary>
       public int NConstraints { get; protected set; }
       /// <summary>Get reference to Position with specified compact index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
-      public NodeDelegate NodeCmt;
+      public Func<int,int,int,MeshNode> NodeCmt;
       /// <summary>Get reference to Position with specified standard index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
-      public NodeDelegate NodeStd;
-
-
+      public Func<int,int,int,MeshNode> NodeStd;
 
       /// <summary>Intended for testing.</summary>
       public MeshBlock() { }
       /// <summary>Create a SubMesh and assign reference to main mesh.</summary><param name="mainMesh">Owner of this submesh who will use it fill _indexMap, mapping positions to _globalNodes list.</param>
       public MeshBlock(BlockStructuredMesh mainMesh) {
          MainMesh = mainMesh;
-         NodeCmt = NodeCmtLocal;
-         NodeStd = NodeStdLocal;
+         NodeCmt = NodeOnBlockCmt;
+         NodeStd = NodeOnBlockStd;
       }
 
-      /// <summary>Get reference to Position (residing on MeshBlock) with specified compact index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="compactPosIndex">Compact element node position index (0 - 4).</param>
-      ref MeshNode NodeCmtLocal(int blockRow, int blockCol, int compactPosIndex) {
-         return ref _Nodes[blockRow][blockCol][compactPosIndex];
+      /// <summary>Get reference to Position (residing on MeshBlock) with specified compact index.</summary><param name="rowCmtInx">Row of element (in which sought after position is located) inside block.</param><param name="colCmtInx">Column of element (in which sought after position is located) inside block.</param><param name="inrCmtInx">Compact element (inner) node position index (0 - 4).</param>
+      MeshNode NodeOnBlockCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) =>
+         Nodes[rowCmtInx][colCmtInx][inrCmtInx];
+      /// <summary>Get reference to Position (residing on MeshBlock) with specified standard index.</summary><param name="rowStdInx">Row of element (in which sought after position is located) inside block.</param><param name="colStdInx">Column of element (in which sought after position is located) inside block.</param><param name="inrStdInx">Standard element position index (0 - 11).</param>
+      MeshNode NodeOnBlockStd(int rowStdInx, int colStdInx, int inrStdInx) {
+         (int rowCmtInx, int colCmtInx, int inrCmrInx) =
+            CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
+         return Nodes[rowCmtInx][colCmtInx][inrCmrInx];
       }
-      /// <summary>Get reference to Position (residing on MeshBlock) with specified standard index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param>
-      ref MeshNode NodeStdLocal(int blockRow, int blockCol, int standardPosIndex) {
-         (int actualBlockRow, int actualBlockCol, int compactPosIndex) =
-            CmtInxFromStdInx(blockRow, blockCol, standardPosIndex);
-         return ref _Nodes[actualBlockRow][actualBlockCol][compactPosIndex];
+      /// <summary>We switch the NodeCmp delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowCmtInx">Row of element (in which sought after position is located) inside block.</param><param name="colCmtInx">Column of element (in which sought after position is located) inside block.</param><param name="inrCmtInx">Compact element node position index (0 - 4).</param>
+      protected MeshNode NodeOnMeshCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) {
+         int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
+         return MainMesh.Node(gblInx);
       }
-      /// <summary>We switch the GetNodeCmp delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="compactPosIndex">Compact element node position index (0 - 4).</param>
-      protected ref MeshNode NodeCmtGlobal(int blockRow, int blockCol, int compactPosIndex) {
-         int globalIndex = GblInxFromCmpInx(blockRow, blockCol, compactPosIndex);
-         return ref MainMesh.Node(globalIndex);
+      /// <summary>We switch the GetNodeStd delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowStdInx">Row of element (in which sought after position is located) inside block.</param><param name="colStdInx">Column of element (in which sought after position is located) inside block.</param><param name="inrStdInx">Standard element position index (0 - 11).</param>
+      protected MeshNode NodeOnMeshStd(int rowStdInx, int colStdInx, int inrStdInx) {
+         (int rowCmtInx,int colCmtInx,int inrCmtInx) =
+            CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
+         int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
+         return MainMesh.Node(gblInx);
       }
-      /// <summary>We switch the GetNodeStd delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param>
-      protected ref MeshNode NodeStdGlobal(int blockRow, int blockCol, int standardPosIndex) {
-         (int actualBlockRow,int actualBlockCol,int compactPosIndex)
-         = CmtInxFromStdInx(blockRow, blockCol, standardPosIndex);
-         int globalIndex = GblInxFromCmpInx(actualBlockRow, actualBlockCol, compactPosIndex);
-         return ref MainMesh.Node(globalIndex);
-      }
-      /// <summary>Returns three actual indices (0 - 4) of node positions array when we specify them in conventional notation (0 -11).</summary><param name="blockRowArg">Row of element inside this block.</param><param name="blockColArg">Column of element inside this block.</param><param name="stdIndexArg">Index of node inside element (1 - 11).</param>
-      public (int blockRow,int blockCol,int cmtIndex) CmtInxFromStdInx(
-         int blockRowArg, int blockColArg, int stdIndexArg) {
-            if(blockRowArg < RowCount) {                                                     // Dummy elements at ends.
-               if(blockColArg < ColCount) {
-                  if(stdIndexArg < 3)
-                     return (blockRowArg, blockColArg, stdIndexArg + 2);
-                  else if(stdIndexArg < 6)
-                     return (blockRowArg, blockColArg + 1, 5 - stdIndexArg);
-                  else if(stdIndexArg == 6)
-                     return (blockRowArg + 1, blockColArg + 1, 2);
-                  else if(stdIndexArg < 10)
-                     return (blockRowArg + 1, blockColArg, 11 - stdIndexArg);
-                  else if(stdIndexArg < 12)
-                     return (blockRowArg, blockColArg, stdIndexArg - 10);
+      /// <summary>Returns three actual indices (0 - 4) of node positions array when we specify them in conventional notation (0 -11).</summary><param name="rowStdInx">Row of element inside this block.</param><param name="colStdInx">Column of element inside this block.</param><param name="inrStdInx">Index of node inside element (1 - 11).</param>
+      public (int rowCmtInx,int colCmtInx,int inrCmtInx) CmtInxFromStdInx(
+         int rowStdInx, int colStdInx, int inrStdInx) {
+            if(rowStdInx < NRows) {                                                     // Dummy elements at ends.
+               if(colStdInx < NCols) {
+                  if(inrStdInx < 3)
+                     return (rowStdInx, colStdInx, inrStdInx + 2);
+                  else if(inrStdInx < 6)
+                     return (rowStdInx, colStdInx + 1, 5 - inrStdInx);
+                  else if(inrStdInx == 6)
+                     return (rowStdInx + 1, colStdInx + 1, 2);
+                  else if(inrStdInx < 10)
+                     return (rowStdInx + 1, colStdInx, 11 - inrStdInx);
+                  else if(inrStdInx < 12)
+                     return (rowStdInx, colStdInx, inrStdInx - 10);
                   else
                      throw new IndexOutOfRangeException("Standard index above 11."); }
                else                                                                          // Cannot access dummy.
@@ -91,15 +88,14 @@ namespace Fluid.Internals.Meshing {
             else
                throw new IndexOutOfRangeException("Block row index of element to large.");
       }
-      /// <summary>Global position index in terms of compact position index.</summary><param name="blockRow">Element's row (in which sought after position is located) inside block.</param><param name="blockColumn">Element's column (in which sought after position is located) inside block.</param><param name="localNodeIndex">Compact index of position inside element (0 - 4).</param>
-      protected int GblInxFromCmpInx(int blockRow, int blockCol, int cmtIndex) {
-         return _CmtInxToGblInxMap[blockRow][blockCol][cmtIndex];
-      }
-      /// <summary>Global position index in terms of standard position index.</summary><param name="blockRowArg">Element's row (in which sought after position is located) inside block.</param><param name="blockColumn">Element's column (in which sought after position is located) inside block.</param><param name="localNodeIndex">Index of position inside element (0 - 11).</param>
-      protected int GblInxFromStdInx(int blockRowArg, int blockColArg, int stdIndex) {
-         (int blockRow,int blockCol,int cmtIndex) =
-            CmtInxFromStdInx(blockRowArg, blockColArg, stdIndex);
-         return _CmtInxToGblInxMap[blockRow][blockCol][cmtIndex];
+      /// <summary>Global position index in terms of compact position index.</summary><param name="rowCmtInx">Element's row (in which sought after position is located) inside block.</param><param name="blockColumn">Element's column (in which sought after position is located) inside block.</param><param name="localNodeIndex">Compact index of position inside element (0 - 4).</param>
+      protected int GblInxFromCmpInx(int rowCmtInx, int colCmtInx, int inrCmtInx) =>
+         _CmtInxToGblInxMap[rowCmtInx][colCmtInx][inrCmtInx];
+      /// <summary>Global position index in terms of standard position index.</summary><param name="rowStdInx">Element's row (in which sought after position is located) inside block.</param><param name="blockColumn">Element's column (in which sought after position is located) inside block.</param><param name="localNodeIndex">Index of position inside element (0 - 11).</param>
+      protected int GblInxFromStdInx(int rowStdInx, int colStdInx, int inrStdInx) {
+         (int rowCmtInx,int colCmtInx,int inrCmtInx) =
+            CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
+         return _CmtInxToGblInxMap[rowCmtInx][colCmtInx][inrCmtInx];
       }
       /// <summary>Fill list of node positions and let main mesh fill in local-to-global index map. Then rewire the Node delegate.</summary>
       protected abstract void CreateNodes();
@@ -109,7 +105,7 @@ namespace Fluid.Internals.Meshing {
       public abstract void AddContribsToSfsMatrix(SparseMat A, double dt, double ni);
       public abstract void AddContribsToFcgVector(SparseRow b, double dt, double ni);
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
-      protected double[][] NodeOperatorMatrix0(ref MeshNode node, double dt, double ni) {
+      protected double[][] NodeOperatorMat0(MeshNode node, double dt, double ni) {
          double[][] A = new double[8][] {
             new double[8] { 1.0/dt + node.Var(2).Val, node.Var(3).Val, node.Var(0).Val, node.Var(1).Val, 0, 0, 1, 0 },
             new double[8] { node.Var(4).Val, 1.0/dt - node.Var(2).Val, -node.Var(1).Val, 0, node.Var(0).Val, 0, 0, 1 },
@@ -121,7 +117,7 @@ namespace Fluid.Internals.Meshing {
             new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
          return A;
       }
-      protected double[][] NodeOperatorMatrix1(ref MeshNode node, double dt, double ni) {
+      protected double[][] NodeOperatorMat1(MeshNode node, double dt, double ni) {
          double[][] A = new double[8][] {
             new double[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
             new double[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
@@ -133,7 +129,7 @@ namespace Fluid.Internals.Meshing {
             new double[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
          return A;
       }
-      protected double[][] NodeOperatorMatrix2(ref MeshNode node, double dt, double ni) {
+      protected double[][] NodeOperatorMat2(MeshNode node, double dt, double ni) {
          double[][] A = new double[8][] {
             new double[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
             new double[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
@@ -146,13 +142,13 @@ namespace Fluid.Internals.Meshing {
          return A;
       }
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="x">X coordinate.</param><param name="y">Y coordinate.</param><param name="vars">Indices of variables we wish to retrieve.</param>
-      public virtual double[] Solution(ref Pos pos, params int[] vars) {
+      public virtual double[] Solution(in Pos pos, params int[] vars) {
          int startRow = 0;                                                          // Where current frame begins.
-         int endRow = RowCount - 1;                                                 // Where current frame ends.
+         int endRow = NRows - 1;                                                 // Where current frame ends.
          int startCol = 0;
-         int endCol = ColCount - 1;
-         int nRows = RowCount;                                                      // Row count of current frame.
-         int nCols = ColCount;
+         int endCol = NCols - 1;
+         int nRows = NRows;                                                      // Row count of current frame.
+         int nCols = NCols;
          var vertices = new Pos[4];
          vertices[0] = NodeStd(startRow, startCol, 0)._Pos;
          vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
@@ -188,30 +184,21 @@ namespace Fluid.Internals.Meshing {
                   vertices[0] = NodeStd(startRow, startCol, 0)._Pos; }
                nCols = endCol - startCol + 1;
          }  }                                                                        // At this point startCol and endCol have to be the same.
-         var quadElm = CreateQuadElement(startRow, startCol);                        // Quadrilateral that contains sought after point.
-         var squarePos = quadElm.ReferenceSquareCoords(ref pos);
-         double[] funcValues = quadElm.Values(in squarePos, vars);
+         var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
+         var squarePos = quadEmt.RefSquareCoords(in pos);
+         double[] funcValues = quadEmt.Values(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>
-      MeshElement CreateQuadElement(int stdRow, int stdCol) {
-         var quadElm = new MeshElement(
-            ref NodeStd(stdRow, stdCol, 0),
-            ref NodeStd(stdRow, stdCol, 1),
-            ref NodeStd(stdRow, stdCol, 2),
-            ref NodeStd(stdRow, stdCol, 3),
-            ref NodeStd(stdRow, stdCol, 4),
-            ref NodeStd(stdRow, stdCol, 5),
-            ref NodeStd(stdRow, stdCol, 6),
-            ref NodeStd(stdRow, stdCol, 7),
-            ref NodeStd(stdRow, stdCol, 8),
-            ref NodeStd(stdRow, stdCol, 9),
-            ref NodeStd(stdRow, stdCol, 10),
-            ref NodeStd(stdRow, stdCol, 11)
-         );
+      MeshElement CreateQuadEmt(int stdRow, int stdCol) {
+         var quadElm = new MeshElement(NodeStd(stdRow, stdCol, 0), NodeStd(stdRow, stdCol, 1),
+            NodeStd(stdRow, stdCol, 2), NodeStd(stdRow, stdCol, 3), NodeStd(stdRow, stdCol, 4),
+            NodeStd(stdRow, stdCol, 5), NodeStd(stdRow, stdCol, 6), NodeStd(stdRow, stdCol, 7),
+            NodeStd(stdRow, stdCol, 8), NodeStd(stdRow, stdCol, 9), NodeStd(stdRow, stdCol, 10),
+            NodeStd(stdRow, stdCol, 11) );
          return quadElm;
       }
       /// <summary>Determines whether specified position is inside MeshBlock.</summary><param name="pos">Point's position.</param>
-      public abstract bool IsPointInside(ref Pos pos);
+      public abstract bool IsPointInside(in Pos pos);
    }
 }

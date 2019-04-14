@@ -17,11 +17,10 @@ namespace Fluid.Internals.Meshing {
          double llx, double lly,
          double lrx, double lry,
          double urx, double ury,
-         double ulx, double uly
-      )
-      : base(mainMesh) {
-         _quadrilateral = new Tetragon(llx, lly,
-               lrx, lry, urx, ury, ulx, uly);
+         double ulx, double uly)
+         : base(mainMesh) {
+            _quadrilateral = new Tetragon(llx, lly,
+                  lrx, lry, urx, ury, ulx, uly);
       }
 
       /// <summary>Returns real-world position of upper boundary node located at a given arc length coordinate.</summary><param name="ksi">Arc length coordinate from 0 to 1.</param>
@@ -38,7 +37,6 @@ namespace Fluid.Internals.Meshing {
          var lowerBoundaryPos = CalcLowerBoundaryPos(ksi);
          var leftBoundaryPos = CalcLeftBoundaryPos(eta);
          var rightBoundaryPos = CalcRightBoundaryPos(eta);
-
          var x = (1 - ksi)*leftBoundaryPos.X  +  ksi*rightBoundaryPos.X  + 
                   (1 - eta)*lowerBoundaryPos.X  +  eta*upperBoundaryPos.X  -  
                   (1 - ksi)*(1 - eta)*_quadrilateral._LL.X - (1 - ksi)*eta*_quadrilateral._UL.X -
@@ -47,7 +45,6 @@ namespace Fluid.Internals.Meshing {
                   (1 - eta)*lowerBoundaryPos.Y  +  eta*upperBoundaryPos.Y  -  
                   (1 - ksi)*(1 - eta)*_quadrilateral._LL.Y - (1 - ksi)*eta*_quadrilateral._UL.Y -
                   (1 - eta)*ksi*_quadrilateral._LR.Y - ksi*eta*_quadrilateral._UR.Y;
-         
          return new Pos(x, y);
       }
       protected MeshNode CreateNode(double ksi, double eta) {
@@ -55,7 +52,6 @@ namespace Fluid.Internals.Meshing {
          var lowerBoundaryPos = CalcLowerBoundaryPos(ksi);
          var leftBoundaryPos = CalcLeftBoundaryPos(eta);
          var rightBoundaryPos = CalcRightBoundaryPos(eta);
-
          var x = (1 - ksi)*leftBoundaryPos.X  +  ksi*rightBoundaryPos.X  + 
                   (1 - eta)*lowerBoundaryPos.X  +  eta*upperBoundaryPos.X  -  
                   (1 - ksi)*(1 - eta)*_quadrilateral._LL.X - (1 - ksi)*eta*_quadrilateral._UL.X -
@@ -64,7 +60,6 @@ namespace Fluid.Internals.Meshing {
                   (1 - eta)*lowerBoundaryPos.Y  +  eta*upperBoundaryPos.Y  -  
                   (1 - ksi)*(1 - eta)*_quadrilateral._LL.Y - (1 - ksi)*eta*_quadrilateral._UL.Y -
                   (1 - eta)*ksi*_quadrilateral._LR.Y - ksi*eta*_quadrilateral._UR.Y;
-
          return new MeshNode(x, y, MainMesh.NVars);
       }
    }

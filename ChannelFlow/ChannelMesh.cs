@@ -58,21 +58,18 @@ namespace Fluid.ChannelFlow {
                0.0, 0.0,
                Width, 0.0, 
                Width, Width,
-               0.0, Width
-            );
+               0.0, Width );
             double tiltedRadiusX = 0.5 * Sqrt(2.0) * ObstructionRadius;                // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
             ObstructionRect = new Tetragon(                                           // Fixed.
                ObstructionX - tiltedRadiusX, ObstructionY - tiltedRadiusX,
                ObstructionX + tiltedRadiusX, ObstructionY - tiltedRadiusX,
                ObstructionX + tiltedRadiusX, ObstructionY + tiltedRadiusX,
-               ObstructionX - tiltedRadiusX, ObstructionY + tiltedRadiusX
-            );
+               ObstructionX - tiltedRadiusX, ObstructionY + tiltedRadiusX );
             RightRect = new Tetragon(                                                 // Fixed.
                Width, 0.0,
                4 * Width, 0.0,
                4 * Width, Width,
-               Width, Width
-            );
+               Width, Width );
             _Nodes = new MeshNode[15620];                                            TB.Reporter.Write($"Created global array of nodes of length {_Nodes.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
             SouthBlock = new SouthBlock(this, channelFlow);                          TB.Reporter.Write("Constructing WestBlock.", Verbose);
             WestBlock = new WestBlock(this, channelFlow, SouthBlock);                TB.Reporter.Write("Constructing NorthBlock.", Verbose);
@@ -81,8 +78,7 @@ namespace Fluid.ChannelFlow {
             RightBlock = new RightBlock(this, channelFlow, EastBlock,
                RightRect._LL.X, RightRect._LL.Y,
                RightRect._UR.X, RightRect._UR.Y,
-               20, 60
-            );                                                                       TB.Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
+               20, 60 );                                                             TB.Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
             WriteCornerPositionsOfRectElement();
       }
 
@@ -124,22 +120,22 @@ namespace Fluid.ChannelFlow {
          }
       }
       /// <summary>Returns solution (only specified variables) at any specified point inside solution domain which is [0,width]x[0,4*width]. Returns a set of double.NaN values for a point outside the domain.</summary><param name="pos">Position in terms of x ans y.</param><param name="vars">Desired variables in terms of variable indices.</param>
-      public override double[] Solution(ref Pos pos, params int[] vars) {
-         if(SouthBlock.IsPointInside(ref pos))                                // First determine if specified point is inside any block at all.
-            return SouthBlock.Solution(ref pos, vars);
-         else if(EastBlock.IsPointInside(ref pos))
-            return EastBlock.Solution(ref pos, vars);
-         else if(NorthBlock.IsPointInside(ref pos))
-            return NorthBlock.Solution(ref pos, vars);
-         else if(WestBlock.IsPointInside(ref pos))
-            return WestBlock.Solution(ref pos, vars);
-         else if(RightBlock.IsPointInside(ref pos))
-            return RightBlock.Solution(ref pos, vars);
+      public override double[] Solution(in Pos pos, params int[] vars) {
+         if(SouthBlock.IsPointInside(in pos))                                // First determine if specified point is inside any block at all.
+            return SouthBlock.Solution(in pos, vars);
+         else if(EastBlock.IsPointInside(in pos))
+            return EastBlock.Solution(in pos, vars);
+         else if(NorthBlock.IsPointInside(in pos))
+            return NorthBlock.Solution(in pos, vars);
+         else if(WestBlock.IsPointInside(in pos))
+            return WestBlock.Solution(in pos, vars);
+         else if(RightBlock.IsPointInside(in pos))
+            return RightBlock.Solution(in pos, vars);
          else {                                                               // Return Double.NaN for points outside domain.
             var outsideDomain = new double[vars.Length];
             for(int i = 0; i < vars.Length; ++i)
                outsideDomain[i] = double.NaN;
-            return outsideDomain;
-      }  }
+            return outsideDomain; }
+      }
    }
 }

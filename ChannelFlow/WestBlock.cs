@@ -57,23 +57,23 @@ namespace Fluid.ChannelFlow {
          double v0 = ChannelFlow.PeakInletVelocity;
          double w = ChannelMesh.Width;
                                                                               // Row 0 (obstruction).
-         for(int col = 0; col < ColCount; ++col) {                              // Col 0 - 20
+         for(int col = 0; col < NCols; ++col) {                              // Col 0 - 20
             for(int std = 0; std < 3; ++std)                                  // Obstruction boundary.
-               SetObstructionConstraints(ref NodeCmt(0, col, std));
-            SetCornerInletConstraints(ref NodeStd(22, col, 9));          // Row 22 (inlet), upper left corner. Set only corner nodes first for inlet. They are non-zero and if side node are to be set correctly, corner nodes must be set correctly first.
-         }
-         SetObstructionConstraints(ref NodeStd(0, 19, 3));                    // Lower right corner.
-         SetCornerInletConstraints(ref NodeStd(22, 19, 6));                   // Upper right corner.
-         for(int col = 0; col < ColCount; ++col)                          // Row 0 (obstruction). Now set side nodes for inlet.
-            SetSideInletConstraints(ref NodeStd(22, col, 9), ref NodeStd(22, col, 8), ref NodeStd(22, col, 7), ref NodeStd(22, col, 6));
+               SetObstructionConstraints(NodeCmt(0, col, std));
+            SetCornerInletConstraints(NodeStd(22, col, 9)); }         // Row 22 (inlet), upper left corner. Set only corner nodes first for inlet. They are non-zero and if side node are to be set correctly, corner nodes must be set correctly first.
+         SetObstructionConstraints(NodeStd(0,19,3));                    // Lower right corner.
+         SetCornerInletConstraints(NodeStd(22,19,6));                   // Upper right corner.
+         for(int col = 0; col < NCols; ++col)                          // Row 0 (obstruction). Now set side nodes for inlet.
+            SetSideInletConstraints(NodeStd(22,col,9), NodeStd(22,col,8), NodeStd(22,col,7),
+            NodeStd(22,col,6));
          return constraintCount;
 
-         void SetObstructionConstraints(ref MeshNode nodeRef) {
+         void SetObstructionConstraints(MeshNode nodeRef) {
             nodeRef.Constrainedness(0) = true;                                  // u, 0 is set implicitly for both u and v due to them being value types.
             nodeRef.Constrainedness(1) = true;                                  // v
             constraintCount += 2;
          }
-         void SetCornerInletConstraints(ref MeshNode nodeRef) {                         // Applied to corners of elements.
+         void SetCornerInletConstraints(MeshNode nodeRef) {                         // Applied to corners of elements.
             nodeRef.Constrainedness(0) = true;                                     // u = (4*v0/w)*y*(1-y/w)
             nodeRef.Var(0).Val = (4*v0/w) * nodeRef.GetY() * (1.0 - nodeRef.GetY()/w);
             nodeRef.Constrainedness(1) = true;                                     // v = 0
@@ -82,7 +82,7 @@ namespace Fluid.ChannelFlow {
             nodeRef.Constrainedness(5) = true;                                     // p = 0
             constraintCount += 4;
          }
-         void SetSideInletConstraints(ref MeshNode nodeRef9, ref MeshNode nodeRef8, ref MeshNode nodeRef7, ref MeshNode nodeRef6) {
+         void SetSideInletConstraints(MeshNode nodeRef9, MeshNode nodeRef8, MeshNode nodeRef7, MeshNode nodeRef6) {
             double u9 = nodeRef9.Var(0).Val;
             double h8 = (4*v0/w) * nodeRef8.GetY() * (1.0 - nodeRef8.GetY()/w);
             double h7 = (4*v0/w) * nodeRef7.GetY() * (1.0 - nodeRef7.GetY()/w);
@@ -108,59 +108,51 @@ namespace Fluid.ChannelFlow {
       }
       void MoveNodesToMainMesh(SouthBlock southBlock) {
          int posCount = ChannelMesh.PositionCount;
-         var blockToGlobal = new int[RowCount + 1][][];
+         var blockToGlobal = new int[NRows + 1][][];
          int row = 0;
          int col = 0;
          var southMap = southBlock.CmtInxToGblInxMap;      // We will need SouthBlock's map.
-         while(row < RowCount) {                                     // Rows 0 - 22
-            blockToGlobal[row] = new int[ColCount + 1][];
+         while(row < NRows) {                                     // Rows 0 - 22
+            blockToGlobal[row] = new int[NCols + 1][];
             col = 0;
             blockToGlobal[row][col] = new int[5];                      // Col 0. Take in nodes from Col 20 of SouthBlock.
             for(int node = 0; node < 3; ++node)
                blockToGlobal[row][col][node] = southMap[row][20][node];
             for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             col = 1;
-            while(col < ColCount) {                                     // Cols 1 - 19
+            while(col < NCols) {                                     // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-                  blockToGlobal[row][col][node] = posCount++;
-               }
-               ++col;
-            }
+                  blockToGlobal[row][col][node] = posCount++; }
+               ++col; }
             blockToGlobal[row][col] = new int[5];                      // Col 20
             for(int node = 0; node < 3; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             for(int node = 3; node < 5; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-            ++row;
-         }
+            ++row; }
          col = 0;                                                    // Row 23.
-         blockToGlobal[row] = new int[ColCount+1][];
+         blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                           // Col 0
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
          blockToGlobal[row][col][2] = southMap[row][20][2];    // Take in node from Col 20 of SouthBlock.
          for(int node = 3; node < 5; ++node) {
             ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-            blockToGlobal[row][col][node] = posCount++;
-         }
+            blockToGlobal[row][col][node] = posCount++; }
          col = 1;
-         while(col < ColCount) {                                         // Cols 1 - 19
+         while(col < NCols) {                                         // Cols 1 - 19
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
-            ++col;
-         }
+               blockToGlobal[row][col][node] = posCount++; }
+            ++col; }
          blockToGlobal[row][col] = new int[5];                           // Col 20
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
@@ -171,8 +163,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeCmtGlobal;                              // Rewire.
-         NodeStd = NodeStdGlobal;
+         NodeCmt = NodeOnMeshCmt;                              // Rewire.
+         NodeStd = NodeOnMeshStd;
       }
    }
 }

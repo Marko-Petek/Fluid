@@ -36,7 +36,7 @@ namespace Fluid.ChannelFlow {
       public RightBlock(ChannelMesh channelMesh, ChannelFlow channelFlow, EastBlock eastBlock,
          double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY,
          int rowCount, int columnCount)
-      : base(channelMesh, lowerLeftX, lowerLeftY, upperRightX, upperRightY,
+         : base(channelMesh, lowerLeftX, lowerLeftY, upperRightX, upperRightY,
          rowCount, columnCount) {
             ChannelMesh = channelMesh;
             ChannelFlow = channelFlow;
@@ -49,23 +49,20 @@ namespace Fluid.ChannelFlow {
       protected override int ApplyConstraints() {
          int constraintCount = 0;
          int col = 0;
-         while(col < ColCount) {                                            // Col 0 - 59
+         while(col < NCols) {                                            // Col 0 - 59
             for(int element = 2; element < 5; ++element) {                  // Upper Channel boundary.
                NodeCmt(20, col, element).Constrainedness(0) = true;     // u
                NodeCmt(20, col, element).Constrainedness(1) = true;     // v
                NodeCmt(20, col, element).Constrainedness(2) = true;     // a
                NodeCmt(20, col, element).Constrainedness(4) = true;     // c
-               constraintCount += 4;
-            }
+               constraintCount += 4; }
             for(int element = 2; element < 5; ++element) {                  // Lower Channel boundary.
                NodeCmt(0, col, element).Constrainedness(0) = true;      // u
                NodeCmt(0, col, element).Constrainedness(1) = true;      // v
                NodeCmt(0, col, element).Constrainedness(2) = true;      // a
                NodeCmt(0, col, element).Constrainedness(4) = true;      // c
-               constraintCount += 4;
-            }
-            ++col;
-         }                                                                   // Col 60
+               constraintCount += 4; }
+            ++col; }                                                                   // Col 60
          NodeCmt(20, col, 2).Constrainedness(0) = true;                   // Channel boundary, u.
          NodeCmt(20, col, 2).Constrainedness(1) = true;                   // v
          NodeCmt(20, col, 2).Constrainedness(2) = true;                   // a
@@ -79,12 +76,12 @@ namespace Fluid.ChannelFlow {
       }
       void MoveNodesToMainMesh(EastBlock eastBlock) {
          int posCount = ChannelMesh.PositionCount;
-         var blockToGlobal = new int[RowCount + 1][][];
+         var blockToGlobal = new int[NRows + 1][][];
          int row = 0;
          int col = 0;
          var eastMap = eastBlock.CmtInxToGblInxMap;           // We will need EastBlock's map.
          while(row < 20) {                                                   // Row 0 - 19
-            blockToGlobal[row] = new int[ColCount + 1][];
+            blockToGlobal[row] = new int[NCols + 1][];
             col = 0;                           
             blockToGlobal[row][col] = new int[5];
             blockToGlobal[row][col][0] = eastMap[23][19 - row][3];          // Col 0
@@ -92,47 +89,39 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][2] = eastMap[23][20 - row][2];
             for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             col = 1;
-            while(col < ColCount) {                                             // Col 1 - 59
+            while(col < NCols) {                                             // Col 1 - 59
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-                  blockToGlobal[row][col][node] = posCount++;
-               }
-               ++col;
-            }
+                  blockToGlobal[row][col][node] = posCount++; }
+               ++col; }
             blockToGlobal[row][col] = new int[5];                               // Col 60, last col.
             for(int node = 0; node < 3; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             for(int node = 3; node < 5; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-            ++row;
-         }                                      
+            ++row; }                                      
          col = 0;                                                            // Row 20
-         blockToGlobal[row] = new int[ColCount+1][];
+         blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                                   // Col 0
          for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
          blockToGlobal[row][col][2] = eastMap[23][0][2];
          for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-         }
+               blockToGlobal[row][col][node] = posCount++; }
          col = 1;
-         while(col < ColCount) {                                                 // Col 1 - 59
+         while(col < NCols) {                                                 // Col 1 - 59
             blockToGlobal[row][col] = new int[5]; 
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
-            ++col;
-         }
+               blockToGlobal[row][col][node] = posCount++; }
+            ++col; }
          blockToGlobal[row][col] = new int[5];                                   // Col 60
          for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
@@ -143,8 +132,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;                          // In our case, this now has to be 15 620.
          _Nodes = null;                                                  // Free memory on block.
-         NodeCmt = NodeCmtGlobal;                                  // Rewire.
-         NodeStd = NodeStdGlobal;
+         NodeCmt = NodeOnMeshCmt;                                  // Rewire.
+         NodeStd = NodeOnMeshStd;
       }
       /// <summary>Get an overlap integral of basis functions j and k. Get term n, m.</summary><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function.</param><param name="n">Factor row.</param><param name="m">Factor column.</param>
       double GetSfsIntegral(int j, int k, int n, int m) {
@@ -166,41 +155,42 @@ namespace Fluid.ChannelFlow {
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       void AddEmtContribToSfsMatrix(SparseMat A, int row, int col, double dt, double ni) {
          double[][] subResult;
-         int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
-         int globalColBelt;
+         int gblRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
+         int gblColBelt;
          for(int j = 0; j < 12; ++j)                               // Over first basis function.
             for(int k = j; k < 12; ++k) {                           // Over second basis function.
                subResult = SubMatrix(row, col, j, k, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
-               globalRowBelt = GblInxFromStdInx(row, col, j);
-               globalColBelt = GblInxFromStdInx(row, col, k);
-               for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
-                  for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.
-                     A[globalRowBelt * 8 + subResultRow][globalColBelt * 8 + subResultCol] += subResult[subResultRow][subResultCol];
-                     A[globalColBelt * 8 + subResultCol][globalRowBelt * 8 + subResultRow] += subResult[subResultRow][subResultCol];
-            }     }
+               gblRowBelt = GblInxFromStdInx(row, col, j);
+               gblColBelt = GblInxFromStdInx(row, col, k);
+               for(int subResRow = 0; subResRow < 8; ++subResRow)
+                  for(int subResCol = 0; subResCol < 8; ++subResCol) {                                                       // Using symmetry of global stiffness matrix.
+                     A[gblRowBelt * 8 + subResRow][gblColBelt * 8 + subResCol] +=
+                        subResult[subResRow][subResCol];
+                     A[gblColBelt * 8 + subResCol][gblRowBelt * 8 + subResRow] +=
+                        subResult[subResRow][subResCol]; } }
       }
       double[][] SubMatrix(int row, int col, int j, int k, double dt, double ni) {
-         double[][] subMatrix = new double[8][];
+         double[][] subMat = new double[8][];
          double[][][][] A = new double[2][][][];                                 // For two nodes j and k. Next dimension contains 3 elements: A0, A1, A2.
          for(int i = 0; i < 8; ++i)
-               subMatrix[i] = new double[8];
-         ref var node1 = ref NodeStd(row, col, j);
-         ref var node2 = ref NodeStd(row, col, k);
+            subMat[i] = new double[8];
+         var node1 = NodeStd(row, col, j);
+         var node2 = NodeStd(row, col, k);
          A[0] = new double[3][][];                                               // Create operators for node1. For 3 different matrices A0, A1, A2.
-         A[0][0] = NodeOperatorMatrix0(ref node1, dt, ni);
+         A[0][0] = NodeOperatorMat0(node1, dt, ni);
          A[0][0].Transpose();
-         A[0][1] = NodeOperatorMatrix1(ref node1, dt, ni);
+         A[0][1] = NodeOperatorMat1(node1, dt, ni);
          A[0][1].Transpose();
-         A[0][2] = NodeOperatorMatrix1(ref node1, dt, ni);
+         A[0][2] = NodeOperatorMat2(node1, dt, ni);
          A[0][2].Transpose();
          A[1] = new double[3][][];                                                   // Create operators for node1.
-         A[1][0] = NodeOperatorMatrix0(ref node2, dt, ni);
-         A[1][1] = NodeOperatorMatrix1(ref node2, dt, ni);
-         A[1][2] = NodeOperatorMatrix1(ref node2, dt, ni);
+         A[1][0] = NodeOperatorMat0(node2, dt, ni);
+         A[1][1] = NodeOperatorMat1(node2, dt, ni);
+         A[1][2] = NodeOperatorMat2(node2, dt, ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               subMatrix.AddTo(Mul(GetSfsIntegral(j, k, n, m), Dot(A[0][NewN(n)], A[1][NewN(m)])));
-         return subMatrix;
+               subMat.AddTo(GetSfsIntegral(j, k, n, m).Mul(A[0][NewN(n)].Dot(A[1][NewN(m)])));
+         return subMat;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
       }
@@ -212,56 +202,57 @@ namespace Fluid.ChannelFlow {
       }
       /// <summary>Add contribution from element at specified row and col to global forcing vector.</summary><param name="b">Global forcing vector.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
       void AddEmtContribToFcgVector(SparseRow b, int row, int col, double dt, double ni) {
-         double[] subVector;
+         double[] subVec;
          int globalRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
          for(int j = 0; j < 12; ++j) {                               // Over basis functions.
-               subVector = SubVector(row, col, j, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
+               subVec = SubVec(row, col, j, dt, ni);      // 8 x 8 matrix which has to be added to global stiffness matrix.
                globalRowBelt = GblInxFromStdInx(row, col, j);
                for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
-                  b[globalRowBelt * 8 + subResultRow] += subVector[subResultRow];
-         }
+                  b[globalRowBelt * 8 + subResultRow] += subVec[subResultRow]; }
       }
       /// <summary>Creates an 8 element subvector of a 96 element forcing vector  for some choice of j = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><param name=x>Previous values of variables at point (row,col,j).</param>
-      double[] SubVector(int row, int col, int j, double dt, double ni) {
-         var subVector = new double[8];
-         ref var node = ref NodeStd(row, col, j);
+      double[] SubVec(int row, int col, int j, double dt, double ni) {
+         var subVec = new double[8];
+         var node = NodeStd(row, col, j);
          var A = new double[3][][];                                                      // For three different operators A.            
-         A[0] = NodeOperatorMatrix0(ref node, dt, ni);                // Create 3 different matrices A0, A1, A2.
+         A[0] = NodeOperatorMat0(node, dt, ni);                // Create 3 different matrices A0, A1, A2.
          A[0].Transpose();
-         A[1] = NodeOperatorMatrix1(ref node, dt, ni);
+         A[1] = NodeOperatorMat1(node, dt, ni);
          A[1].Transpose();
-         A[2] = NodeOperatorMatrix1(ref node, dt, ni);
+         A[2] = NodeOperatorMat2(node, dt, ni);
          A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
-         double[][] fCoeffs = new double[8][];                                           // Coefficients accompanying terms in f vector.
-         fCoeffs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val, -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
-         fCoeffs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val, -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
-         fCoeffs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
-         fCoeffs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
-         fCoeffs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
-         fCoeffs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
-         fCoeffs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
-         fCoeffs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
+         double[][] fCoefs = new double[8][];                                           // Coefficients accompanying terms in f vector.
+         fCoefs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val,
+            -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
+         fCoefs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val,
+            -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
+         fCoefs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
+         fCoefs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
+         fCoefs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
+         fCoefs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
+         fCoefs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
+         fCoefs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
-               for(int matCol = 0; matCol < 2; ++matCol) {
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(j,j,n,0) +   // A[pick matrix][pick row][pick col]
-                        fCoeffs[0][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,2)) +
-                        fCoeffs[0][2] * (GetSfsIntegral(j,j,n,3) + GetSfsIntegral(j,j,n,4)) +
-                        fCoeffs[0][3] * GetForcingIntegral(j,n));
-               }
-               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoeffs[2][0] * GetSfsIntegral(j,j,n,0) + 
-                  fCoeffs[2][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoeffs[3][0] * GetSfsIntegral(j,j,n,0) + 
-                  fCoeffs[3][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
+               for(int matCol = 0; matCol < 2; ++matCol)
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol]*(fCoefs[matCol][0] *     // A[pick matrix][pick row][pick col]
+                     GetSfsIntegral(j,j,n,0) + fCoefs[0][1]*(GetSfsIntegral(j,j,n,1) +
+                     GetSfsIntegral(j,j,n,2)) + fCoefs[0][2]*(GetSfsIntegral(j,j,n,3) +
+                     GetSfsIntegral(j,j,n,4)) + fCoefs[0][3]*GetForcingIntegral(j,n));
+               aTf[vecRow] += A[NewN(n)][vecRow][2] * (fCoefs[2][0] * GetSfsIntegral(j,j,n,0) + 
+                  fCoefs[2][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][3] * (fCoefs[3][0] * GetSfsIntegral(j,j,n,0) + 
+                  fCoefs[3][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
                for(int matCol = 4; matCol < 6; ++matCol)
-                  aTf[vecRow] += A[NewN(n)][vecRow][matCol] * (fCoeffs[matCol][0] * GetSfsIntegral(j,j,n,0) + 
-                     fCoeffs[matCol][1] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)));
-               aTf[vecRow] += A[NewN(n)][vecRow][6] * (fCoeffs[6][0] * GetSfsIntegral(j,j,n,0) + 
-                  fCoeffs[6][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
-               aTf[vecRow] += A[NewN(n)][vecRow][7] * (fCoeffs[7][0] * (GetSfsIntegral(j,j,n,1) + GetSfsIntegral(j,j,n,3)) +
-                  fCoeffs[7][1] * (GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
-            }
+                  aTf[vecRow] += A[NewN(n)][vecRow][matCol]*(fCoefs[matCol][0]
+                     *GetSfsIntegral(j,j,n,0) + fCoefs[matCol][1]*(GetSfsIntegral(j,j,n,1)
+                     + GetSfsIntegral(j,j,n,3)));
+               aTf[vecRow] += A[NewN(n)][vecRow][6]*(fCoefs[6][0]*GetSfsIntegral(j,j,n,0) + 
+                  fCoefs[6][1]*(GetSfsIntegral(j,j,n,2) + GetSfsIntegral(j,j,n,4)));
+               aTf[vecRow] += A[NewN(n)][vecRow][7]*(fCoefs[7][0]*(GetSfsIntegral(j,j,n,1) +
+                  GetSfsIntegral(j,j,n,3)) + fCoefs[7][1]*(GetSfsIntegral(j,j,n,2) +
+                  GetSfsIntegral(j,j,n,4))); }
          return aTf;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.
