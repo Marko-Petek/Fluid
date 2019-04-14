@@ -72,7 +72,6 @@ namespace Fluid.ChannelFlow {
          int nVars = ChannelMesh.NVars;
          int width = posCount * nVars;
          var matrix = new SparseMatInt(width, width, 2000);
-
          for(int front = 0, back = width - 1; front <= back; ++front) {
             int frontPosIndex = front / nVars;                                  // Is rounded down.
             int frontVarIndex = front % nVars;
@@ -85,11 +84,8 @@ namespace Fluid.ChannelFlow {
                   --back;
                   backPosIndex = back / nVars;
                   backVarIndex = back % nVars;
-                  backNode = ref ChannelMesh.Node(backPosIndex);
-               }
-               matrix[front][back] = 1;                                    // Indicate that the two elements need to be swapped.
-            }
-         }
+                  backNode = ref ChannelMesh.Node(backPosIndex); }
+               matrix[front][back] = 1; } }                                  // Indicate that the two elements need to be swapped.}
          return matrix;
       }
 

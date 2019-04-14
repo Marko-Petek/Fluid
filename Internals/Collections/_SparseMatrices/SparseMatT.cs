@@ -69,8 +69,7 @@ namespace Fluid.Internals.Collections {
             Width = virtJ;                                                 // Adjust width of this Matrix.
             foreach(var rowKVPair in this) {                                  // Split each SparseRow separately.
                var removedCols = rowKVPair.Value.SplitAt(virtJ);             // TODO: Check all split algorithms whether they properly remove rows/cols.
-               removedRightPart.Add(rowKVPair.Key, removedCols);
-            }
+               removedRightPart.Add(rowKVPair.Key, removedCols); }
             return removedRightPart;
          }
          /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified virtual index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
@@ -80,8 +79,7 @@ namespace Fluid.Internals.Collections {
             var removedMatrix = new SparseMat<T,TArith>(Width, removedHeight);
             foreach(var row in this.Where(kvPair => kvPair.Key >= virtI)) {
                removedMatrix.Add(row.Key, row.Value);
-               Remove(row.Key);
-            }
+               Remove(row.Key); }
             return removedMatrix;
          }
          /// <summary>Swap rows with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="inx1">Virtual index of first row to swap.</param><param name="inx2">Virtual index of second row to swap.</param>
@@ -134,8 +132,7 @@ namespace Fluid.Internals.Collections {
                         if(!rMatRowEmt.Equals(default(T)))                                         // Not zero.
                            rMatRowAsDict[lMatRowKVPair.Key] = rMatRowEmt;
                         else
-                           rMatRowAsDict.Remove(lMatRowKVPair.Key);
-                  }  }
+                           rMatRowAsDict.Remove(lMatRowKVPair.Key); } }
                   else                                                                             // Right row counterpart does not exist (zeros).
                      rMatAsDict.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value)); }
                return (SparseMat<T,TArith>) rMatAsDict;

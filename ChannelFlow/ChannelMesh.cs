@@ -106,18 +106,16 @@ namespace Fluid.ChannelFlow {
          return fcgVector;
       }
       public void WriteCornerPositionsOfRectElement() {
-         var node1 = RightBlock.NodeStd(1,1,0).GetPos();
-         var node4 = RightBlock.NodeStd(1,1,3).GetPos();
-         var node7 = RightBlock.NodeStd(1,1,6).GetPos();
-         var node10 = RightBlock.NodeStd(1,1,9).GetPos();
+         var node1 = RightBlock.NodeStd(1,1,0)._Pos;
+         var node4 = RightBlock.NodeStd(1,1,3)._Pos;
+         var node7 = RightBlock.NodeStd(1,1,6)._Pos;
+         var node10 = RightBlock.NodeStd(1,1,9)._Pos;
          var fileInfo = new FileInfo("./Results/rectElement.txt");
-
          using(var sw = new StreamWriter(fileInfo.FullName)) {
             sw.WriteLine($"{{{node1},");
             sw.WriteLine($"{node4},");
             sw.WriteLine($"{node7},");
-            sw.WriteLine($"{node10}}}");
-         }
+            sw.WriteLine($"{node10}}}"); }
       }
       /// <summary>Returns solution (only specified variables) at any specified point inside solution domain which is [0,width]x[0,4*width]. Returns a set of double.NaN values for a point outside the domain.</summary><param name="pos">Position in terms of x ans y.</param><param name="vars">Desired variables in terms of variable indices.</param>
       public override double[] Solution(in Pos pos, params int[] vars) {

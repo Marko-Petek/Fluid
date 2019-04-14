@@ -29,36 +29,33 @@ namespace Fluid.Internals.Development {
 
 
       /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-      public AppReporter(VerbositySettings verbosity,
-      [CallerFilePath] string path = null, [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
+      public AppReporter(VerbositySettings verbosity, [CallerFilePath] string path = null,
+         [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
+            Output = new OutputSettings();
+            Output |= (OutputSettings.Console | OutputSettings.File);
+            Verbosity = verbosity;
+            StartTime = DateTime.Now;
+            _Report = new Report(StartTime);
+            ReportWriter = new ReportWriter(this);
 
-         Output = new OutputSettings();
-         Output |= (OutputSettings.Console | OutputSettings.File);
-         Verbosity = verbosity;
-         StartTime = DateTime.Now;
-         _Report = new Report(StartTime);
-         ReportWriter = new ReportWriter(this);
-
-         var initMessage = new Message(StartTime, "Program started.", path, caller, line);            // Write initial message.
-         Report.AddMessage(initMessage);
-         ReportWriter.WriteMessage(0);   
-                     // Write initial message (Program started, etc.)
+            var initMessage = new Message(StartTime, "Program started.", path, caller, line);            // Write initial message.
+            Report.AddMessage(initMessage);
+            ReportWriter.WriteMessage(0);   
+                        // Write initial message (Program started, etc.)
       }
 
       /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="text">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
       [Conditional("REPORT")]
       public void Write(string text, VerbositySettings verbosity = Moderate,
-      [CallerFilePath] string path = null, [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
-
-         if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.
-            var strippedText = Regex.Replace(text, @"\n", "");                            // Strip out any new lines.
-            var message = new Message(DateTime.Now, strippedText, path, caller, line);          // Construct message.
-            int newMessageIndex = Report.Messages.Count;                                // New message index will equal count.
-            Report.AddMessage(message);
-            ReportWriter.WriteMessage(newMessageIndex);
-         }
+         [CallerFilePath] string path = null, [CallerMemberName] string caller = null,
+         [CallerLineNumber] int line = 0) {
+            if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.
+               var strippedText = Regex.Replace(text, @"\n", "");                            // Strip out any new lines.
+               var message = new Message(DateTime.Now, strippedText, path, caller, line);          // Construct message.
+               int newMessageIndex = Report.Messages.Count;                                // New message index will equal count.
+               Report.AddMessage(message);
+               ReportWriter.WriteMessage(newMessageIndex); }
       }
-
 
       [Flags]
       /// <summary>Determines where output is written to.</summary>

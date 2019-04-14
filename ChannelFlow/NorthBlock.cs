@@ -15,11 +15,10 @@ namespace Fluid.ChannelFlow {
          channelMesh.ObstructionRect._UR.X, channelMesh.ObstructionRect._UR.Y,
          channelMesh.LeftSquare._UR.X, channelMesh.LeftSquare._UR.Y,
          channelMesh.LeftSquare._UL.X, channelMesh.LeftSquare._UL.Y) {
-         
-         CreateNodes();
-         NConstraints = ApplyConstraints();
-         ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
-         MoveNodesToMainMesh(westBlock);
+            CreateNodes();
+            NConstraints = ApplyConstraints();
+            ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
+            MoveNodesToMainMesh(westBlock);
       }
 
       /// <summary>Returns real-world position of upper boundary node located at a given arc length coordinate.</summary><param name="ksi">Arc length coordinate from 0 to 1.</param>
@@ -55,33 +54,28 @@ namespace Fluid.ChannelFlow {
          int constraintCount = 0;
          int col = 0;
          for(int element = 3; element < 5; ++element) {                  // Col 0 is different, we exclude left most points. Obstruction boundary.
-               NodeCmt(0, col, element).Constrainedness(0) = true;      // u, 0 is set implicitly for both u and v due to them being value types.
-               NodeCmt(0, col, element).Constrainedness(1) = true;      // v
-               constraintCount += 2;
-         }
+            NodeCmt(0, col, element).Constrainedness(0) = true;      // u, 0 is set implicitly for both u and v due to them being value types.
+            NodeCmt(0, col, element).Constrainedness(1) = true;      // v
+            constraintCount += 2; }
          for(int element = 3; element < 5; ++element) {                  // Channel boundary.
-               NodeCmt(23, col, element).Constrainedness(0) = true;     // u
-               NodeCmt(23, col, element).Constrainedness(1) = true;     // v
-               NodeCmt(23, col, element).Constrainedness(2) = true;     // a
-               NodeCmt(23, col, element).Constrainedness(4) = true;     // c
-               constraintCount += 4;
-         }
+            NodeCmt(23, col, element).Constrainedness(0) = true;     // u
+            NodeCmt(23, col, element).Constrainedness(1) = true;     // v
+            NodeCmt(23, col, element).Constrainedness(2) = true;     // a
+            NodeCmt(23, col, element).Constrainedness(4) = true;     // c
+            constraintCount += 4; }
          ++col;
          while(col < NCols) {                                            // Col 0 - 22
             for(int element = 2; element < 5; ++element) {                  // Obstruction boundary.
                NodeCmt(0, col, element).Constrainedness(0) = true;      // u, 0 is set implicitly for both u and v due to them being value types.
                NodeCmt(0, col, element).Constrainedness(1) = true;      // v
-               constraintCount += 2;
-            }
+               constraintCount += 2; }
             for(int element = 2; element < 5; ++element) {                  // Channel boundary.
                NodeCmt(23, col, element).Constrainedness(0) = true;     // u
                NodeCmt(23, col, element).Constrainedness(1) = true;     // v
                NodeCmt(23, col, element).Constrainedness(2) = true;     // a
                NodeCmt(23, col, element).Constrainedness(4) = true;     // c
-               constraintCount += 4;
-            }
-            ++col;
-         }
+               constraintCount += 4; }
+            ++col; }
          // We also omit right most column of points.
          // GetNodeCmp(0, col, 2).Constrainedness(0) = true;                    // Obstruction boundary, u, last column
          // GetNodeCmp(0, col, 2).Constrainedness(1) = true;                    // v
@@ -106,26 +100,21 @@ namespace Fluid.ChannelFlow {
                blockToGlobal[row][col][node] = westMap[row][20][node];
             for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             col = 1;
             while(col < NCols) {                                     // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-                  blockToGlobal[row][col][node] = posCount++;
-               }
-               ++col;
-            }
+                  blockToGlobal[row][col][node] = posCount++; }
+               ++col; }
             blockToGlobal[row][col] = new int[5];                      // Col 20, Last col.
             for(int node = 0; node < 3; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             for(int node = 3; node < 5; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-            ++row;
-         }
+            ++row; }
          col = 0;                                                    // Row 23
          blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                           // Col 0
@@ -134,8 +123,7 @@ namespace Fluid.ChannelFlow {
          blockToGlobal[row][col][2] = westMap[row][20][2];                   // Take in nodes from Col 20 of WestBlock.
          for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-         }
+               blockToGlobal[row][col][node] = posCount++; }
          col = 1;
          while(col < NCols) {                                         // Cols 1 - 19
             blockToGlobal[row][col] = new int[5];
@@ -143,17 +131,15 @@ namespace Fluid.ChannelFlow {
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;    
-            }
-            ++col;
-         }
+               blockToGlobal[row][col][node] = posCount++; }
+            ++col; }
          blockToGlobal[row][col] = new int[5];
          for(int node = 0; node < 2; ++node)                           // Col 20
             blockToGlobal[row][col][node] = Int32.MinValue;
          ChannelMesh.Node(posCount) = NodeCmt(row, col, 2);
          blockToGlobal[row][col][2] = posCount++;
          for(int node = 3; node < 5; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
+            blockToGlobal[row][col][node] = Int32.MinValue;
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.

@@ -14,12 +14,11 @@ namespace Fluid.ChannelFlow {
          channelMesh.ObstructionRect._UR.X, channelMesh.ObstructionRect._UR.Y,
          channelMesh.ObstructionRect._LR.X, channelMesh.ObstructionRect._LR.Y,
          channelMesh.LeftSquare._LR.X, channelMesh.LeftSquare._LR.Y,
-         channelMesh.LeftSquare._UR.X, channelMesh.LeftSquare._UR.Y) {
-               
-         CreateNodes();
-         NConstraints = ApplyConstraints();
-         ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
-         MoveNodesToMainMesh(northBlock, southBlock);
+         channelMesh.LeftSquare._UR.X, channelMesh.LeftSquare._UR.Y) {  
+            CreateNodes();
+            NConstraints = ApplyConstraints();
+            ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
+            MoveNodesToMainMesh(northBlock, southBlock);
       }
 
 
@@ -58,8 +57,7 @@ namespace Fluid.ChannelFlow {
             for(int node = 2; node < 5; ++node) {
                NodeCmt(0, col, node).Constrainedness(0) = true;
                NodeCmt(0, col, node).Constrainedness(1) = true;
-               constraintCount += 2;
-            }
+               constraintCount += 2; }
          return constraintCount;                                             // Must not count in points from col 20.
          // ref var node = ref GetNodeCmp(0, 0, 2);
          // node.Constrainedness(0) = true;
@@ -87,24 +85,20 @@ namespace Fluid.ChannelFlow {
                blockToGlobal[row][col][node] = northMap[row][20][node];
             for(int node = 3; node < 5; ++node) {
                ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++;
-            }
+               blockToGlobal[row][col][node] = posCount++; }
             col = 1;
             while(col < NCols) {                                            // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
                   ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-                  blockToGlobal[row][col][node] = posCount++;
-               }
-               ++col;
-            }
+                  blockToGlobal[row][col][node] = posCount++; }
+               ++col; }
             blockToGlobal[row][col] = new int[5];                       // Col 20, Take in nodes from Col 0 of SouthBlock.
             for(int node = 0; node < 3; ++node)
                blockToGlobal[row][col][node] = southMap[row][0][node];
             for(int node = 3; node < 5; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
-            ++row;
-         }
+            ++row; }
          col = 0;                                                    // Row 23.
          blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                           // Col 0, take in node from Col 20 of NorthBlock.
@@ -113,19 +107,16 @@ namespace Fluid.ChannelFlow {
          blockToGlobal[row][col][2] = northMap[row][20][2];
          for(int node = 3; node < 5; ++node) {
             ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-            blockToGlobal[row][col][node] = posCount++;
-         }
+            blockToGlobal[row][col][node] = posCount++; }
          col = 1;
          while(col < NCols) {                                         // Cols 1 - 19
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
-            ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-            blockToGlobal[row][col][node] = posCount++;
-            }
-            ++col;
-         }
+               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
+               blockToGlobal[row][col][node] = posCount++; }
+            ++col; }
          blockToGlobal[row][col] = new int[5];                           // Col 20, Take in nodes from Col 0 of SouthBlock.
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;

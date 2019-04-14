@@ -2,8 +2,7 @@ using Xunit;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Tests
-{
+namespace Fluid.Tests {
    public class MatsTests {
       [Fact] public void InvertMatrix1() {
          double[][] matrix = new double[3][] {

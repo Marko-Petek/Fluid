@@ -9,31 +9,19 @@ using System.Text;
 using Fluid.Internals.Collections;
 using static Fluid.Internals.Development.AppReporter;
 
-namespace Fluid.Internals.IO
-{
-   public class FileReader : FileRWBase, IDisposable
-   {
-      StreamReader _Reader;
-      StreamReader Reader => _Reader;
+namespace Fluid.Internals.IO {
+   public class FileReader : FileRWBase, IDisposable {
+      StreamReader Reader { get; set; }
 
+      public FileReader(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName,
+         string fileExt = DefaultExt) : base(dirPath, fileNameNoExt, fileExt) {
+            OnSettingsChanged();
+      }
 
       protected override void ResetUnmanagedResource() {
          Reader?.Dispose();                                                  // Dispose old reader if it exists.
-         _Reader = new StreamReader(File.FullName, Encoding.UTF8);
+         Reader = new StreamReader(File.FullName, Encoding.UTF8);
       }
-
-
-      public FileReader(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName, string fileExt = DefaultExt) :
-      base(dirPath, fileNameNoExt, fileExt) {
-         OnSettingsChanged();
-      }
-
-
-      // public double[] ReadDoubleArray1d() {
-      //    OnSettingsChanged();
-      //    return IO.ReadDoubleArray1d(Reader);
-      // }
-
       public Hierarchy<T> ReadHierarchy<T>() {
          OnSettingsChanged();
          return IO.ReadHierarchy<T>(Reader);
@@ -46,18 +34,10 @@ namespace Fluid.Internals.IO
          else
             throw new IOException("Failure when reading array.");
       }
-
-      // public Hierarchy<int> ReadHierarchyInt() {
-      //    OnSettingsChanged();
-      //    return IO.ReadHierarchyInt(Reader);
-      // }
-
-
       public void Dispose() {
          Reader.Dispose();
          GC.SuppressFinalize(this);
       }
-
       ~FileReader() => Dispose();
    }
 }

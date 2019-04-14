@@ -56,10 +56,9 @@ namespace Fluid.Tests {
             var expected = new double[][] {
                new double[] {9,7},
                new double[] {6,3},
-               new double[] {5,2}
-            };
-            Assert.True(result.Equals(expected, 0.000001));
-      }  }
+               new double[] {5,2} };
+            Assert.True(result.Equals(expected, 0.000001)); }
+      }
       [Fact] public void HierarchyInput2() {
          TB.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
          var hierWriteBack = TB.FileReader.ReadHierarchy<double>();
@@ -70,22 +69,17 @@ namespace Fluid.Tests {
             var expected = new double[][][] {
                new double[][] {
                   new double[] {7,3},
-                  new double[] {0,5}
-               },
+                  new double[] {0,5} },
                new double[][] {
                   new double[] {3,5},
                   new double[] {4,2},
-                  new double[] {8,1}
-               },
+                  new double[] {8,1} },
                new double[][] {
                   new double[] {11,88},
                   new double[] {33,56},
                   new double[] {96,28},
-                  new double[] {28,51}
-               }
-            };
-            Assert.True(result.Equals(expected, 0.000001));
-         }
+                  new double[] {28,51} } };
+            Assert.True(result.Equals(expected, 0.000001)); }
       }
    }
 }

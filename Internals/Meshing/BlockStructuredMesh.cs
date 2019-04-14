@@ -5,7 +5,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Meshing {
    using SparseRow = SparseRow<double,DblArithmetic>;
-   /// <summary>A mesh made of quadrilateral elements.</summary>
+   /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
    public abstract class BlockStructuredMesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int NVars { get; protected set; }
@@ -36,7 +36,6 @@ namespace Fluid.Internals.Meshing {
                sparseRow[index] = _Nodes[i].Var(j).Val; }}
          return sparseRow;
       }
-
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Pos pos, params int[] vars);
    }

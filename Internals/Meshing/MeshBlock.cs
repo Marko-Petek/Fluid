@@ -182,8 +182,7 @@ namespace Fluid.Internals.Meshing {
                   startCol = newEndCol + 1;
                   vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
                   vertices[0] = NodeStd(startRow, startCol, 0)._Pos; }
-               nCols = endCol - startCol + 1;
-         }  }                                                                        // At this point startCol and endCol have to be the same.
+               nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);
          double[] funcValues = quadEmt.Values(in squarePos, vars);

@@ -12,31 +12,26 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Ops;
 
 namespace Fluid.Internals.IO {
-   public static partial class IO
-   {
+   public static partial class IO {
       static CultureInfo _en_US = new CultureInfo("en-US");
-
       /// <summary>Write a 1D array with specified TextWriter.</summary><param name="array1d">1D array.</param><param name="tw">TextWriter which writes to an underlying stream.</param>
       public static void Write<T>(T[] array1d, TextWriter tw) {
          int loop = array1d.Length - 1;
          tw.Write('{');
-         for(int i = 0; i < loop; ++i) {
+         for(int i = 0; i < loop; ++i)
             //tw.Write($"{array1d[i].ToString("G17")}, ");
             tw.Write(
                String.Format(
                   _en_US,
                   "{0:G17}, ",
-                  array1d[i]
-            )  );
-         }
+                  array1d[i] ) );
          //tw.Write($"{array1d[loop].ToString():G17}}}");
          tw.Write(
             String.Format(
                _en_US, 
                "{0:G17}{1}",
                array1d[loop],
-               "}"
-         )  );
+               "}" ) );
       }
       /// <summary>Write a 2D array with specified TextWriter.</summary><param name="array1d">2D array.</param><param name="tw">TextWriter which writes to an underlying stream.</param>
       public static void Write<T>(T[][] array2d, TextWriter tw) {
@@ -44,8 +39,7 @@ namespace Fluid.Internals.IO {
          tw.Write('{');
          for(int i = 0; i < loop; ++i) {
             Write(array2d[i], tw);
-            tw.Write(", ");
-         }
+            tw.Write(", "); }
          Write(array2d[loop], tw);
          tw.Write('}');
       }
@@ -55,8 +49,7 @@ namespace Fluid.Internals.IO {
          tw.Write('{');
          for(int i = 0; i < loop; ++i) {
             Write(array3d[i], tw);
-            tw.Write(", ");
-         }
+            tw.Write(", "); }
          Write(array3d[loop], tw);
          tw.Write('}');
       }
@@ -66,8 +59,7 @@ namespace Fluid.Internals.IO {
          tw.Write('{');
          for(int i = 0; i < loop; ++i) {
             Write(array4d[i], tw);
-            tw.Write(", ");
-         }
+            tw.Write(", "); }
          Write(array4d[loop], tw);
          tw.Write('}');
       }
@@ -77,8 +69,7 @@ namespace Fluid.Internals.IO {
          tw.Write('{');
          for(int i = 0; i < loop; ++i) {
             Write(array5d[i], tw);
-            tw.Write(", ");
-         }
+            tw.Write(", "); }
          Write(array5d[loop], tw);
          tw.Write('}');
       }
@@ -88,8 +79,7 @@ namespace Fluid.Internals.IO {
          tw.Write('{');
          for(int i = 0; i < loop; ++i) {
             Write(array6d[i], tw);
-            tw.Write(", ");
-         }
+            tw.Write(", "); }
          Write(array6d[loop], tw);
          tw.Write('}');
       }

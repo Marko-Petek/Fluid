@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Fluid.Internals.Collections
 {
     /// <summary>A network with nodes of type T.</summary><typeparam name="T">Type of nodes.</typeparam>
-    public abstract class Network<T>
+    public abstract class Network<T> //TODO: What is the use of this? (Network)
     {
         protected HashSet<T> _Nodes;
         public HashSet<T> Nodes => _Nodes;

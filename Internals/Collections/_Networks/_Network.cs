@@ -2,12 +2,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace Fluid.Internals.Collections
-{
+namespace Fluid.Internals.Collections {
 
-    public class Network : Network<Node>
-    {
-        public Network() : base() {}
-    }
+   public class Network : Network<Node>
+   {
+      public Network() : base() {}
+   }
 }
 #endif

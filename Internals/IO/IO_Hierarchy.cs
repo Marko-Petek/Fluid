@@ -29,10 +29,10 @@ namespace Fluid.Internals.IO {
                else                                                            // This is not a value node.
                   Recursion(node);                                            // Re-enter recursion.                            
                if(++i < startNode.Subordinates.Count)                                     // We have more than one node left in this group.
-                  tw.Write(", ");                                             // So add a comma and space.
-            }
+                  tw.Write(", "); }                                            // So add a comma and space.
             tw.Write('}');
-      }   }
+         }
+      }
       public static void WriteLine<T>(this Hierarchy<T> hier, TextWriter tw) {
          Write(hier, tw);
          tw.WriteLine();
@@ -42,7 +42,8 @@ namespace Fluid.Internals.IO {
          nFI.NumberDecimalSeparator = ".";
          var types = new Type[] { typeof(string), typeof(IFormatProvider) };
          var parseMethod = typeof(T).GetMethod("Parse", types);
-         var parse = (Func<string,IFormatProvider,T>) Delegate.CreateDelegate(typeof(Func<string,IFormatProvider,T>), parseMethod);
+         var parse = (Func<string,IFormatProvider,T>) Delegate.CreateDelegate(
+            typeof(Func<string,IFormatProvider,T>), parseMethod);
          var wholeStr = tr.ReadToEnd();
          var sb = new StringBuilder(@"(\w+\.?\w*|", 300);
          sb.Append(@"\{                     ");
@@ -56,14 +57,14 @@ namespace Fluid.Internals.IO {
          sb.Append(@"  (?(DEPTH)(?!))       ");
          sb.Append(@"}                      ");
          sb.Append(@")");                                    // The end of an alternator from first line.
-         var matcher = new Regex(sb.ToString(), RegexOptions.IgnorePatternWhitespace, new TimeSpan(0,0,1));
+         var matcher = new Regex(sb.ToString(), RegexOptions.IgnorePatternWhitespace,
+            new TimeSpan(0,0,1));
          var firstMatch = matcher.Match(wholeStr);
          if(firstMatch.Success) {                                     // Now check elements inside it.
             var topNode = new RankedNode();
             var hier = new Hierarchy<T>(topNode);
             Recursion(firstMatch.Value, topNode);
-            return hier;
-         }
+            return hier; }
          else
             return null;
 
@@ -77,8 +78,8 @@ namespace Fluid.Internals.IO {
                   Recursion(newMatch.Value, new RankedNode(nodeAbove));
                else                                                                    // If it was a value node.
                   new ValueNode<T>(nodeAbove, parse(newMatch.Value, nFI));
-               newMatch = newMatch.NextMatch();
-         }  }
+               newMatch = newMatch.NextMatch(); }
+         }
       }
    }
 }

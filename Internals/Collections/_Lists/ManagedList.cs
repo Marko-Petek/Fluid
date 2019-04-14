@@ -20,7 +20,7 @@ namespace Fluid.Internals.Collections {
       public override T this[int index] {
          get {
             if (index > -1)
-               if (index < _Count)
+               if (index < Count)
                   return _E[index];
                else
                   throw new IndexOutOfRangeException("Index too large.");
@@ -28,11 +28,11 @@ namespace Fluid.Internals.Collections {
                throw new IndexOutOfRangeException("Negative index."); }
          set {
             if (index > -1)
-               if (index < _Count) {
-                  if (!_Comparer.Equals(_E[index], default(T)))     // If there is a pre-existing element at the index in question.
+               if (index < Count) {
+                  if (!Comparer.Equals(_E[index], default(T)))     // If there is a pre-existing element at the index in question.
                      BeforeEmtExit(index);
                   _E[index] = value;
-                  if (!_Comparer.Equals(value, default(T)))                 // If the newly assigned value is not null.
+                  if (!Comparer.Equals(value, default(T)))                 // If the newly assigned value is not null.
                      AfterEmtEntry(index); }
                else
                   throw new IndexOutOfRangeException("Index too big.");
@@ -41,43 +41,43 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Adds an element to the end of the list.</summary>
       public override void Add(T emt) {
-         _E.EnsureCapacity(_Count + 1);
-         _E[_Count] = emt;
-         _Count++;
-         if (!_Comparer.Equals(emt, default(T)))                 // If the newly assigned value is not null.
-            AfterEmtEntry(_Count - 1);
+         _E.EnsureCapacity(Count + 1);
+         _E[Count] = emt;
+         Count++;
+         if (!Comparer.Equals(emt, default(T)))                 // If the newly assigned value is not null.
+            AfterEmtEntry(Count - 1);
       }
       public override void AddRange(SCG.IList<T> elements) {
-         _E.EnsureCapacity(_Count + elements.Count);
+         _E.EnsureCapacity(Count + elements.Count);
          for (int i = 0; i < elements.Count; i++) {
-            _E[_Count + i] = elements[i];
-            if (!_Comparer.Equals(elements[i], default(T)))                 // If the newly assigned value is not null.
-               AfterEmtEntry(_Count + i); }
-         _Count += elements.Count;
+            _E[Count + i] = elements[i];
+            if (!Comparer.Equals(elements[i], default(T)))                 // If the newly assigned value is not null.
+               AfterEmtEntry(Count + i); }
+         Count += elements.Count;
       }
       /// <summary>Insert an element at a desired index.</summary>
       public override void Insert(int inx, T emt) {
          if (inx < 0) throw new IndexOutOfRangeException("Negative index.");
-         else if (inx <= _Count) {
-            _E.EnsureCapacity(_Count + 1);
-            for (int i = _Count; i > inx; i--)                // Shift all consequent members by one. Makes room for a member.
+         else if (inx <= Count) {
+            _E.EnsureCapacity(Count + 1);
+            for (int i = Count; i > inx; i--)                // Shift all consequent members by one. Makes room for a member.
                _E[i] = _E[i - 1];
             _E[inx] = emt;
-            _Count++;
-            if (!_Comparer.Equals(emt, default(T)))                 // If the newly assigned value is not null.
+            Count++;
+            if (!Comparer.Equals(emt, default(T)))                 // If the newly assigned value is not null.
                AfterEmtEntry(inx); }
          else
             throw new IndexOutOfRangeException("Index too large.");
       }
       /// <summary>Searches for and removes the specified element from this Subsequence. Returns true if successfully removed.</summary>
       public override bool Remove(T emt) {
-         for (int i = 0; i < _Count; i++)
-            if (_Comparer.Equals(_E[i], emt)) {                   // If the element has been found.
+         for (int i = 0; i < Count; i++)
+            if (Comparer.Equals(_E[i], emt)) {                   // If the element has been found.
                BeforeEmtExit(i);
-               for (int j = i; j < _Count - 1; j++)
+               for (int j = i; j < Count - 1; j++)
                   _E[j] = _E[j + 1];          // Shift elements, writing over the removed element.
-               _E[_Count - 1] = default(T);         // Reset the last Instruction.
-               _Count--;                                // Adjust the Count.
+               _E[Count - 1] = default(T);         // Reset the last Instruction.
+               Count--;                                // Adjust the Count.
                return true; }
          return false;
       }
@@ -85,23 +85,23 @@ namespace Fluid.Internals.Collections {
       public override void RemoveAt(int inx) {
          if (inx < 0)
             throw new IndexOutOfRangeException("Negative index.");
-         else if (inx < _Count) {
-            if (!_Comparer.Equals(_E[inx], default(T)))     // If there is a pre-existing element at the index in question.
+         else if (inx < Count) {
+            if (!Comparer.Equals(_E[inx], default(T)))     // If there is a pre-existing element at the index in question.
                BeforeEmtExit(inx);
-            for (int i = inx; i < _Count - 1; i++)
+            for (int i = inx; i < Count - 1; i++)
                _E[i] = _E[i + 1];
-            _E[_Count - 1] = default(T);
-            _Count--; }
+            _E[Count - 1] = default(T);
+            Count--; }
          else
             throw new IndexOutOfRangeException("Index too large.");
       }
       /// <summary>Clears the internal array without changing its capacity.</summary>
       public override void Clear() {
-         for (int i = 0; i < _Count; i++) {
-            if (!_Comparer.Equals(_E[i], default(T)))     // If there is a pre-existing element at the index in question.
+         for (int i = 0; i < Count; i++) {
+            if (!Comparer.Equals(_E[i], default(T)))     // If there is a pre-existing element at the index in question.
                BeforeEmtExit(i);
             _E[i] = default(T); }
-         _Count = 0;
+         Count = 0;
       }
    }
 }
