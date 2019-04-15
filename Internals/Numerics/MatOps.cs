@@ -119,10 +119,19 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Swaps two elements in a 2D matrix.</summary><param name="mat">Matrix to operate on.</param><param name="row1">Row index of first element.</param><param name="col1">Column index of first element.</param><param name="row2">Row index of second element.</param><param name="col2">Column index of second element.</param>
       public static void Swap<T>(this T[][] mat, int row1, int col1, int row2, int col2) {
          T temp = mat[row2][col2];
-         mat[row2][col2] = mat[row1][col1];
+         mat[row2][col2] = mat[row1][col1];//TODO: Write SwapRows and SwapCols.
          mat[row1][col1] = temp;
       }
-
+      public static T[][] CreateFromArray<T>(T[] row, int allRows, int startRow, int nRows,
+         int startCol, int nCols) {
+            int allCols = row.Length/allRows;
+            T[][] mat = new T[nRows][];
+            for(int i = 0; i < nRows; ++i) {
+               mat[i] = new T[nCols];
+               for(int j = 0; j < nCols; ++j)
+                  mat[i][j] = row[allCols*(startRow + i) + startCol + j]; }
+            return mat;
+      }
       public static bool Equals(this double[] mat1, double[] mat2, double epsilon) {
          if(mat1.Length == mat2.Length) {
             for(int i = 0; i < mat1.Length; ++i)

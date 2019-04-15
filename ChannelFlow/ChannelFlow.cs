@@ -48,7 +48,7 @@ namespace Fluid.ChannelFlow {
       public void SolveNextAndAddToNodeArray() {                                                         TB.Reporter.Write("Assembling stiffness matrix from node data.");
          var sfsMatrix = ChannelMesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
          var forcingVector = ChannelMesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
-         sfsMatrix.ApplyColSwaps(SwapMatrix);                                                      // Swap columns so that constrained variables end up at right side.
+         // FIXME: sfsMatrix.ApplyColSwaps(SwapMatrix);                                                      // Swap columns so that constrained variables end up at right side.
          int stiffnessMatrixWidth = sfsMatrix.Width;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          forcingVector.ApplySwaps(SwapMatrix);                                                           // Swap elements so that constrained elements end up at end.
          int forcingVectorWidth = forcingVector.Width;

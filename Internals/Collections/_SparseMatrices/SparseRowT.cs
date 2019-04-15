@@ -6,7 +6,6 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
-
    public class SparseRow<T,TArith> : SCG.Dictionary<int,T>,
       IEquatable<SparseRow<T,TArith>>                                         // So that we can equate two SparseRows via the Equals method.
       where T : IEquatable<T>, new()
@@ -34,19 +33,22 @@ namespace Fluid.Internals.Collections {
          public static SparseRow<T,TArith> CreateSparseRow(int width, int capacity = 6) => new SparseRow<T,TArith>(width, capacity);
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
          public static SparseRow<T,TArith> CreateSparseRow(SparseRow<T,TArith> source) => new SparseRow<T,TArith>(source);
-         /// <summary>Create a new SparseRow by copying an array.</summary><param name="source">Array to copy.</param>
-         public static SparseRow<T,TArith> CreateFromArray(T[] source) {
-            var row = CreateSparseRow(source.Length, source.Length);
-            for(int i = 0; i < source.Length; ++i)
-               row.Add(i, source[i]);
+         /// <summary>Create a new SparseRow by copying an array.</summary><param name="arr">Array to copy.</param>
+         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols) {
+            var row = CreateSparseRow(arr.Length, arr.Length);
+            for(int i = startCol; i < startCol + nCols; ++i)
+               row.Add(i, arr[i]);
             return row;
          } 
          /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is put into specified second argument.</summary><param name="inx">Index at which to split. Element at this index will be chopped off and end up as part of returned SparseRow.</param><param name="removedCols">Right remainder will be put in here.</param>
-         public SparseRow<T,TArith> SplitAt(int inx) {//TODO: Test SplitAt method.
+         public SparseRow<T,TArith> SplitAt(int inx) {
             var removedCols = new SparseRow<T,TArith>(Width - inx);
+            var remKeys = new List<int>(10);                                   // Must not modify collection during enumeration. Therefore create a list of keys to be removed afterwards.
             foreach(var kvPair in this.Where(pair => pair.Key >= inx)) {
                removedCols.Add(kvPair.Key, kvPair.Value);                         // Add to right remainder.
-               Remove(kvPair.Key); }                                              // Remove from left remainder.
+               remKeys.Add(kvPair.Key); }                                              // Add key to be removed afterwards from left remainder.
+            foreach(int key in remKeys)
+               Remove(key);
             return removedCols;
          }
          /// <summary>Append specified SparseRow to this one.</summary><param name="rightCols">SparseRow to append.</param>
@@ -57,15 +59,16 @@ namespace Fluid.Internals.Collections {
          }
          /// <summary>Swap two elements specified by indices.</summary><param name="inx1">Index of first element.</param><param name="inx2">Index of second element.</param><remarks>Useful for swapping columns.</remarks>
          public void SwapElms(int inx1, int inx2) {
+            //var asDict = (Dictionary<)
             bool firstExists = TryGetValue(inx1, out T val1);
             bool secondExists = TryGetValue(inx2, out T val2);
-            if(firstExists)
+            if(firstExists) {
                if(secondExists) {
-                  this[inx1] = val2;
-                  this[inx2] = val1; }
+                  base[inx1] = val2;
+                  base[inx2] = val1; }
                else {
-                  Remove(inx1);                                   // Element at virtIndex1 becomes 0 and is removed.
-                  Add(inx2, val1); }
+                  Remove(inx1);                                   // Element at inx1 becomes 0 and is removed.
+                  Add(inx2, val1); } }
             else if(secondExists) {
                Add(inx1, val2);
                Remove(inx2); }                                   // Else nothing happens, both are 0.
@@ -94,15 +97,15 @@ namespace Fluid.Internals.Collections {
                TryGetValue(i, out T val);                               // Outputs zero if value not found.
                return val; }
             set {
-               if(!value.Equals(default(T)))                            // Value different from 0.
+               if(!value.Equals(default(T))) {                           // Value different from 0.
                   if(this is DummyRow<T,TArith> dummyRow) {             // Try downcasting to DummyRow.
                      var newRow = new SparseRow<T,TArith>(Width);               // Add new row to its owner and add value to it.
                      newRow.Add(i, value);
                      dummyRow.SparseMat.Add(dummyRow.Index, newRow); }
                   else
-                     base[i] = value;                                   // Indexers adds or modifies if entry already exists.
-               else
-                  Remove(i); }                                           // Remove if value set is 0.
+                     base[i] = value; }                                  // Indexers adds or modifies if entry already exists.
+               else if(!(this is DummyRow<T,TArith>))
+                  Remove(i); }                                           // Remove value at given index if value set is 0 and we are not in DummyRow.
          }
          public static SparseRow<T,TArith> operator +
             (SparseRow<T,TArith> left, SparseRow<T,TArith> right) {

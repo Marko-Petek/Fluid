@@ -74,8 +74,8 @@ namespace Fluid.Internals.Collections {
             throw new ArgumentException("arrayStartIndex too large.");
       }
       public SCG.IEnumerator<T> GetEnumerator() {
-         foreach(T element in _E)
-               yield return element;
+         for(int i = 0; i < Count; ++i)
+            yield return _E[i];
       }
       SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
    }
