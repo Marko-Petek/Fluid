@@ -39,9 +39,9 @@ namespace Fluid.Internals.Numerics
             return true;
 
          void ActOnCondition(in Pos vt1, in Pos vt2) {
-            if(vt1.Y <= y)
+            if(vt1.Y <= y) {
                if(vt2.Y > y && (vt1.X - x)*(vt2.Y - y) - (vt1.Y - y)*(vt2.X - x) > 0)
-                  ++oddIfTrue;
+                  ++oddIfTrue; }
             else
                if(vt2.Y <= y && (vt1.X - x)*(vt2.Y - y) - (vt1.Y - y)*(vt2.X - x) < 0)
                   --oddIfTrue;

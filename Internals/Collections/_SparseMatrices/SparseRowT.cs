@@ -8,7 +8,7 @@ using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Collections {
    public class SparseRow<T,TArith> : SCG.Dictionary<int,T>,
       IEquatable<SparseRow<T,TArith>>                                         // So that we can equate two SparseRows via the Equals method.
-      where T : IEquatable<T>, new()
+      where T : IEquatable<T>, IComparable<T>, new()
       where TArith : IArithmetic<T>, new() {
          /// <summary>Contains arithmetic operations.</summary>
          static TArith Arith { get; } = new TArith();
@@ -34,10 +34,10 @@ namespace Fluid.Internals.Collections {
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
          public static SparseRow<T,TArith> CreateSparseRow(SparseRow<T,TArith> source) => new SparseRow<T,TArith>(source);
          /// <summary>Create a new SparseRow by copying an array.</summary><param name="arr">Array to copy.</param>
-         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols) {
-            var row = CreateSparseRow(arr.Length, arr.Length);
-            for(int i = startCol; i < startCol + nCols; ++i)
-               row.Add(i, arr[i]);
+         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols, int startInx, int width) {
+            var row = CreateSparseRow(width, arr.Length);
+            for(int i = startCol, j = startInx; i < startCol + nCols; ++i, ++j)
+               row[j] = arr[i];
             return row;
          } 
          /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is put into specified second argument.</summary><param name="inx">Index at which to split. Element at this index will be chopped off and end up as part of returned SparseRow.</param><param name="removedCols">Right remainder will be put in here.</param>
@@ -49,10 +49,11 @@ namespace Fluid.Internals.Collections {
                remKeys.Add(kvPair.Key); }                                              // Add key to be removed afterwards from left remainder.
             foreach(int key in remKeys)
                Remove(key);
+            Width = inx;
             return removedCols;
          }
          /// <summary>Append specified SparseRow to this one.</summary><param name="rightCols">SparseRow to append.</param>
-         public void MergeWith(SparseRow<T,TArith> rightCols) {//TODO: Test MergeWith method.
+         public void MergeWith(SparseRow<T,TArith> rightCols) {
             Width += rightCols.Width;                                      // Readjust width.
             foreach(var kvPair in rightCols)
                this[kvPair.Key] = kvPair.Value;
@@ -163,6 +164,15 @@ namespace Fluid.Internals.Collections {
                if(!(other.TryGetValue(rowKVPair.Key, out T val) && rowKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
                   return false;
             return true;
+         }
+
+         public bool Equals(SparseRow<T,TArith> other, T eps) {
+            foreach(var rowKVPair in this) {
+               if(!(other.TryGetValue(rowKVPair.Key, out T val)))                      // Fetch did not suceed.
+                  return false;
+               if(Arith.Abs(Arith.Sub(rowKVPair.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
+                  return false; }
+            return true;                                                              // All values agree within tolerance.
          }
    }
 }

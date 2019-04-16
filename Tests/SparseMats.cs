@@ -132,7 +132,7 @@ namespace Fluid.Tests {
                   4.0, 3.0, 2.0, 1.0)]
       [Theory] public void MatColSwaps(params double[] arr) {
          int nCols = 4;
-         var sparseMat = SparseMat.CreateFromArray(arr, 4, 0, 4, 0, 4);
+         var sparseMat = SparseMat.CreateFromArray(arr, 4, 0, 4, 0, 4, 4, 4);
          var transformedMatrix = new SparseMat(sparseMat);
          for(int i = 0; i < nCols/2; ++i)
             transformedMatrix.SwapCols(i, nCols - 1 - i);                     // Swap each left half column with its counterpart on right side.
@@ -143,7 +143,7 @@ namespace Fluid.Tests {
 
       [InlineData(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)]
       [Theory] public void RowEmtSwaps(params double[] vector) {
-         var sparseRow = SparseRow.CreateFromArray(vector, 0, 6);
+         var sparseRow = SparseRow.CreateFromArray(vector, 0, 6, 0, 6);
          double el1 = sparseRow[2];
          double el2 = sparseRow[4];
          sparseRow.SwapElms(2,4);
@@ -179,18 +179,18 @@ namespace Fluid.Tests {
          0,4,3,7,
          1,8,5,3 )]
       [Theory] public void MatColSplit(params int[] data) {
-         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 2);
-         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 2, 2);
-         var res1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 4);
+         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 2, 2, 4);
+         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 2, 2, 2, 4);
+         var res1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 4, 4, 4);
          var res2 = res1.SplitAtCol(2);
          Assert.True(res1.Equals(expRes1) && res2.Equals(expRes2));
       }
 
       [InlineData( 5,2,8,4, 7,4,8,2, 1,3,0,5, 0,4,2,4 )]
       [Theory] public void RowSplit(params int[] data) {
-         var expRes1 = SparseRowInt.CreateFromArray(data, 0, 8);
-         var expRes2 = SparseRowInt.CreateFromArray(data, 8, 8);
-         var res1 = SparseRowInt.CreateFromArray(data, 0, 16);
+         var expRes1 = SparseRowInt.CreateFromArray(data, 0, 8, 0, 8);
+         var expRes2 = SparseRowInt.CreateFromArray(data, 8, 8, 8, 8);
+         var res1 = SparseRowInt.CreateFromArray(data, 0, 16, 0, 16);
          var res2 = res1.SplitAt(8);
          Assert.True(expRes1.Equals(res1) && expRes2.Equals(res2));
       }
@@ -200,9 +200,9 @@ namespace Fluid.Tests {
          9,3,4,2,
          0,4,3,7,
          1,8,5,3 )]
-      [Theory] public void MatRowSplit(params int[] data) {
-         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 2, 0, 4);
-         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 2, 2, 0, 4);
+      [Theory] public void MatRowSplit(params int[] data) {                      //FIXME: Make widths play! Renormalize index on split, option!
+         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 2, 0, 4, 4, 2);
+         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 2, 2, 0, 4, 4, 2);
          var res1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 4);
          var res2 = res1.SplitAtRow(2);
          Assert.True(expRes1.Equals(res1) && expRes2.Equals(res2));
@@ -226,6 +226,30 @@ namespace Fluid.Tests {
          swapDict[0] = 3;
          mat.ApplyColSwaps(swapDict);
          Assert.True(mat.Equals(expRes));
+      }
+
+      [InlineData(1,2,3,4,5,6, 4,5,6,7,8,9)]
+      [Theory] public void MergeWith(params int[] bothRows) {
+         var row1 = SparseRowInt.CreateFromArray(bothRows, 0, 6, 0);
+         var row2 = SparseRowInt.CreateFromArray(bothRows, 6, 6, 6);
+         row1.MergeWith(row2);
+         var expRes = SparseRowInt.CreateFromArray(bothRows, 0, 12, 0);
+         Assert.True(row1.Equals(expRes));
+      }
+
+      [InlineData(
+         1.01, 2.63, 3.21,
+         5.56, 7.62, 5.45,
+         6.50, 2.23, 7.66,
+
+         1.02, 2.64, 3.21,
+         5.55, 7.61, 5.44,
+         6.51, 2.22, 7.65 )]
+      [Theory] public void MatEquals(params double[] twoMats) {
+         var mat1 = SparseMat.CreateFromArray(twoMats, 6, 0, 3, 0, 3);
+         var tempMat2 = MatOps.CreateFromArray(twoMats, 6, 3, 3, 0, 3);
+         var mat2 = SparseMat.CreateFromArray(tempMat2);
+         Assert.True(mat1.Equals(mat2, 0.02));
       }
    }
 }

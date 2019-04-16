@@ -4,7 +4,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
    internal class DummyRow<T,TArith> : SparseRow<T,TArith>
-      where T : IEquatable<T>, new()
+      where T : IEquatable<T>, IComparable<T>, new()
       where TArith : IArithmetic<T>, new() {
          public int Index { get; set; }
          internal DummyRow(SparseMat<T,TArith> owner, int width, int capacity = 1) : base(width, capacity) {

@@ -35,19 +35,19 @@ namespace Fluid.Internals.Collections {
       /// <summary>Indexer</summary>
       public override T this[int index] {
          get {
-            if (index > -1)
+            if (index > -1) {
                if (index < Count)
                   return _E[index];
                else
-                  throw new IndexOutOfRangeException("Index too large.");
+                  throw new IndexOutOfRangeException("Index too large."); }
             else
                throw new IndexOutOfRangeException("Negative index."); }
          set {
-            if (index > -1)
+            if (index > -1) {
                if (index < Count)
                   _E[index] = value;
                else
-                  throw new IndexOutOfRangeException("Index too big.");
+                  throw new IndexOutOfRangeException("Index too big."); }
             else
                throw new IndexOutOfRangeException("Negative index."); }
       }

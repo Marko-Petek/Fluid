@@ -48,7 +48,7 @@ namespace Fluid.ChannelFlow {
       public void SolveNextAndAddToNodeArray() {                                                         TB.Reporter.Write("Assembling stiffness matrix from node data.");
          var sfsMatrix = ChannelMesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
          var forcingVector = ChannelMesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
-         // FIXME: sfsMatrix.ApplyColSwaps(SwapMatrix);                                                      // Swap columns so that constrained variables end up at right side.
+         // FIXME: sfsMatrix.ApplyColSwaps(SwapMatrix);SwapRow!                                                      // Swap columns so that constrained variables end up at right side.
          int stiffnessMatrixWidth = sfsMatrix.Width;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          forcingVector.ApplySwaps(SwapMatrix);                                                           // Swap elements so that constrained elements end up at end.
          int forcingVectorWidth = forcingVector.Width;
@@ -60,7 +60,7 @@ namespace Fluid.ChannelFlow {
          forcingVector.SplitAt(stiffnessMatrixWidth - nConstraints);                                     /* Also split forcing vector. */ TB.Reporter.Write("Constructing modified forcing vector.");
          forcingVector = forcingVector - sfsMatrixRight * solutionLower;                           /* Construct modified forcing vector which we will need to solve linear system. */ TB.Reporter.Write("Initiating ConjugateGradients solver.");
          var solver = new ConjGradsSolver(sfsMatrix, forcingVector);                            TB.Reporter.Write("Solving.");
-         Solution = solver.GetSolution(Solution, 0.0001);                                                TB.Reporter.Write("Merging solution with previously split values.");
+         Solution = solver.Solve(Solution, 0.0001);                                                TB.Reporter.Write("Merging solution with previously split values.");
          Solution.MergeWith(solutionLower);                                                              /* 1) Merge solution with solutionLower. */ TB.Reporter.Write("Unswapping solution.");
          Solution.ApplySwaps(SwapMatrix);                                                                /* 2) Unswap solution. */ TB.Reporter.Write("Adding changes to node array on channel mesh.");
          Solution.UpdateNodeArray(ChannelMesh.Nodes);                                                    // 3) Add changes to Node[] array on _channelMesh.

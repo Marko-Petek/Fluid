@@ -19,15 +19,15 @@ namespace Fluid.Internals.Collections {
       protected abstract void BeforeEmtExit(int index);
       public override T this[int index] {
          get {
-            if (index > -1)
+            if (index > -1) {
                if (index < Count)
                   return _E[index];
                else
-                  throw new IndexOutOfRangeException("Index too large.");
+                  throw new IndexOutOfRangeException("Index too large."); }
             else
                throw new IndexOutOfRangeException("Negative index."); }
          set {
-            if (index > -1)
+            if (index > -1) {
                if (index < Count) {
                   if (!Comparer.Equals(_E[index], default(T)))     // If there is a pre-existing element at the index in question.
                      BeforeEmtExit(index);
@@ -35,7 +35,7 @@ namespace Fluid.Internals.Collections {
                   if (!Comparer.Equals(value, default(T)))                 // If the newly assigned value is not null.
                      AfterEmtEntry(index); }
                else
-                  throw new IndexOutOfRangeException("Index too big.");
+                  throw new IndexOutOfRangeException("Index too big."); }
             else
                throw new IndexOutOfRangeException("Negative index."); }
       }

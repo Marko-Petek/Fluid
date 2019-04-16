@@ -8,7 +8,7 @@ using TB = Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Collections {
    public class SparseMat<T,TArith> : SCG.Dictionary<int,SparseRow<T,TArith>>,
       IEquatable<SparseMat<T,TArith>>                                                        // So we can compare two SparseMats via Equals method.
-      where T : IEquatable<T>, new()
+      where T : IEquatable<T>, IComparable<T>, new()
       where TArith : IArithmetic<T>, new() {
          /// <summary>Contains arithmetic operations.</summary>
          static TArith Arith { get; } = new TArith();
@@ -45,9 +45,9 @@ namespace Fluid.Internals.Collections {
                   sparseMat[i][j] = arr[i][j];
             return sparseMat;
          }
-         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int allRows, int startRow, int nRows, int startCol, int nCols) {
+         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int allRows, int startRow, int nRows, int startCol, int nCols, int width, int height) {
             int allCols = arr.Length/allRows;
-            var sparseMat = new SparseMat<T,TArith>(allCols, allRows, nCols*nRows);
+            var sparseMat = new SparseMat<T,TArith>(width, height, nCols*nRows);
             for(int i = startRow; i < startRow + nRows; ++i)
                for(int j = startCol; j < startCol + nCols; ++j)
                   sparseMat[i][j] = arr[i*allCols + j];
@@ -104,7 +104,7 @@ namespace Fluid.Internals.Collections {
             foreach(var matKVPair in this)
                matKVPair.Value.SwapElms(inx1, inx2);              // Swap elms of row.
          }
-         public void ApplyColSwaps(SCG.Dictionary<int,int> swapDict) {//TODO: Test ApplyColSwaps.
+         public void ApplyColSwaps(SCG.Dictionary<int,int> swapDict) {
             foreach(var rowKVPair in swapDict)
                SwapCols(rowKVPair.Key, rowKVPair.Value);
          }
@@ -170,6 +170,15 @@ namespace Fluid.Internals.Collections {
                if(!(other.TryGetValue(matKVPair.Key, out SparseRow<T,TArith> val) && matKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
                   return false;
             return true;
+         }
+
+         public bool Equals(SparseMat<T,TArith> other, T eps) {
+            foreach(var matKVPair in this) {
+               if(!(other.TryGetValue(matKVPair.Key, out SparseRow<T,TArith> otherRow)))  // Fetch did not suceed.
+                  return false;
+               if(!matKVPair.Value.Equals(otherRow, eps))                             // Fetch suceeded and values do not agree within tolerance.
+                  return false; }
+            return true;                                                              // All values agree within tolerance.
          }
    }
 }

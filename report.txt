@@ -8076,3 +8076,5 @@
 10:04     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   35    
 10:05     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   35    
           var = {2, True}                          0,555     Tests/Geometry.cs      StructBehavior    69    
+15:26     Program started.                                                       0         Internals/Toolbox.cs                  EntryPointSetup   36    
+          var = {2, True}                                                        0,0546    Tests/Geometry.cs                     StructBehavior    69    

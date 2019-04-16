@@ -111,7 +111,7 @@ namespace Fluid.Internals.Numerics {
          mat[0][0] + mat[0][1] + mat[1][0] + mat[1][1];
       /// <summary>Extends the capacity of an array if it does not satisfy the specified capacity.</summary>
       public static void EnsureCapacity<T>(this T[] mat, int capacity) {
-         if (mat.Length < capacity) {
+         if(mat.Length < capacity) {
             var biggerArray = new T[2 * mat.Length];
             Array.Copy(mat, biggerArray, mat.Length);
             mat = biggerArray; }
