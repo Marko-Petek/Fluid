@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Development;
@@ -12,8 +13,15 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals {
    public static class Toolbox {
-      static bool _Initialized;
-      public static bool Initialized => _Initialized;
+      static bool _Initializing = false;
+      public static Task _Initialization = new Task(() => {
+         System.Console.OutputEncoding = Encoding.UTF8;
+         _FileReader = new IO.FileReader();
+         _FileWriter = new IO.FileWriter();
+         _Console = new IO.Console();
+         _Reporter = new AppReporter();
+         _Rng = new Rng();
+      });
       static IO.FileReader _FileReader;
       public static IO.FileReader FileReader => _FileReader;
       static IO.FileWriter _FileWriter;
@@ -26,31 +34,25 @@ namespace Fluid.Internals {
       public static Rng Rng => _Rng;
 
       /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
-      public static void EntryPointSetup(Action main, VerbositySettings verbosity =
-         VerbositySettings.Moderate) {
-            try {
-               System.Console.OutputEncoding = Encoding.UTF8;
-               _FileReader = new IO.FileReader();
-               _FileWriter = new IO.FileWriter();
-               _Console = new IO.Console();
-               _Reporter = new AppReporter(verbosity);
-               _Rng = new Rng();
-               _Initialized = true;
-               main(); }
-            catch(Exception exc) {
-               Reporter.Write($"Exception occured: {exc.Message}");
-               Reporter.Write($"Stack trace:{exc.StackTrace}");
-               throw exc; }
-            finally {
-               Reporter.Write("Exiting application.");
-               FileWriter.Flush(); }
+      public static void EntryPointSetup(string initMsg = "Program started.",
+         Action main = null, VerbositySettings verbosity = VerbositySettings.Moderate) {
+            if(!_Initializing) {
+               _Initializing = true;
+               _Initialization.Start(); }
+            _Initialization.ContinueWith(
+               (ant) => {
+                  try {
+                     Reporter.Write(initMsg);
+                     main?.Invoke(); }
+                  catch(Exception exc) {
+                     Reporter.Write($"Exception occured: {exc.Message}");
+                     Reporter.Write($"Stack trace:{exc.StackTrace}");
+                     throw exc; }
+                  finally {
+                     Reporter.Write("Exiting application.");
+                     FileWriter.Flush(); } },
+               TaskContinuationOptions.ExecuteSynchronously); 
       }
-
-      public static void TryInitialize() {
-         if(!Initialized)
-            EntryPointSetup(() => Thread.Sleep(500));
-      }
-
       /// <summary>A class which simplifies exception coding.</summary>
       public static class Assert {
          public static void True(bool cond, string msg = "Assert.True failed.") {

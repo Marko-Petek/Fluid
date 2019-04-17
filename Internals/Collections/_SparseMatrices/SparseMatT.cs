@@ -30,10 +30,9 @@ namespace Fluid.Internals.Collections {
             Height = height;
          }
          /// <summary>Create a copy of specified SparseMatrix.</summary><param name="source">Source SparseMatrix to copy.</param>
-         public SparseMat(SparseMat<T,TArith> source) : base(source) {
-            DummyRow = new DummyRow<T,TArith>(this, Width);
-            Width = source.Width;
-            Height = source.Height;
+         public SparseMat(SparseMat<T,TArith> source) : this(source.Width, source.Height, source.Count) {
+            foreach(var matKVPair in source)
+               Add(matKVPair.Key, new SparseRow<T,TArith>(matKVPair.Value));
          }
 
          public static SparseMat<T,TArith> CreateFromArray(T[][] arr) {
@@ -45,14 +44,19 @@ namespace Fluid.Internals.Collections {
                   sparseMat[i][j] = arr[i][j];
             return sparseMat;
          }
-         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int allRows, int startRow, int nRows, int startCol, int nCols, int width, int height) {
-            int allCols = arr.Length/allRows;
-            var sparseMat = new SparseMat<T,TArith>(width, height, nCols*nRows);
-            for(int i = startRow; i < startRow + nRows; ++i)
-               for(int j = startCol; j < startCol + nCols; ++j)
-                  sparseMat[i][j] = arr[i*allCols + j];
-            return sparseMat;
+         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int allRows, int startRow,
+            int nRows, int startCol, int nCols, int width, int height, int startRowInx = 0, int startColInx = 0) {
+               int allCols = arr.Length/allRows;
+               var sparseMat = new SparseMat<T,TArith>(width, height, nCols*nRows);
+               for(int i = startRow, k = startRowInx; i < startRow + nRows; ++i, ++k)
+                  for(int j = startCol, l = startColInx; j < startCol + nCols; ++j, ++l)
+                     sparseMat[k][l] = arr[i*allCols + j];
+               return sparseMat;
          }
+
+         public static SparseMat<T,TArith> CreateFromArray(T[] arr, int allRows, int startRow,
+            int nRows, int startCol, int nCols) =>
+               CreateFromArray(arr, allRows, startRow, nRows, startCol, nCols, nCols, nRows);
 
          public static SparseMat<T,TArith> CreateFromSpan(Span<T> slice, int nRows) {
             int nCols = slice.Length / nRows;
@@ -62,28 +66,24 @@ namespace Fluid.Internals.Collections {
                   sparseMat[i][j] = slice[i*nRows + j];
             return sparseMat;
          }
-         /// <summary>Split matrix on left and right part. Return right part. Element at specified virtual index will be part of right part.</summary><param name="colInx">Index of element at which to split. This element will be part of right matrix.</param>
+         /// <summary>Split matrix on left and right part. Return right part. Element at specified index will be part of right part.</summary><param name="colInx">Index of element at which to split. This element will be part of right matrix.</param>
          public SparseMat<T,TArith> SplitAtCol(int colInx) {
             int remWidth = Width - colInx;
-            var removedRightPart = new SparseMat<T,TArith>(remWidth, Height);
+            var remMat = new SparseMat<T,TArith>(remWidth, Height);
             Width = colInx;                                                 // Adjust width of this Matrix.
-            foreach(var rowKVPair in this) {                                  // Split each SparseRow separately.
-               var removedCols = rowKVPair.Value.SplitAt(colInx);
-               removedRightPart.Add(rowKVPair.Key, removedCols); }
-            return removedRightPart;
+            foreach(var matKVPair in this) {                                  // Split each SparseRow separately.
+               var remRow = matKVPair.Value.SplitAt(colInx);
+               remMat.Add(matKVPair.Key, remRow); }
+            return remMat;
          }
-         /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified virtual index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
-         public SparseMat<T,TArith> SplitAtRow(int rowInx) {
-            int remWidth = Width;
-            int removedHeight = Height - rowInx;
-            var removedMatrix = new SparseMat<T,TArith>(Width, removedHeight);
-            var remKeys = new List<int>(10); 
-            foreach(var row in this.Where(kvPair => kvPair.Key >= rowInx)) {
-               removedMatrix.Add(row.Key, row.Value);
-               remKeys.Add(row.Key); }
-            foreach(var key in remKeys)
-               Remove(key);
-            return removedMatrix;
+         /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
+         public SparseMat<T,TArith> SplitAtRow(int inx) {
+            var remMat = new SparseMat<T,TArith>(Width, Height - inx); 
+            foreach(var matKVPair in this.Where(kvPair => kvPair.Key >= inx))
+               remMat.Add(matKVPair.Key - inx, matKVPair.Value);
+            foreach(var key in remMat.Keys)
+               Remove(key + inx);
+            return remMat;
          }
          /// <summary>Swap rows with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="inx1">Virtual index of first row to swap.</param><param name="inx2">Virtual index of second row to swap.</param>
          public void SwapRows(int inx1, int inx2) {

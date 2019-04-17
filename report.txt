@@ -8078,3 +8078,13 @@
           var = {2, True}                          0,555     Tests/Geometry.cs      StructBehavior    69    
 15:26     Program started.                                                       0         Internals/Toolbox.cs                  EntryPointSetup   36    
           var = {2, True}                                                        0,0546    Tests/Geometry.cs                     StructBehavior    69    
+07:21     Program started.                                                       0         Internals/Toolbox.cs                  EntryPointSetup   36    
+08:07     Program started.                                                       0         Internals/Toolbox.cs                  EntryPointSetup   36    
+09:31     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:32     Program started.                                  0         Internals/Toolbox.cs        EntryPointSetup   36    
+09:36     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:36     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:36     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:37     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:37     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
+09:42     Program started.                                  0         Internals/Toolbox.cs        EntryPointSetup   36    

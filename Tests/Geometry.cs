@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using static System.Console;
 using Xunit;
 
@@ -11,8 +12,10 @@ using Fluid.Tests.Mocks;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   public class GeometryTests {
-      static GeometryTests() => TB.TryInitialize();
+   public partial class Thread2 {
+      static Thread2() {
+         TB.EntryPointSetup("Starting Thread2 tests.", () => Thread.Sleep(200));
+      }
 
       [InlineData(-0.5, 0.5)]
       [InlineData(0.5, 0.5)]

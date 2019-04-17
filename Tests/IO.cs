@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 using Fluid.Internals;
@@ -10,7 +11,8 @@ using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Tests {
-   public class IOTest {
+   public partial class Thread1 {
+
       [Fact] public void ReadAndParseArray() {
           TB.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
           var inputArray = (double[]) TB.FileReader.ReadArray<double>();

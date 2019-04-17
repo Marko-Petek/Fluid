@@ -29,7 +29,7 @@ namespace Fluid.Internals.Development {
 
 
       /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-      public AppReporter(VerbositySettings verbosity, [CallerFilePath] string path = null,
+      public AppReporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = null,
          [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
             Output = new OutputSettings();
             Output |= (OutputSettings.Console | OutputSettings.File);
@@ -38,9 +38,9 @@ namespace Fluid.Internals.Development {
             _Report = new Report(StartTime);
             ReportWriter = new ReportWriter(this);
 
-            var initMessage = new Message(StartTime, "Program started.", path, caller, line);            // Write initial message.
-            Report.AddMessage(initMessage);
-            ReportWriter.WriteMessage(0);   
+            // var initMessage = new Message(StartTime, initMsg, path, caller, line);            // Write initial message.
+            // Report.AddMessage(initMessage);
+            // ReportWriter.WriteMessage(0);   
                         // Write initial message (Program started, etc.)
       }
 

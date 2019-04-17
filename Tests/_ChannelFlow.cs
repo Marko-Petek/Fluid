@@ -5,10 +5,12 @@ using System.Threading;
 
 namespace Fluid.Tests
 {
-   public class ChannelFlowTest {
-      static ChannelFlowTest() => TB.TryInitialize();
+   public partial class Thread1 {
+      static Thread1() {
+         TB.EntryPointSetup("Starting Thread1 tests.", () => Thread.Sleep(200));
+      }
       /// <summary>Test transformation from standard block indices to compact block indices.</summary>
-      [Fact] public void CmtToStdIndexTransform() {
+      [Fact] public void CmtToStdIndexTransform() {               // Uses TB.FileReader inside ObstructionBlock.
          var block = new ObstructionBlockMock();
          Assert.True( block.CmtInxFromStdInx(0,0,0) == (0,0,2) );
          Assert.True( block.CmtInxFromStdInx(0,0,1) == (0,0,3) );

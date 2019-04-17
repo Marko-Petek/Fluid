@@ -9,6 +9,6 @@ using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Seminar.NodeCreation {
    partial class Program {
-      static void Main(string[] args) => TB.EntryPointSetup(() => CreateDerivedData());  
+      static void Main(string[] args) => TB.EntryPointSetup("NodeCreation started.",() => CreateDerivedData());  
    }
 }

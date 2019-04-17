@@ -24,7 +24,7 @@ namespace Fluid.Internals.Collections {
             Width = width;
          }
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
-         public SparseRow(SparseRow<T,TArith> source) : base(source.Count) {
+         public SparseRow(SparseRow<T,TArith> source) : this(source.Width, source.Count) {
             foreach(var pair in source)
                Add(pair.Key, pair.Value);
          }
@@ -34,23 +34,28 @@ namespace Fluid.Internals.Collections {
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
          public static SparseRow<T,TArith> CreateSparseRow(SparseRow<T,TArith> source) => new SparseRow<T,TArith>(source);
          /// <summary>Create a new SparseRow by copying an array.</summary><param name="arr">Array to copy.</param>
-         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols, int startInx, int width) {
-            var row = CreateSparseRow(width, arr.Length);
-            for(int i = startCol, j = startInx; i < startCol + nCols; ++i, ++j)
-               row[j] = arr[i];
-            return row;
-         } 
-         /// <summary>Splits SparseRow in two SparseRows. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is put into specified second argument.</summary><param name="inx">Index at which to split. Element at this index will be chopped off and end up as part of returned SparseRow.</param><param name="removedCols">Right remainder will be put in here.</param>
+         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols,
+            int startInx, int width) {
+               var row = CreateSparseRow(width, arr.Length);
+               for(int i = startCol, j = startInx; i < startCol + nCols; ++i, ++j)
+                  row[j] = arr[i];
+               return row;
+         }
+
+         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols,
+            int startInx) => CreateFromArray(arr, startCol, nCols, startInx, nCols);
+
+         public static SparseRow<T,TArith> CreateFromArray(T[] arr, int startCol, int nCols) =>
+            CreateFromArray(arr, startCol, nCols, 0);
+         /// <summary>Splits SparseRow in two. This SparseRow is modified (left remainder), while chopped-off part (right remainder) is returned as a separate (re-indexed) SparseRow.</summary><param name="inx">Index at which to split. Element at this index will end up as part of right remainder.</param>
          public SparseRow<T,TArith> SplitAt(int inx) {
-            var removedCols = new SparseRow<T,TArith>(Width - inx);
-            var remKeys = new List<int>(10);                                   // Must not modify collection during enumeration. Therefore create a list of keys to be removed afterwards.
-            foreach(var kvPair in this.Where(pair => pair.Key >= inx)) {
-               removedCols.Add(kvPair.Key, kvPair.Value);                         // Add to right remainder.
-               remKeys.Add(kvPair.Key); }                                              // Add key to be removed afterwards from left remainder.
-            foreach(int key in remKeys)
-               Remove(key);
+            var remRow = new SparseRow<T,TArith>(Width - inx);                                  
+            foreach(var kvPair in this.Where(pair => pair.Key >= inx))
+               remRow.Add(kvPair.Key - inx, kvPair.Value);                         // Add to right remainder.
+            foreach(var key in remRow.Keys)
+               Remove(key + inx);                                          // Must not modify collection during enumeration. Therefore entries have to be removed from left remainder afterwards.
             Width = inx;
-            return removedCols;
+            return remRow;
          }
          /// <summary>Append specified SparseRow to this one.</summary><param name="rightCols">SparseRow to append.</param>
          public void MergeWith(SparseRow<T,TArith> rightCols) {
@@ -122,16 +127,16 @@ namespace Fluid.Internals.Collections {
                return (SparseRow<T,TArith>) resultRow;
          }
          public static SparseRow<T,TArith> operator -
-            (SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
-               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(left);     // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+            (SparseRow<T,TArith> left, SparseRow<T,TArith> rightRow) {
+               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(left);     // Copy left operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
                T temp;
-               foreach(var kvPair in right) {
-                  resultRow.TryGetValue(kvPair.Key, out T val);               // val is 0, if key does not exist
-                  temp = Arith.Sub(val, kvPair.Value);
+               foreach(var rowKVPair in rightRow) {
+                  resultRow.TryGetValue(rowKVPair.Key, out T val);               // val is 0, if key does not exist
+                  temp = Arith.Sub(val, rowKVPair.Value);
                   if(!temp.Equals(default(T)))
-                     resultRow[kvPair.Key] = temp;
+                     resultRow[rowKVPair.Key] = temp;
                   else
-                     resultRow.Remove(kvPair.Key); }
+                     resultRow.Remove(rowKVPair.Key); }
                return (SparseRow<T,TArith>) resultRow;
          }
          /// <summary>Dot (scalar) product.</summary>
@@ -142,14 +147,14 @@ namespace Fluid.Internals.Collections {
                   result = Arith.Add(result, Arith.Mul(kvPair.Value, val));
             return result;
          }
-         public static SparseRow<T,TArith> operator *(T left, SparseRow<T,TArith> right) {
-            if(!left.Equals(default(T))) {                                                // Not zero.
-               var result = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);      // Upcast to dictionary so that Dictionary's indexer is used.
-               foreach(var key in result.Keys)
-                  result[key] = Arith.Mul(result[key], left); //result[key] *= left;
-               return (SparseRow<T,TArith>)result; }
+         public static SparseRow<T,TArith> operator *(T leftNum, SparseRow<T,TArith> rightRow) {
+            if(!leftNum.Equals(default(T))) {                                                // Not zero.
+               var result = new SparseRow<T,TArith>(rightRow.Width, rightRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
+               foreach(var rowKVPair in rightRow)
+                  result.Add(rowKVPair.Key, Arith.Mul(rowKVPair.Value, leftNum));
+               return result; }
             else                                                                          // Zero.
-               return new SparseRow<T,TArith>(right.Width);                               // Return empty row.
+               return new SparseRow<T,TArith>(rightRow.Width);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public T NormSqr() {

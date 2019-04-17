@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Xunit;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using SCG = System.Collections.Generic;
+using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    using SparseMat = SparseMat<double,DblArithmetic>;
@@ -11,7 +13,11 @@ namespace Fluid.Tests {
    using SparseMatInt = SparseMat<int,IntArithmetic>;
    using SparseRowInt = SparseRow<int,IntArithmetic>;
    
-   public class SparseMatsTest {//TODO: Log timing of methods for a large number of operations and save results.
+   public partial class Thread3 {//TODO: Log timing of methods for a large number of operations and save results.
+      static Thread3() {
+         TB.EntryPointSetup("Starting Thread3 tests.", () => Thread.Sleep(200));
+      }
+      
       /// <summary>Test addition of two sparse rows.</summary>
       [Fact] public void AddTwoRows() {
          var sparseRow = new SparseRow(3);
@@ -188,9 +194,9 @@ namespace Fluid.Tests {
 
       [InlineData( 5,2,8,4, 7,4,8,2, 1,3,0,5, 0,4,2,4 )]
       [Theory] public void RowSplit(params int[] data) {
-         var expRes1 = SparseRowInt.CreateFromArray(data, 0, 8, 0, 8);
-         var expRes2 = SparseRowInt.CreateFromArray(data, 8, 8, 8, 8);
-         var res1 = SparseRowInt.CreateFromArray(data, 0, 16, 0, 16);
+         var expRes1 = SparseRowInt.CreateFromArray(data, 0, 8);
+         var expRes2 = SparseRowInt.CreateFromArray(data, 8, 8);
+         var res1 = SparseRowInt.CreateFromArray(data, 0, 16);
          var res2 = res1.SplitAt(8);
          Assert.True(expRes1.Equals(res1) && expRes2.Equals(res2));
       }
@@ -200,9 +206,9 @@ namespace Fluid.Tests {
          9,3,4,2,
          0,4,3,7,
          1,8,5,3 )]
-      [Theory] public void MatRowSplit(params int[] data) {                      //FIXME: Make widths play! Renormalize index on split, option!
-         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 2, 0, 4, 4, 2);
-         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 2, 2, 0, 4, 4, 2);
+      [Theory] public void MatRowSplit(params int[] data) {
+         var expRes1 = SparseMatInt.CreateFromArray(data, 4, 0, 2, 0, 4);
+         var expRes2 = SparseMatInt.CreateFromArray(data, 4, 2, 2, 0, 4);
          var res1 = SparseMatInt.CreateFromArray(data, 4, 0, 4, 0, 4);
          var res2 = res1.SplitAtRow(2);
          Assert.True(expRes1.Equals(res1) && expRes2.Equals(res2));

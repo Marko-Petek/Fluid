@@ -1,9 +1,12 @@
 using Xunit;
+using System.Threading;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
+using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   public class MatsTests {
+   public partial class Thread2 {
+
       [Fact] public void InvertMatrix1() {
          double[][] matrix = new double[3][] {
             new double[3] {6, 0, 0},
