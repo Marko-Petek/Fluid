@@ -4,7 +4,7 @@ using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
-
+// TODO: Write tests for constructors.
 namespace Fluid.Internals.Collections {
    public class SparseMat<T,TArith> : SCG.Dictionary<int,SparseRow<T,TArith>>,
       IEquatable<SparseMat<T,TArith>>                                                        // So we can compare two SparseMats via Equals method.
@@ -63,7 +63,7 @@ namespace Fluid.Internals.Collections {
             var sparseMat = new SparseMat<T,TArith>(nCols, nRows, nCols*nRows);
             for(int i = 0; i < nRows; ++i)
                for(int j = 0; j < nCols; ++j)
-                  sparseMat[i][j] = slice[i*nRows + j];
+                  sparseMat[i][j] = slice[i*nCols + j];
             return sparseMat;
          }
          /// <summary>Split matrix on left and right part. Return right part. Element at specified index will be part of right part.</summary><param name="colInx">Index of element at which to split. This element will be part of right matrix.</param>
@@ -141,15 +141,14 @@ namespace Fluid.Internals.Collections {
          }
          public static SparseRow<T,TArith> operator *
             (SparseMat<T,TArith> lMat, SparseRow<T,TArith> rRow) {
-               TB.Assert.AreEqual(lMat.Width, rRow.Width);                                 // Check that matrix and row can be multiplied.
-               int matrixRowCount = lMat.Count;                                         
-               var resultRow = new SparseRow<T,TArith>(lMat.Height, lMat.Count);           // lMat.Count = # of non-zero rows.
+               TB.Assert.AreEqual(lMat.Width, rRow.Width);                                 // Check that matrix and row can be multiplied.                                        
+               var resultRow = new SparseRow<T,TArith>(lMat.Width);           // lMat.Count = # of non-zero rows.
                T sum;
                foreach(var lMatKVPair in lMat) {                                           // Go through each row in lMat. Rows that do not exist, create no entries in result row.
                   sum = default(T);
-                  foreach(var lMatRowKVPair in lMatKVPair.Value) {                         // Move over each element in lMatRow.
-                     if(rRow.TryGetValue(lMatRowKVPair.Key, out T rRowEmt))                // Check its index then search for an element with matching index in rRow.
-                        sum = Arith.Add(sum, Arith.Mul(lMatRowKVPair.Value, rRowEmt)); }   // sum += lMatRowKVPair.Value * rRowEmt; ~~> Add all such contributions to emt with same index in rRow.
+                  foreach(var lRowKVPair in lMatKVPair.Value) {                         // Move over each element in lMatRow.
+                     if(rRow.TryGetValue(lRowKVPair.Key, out T rEmt))                // Check its index then search for an element with matching index in rRow.
+                        sum = Arith.Add(sum, Arith.Mul(lRowKVPair.Value, rEmt)); }   // sum += lMatRowKVPair.Value * rRowEmt; ~~> Add all such contributions to emt with same index in rRow.
                   resultRow[lMatKVPair.Key] = sum; }
                return resultRow;
          }
@@ -158,12 +157,13 @@ namespace Fluid.Internals.Collections {
                TB.Assert.AreEqual(rMat.Width, lRow.Width);                                      // Check that matrix and row can be multiplied.
                var resultRow = new SparseRow<T,TArith>(rMat.Height, rMat.Width);
                foreach(var rMatKVPair in rMat)
-                  foreach(var rMatRowEmt in rMatKVPair.Value)
-                     if(lRow.TryGetValue(rMatRowEmt.Key, out T lRowEmt))
-                        resultRow[rMatKVPair.Key] = Arith.Add(
-                           resultRow[rMatKVPair.Key], Arith.Mul(lRowEmt, rMatRowEmt.Value));    // resultRow[rMatKVPair.Key] += lRowEmt * rMatRowEmt.Value;
+                  if(lRow.TryGetValue(rMatKVPair.Key, out T lRowVal)) {
+                     foreach(var rRowKVPair in rMatKVPair.Value)
+                        resultRow[rRowKVPair.Key] = Arith.Add(resultRow[rRowKVPair.Key], Arith.Mul(lRowVal, rRowKVPair.Value)); }
                return resultRow;
          }
+
+         
          /// <summary>Compare two SparseMats.</summary><param name="other">The other SparseMat to compare with.</param>
          public bool Equals(SparseMat<T,TArith> other) {
             foreach(var matKVPair in this)
