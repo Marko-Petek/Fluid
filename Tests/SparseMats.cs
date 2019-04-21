@@ -139,6 +139,34 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
+      [InlineData(
+         5,3,0,2,  6,
+         30,18,0,12 )]
+      [Theory] public void MulNumRow(params int[] data) {
+         var num = data[4];
+         var row = SparseRowInt.CreateFromArray(data, 0, 4);
+         var res = num*row;
+         var expRes = SparseRowInt.CreateFromArray(data,5,4);
+         Assert.True(res.Equals(expRes));
+      }
+
+      // [InlineData(
+      //    2,6,0,
+      //    3,7,1,
+      //    6,0,4,
+      //    3,
+      //    6,18,0,
+      //    9,21,3,
+      //    18,0,12
+      // )]
+      // [Theory] public void MulNumMat(params int[] data) {
+      //    var slice = new Span<int>(data, 0, 9);
+      //    var mat = SparseMatInt.CreateFromSpan(slice, 3);
+      //    var num = data[9];
+      //    var res = num*mat;
+      //    var expRes = 
+      // }
+
       /// <summary>Test wether column swapping in SparseMatrix functions correctly.</summary>
       [InlineData(1.0, 2.0, 3.0, 4.0,
                   5.0, 6.0, 7.0, 8.0,

@@ -114,47 +114,35 @@ namespace Fluid.Internals.Collections {
                   Remove(i); }                                           // Remove value at given index if value set is 0 and we are not in DummyRow.
          }
          public static SparseRow<T,TArith> operator +
-            (SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
-               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(right);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-               T temp;
-               foreach(var kvPair in left) {
-                  resultRow.TryGetValue(kvPair.Key, out T val);                  // Then add to existing value.
-                  temp = Arith.Add(kvPair.Value, val);
-                  if(!temp.Equals(default(T)))                                   // Not zero.
-                     resultRow[kvPair.Key] = temp;      // Add to result. Upcast to dictionary so that Dictionary's indexer is used.
-                  else                                                           // Zero.
-                     resultRow.Remove(kvPair.Key); }
-               return (SparseRow<T,TArith>) resultRow;
+            (SparseRow<T,TArith> lRow, SparseRow<T,TArith> rRow) {
+               var resRow = new SparseRow<T,TArith>(rRow);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+               foreach(var lRowKVPair in lRow)
+                  resRow[lRowKVPair.Key] = Arith.Add(lRowKVPair.Value, rRow[lRowKVPair.Key]);
+               return resRow;
          }
          public static SparseRow<T,TArith> operator -
-            (SparseRow<T,TArith> left, SparseRow<T,TArith> rightRow) {
-               var resultRow = (SCG.Dictionary<int,T>) new SparseRow<T,TArith>(left);     // Copy left operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-               T temp;
-               foreach(var rowKVPair in rightRow) {
-                  resultRow.TryGetValue(rowKVPair.Key, out T val);               // val is 0, if key does not exist
-                  temp = Arith.Sub(val, rowKVPair.Value);
-                  if(!temp.Equals(default(T)))
-                     resultRow[rowKVPair.Key] = temp;
-                  else
-                     resultRow.Remove(rowKVPair.Key); }
-               return (SparseRow<T,TArith>) resultRow;
+            (SparseRow<T,TArith> lRow, SparseRow<T,TArith> rRow) {
+               var resRow = new SparseRow<T,TArith>(lRow);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+               foreach(var rRowKVPair in rRow)
+                  resRow[rRowKVPair.Key] = Arith.Sub(lRow[rRowKVPair.Key], rRowKVPair.Value);
+               return resRow;
          }
          /// <summary>Dot (scalar) product.</summary>
-         public static T operator *(SparseRow<T,TArith> left, SparseRow<T,TArith> right) {
-            T result = default(T);
-            foreach(var kvPair in left)
-               if(right.TryGetValue(kvPair.Key, out T val))
-                  result = Arith.Add(result, Arith.Mul(kvPair.Value, val));
-            return result;
+         public static T operator *(SparseRow<T,TArith> lRow, SparseRow<T,TArith> rRow) {
+            T res = default(T);
+            foreach(var lRowKVPair in lRow)
+               if(rRow.TryGetValue(lRowKVPair.Key, out T rVal))
+                  res = Arith.Add(res, Arith.Mul(lRowKVPair.Value, rVal));
+            return res;
          }
-         public static SparseRow<T,TArith> operator *(T leftNum, SparseRow<T,TArith> rightRow) {
+         public static SparseRow<T,TArith> operator *(T leftNum, SparseRow<T,TArith> rRow) {
             if(!leftNum.Equals(default(T))) {                                                // Not zero.
-               var result = new SparseRow<T,TArith>(rightRow.Width, rightRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
-               foreach(var rowKVPair in rightRow)
-                  result.Add(rowKVPair.Key, Arith.Mul(rowKVPair.Value, leftNum));
+               var result = new SparseRow<T,TArith>(rRow.Width, rRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
+               foreach(var rRowKVPair in rRow)
+                  result.Add(rRowKVPair.Key, Arith.Mul(rRowKVPair.Value, leftNum));
                return result; }
             else                                                                          // Zero.
-               return new SparseRow<T,TArith>(rightRow.Width);                               // Return empty row.
+               return new SparseRow<T,TArith>(rRow.Width);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public T NormSqr() {

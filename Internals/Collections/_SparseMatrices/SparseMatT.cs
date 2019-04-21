@@ -116,28 +116,27 @@ namespace Fluid.Internals.Collections {
                   DummyRow.SparseMat = this;
                   DummyRow.Index = i;
                   return (SparseRow<T,TArith>)DummyRow; } }
+            set {
+               if(value.Count != 0)
+                  base[i] = value;
+               else
+                  Remove(i); }
          }
          /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="lMat">Left operand.</param><param name="rMat">Right operand.</param>
          public static SparseMat<T,TArith> operator +
             (SparseMat<T,TArith> lMat, SparseMat<T,TArith> rMat) {
                TB.Assert.AreEqual(lMat.Width, rMat.Width);                                         // Check that width and height of operands match.
                TB.Assert.AreEqual(lMat.Height, rMat.Height);
-               var rMatAsDict = (SCG.Dictionary<int,SparseRow<T,TArith>>)                          // Copy right operand. Result will appear here.
-                  new SparseMat<T,TArith>(rMat);                                                   // Upcast to dictionary so that Dictionary's indexer is used.
-               SCG.Dictionary<int,T> rMatRowAsDict;
-               T rMatRowEmt;
+               var res = new SparseMat<T,TArith>(rMat);
                foreach(var lMatKVPair in lMat) {
-                  if(rMatAsDict.TryGetValue(lMatKVPair.Key, out SparseRow<T,TArith> rMatRow)) {    // Right row counterpart exists.
-                     rMatRowAsDict = (SCG.Dictionary<int,T>) rMatRow;
-                     foreach(var lMatRowKVPair in lMatKVPair.Value) {
-                        rMatRowEmt = Arith.Add(rMatRow[lMatRowKVPair.Key], lMatRowKVPair.Value);
-                        if(!rMatRowEmt.Equals(default(T)))                                         // Not zero.
-                           rMatRowAsDict[lMatRowKVPair.Key] = rMatRowEmt;
-                        else
-                           rMatRowAsDict.Remove(lMatRowKVPair.Key); } }
-                  else                                                                             // Right row counterpart does not exist (zeros).
-                     rMatAsDict.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value)); }
-               return (SparseMat<T,TArith>) rMatAsDict;
+                  res[lMatKVPair.Key] = lMatKVPair.Value + rMat[lMatKVPair.Key]; }
+                  // if(rMat.TryGetValue(lMatKVPair.Key, out SparseRow<T,TArith> rRow)) {    // Right row counterpart exists.
+                  //    var resRow = lMatKVPair.Value + rRow;
+                  //    if(resRow.Count != 0)
+                  //       res.Add(lMatKVPair.Key, resRow); }
+                  // else                                                                             // Right row counterpart does not exist (zeros).
+                  //    res.Add(lMatKVPair.Key, new SparseRow<T,TArith>(lMatKVPair.Value)); }
+               return res;
          }
          public static SparseRow<T,TArith> operator *
             (SparseMat<T,TArith> lMat, SparseRow<T,TArith> rRow) {
