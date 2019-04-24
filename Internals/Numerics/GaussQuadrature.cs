@@ -1,9 +1,10 @@
 using System;
+using System.Linq;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>Guass-Legendre quadrature (integrator). Works for hyper-cubes with sides [-1,1].</summary>
    public class GaussQuadrature {
-      /// <summary>Weights and abscissae for various order Gauss-Legendre Quadratures. [quadrature order i (0,6)][abscissa j (0,i+2)][weight val,abscissa val]</summary>
+      /// <summary>Weights and abscissae for various order Gauss-Legendre Quadratures. [quadrature order i-2, i(2,7)][abscissa j (0,i+2)][weight val,abscissa val]</summary>
       public static double[][][] WA { get; } = new double[6][][] {
          new double[2][] {
             new double[2] {1.0, -0.5773502691896257},
@@ -56,7 +57,24 @@ namespace Fluid.Internals.Numerics {
 
 
       public double Integrate() {
+         double res = 0.0;
+         int depth = -1;
+         double[] cors = new double[Dim];
          
+         void Recursion(double[] wa) {    // wa = weight and abscissa.
+            ++depth;
+            double wgh = 
+            if(depth < Dim - 1) {                                        // Re-enter recursion, not all dimensions explored.
+               for(int i = 0; i < Order; ++i) {
+                  Recursion(WA[Order - 2][i]);
+               }
+            }
+            else {
+               for(int i = 0; i < Order; ++i) {
+                  res += 
+               }
+            }
+         }
       }
    }
 }
