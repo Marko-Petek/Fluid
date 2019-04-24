@@ -37,7 +37,7 @@
 		"workbench.colorTheme": "Visual Studio Light",
 		"workbench.colorCustomizations": {
 			"activityBar.background": "#272424",
-			"activityBar.inactiveForeground": "#585858",
+			"activityBar.inactiveForeground": "#888888",
 			"activityBar.foreground": "#ffffff",
          "button.background": "#0004ff93",
          "button.hoverBackground": "#0004ffb6",
