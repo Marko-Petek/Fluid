@@ -39,15 +39,24 @@ namespace Fluid.Internals.Numerics {
             new double[2] {0.1294849661688697, -0.9491079123427585},
             new double[2] {0.1294849661688697, 0.9491079123427585} }
       };
-      /// <summary>Order of Gauss-Legendre quadrature.</summary>
+      /// <summary>Order of Gauss-Legendre quadrature equals the amount of abscissae in 1D.</summary>
       public int Order { get; set; } = 7;
+      /// <summary>Dimension of hypercube that defines the integration domain. 1 = line, 2 = square, 3 = cube, etc.</summary>
+      public int Dim { get; set; } = 2;
       /// <summary>Function to integrate.</summary>
       public Func<double[],double> F { get; set; }
 
 
       public GaussQuadrature() {}
+      public GaussQuadrature(int order, int dim, Func<double[],double> func) : this() {
+         Order = order;
+         Dim = dim;
+         F = func;
+      }
 
 
-
+      public double Integrate() {
+         
+      }
    }
 }
