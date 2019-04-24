@@ -6,7 +6,7 @@ namespace Fluid.Internals.Numerics {
    using SparseRow = SparseRow<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
-   public class ConjGradsSolver {//TODO1: Test ConjGradSolver.
+   public class ConjGradsSolver {
       /// <summary>Left-hand side matrix of A x = b.</summary>
       SparseMat A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
