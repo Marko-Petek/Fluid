@@ -49,31 +49,34 @@ namespace Fluid.Internals.Numerics {
 
 
       public GaussQuadrature() {}
-      public GaussQuadrature(int order, int dim, Func<double[],double> func) : this() {
+      public GaussQuadrature(Func<double[],double> func) : this() {
+         F = func;
+      }
+      public GaussQuadrature(int order, int dim, Func<double[],double> func) : this(func) {
          Order = order;
          Dim = dim;
-         F = func;
+         
       }
 
 
       public double Integrate() {
-         double res = 0.0;
-         int depth = -1;
-         double[] cors = new double[Dim];
+         double result = 0.0;
+         //int depth = -1;
+         double[] coords = new double[Dim];
+         Recursion(-1, 1.0);
+         return result;
          
-         void Recursion(double[] wa) {    // wa = weight and abscissa.
+         // Recursion is entered once for each dimension of domain before it reaches bottom.
+         void Recursion(int depth, double wgh) {    // wa = weight and abscissa of current recursion. wgh = accumulated product of weights.
             ++depth;
-            double wgh = 
-            if(depth < Dim - 1) {                                        // Re-enter recursion, not all dimensions explored.
+            if(depth < Dim - 1) {                                          // Re-enter recursion, not all dimensions explored.
                for(int i = 0; i < Order; ++i) {
-                  Recursion(WA[Order - 2][i]);
-               }
-            }
+                  coords[depth] = WA[Order - 2][i][1];                       // Must be here.                  
+                  Recursion(depth, wgh*WA[Order - 2][i][0]); } }         // Multiply accumulated weight with current.
             else {
                for(int i = 0; i < Order; ++i) {
-                  res += 
-               }
-            }
+                  coords[Dim-1] = WA[Order - 2][i][1];
+                  result += wgh*WA[Order - 2][i][0]*F(coords); } }
          }
       }
    }

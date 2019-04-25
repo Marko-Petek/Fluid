@@ -84,5 +84,12 @@ namespace Fluid.Internals {
             lines.Add(str);
          return lines;
       }
+
+      public static bool Equals(this double val1, double val2, double eps = 0.000001) {
+         if(Abs(val1 - val2) > eps)
+            return false;
+         else
+            return true;
+      }
    }
 }
