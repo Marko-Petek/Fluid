@@ -17,6 +17,7 @@
 		"git.enableSmartCommit": true,
 		//"jupyter.appendResults": true,
       "latex-workshop.view.pdf.viewer": "tab",
+      "latex-workshop.latex.autoBuild.run": "onFileChange",
       "omnisharp.path": "latest",
 		"python.jediEnabled": false,
 		"python.linting.pylintEnabled": true,

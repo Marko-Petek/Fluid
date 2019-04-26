@@ -217,3 +217,39 @@ Basic lemma of variational principles: Temeljni lema variacijskih načel.
 \begin{equation}
    \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{g0}} \mkern2mu \right) = 0
 \end{equation}
+
+\begin{equation}
+   \mathbf{\nabla} \psi^{a}(\mathbf{x}) = \texttt{J} \mathbf{\nabla} \phi^{a}(\bm{\rho})
+\end{equation}
+
+\begin{equation}
+   \psi^{a1} = \widetilde{J}^{a}_{11} \phi^{a1} + \widetilde{J}^{a}_{12} \phi^{a2}
+\end{equation}
+
+\begin{equation}
+   \frac{\pd \psi^a}{\pd x} = \widetilde{J}^{a}_{11} \frac{\pd \phi^a}{\pd \xi} + \widetilde{J}^{a}_{12} \frac{\pd \phi^a}{\pd \eta}
+\end{equation}
+
+\begin{equation}
+   \widetilde{J}^{a}_{11} = \frac{\pd \xi}{\pd x} \quad \widetilde{J}^{a}_{12} = \frac{\pd \eta}{\pd x}
+\end{equation}
+
+\begin{equation}
+   \frac{\pd \psi^a}{\pd x} = \frac{\pd \xi}{\pd x} \frac{\pd \phi^a}{\pd \xi} + \frac{\pd \eta}{\pd x} \frac{\pd \phi^a}{\pd \eta}
+\end{equation}
+
+\begin{equation}
+   \psi^{ab} = \widetilde{J}_{bc} \phi^{ac} \quad J_{0c} = 1
+\end{equation}
+
+\begin{equation}
+   \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \psi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \psi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \psi^{d0} \frac{\pd}{\pd x_e}\right) \left(u^g_m \mkern1mu \psi^{g0}\right) - f^g_j \mkern1mu \psi^{g0}}
+\end{equation}
+
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\psi^{a0} \psi^{cb} \mkern1mu}\ket{\mkern1mu \psi^{d0} \psi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\psi^{a0} \psi^{cb} \mkern1mu}\ket{\mkern1mu \psi^{g0}} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{d0} (\widetilde{J}_{eh}  \phi^{gh}) |\texttt{J}|} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{g0} |\texttt{J}|} \mkern2mu \right) = 0
+\end{equation}
