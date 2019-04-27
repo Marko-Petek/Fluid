@@ -28,9 +28,8 @@ kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa re
 	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \frac{\ud \widetilde{\mathbf{w}}}{\ud \varepsilon} \ \ud \Omega \,
 	=
 	\, \int_{\Omega} \left(\frac{\ud F}{\ud \widetilde{\mathbf{w}}}\right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \ ,
-\label{eq:funcDerivative}
 \end{equation*}
-\begin{equation*}
+\begin{equation}
 	\frac{\ud I}{\ud \varepsilon} \,
 	=
 	\, \int_{\Omega} \frac{\ud}{\ud \varepsilon} F(\widetilde{\mathbf{w}}) \, \ud \Omega \,
@@ -39,7 +38,7 @@ kjer je $\mathbf{v}(\mathbf{x})$ poljubna odmična funkcija, $\varepsilon$ pa re
 	=
 	\, \bra{\frac{\ud F}{\ud \widetilde{\mathbf{w}}}}\ket{\mkern1mu \mathbf{v} \mkern-1mu} \ ,
 \label{eq:funcDerivative}
-\end{equation*}
+\end{equation}
 nato pa $\varepsilon$ v \eqref{eq:funcDerivative} pošljemo proti nič in celoten izraz enačimo z nič:
 \begin{equation*}
 	\lim_{\varepsilon \rightarrow 0} \frac{\ud I}{\ud \varepsilon} \,
@@ -61,7 +60,7 @@ Limita deluje le na prvi člen v integrandu, zato se variacijska izjava glasi:
 		\int_{\Omega} \, \lim_{\varepsilon \rightarrow 0} \left(\frac{\ud F(\widetilde{\mathbf{w}})}{\ud \widetilde{\mathbf{w}}} \right)^\mathsf{\mkern-7mu T} \mkern-5mu \cdot \mkern-1mu \mathbf{v} \ \ud \Omega \, = \, 0 \ , \quad \forall \mathbf{v(\mathbf{x})}\,
 	}
 	\hspace{1.3cm} \texttt{variacijska izjava} \ .
-	\label{eq:variationalStatement}
+	\label{eq:variationalStatement1}
 \end{equation}
 \begin{equation}
 	\boxed{\, \vphantom{\bigg)^2_3}
@@ -79,7 +78,7 @@ $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \t
 	\hspace{10mm} \boxed{\, \vphantom{\big(}
 		\mathbf{R\big(w(x)\big)} \, = \, \mathbsf{A}(\mathbf{x}) \mkern-2.5mu \cdot \mkern-2mu \mathbf{w(x)} - \mathbf{f(x)} \,
 	}\hspace{20mm} \texttt{vektor ostanka .}
-	\label{eq:residual}
+	\label{eq:residual1}
 \end{equation}
 \begin{equation}
 	\hspace{10mm} \boxed{\, \vphantom{\big(}
@@ -90,7 +89,7 @@ $F\left(\mathbf{w}(\mathbf{x})\right)$ v funkcionalu poskusne funkcije je pri \t
 Poskusna funkcija $\mathbf{w(x)}$, za katero je ostanek $\mathbf{R(w(x))}$ enak nič, je rešitev problema $\mathbf{u(x)}$. Idejo za izničenje ostanka vzamemo iz variacijske izjave \eqref{eq:variationalStatement}: naj bo ostanek $\mathbf{R(w(x))}$ ortogonalen na katerokoli odmično funkcijo $\mathbf{v(x)}$:
 \begin{equation}
 	\hspace{21mm} \int_{\Omega} \mathbf{R\big(w(x)\big)}^\mathsf{\mkern-1mu T} \mkern-4.5mu \cdot \mkern-1mu \mathbf{v(x)} \ \ud \Omega \, = \, 0 \hspace{13mm} \texttt{načelo metode uteženih ostankov .}
-	\label{eq:GfemStatement}
+	\label{eq:GfemStatement1}
 \end{equation}
 \begin{equation}
 	\hspace{21mm} \bra{\mathbf{R}}\ket{\mathbf{v}} \, = \, 0 \hspace{13mm} \texttt{načelo metode uteženih ostankov .}
@@ -174,7 +173,7 @@ Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem p
 		0 \ , \hspace{5mm} \forall \mathbf{v} \vphantom{\bigg{)}} \
 	}
 	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
-	\label{eq:LsfemVariationalStatement}
+	\label{eq:LsfemVariationalStatement1}
 \end{equation}
 \begin{equation}
 	\boxed{\

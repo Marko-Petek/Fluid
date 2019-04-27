@@ -136,7 +136,7 @@ S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Na
         \caption{}
     \end{subfigure}
     \caption{}
-    \label{fig:shapeFs}
+    \label{fig:nodalFs}
 \end{figure}
 
 Štirikotne ploskvice, ki nastanejo s postavitvijo vozlišč, imenujemo \textbf{elementi}. Nobena vozliščna funkcija $\Phi_i$ ne sme pokrivati elementov, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
@@ -253,3 +253,42 @@ Basic lemma of variational principles: Temeljni lema variacijskih načel.
 \begin{equation}
    \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{d0} (\widetilde{J}_{eh}  \phi^{gh}) |\texttt{J}|} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{g0} |\texttt{J}|} \mkern2mu \right) = 0
 \end{equation}
+
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle\phi^{a0} (J^{-1}_{bh}  \phi^{ch}) \mkern1mu\mkern1mu \phi^{d0} (J^{-1}_{eh}  \phi^{gh}) |\mathbsf{J}|\right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \left\langle\phi^{a0} (J^{-1}_{bh}  \phi^{ch}) \mkern1mu \mkern1mu \phi^{g0} |\mathbsf{J}|\right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+$\widetilde{J}$ ima posebna ničta elementa: $|\mathbsf{J}|$.
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu\mkern1mu \phi^{d0} (\widetilde{J}_{eh}  \phi^{gh}) \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \left\langle\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu \mkern1mu \phi^{g0} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} \phi^{d0} \mkern2mu \widetilde{J}_{bh}  \phi^{ch} \mkern1mu \widetilde{J}_{el}  \phi^{gl} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{pk} \mkern1mu f^g_p \left\langle\phi^{a0} \phi^{g0} \widetilde{J}_{bh}  \phi^{ch} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^c_k A^{ab}_{jk} \left(A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} \phi^{d0} \mkern2mu \widetilde{J}_{bh}  \phi^{ch} \mkern1mu \widetilde{J}_{el}  \phi^{gl} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^g_j \left\langle\phi^{a0} \phi^{g0} \widetilde{J}_{bh}  \phi^{ch} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^a_k A^{bp}_{jk} \left(A^{cq}_{jm} u^d_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{b0} \phi^{c0} \mkern2mu \widetilde{J}_{pr}  \phi^{ar} \mkern1mu \widetilde{J}_{qs}  \phi^{ds} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^d_j \left\langle\phi^{b0} \phi^{d0} \widetilde{J}_{pr}  \phi^{ar} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^a_k A^{bp}_{jk} \left(A^{cq}_{jm} u^d_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^d_j \left\langle\phi^0_b \phi^0_d \widetilde{J}_{pr}  \phi^r_a \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^k_a A^{bp}_{jk} \left(A^{cq}_{jm} u^m_d \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-4mu(\xi, \eta)} \mkern-6mu - \mkern1mu f^j_d \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-2mu(\xi, \eta)} \mkern2mu \right) = 0
+\end{equation}
+
+\begin{equation}
+   \sum_i v^a_k A^{bp}_{jk} \left( \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cq}_{jl} u^d_l \mkern1mu - \mkern1mu \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^d_j \mkern2mu \right) = 0
+\end{equation}
+
+Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
+
+Podobno stori za asociirane pare $(i, d)$. Vsota po $l$ bo ponovno imela $m$ seštevancev. Seštevanci iz različnih asociiranih parov z istimi $l$ prispevajo k istemu stolpcu globalne matrike.
+
+To pomeni $2 \times 2 = 4$ prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
