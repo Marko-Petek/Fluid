@@ -114,8 +114,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;        // Apply local to field.
          ChannelMesh.PositionCount = posCount;                   // Last global index to pass to next block which will generate local to global mapping.
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeOnMeshCmt;                              // Rewire.
-         NodeStd = NodeOnMeshStd;
+         NodeCmt = NodeOnMainCmt;                              // Rewire.
+         NodeStd = NodeOnMainStd;
       }
    }
 }

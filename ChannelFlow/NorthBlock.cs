@@ -143,8 +143,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeOnMeshCmt;                              // Rewire.
-         NodeStd = NodeOnMeshStd;
+         NodeCmt = NodeOnMainCmt;                              // Rewire.
+         NodeStd = NodeOnMainStd;
       }
    }
 }

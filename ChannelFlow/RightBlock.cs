@@ -131,8 +131,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;                          // In our case, this now has to be 15 620.
          _Nodes = null;                                                  // Free memory on block.
-         NodeCmt = NodeOnMeshCmt;                                  // Rewire.
-         NodeStd = NodeOnMeshStd;
+         NodeCmt = NodeOnMainCmt;                                  // Rewire.
+         NodeStd = NodeOnMainStd;
       }
       /// <summary>Get an overlap integral of basis functions j and k. Get term n, m.</summary><param name="j">First overlapping basis function.</param><param name="k">Second overlapping basis function.</param><param name="n">Factor row.</param><param name="m">Factor column.</param>
       double GetSfsIntegral(int j, int k, int n, int m) {

@@ -59,16 +59,6 @@ namespace Fluid.ChannelFlow {
                NodeCmt(0, col, node).Constrainedness(1) = true;
                constraintCount += 2; }
          return constraintCount;                                             // Must not count in points from col 20.
-         // ref var node = ref GetNodeCmp(0, 0, 2);
-         // node.Constrainedness(0) = true;
-         // node.Constrainedness(1) = true;
-         // node.Constrainedness(2) = true;
-         // node.Constrainedness(4) = true;
-         // node = ref GetNodeCmp(23, 20, 2);
-         // node.Constrainedness(0) = true;
-         // node.Constrainedness(1) = true;
-         // node.Constrainedness(2) = true;
-         // node.Constrainedness(4) = true;
       }
       protected void MoveNodesToMainMesh(NorthBlock northBlock, SouthBlock southBlock) {
          int posCount = ChannelMesh.PositionCount;
@@ -126,8 +116,8 @@ namespace Fluid.ChannelFlow {
          _CmtInxToGblInxMap = blockToGlobal;
          ChannelMesh.PositionCount = posCount;
          _Nodes = null;                                              // Free memory on block.
-         NodeCmt = NodeOnMeshCmt;                              // Rewire.
-         NodeStd = NodeOnMeshStd;
+         NodeCmt = NodeOnMainCmt;                              // Rewire.
+         NodeStd = NodeOnMainStd;
       }
    }
 }

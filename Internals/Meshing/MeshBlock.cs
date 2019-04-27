@@ -30,9 +30,9 @@ namespace Fluid.Internals.Meshing {
       public int[][][] CmtInxToGblInxMap => _CmtInxToGblInxMap;
       /// <summary>Number of unique constraints set on this block.</summary>
       public int NConstraints { get; protected set; }
-      /// <summary>Get reference to Position with specified compact index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
+      /// <summary>Get MeshNode with specified compact index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
       public Func<int,int,int,MeshNode> NodeCmt;
-      /// <summary>Get reference to Position with specified standard index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
+      /// <summary>Get MeshNode with specified standard index.</summary><param name="blockRow">Row of element (in which sought after position is located) inside block.</param><param name="blockCol">Column of element (in which sought after position is located) inside block.</param><param name="standardPosIndex">Standard element position index (0 - 11).</param><remarks>We use a delegate because first, we create all positions and add them to local positions array (delegate points to this array), then we move positions to a 1D global map on main mesh (delegate is then rewired to point there.)</remarks>
       public Func<int,int,int,MeshNode> NodeStd;
 
       /// <summary>Intended for testing.</summary>
@@ -54,12 +54,12 @@ namespace Fluid.Internals.Meshing {
          return Nodes[rowCmtInx][colCmtInx][inrCmrInx];
       }
       /// <summary>We switch the NodeCmp delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowCmtInx">Row of element (in which sought after position is located) inside block.</param><param name="colCmtInx">Column of element (in which sought after position is located) inside block.</param><param name="inrCmtInx">Compact element node position index (0 - 4).</param>
-      protected MeshNode NodeOnMeshCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) {
+      protected MeshNode NodeOnMainCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) {
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
          return MainMesh.Node(gblInx);
       }
       /// <summary>We switch the GetNodeStd delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowStdInx">Row of element (in which sought after position is located) inside block.</param><param name="colStdInx">Column of element (in which sought after position is located) inside block.</param><param name="inrStdInx">Standard element position index (0 - 11).</param>
-      protected MeshNode NodeOnMeshStd(int rowStdInx, int colStdInx, int inrStdInx) {
+      protected MeshNode NodeOnMainStd(int rowStdInx, int colStdInx, int inrStdInx) {
          (int rowCmtInx,int colCmtInx,int inrCmtInx) =
             CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
