@@ -287,10 +287,24 @@ $\widetilde{J}$ ima posebna ničta elementa: $|\mathbsf{J}|$.
    \sum_i v^a_k A^{bp}_{jk} \left( \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cq}_{jl} u^d_l \mkern1mu - \mkern1mu \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^d_j \mkern2mu \right) = 0
 \end{equation}
 
+\begin{equation}
+   \sum_i v^a_k A^{bp}_{jk} \left( \left\langle \frac{1}{\widetilde{J}_{00}} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cq}_{jl} u^d_l \mkern1mu - \mkern1mu \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^d_j \mkern2mu \right) = 0
+\end{equation}
+
 Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
 
 Podobno stori za asociirane pare $(i, d)$. Vsota po $l$ bo ponovno imela $m$ seštevancev. Seštevanci iz različnih asociiranih parov z istimi $l$ prispevajo k istemu stolpcu globalne matrike.
 
-To pomeni $2 \times 2 = 4$ prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
+To pomeni \(2 \times 2 = 4\) prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
 
-Lahko pa sestavljaš po elementih.
+Lahko pa sestavljaš po elementih. $(i, a)$ določi pas vrstic, $k$ določi mesto znotraj pasu. $(i, d)$ določi pas stolpcev, $l$ pa mesto znotraj pasu.
+
+\begin{equation}
+   \mathbsf{\widetilde{J}}
+   =
+   \begin{pmatrix}
+      |\mathbsf{J}| & 0 & 0 \\
+      0 & +J_{22} & -J_{12} \\
+      0 & -J_{21} & +J_{11}
+   \end{pmatrix}
+\end{equation}
