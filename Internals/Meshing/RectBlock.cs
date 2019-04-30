@@ -2,7 +2,7 @@ using System;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Meshing.MeshElement;
+using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Meshing {
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>
@@ -92,8 +92,8 @@ namespace Fluid.Internals.Meshing {
          int nVars = vars.Length;
          double[] result = new double[nVars];
          for(int var = 0; var < nVars; ++var)                        // For each specified variable.
-            for(int node = 0; node < 12; ++node)
-               result[var] += Phi[node](ksi,eta)*NodeStd(nY, nX, node).Var(vars[var]).Val;
+            for(int p = 0; p < 12; ++p)                     // Over element nodes.
+               result[var] += ϕ[0][p](ksi,eta)*NodeStd(nY, nX, p).Var(vars[var]).Val;
          return result;
       }
       /// <summary>Determine whether a point is inside this Rectangle.</summary><param name="pos">Point's position.</param>

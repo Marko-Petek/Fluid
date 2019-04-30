@@ -1,9 +1,12 @@
 using System;
 using static System.Math;
 
+using Fluid.Internals.Meshing;
+
 namespace Fluid.Internals.Numerics {
    public static class SerendipityBasis {
-      public static Func<double,double,double>[][] F { get; } = new Func<double,double,double>[][] {
+      /// <summary>12 Serendipity basis functions [0][i from 0 to 11] and their partials over ξ [1][i from 0 to 11] and η[2][i from 0 to 11]. All defined on reference square</summary>
+      public static Func<double,double,double>[][] ϕ { get; } = new Func<double,double,double>[][] {
          new Func<double,double,double>[] {                             // Basis functions.
             (ξ,η) => ((-1 + η)*(1 - ξ)*(-2 + η + η*η + ξ + ξ*ξ))/8.0,
             (ξ,η) => -((-1 + η)*Pow(-1 + ξ,2)*(1 + ξ))/8.0,
@@ -46,6 +49,6 @@ namespace Fluid.Internals.Numerics {
             (ξ,η) => ((1 + η)*(-1 + 3*η)*(-1 + ξ))/8.0,
             (ξ,η) => -((-1 - 2*η + 3*η*η)*(-1 + ξ))/8.0,
          }
-      }
+      };
    }
 }
