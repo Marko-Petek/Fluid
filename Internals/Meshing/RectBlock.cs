@@ -91,9 +91,9 @@ namespace Fluid.Internals.Meshing {
          double eta = (blockY - nY*RowHeight) / RowHeight;
          int nVars = vars.Length;
          double[] result = new double[nVars];
-         for(int var = 0; var < nVars; ++var)                        // For each specified variable.
+         for(int varInx = 0; varInx < nVars; ++varInx)                        // For each specified variable.
             for(int p = 0; p < 12; ++p)                     // Over element nodes.
-               result[var] += ϕ[0][p](ksi,eta)*NodeStd(nY, nX, p).Var(vars[var]).Val;
+               result[varInx] += ϕ[0][p](ksi,eta)*NodeStd(nY, nX, p).Vars[vars[varInx]].Val;
          return result;
       }
       /// <summary>Determine whether a point is inside this Rectangle.</summary><param name="pos">Point's position.</param>

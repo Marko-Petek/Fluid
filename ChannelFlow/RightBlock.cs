@@ -49,32 +49,32 @@ namespace Fluid.ChannelFlow {
          int constraintCount = 0;
          int col = 0;
          while(col < NCols) {                                            // Col 0 - 59
-            for(int element = 2; element < 5; ++element) {                  // Upper Channel boundary.
-               NodeCmt(20, col, element).Constrainedness(0) = true;     // u
-               NodeCmt(20, col, element).Constrainedness(1) = true;     // v
-               NodeCmt(20, col, element).Constrainedness(2) = true;     // a
-               NodeCmt(20, col, element).Constrainedness(4) = true;     // c
+            for(int p = 2; p < 5; ++p) {                  // Upper Channel boundary.
+               NodeCmt(20, col, p).Vars[0].Constrained = true;     // u
+               NodeCmt(20, col, p).Vars[1].Constrained = true;     // v
+               NodeCmt(20, col, p).Vars[2].Constrained = true;     // a
+               NodeCmt(20, col, p).Vars[4].Constrained = true;     // c
                constraintCount += 4; }
-            for(int element = 2; element < 5; ++element) {                  // Lower Channel boundary.
-               NodeCmt(0, col, element).Constrainedness(0) = true;      // u
-               NodeCmt(0, col, element).Constrainedness(1) = true;      // v
-               NodeCmt(0, col, element).Constrainedness(2) = true;      // a
-               NodeCmt(0, col, element).Constrainedness(4) = true;      // c
+            for(int p = 2; p < 5; ++p) {                  // Lower Channel boundary.
+               NodeCmt(0, col, p).Vars[0].Constrained = true;      // u
+               NodeCmt(0, col, p).Vars[1].Constrained = true;      // v
+               NodeCmt(0, col, p).Vars[2].Constrained = true;      // a
+               NodeCmt(0, col, p).Vars[4].Constrained = true;      // c
                constraintCount += 4; }
             ++col; }                                                                   // Col 60
-         NodeCmt(20, col, 2).Constrainedness(0) = true;                   // Channel boundary, u.
-         NodeCmt(20, col, 2).Constrainedness(1) = true;                   // v
-         NodeCmt(20, col, 2).Constrainedness(2) = true;                   // a
-         NodeCmt(20, col, 2).Constrainedness(4) = true;                   // c
-         NodeCmt(0, col, 2).Constrainedness(0) = true;                    // Channel boundary, u.
-         NodeCmt(0, col, 2).Constrainedness(1) = true;                    // v
-         NodeCmt(0, col, 2).Constrainedness(2) = true;                    // a
-         NodeCmt(0, col, 2).Constrainedness(4) = true;                    // c
+         NodeCmt(20, col, 2).Vars[0].Constrained = true;                   // Channel boundary, u.
+         NodeCmt(20, col, 2).Vars[1].Constrained = true;                   // v
+         NodeCmt(20, col, 2).Vars[2].Constrained = true;                   // a
+         NodeCmt(20, col, 2).Vars[4].Constrained = true;                   // c
+         NodeCmt(0, col, 2).Vars[0].Constrained = true;                    // Channel boundary, u.
+         NodeCmt(0, col, 2).Vars[1].Constrained = true;                    // v
+         NodeCmt(0, col, 2).Vars[2].Constrained = true;                    // a
+         NodeCmt(0, col, 2).Vars[4].Constrained = true;                    // c
          constraintCount += 8;
          return constraintCount;
       }
       void MoveNodesToMainMesh(EastBlock eastBlock) {
-         int posCount = ChannelMesh.PositionCount;
+         int nPos = ChannelMesh.NPos;
          var blockToGlobal = new int[NRows + 1][][];
          int row = 0;
          int col = 0;
@@ -86,50 +86,50 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][0] = eastMap[23][19 - row][3];          // Col 0
             blockToGlobal[row][col][1] = eastMap[23][19 - row][4];
             blockToGlobal[row][col][2] = eastMap[23][20 - row][2];
-            for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++; }
+            for(int p = 3; p < 5; ++p) {
+               ChannelMesh.G[nPos] = NodeCmt(row, col, p);
+               blockToGlobal[row][col][p] = nPos++; }
             col = 1;
             while(col < NCols) {                                             // Col 1 - 59
                blockToGlobal[row][col] = new int[5];
-               for(int node = 0; node < 5; ++node) {
-                  ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-                  blockToGlobal[row][col][node] = posCount++; }
+               for(int p = 0; p < 5; ++p) {
+                  ChannelMesh.G[nPos] = NodeCmt(row, col, p);
+                  blockToGlobal[row][col][p] = nPos++; }
                ++col; }
             blockToGlobal[row][col] = new int[5];                               // Col 60, last col.
-            for(int node = 0; node < 3; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++; }
-            for(int node = 3; node < 5; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
+            for(int p = 0; p < 3; ++p) {
+               ChannelMesh.G[nPos] = NodeCmt(row, col, p);
+               blockToGlobal[row][col][p] = nPos++; }
+            for(int p = 3; p < 5; ++p)
+               blockToGlobal[row][col][p] = Int32.MinValue;
             ++row; }                                      
          col = 0;                                                            // Row 20
          blockToGlobal[row] = new int[NCols+1][];
          blockToGlobal[row][col] = new int[5];                                   // Col 0
-         for(int node = 0; node < 2; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
+         for(int p = 0; p < 2; ++p)
+               blockToGlobal[row][col][p] = Int32.MinValue;
          blockToGlobal[row][col][2] = eastMap[23][0][2];
-         for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++; }
+         for(int p = 3; p < 5; ++p) {
+               ChannelMesh.G[nPos] = NodeCmt(row, col, p);
+               blockToGlobal[row][col][p] = nPos++; }
          col = 1;
          while(col < NCols) {                                                 // Col 1 - 59
             blockToGlobal[row][col] = new int[5]; 
-            for(int node = 0; node < 2; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
-            for(int node = 2; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
-               blockToGlobal[row][col][node] = posCount++; }
+            for(int p = 0; p < 2; ++p)
+               blockToGlobal[row][col][p] = Int32.MinValue;
+            for(int p = 2; p < 5; ++p) {
+               ChannelMesh.G[nPos] = NodeCmt(row, col, p);
+               blockToGlobal[row][col][p] = nPos++; }
             ++col; }
          blockToGlobal[row][col] = new int[5];                                   // Col 60
-         for(int node = 0; node < 2; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
-         ChannelMesh.Node(posCount) = NodeCmt(row, col, 2);
-         blockToGlobal[row][col][2] = posCount++;                             // Last position to be added.
-         for(int node = 3; node < 5; ++node)
-               blockToGlobal[row][col][node] = Int32.MinValue;
+         for(int p = 0; p < 2; ++p)
+               blockToGlobal[row][col][p] = Int32.MinValue;
+         ChannelMesh.G[nPos] = NodeCmt(row, col, 2);
+         blockToGlobal[row][col][2] = nPos++;                             // Last position to be added.
+         for(int p = 3; p < 5; ++p)
+               blockToGlobal[row][col][p] = Int32.MinValue;
          _CmtInxToGblInxMap = blockToGlobal;
-         ChannelMesh.PositionCount = posCount;                          // In our case, this now has to be 15 620.
+         ChannelMesh.NPos = nPos;                          // In our case, this now has to be 15 620.
          _Nodes = null;                                                  // Free memory on block.
          NodeCmt = NodeOnMainCmt;                                  // Rewire.
          NodeStd = NodeOnMainStd;
@@ -222,16 +222,16 @@ namespace Fluid.ChannelFlow {
          A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
          double[][] fCoefs = new double[8][];                                           // Coefficients accompanying terms in f vector.
-         fCoefs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val,
-            -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
-         fCoefs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val,
-            -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
-         fCoefs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
-         fCoefs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
-         fCoefs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
-         fCoefs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
-         fCoefs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
-         fCoefs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
+         fCoefs[0] = new double[4] {-node.Vars[6].Val, ni*node.Vars[2].Val, ni*node.Vars[3].Val,
+            -node.Vars[0].Val * node.Vars[2].Val - node.Vars[1].Val * node.Vars[3].Val};
+         fCoefs[1] = new double[4] {-node.Vars[7].Val, ni*node.Vars[4].Val, -ni*node.Vars[2].Val,
+            -node.Vars[0].Val * node.Vars[4].Val + node.Vars[1].Val * node.Vars[2].Val};
+         fCoefs[2] = new double[2] {-node.Vars[2].Val, node.Vars[0].Val};
+         fCoefs[3] = new double[2] {-node.Vars[3].Val, node.Vars[0].Val};
+         fCoefs[4] = new double[2] {-node.Vars[4].Val, node.Vars[1].Val};
+         fCoefs[5] = new double[2] {-node.Vars[6].Val, node.Vars[5].Val};
+         fCoefs[6] = new double[2] {-node.Vars[7].Val, node.Vars[5].Val};
+         fCoefs[7] = new double[2] {node.Vars[7].Val, -node.Vars[6].Val};
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
                for(int matCol = 0; matCol < 2; ++matCol)

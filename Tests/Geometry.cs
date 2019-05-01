@@ -65,11 +65,18 @@ namespace Fluid.Tests {
          Assert.False(point.IsInsidePolygon(vertices));
       }
 
-      // [Fact] public void StructBehavior() {
-      //    TB.TryInitialize();
+      // [Fact] public void StructBehavior() {              // Behaves well.
       //    Variable var = new Variable(1, true);
       //    var.Val = 2;
       //    TB.Reporter.Write($"var = {var.ToString()}");
+      // }
+
+      // [Fact] public void StructInArrayBehavior() {       // Behaves well.
+      //    var vars  = new Variable[1] {
+      //      new Variable(1, true)
+      //    };
+      //    vars[0].Val = 3.0;
+      //    Assert.True(vars[0].Val == 3.0);
       // }
    }
 }

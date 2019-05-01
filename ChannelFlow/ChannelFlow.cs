@@ -21,7 +21,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Solution represents a change of values from prvious time to new time.</summary>
       SparseRow Solution { get; set; }
       /// <summary>Holds positions of nodes.</summary>
-      ChannelMesh ChannelMesh { get; }
+      ChannelMesh Mesh { get; }
       /// <summary>Channel width.</summary>
       double Width { get; }
       /// <summary>Swaps that have to be made in solution vector and forcing vector to move constrained nodes to bottom most rows. These same swaps have to occurr also to columns of StiffnessMatrix.</summary>
@@ -33,9 +33,9 @@ namespace Fluid.ChannelFlow {
          PeakInletVelocity = peakInletVelocity;                                           TB.Reporter.Write($"Integration step dt = {dt}.", Verbose);
          Dt = dt;
          Viscosity = viscosity;                                                           TB.Reporter.Write("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
-         ChannelMesh = new ChannelMesh(this);                                             // Initial setup is now already present on _nodes list.
-         Width = ChannelMesh.Width;                                                       TB.Reporter.Write("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
-         Solution = ChannelMesh.NodesArrayToSparseRow();                                  /* Take 0 field as initial solution. */  TB.Reporter.Write("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
+         Mesh = new ChannelMesh(this);                                             // Initial setup is now already present on _nodes list.
+         Width = Mesh.Width;                                                       TB.Reporter.Write("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
+         Solution = Mesh.NodesArrayToSparseRow();                                  /* Take 0 field as initial solution. */  TB.Reporter.Write("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
          SwapMatrix = CreateSwapMatrix();
       }
       // Reorder PreviousSolution
@@ -46,13 +46,13 @@ namespace Fluid.ChannelFlow {
       double InletB(double y) => (4 * PeakInletVelocity / Width) * (1 - y / Width);
       /// <summary>Solves for field changes in time step dt and adds changes to Node[] array on _channelMesh.</summary>
       public void SolveNextAndAddToNodeArray() {                                                         TB.Reporter.Write("Assembling stiffness matrix from node data.");
-         var sfsMatrix = ChannelMesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
-         var forcingVector = ChannelMesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
+         var sfsMatrix = Mesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
+         var forcingVector = Mesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
          // FIXME: sfsMatrix.ApplyColSwaps(SwapMatrix);SwapRow!                                                      // Swap columns so that constrained variables end up at right side.
          int stiffnessMatrixWidth = sfsMatrix.Width;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          forcingVector.ApplySwaps(SwapMatrix);                                                           // Swap elements so that constrained elements end up at end.
          int forcingVectorWidth = forcingVector.Width;
-         int nConstraints = ChannelMesh.NConstraints;                                            TB.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
+         int nConstraints = Mesh.NConstraints;                                            TB.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
          var sfsMatrixRight = sfsMatrix.SplitAtCol(stiffnessMatrixWidth - nConstraints);     /* Split stiffness matrix vertically. Remember right part. */ TB.Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
          sfsMatrix.SplitAtRow(stiffnessMatrixWidth - nConstraints);                                /* Further split stiffness matrix horizontally. */ TB.Reporter.Write("Applying swaps to solution SparseRow.");
          Solution.ApplySwaps(SwapMatrix);                                                                /* Apply swaps, do not forget to unswap after done. */ TB.Reporter.Write("Splitting previous solution SparseRow.");
@@ -63,28 +63,28 @@ namespace Fluid.ChannelFlow {
          Solution = solver.Solve(Solution, 0.0001);                                                TB.Reporter.Write("Merging solution with previously split values.");
          Solution.MergeWith(solutionLower);                                                              /* 1) Merge solution with solutionLower. */ TB.Reporter.Write("Unswapping solution.");
          Solution.ApplySwaps(SwapMatrix);                                                                /* 2) Unswap solution. */ TB.Reporter.Write("Adding changes to node array on channel mesh.");
-         Solution.UpdateNodeArray(ChannelMesh.Nodes);                                                    // 3) Add changes to Node[] array on _channelMesh.
+         Solution.UpdateNodeArray(Mesh.G);                                                    // 3) Add changes to Node[] array on _channelMesh.
       }
 
       /// <summary>Creates a matrix whose entries indicate which solution vector rows should be swapped with one another.</summary>
       SparseMatInt CreateSwapMatrix() {
-         int posCount = ChannelMesh.PositionCount;
-         int nVars = ChannelMesh.NVars;
+         int posCount = Mesh.NPos;
+         int nVars = Mesh.NVars;
          int width = posCount * nVars;
          var matrix = new SparseMatInt(width, width, 2000);
          for(int front = 0, back = width - 1; front <= back; ++front) {
-            int frontPosIndex = front / nVars;                                  // Is rounded down.
-            int frontVarIndex = front % nVars;
-            int backPosIndex = back / nVars;
-            int backVarIndex = back % nVars;
-            ref var frontNode = ref ChannelMesh.Node(frontPosIndex);
-            ref var backNode = ref ChannelMesh.Node(backPosIndex);
-            if(frontNode.Var(frontVarIndex).Constrained) {                     // Check whether node at the front is constrained.
-               while(backNode.Var(backVarIndex).Constrained) {                // Move to an unconstrained variable.
+            int frontPosInx = front / nVars;                                  // Is rounded down.
+            int frontVarInx = front % nVars;
+            int backPosInx = back / nVars;
+            int backVarInx = back % nVars;
+            var frontNode = Mesh.G[frontPosInx];
+            var backNode = Mesh.G[backPosInx];
+            if(frontNode.Vars[frontVarInx].Constrained) {                     // Check whether node at the front is constrained.
+               while(backNode.Vars[backVarInx].Constrained) {                // Move to an unconstrained variable.
                   --back;
-                  backPosIndex = back / nVars;
-                  backVarIndex = back % nVars;
-                  backNode = ref ChannelMesh.Node(backPosIndex); }
+                  backPosInx = back / nVars;
+                  backVarInx = back % nVars;
+                  backNode = Mesh.G[backPosInx]; }
                matrix[front][back] = 1; } }                                  // Indicate that the two elements need to be swapped.}
          return matrix;
       }

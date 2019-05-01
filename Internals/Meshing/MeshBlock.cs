@@ -56,14 +56,14 @@ namespace Fluid.Internals.Meshing {
       /// <summary>We switch the NodeCmp delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowCmtInx">Row of element (in which sought after position is located) inside block.</param><param name="colCmtInx">Column of element (in which sought after position is located) inside block.</param><param name="inrCmtInx">Compact element node position index (0 - 4).</param>
       protected MeshNode NodeOnMainCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) {
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
-         return MainMesh.Node(gblInx);
+         return MainMesh.G[gblInx];
       }
       /// <summary>We switch the GetNodeStd delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowStdInx">Row of element (in which sought after position is located) inside block.</param><param name="colStdInx">Column of element (in which sought after position is located) inside block.</param><param name="inrStdInx">Standard element position index (0 - 11).</param>
       protected MeshNode NodeOnMainStd(int rowStdInx, int colStdInx, int inrStdInx) {
          (int rowCmtInx,int colCmtInx,int inrCmtInx) =
             CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
-         return MainMesh.Node(gblInx);
+         return MainMesh.G[gblInx];
       }
       /// <summary>Returns three actual indices (0 - 4) of node positions array when we specify them in conventional notation (0 -11).</summary><param name="rowStdInx">Row of element inside this block.</param><param name="colStdInx">Column of element inside this block.</param><param name="inrStdInx">Index of node inside element (1 - 11).</param>
       public (int rowCmtInx,int colCmtInx,int inrCmtInx) CmtInxFromStdInx(
@@ -107,8 +107,8 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
       protected double[][] NodeOperatorMat0(MeshNode node, double dt, double ni) {
          double[][] A = new double[8][] {
-            new double[8] { 1.0/dt + node.Var(2).Val, node.Var(3).Val, node.Var(0).Val, node.Var(1).Val, 0, 0, 1, 0 },
-            new double[8] { node.Var(4).Val, 1.0/dt - node.Var(2).Val, -node.Var(1).Val, 0, node.Var(0).Val, 0, 0, 1 },
+            new double[8] { 1.0/dt + node.Vars[2].Val, node.Vars[3].Val, node.Vars[0].Val, node.Vars[1].Val, 0, 0, 1, 0 },
+            new double[8] { node.Vars[4].Val, 1.0/dt - node.Vars[2].Val, -node.Vars[1].Val, 0, node.Vars[0].Val, 0, 0, 1 },
             new double[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
             new double[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
             new double[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
@@ -150,38 +150,38 @@ namespace Fluid.Internals.Meshing {
          int nRows = NRows;                                                      // Row count of current frame.
          int nCols = NCols;
          var vertices = new Pos[4];
-         vertices[0] = NodeStd(startRow, startCol, 0)._Pos;
-         vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
-         vertices[2] = NodeStd(endRow, endCol, 6)._Pos;
-         vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
+         vertices[0] = NodeStd(startRow, startCol, 0).Pos;
+         vertices[1] = NodeStd(startRow, endCol, 3).Pos;
+         vertices[2] = NodeStd(endRow, endCol, 6).Pos;
+         vertices[3] = NodeStd(endRow, startCol, 9).Pos;
          int newEndRow = 0;
          int newEndCol = 0;
          while(nRows > 1 || nCols > 1) {                                            // As long as we have not narrowed our frame down to a single element.
             if(nRows > 1) {
                newEndRow = startRow + nRows/2 - 1;                                  // Set row at half frame width as end. No problem if nRows is odd.
-               vertices[3] = NodeStd(newEndRow, startCol, 9)._Pos;                  // New upper left.
-               vertices[2] = NodeStd(newEndRow, endCol, 6)._Pos;                    // New upper right.
+               vertices[3] = NodeStd(newEndRow, startCol, 9).Pos;                  // New upper left.
+               vertices[2] = NodeStd(newEndRow, endCol, 6).Pos;                    // New upper right.
                if(pos.IsInsidePolygon(vertices)) {
                   endRow = newEndRow;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;                  // UL
-                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }                  // UR
+                  vertices[3] = NodeStd(endRow, startCol, 9).Pos;                  // UL
+                  vertices[2] = NodeStd(endRow, endCol, 6).Pos; }                  // UR
                else {
                   startRow = newEndRow + 1;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos;                // LL
-                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos; }                // LR
+                  vertices[0] = NodeStd(startRow, startCol, 0).Pos;                // LL
+                  vertices[1] = NodeStd(startRow, endCol, 3).Pos; }                // LR
                nRows = endRow - startRow + 1; }
             if(nCols > 1) {
                newEndCol = startCol + nCols/2 - 1;
-               vertices[1] = NodeStd(startRow, newEndCol, 3)._Pos;                  // new LR.
-               vertices[2] = NodeStd(endRow, newEndCol, 6)._Pos;
+               vertices[1] = NodeStd(startRow, newEndCol, 3).Pos;                  // new LR.
+               vertices[2] = NodeStd(endRow, newEndCol, 6).Pos;
                if(pos.IsInsidePolygon(vertices)) {
                   endCol = newEndCol;
-                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
-                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }
+                  vertices[1] = NodeStd(startRow, endCol, 3).Pos;
+                  vertices[2] = NodeStd(endRow, endCol, 6).Pos; }
                else {
                   startCol = newEndCol + 1;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos; }
+                  vertices[3] = NodeStd(endRow, startCol, 9).Pos;
+                  vertices[0] = NodeStd(startRow, startCol, 0).Pos; }
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);

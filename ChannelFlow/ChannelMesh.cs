@@ -36,7 +36,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Corners of largest possible square inside circular obstruction.</summary>
       public Tetragon ObstructionRect { get; protected set; }
       /// <summary>Number of positions that nodes reside at.</summary>
-      public int PositionCount { get; set; }
+      public int NPos { get; set; }
       /// <summary>Obstruction's center x coordinate.</summary>
       protected double ObstructionX => 0.5 * Width;
       /// <summary>Obstruction's center y coordinate.</summary>
@@ -50,7 +50,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Constructs main mesh covering whole channel.</summary><remarks>Parameters cannot yet be changed because currently, element integrals have to be computed outside (e.g.static by Mathematica) which requires manual setup.</remarks>
       public ChannelMesh(ChannelFlow channelFlow, double width = 1.0,
          double relObstructionDiameter = 0.25, int elementDensity = 20) : base(8) {
-            PositionCount = 0;
+            NPos = 0;
             Width = width;
             RelObstructionDiameter = relObstructionDiameter;
             ElementDensity = elementDensity;
@@ -70,7 +70,7 @@ namespace Fluid.ChannelFlow {
                4 * Width, 0.0,
                4 * Width, Width,
                Width, Width );
-            _Nodes = new MeshNode[15620];                                            TB.Reporter.Write($"Created global array of nodes of length {_Nodes.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+            G = new MeshNode[15620];                                            TB.Reporter.Write($"Created global array of nodes of length {G.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
             SouthBlock = new SouthBlock(this, channelFlow);                          TB.Reporter.Write("Constructing WestBlock.", Verbose);
             WestBlock = new WestBlock(this, channelFlow, SouthBlock);                TB.Reporter.Write("Constructing NorthBlock.", Verbose);
             NorthBlock = new NorthBlock(this, channelFlow, WestBlock);               /* Integral values get imported with static constructor of ObstructionBlock. */  TB.Reporter.Write("Constructing EastBlock.", Verbose);
@@ -106,10 +106,10 @@ namespace Fluid.ChannelFlow {
          return fcgVector;
       }
       public void WriteCornerPositionsOfRectElement() {
-         var node1 = RightBlock.NodeStd(1,1,0)._Pos;
-         var node4 = RightBlock.NodeStd(1,1,3)._Pos;
-         var node7 = RightBlock.NodeStd(1,1,6)._Pos;
-         var node10 = RightBlock.NodeStd(1,1,9)._Pos;
+         var node1 = RightBlock.NodeStd(1,1,0).Pos;
+         var node4 = RightBlock.NodeStd(1,1,3).Pos;
+         var node7 = RightBlock.NodeStd(1,1,6).Pos;
+         var node10 = RightBlock.NodeStd(1,1,9).Pos;
          var fileInfo = new FileInfo("./Results/rectElement.txt");
          using(var sw = new StreamWriter(fileInfo.FullName)) {
             sw.WriteLine($"{{{node1},");

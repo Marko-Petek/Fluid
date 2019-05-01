@@ -20,7 +20,7 @@ namespace Fluid.ChannelFlow {
    public abstract class ObstructionBlock : TfiBlock {
       public ChannelFlow ChannelFlow { get; protected set; }
       /// <summary>Main mesh.</summary>
-      public ChannelMesh ChannelMesh { get; protected set; }
+      public ChannelMesh Mesh { get; protected set; }
       /// <summary>Height measured from one of lower corners that lie on upeer part of obstruction to top of obstruction.</summary>
       protected double QuarterMoonHeight { get; set; }
       /// <summary>Side length (which is tilted at 45 deg) projected on vertical.</summary>
@@ -56,7 +56,7 @@ namespace Fluid.ChannelFlow {
          upperLeftX, upperLeftY) {
             double rat = channelMesh.RelObstructionDiameter;
             double b = channelMesh.ElementDensity;
-            ChannelMesh = channelMesh;
+            Mesh = channelMesh;
             ChannelFlow = channelFlow;
             QuarterMoonHeight = (1 - 0.5*Sqrt(2))* channelMesh.ObstructionRadius;
             DiagonalProjection = 0.5*(channelMesh.Width - Sqrt(2)*channelMesh.ObstructionRadius);
@@ -82,7 +82,7 @@ namespace Fluid.ChannelFlow {
             constantEtaArray = new MeshNode[21][];                                  // We need 21 (20 elements cols) nodes at constant eta. We will be writing positions here in next loop.
             nodes.Add(constantEtaArray);
             ksi = 0.0;
-            nextKsi = 1.0 / ChannelMesh.ElementDensity;
+            nextKsi = 1.0 / Mesh.ElementDensity;
             col = 0;                                                                // Reset col counter.
             while(ksi <= 1.0) {                                                     // Move horizontally right.
                twoThirdsAbove = CreateNode(ksi, eta + 2.0 * (nextEta - eta) / 3.0);
@@ -91,8 +91,8 @@ namespace Fluid.ChannelFlow {
                thirdRight = CreateNode(ksi + (nextKsi - ksi) / 3.0, eta);
                twoThirdsRight = CreateNode(ksi + 2.0 * (nextKsi - ksi) / 3.0, eta);
                constantEtaArray[col] = new MeshNode[] {twoThirdsAbove, thirdAbove, corner, thirdRight, twoThirdsRight};
-               ksi += 1.0 / ChannelMesh.ElementDensity;                             // Increase ksi.
-               nextKsi += 1.0 / ChannelMesh.ElementDensity;
+               ksi += 1.0 / Mesh.ElementDensity;                             // Increase ksi.
+               nextKsi += 1.0 / Mesh.ElementDensity;
                ++col; }
             twoThirdsAbove = CreateNode(1.0, eta + 2.0 * (nextEta - eta) / 3.0);    // Create final three positions in row.
             thirdAbove = CreateNode(1.0, eta + (nextEta - eta) / 3.0);
@@ -103,7 +103,7 @@ namespace Fluid.ChannelFlow {
             eta = nextEta;                                                          // Increase eta.
             nextEta = NextEta(nextEta); }
          ksi = 0.0;                                                                 // Finalize the top-most row of nodes with current eta and nextEta = 1.0.
-         nextKsi = 1.0 / ChannelMesh.ElementDensity;
+         nextKsi = 1.0 / Mesh.ElementDensity;
          constantEtaArray = new MeshNode[21][];
          nodes.Add(constantEtaArray);
          col = 0;                                            // Reset col counter.
@@ -114,8 +114,8 @@ namespace Fluid.ChannelFlow {
             constantEtaArray[col] = new MeshNode[] {
                new MeshNode(Double.NaN, Double.NaN, 0), new MeshNode(Double.NaN, Double.NaN, 0),
                corner, thirdRight, twoThirdsRight };
-            ksi += 1.0 / ChannelMesh.ElementDensity;                                  // Increase ksi.
-            nextKsi += 1.0 / ChannelMesh.ElementDensity;
+            ksi += 1.0 / Mesh.ElementDensity;                                  // Increase ksi.
+            nextKsi += 1.0 / Mesh.ElementDensity;
             ++col; }
          corner = CreateNode(1.0, 1.0);                                             // Now add one final point.
          constantEtaArray[col] = new MeshNode[] {
@@ -277,26 +277,26 @@ namespace Fluid.ChannelFlow {
       /// <summary>Creates an 8 element subvector of a 96 element forcing vector  for some choice of j = 0,...,11.</summary><param name="row">Mesh block row of element.</param><param name="col">Mesh block column row of element.</param><param name="j">First overlapping basis function.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param><param name=x>Previous values of variables at point (row,col,j).</param>
       double[] SubVec(int row, int col, int j, double dt, double ni) {
          var subVector = new double[8];
-         var node = NodeStd(row, col, j);
+         var p = NodeStd(row, col, j);
          var A = new double[3][][];                                                      // For three different operators A.            
-         A[0] = NodeOperatorMat0(node, dt, ni);                // Create 3 different matrices A0, A1, A2.
+         A[0] = NodeOperatorMat0(p, dt, ni);                // Create 3 different matrices A0, A1, A2.
          A[0].Transpose();
-         A[1] = NodeOperatorMat1(node, dt, ni);
+         A[1] = NodeOperatorMat1(p, dt, ni);
          A[1].Transpose();
-         A[2] = NodeOperatorMat2(node, dt, ni);
+         A[2] = NodeOperatorMat2(p, dt, ni);
          A[2].Transpose();
          var aTf = new double[8];                                                        // Elemental forcing vector.
          double[][] fCoefs = new double[8][];                                           // Coefficients accompanying terms in f vector.
-         fCoefs[0] = new double[4] {-node.Var(6).Val, ni*node.Var(2).Val, ni*node.Var(3).Val,
-            -node.Var(0).Val * node.Var(2).Val - node.Var(1).Val * node.Var(3).Val};
-         fCoefs[1] = new double[4] {-node.Var(7).Val, ni*node.Var(4).Val, -ni*node.Var(2).Val,
-            -node.Var(0).Val * node.Var(4).Val + node.Var(1).Val * node.Var(2).Val};
-         fCoefs[2] = new double[2] {-node.Var(2).Val, node.Var(0).Val};
-         fCoefs[3] = new double[2] {-node.Var(3).Val, node.Var(0).Val};
-         fCoefs[4] = new double[2] {-node.Var(4).Val, node.Var(1).Val};
-         fCoefs[5] = new double[2] {-node.Var(6).Val, node.Var(5).Val};
-         fCoefs[6] = new double[2] {-node.Var(7).Val, node.Var(5).Val};
-         fCoefs[7] = new double[2] {node.Var(7).Val, -node.Var(6).Val};
+         fCoefs[0] = new double[4] {-p.Vars[6].Val, ni*p.Vars[2].Val, ni*p.Vars[3].Val,
+            -p.Vars[0].Val * p.Vars[2].Val - p.Vars[1].Val * p.Vars[3].Val};
+         fCoefs[1] = new double[4] {-p.Vars[7].Val, ni*p.Vars[4].Val, -ni*p.Vars[2].Val,
+            -p.Vars[0].Val * p.Vars[4].Val + p.Vars[1].Val * p.Vars[2].Val};
+         fCoefs[2] = new double[2] {-p.Vars[2].Val, p.Vars[0].Val};
+         fCoefs[3] = new double[2] {-p.Vars[3].Val, p.Vars[0].Val};
+         fCoefs[4] = new double[2] {-p.Vars[4].Val, p.Vars[1].Val};
+         fCoefs[5] = new double[2] {-p.Vars[6].Val, p.Vars[5].Val};
+         fCoefs[6] = new double[2] {-p.Vars[7].Val, p.Vars[5].Val};
+         fCoefs[7] = new double[2] {p.Vars[7].Val, -p.Vars[6].Val};
          for(int vecRow = 0; vecRow < 8; ++vecRow)                                     // For each entry in elemental vector.
             for(int n = 0; n < 5; ++n) {                                                // For each left term-
                for(int matCol = 0; matCol < 2; ++matCol)
@@ -333,16 +333,16 @@ namespace Fluid.ChannelFlow {
          var vertices = new Pos[nVertices];
          int counter = 0;
          for(int col = 0; col < NCols; ++col) {                              // Add vertices on lower edge.
-               vertices[counter] = NodeStd(0, col, 0)._Pos;
+               vertices[counter] = NodeStd(0, col, 0).Pos;
                ++counter; }
          for(int row = 0; row < NRows; ++row) {                              // Add vertices on right edge.
-               vertices[counter] = NodeStd(row, NCols - 1, 3)._Pos;
+               vertices[counter] = NodeStd(row, NCols - 1, 3).Pos;
                ++counter; }
          for(int col = NCols - 1; col > 0; --col) {                          // Add vertices on upper edge.
-               vertices[counter] = NodeStd(NRows - 1, col, 6)._Pos;
+               vertices[counter] = NodeStd(NRows - 1, col, 6).Pos;
                ++counter; }
          for(int row = NRows - 1; row > 0; --row) {                          // Add vertices on left edge.
-               vertices[counter] = NodeStd(row, 0, 9)._Pos;
+               vertices[counter] = NodeStd(row, 0, 9).Pos;
                ++counter; }
          return pos.IsInsidePolygon(vertices);
       }

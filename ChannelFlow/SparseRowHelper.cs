@@ -12,7 +12,7 @@ namespace Fluid.ChannelFlow {
          int nVars = nodes[0].Vars.Length;
          for(int i = 0; i < nodeCount; ++i)
             for(int j = 0; j < nVars; ++j)
-               nodes[i].Var(j).Val += sparseRow[nVars*i + j];
+               nodes[i].Vars[j].Val += sparseRow[nVars*i + j];
       }
    }
 }
