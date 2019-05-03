@@ -9,7 +9,7 @@ namespace Fluid.ChannelFlow {
    /// <summary>Block on south side of obstruction.</summary><remarks>Sealed, because we call a virtual method in constructor.</remarks>
    public sealed class SouthBlock : ObstructionBlock {   
       /// <summary>Create a mesh block just south of circular obstruction.</summary><param name="channelMesh">Main mesh.</param>
-      public SouthBlock(ChannelMesh channelMesh, ChannelFlow channelFlow)
+      public SouthBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow)
       : base(channelMesh, channelFlow,
          channelMesh.ObstructionRect._LR.X, channelMesh.ObstructionRect._LR.Y,
          channelMesh.ObstructionRect._LL.X, channelMesh.ObstructionRect._LL.Y,

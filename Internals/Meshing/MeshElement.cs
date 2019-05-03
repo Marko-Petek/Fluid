@@ -8,55 +8,11 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Meshing {
    using dbl = Double;
+   // TODO: Convert to class and add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
    /// <summary>A quadrilateral element.</summary>
    public readonly struct MeshElement {
-      // /// <summary>Basis functions.</summary>
-      // public static Func<dbl,dbl,dbl>[] Phi = new Func<dbl,dbl,dbl>[12] {
-      //    (ksi, eta) => 0.125*(-1 + eta)*(1 - ksi)*(-2 + eta + eta*eta + ksi + ksi*ksi),
-      //    (ksi, eta) => 0.125*(1 - eta)*Pow(1 - ksi, 2)*(1 + ksi),
-      //    (ksi, eta) => 0.125*(-1 + eta)*Pow(1 - ksi, 2)*(1 + ksi),
-      //    (ksi, eta) => 0.125*(-1 + eta)*(1 + ksi)*(-2 + eta + eta*eta - ksi + ksi*ksi),
-      //    (ksi, eta) => 0.125*Pow(1 - eta, 2)*(1 + eta)*(1 + ksi),
-      //    (ksi, eta) => 0.125*(1 - eta)*Pow(1 + eta, 2)*(1 + ksi),
-      //    (ksi, eta) => 0.125*(1 + eta)*(-1 - ksi)*(-2 - eta + eta*eta - ksi + ksi*ksi),
-      //    (ksi, eta) => 0.125*(1 + eta)*(1 - ksi)*Pow(1 + ksi, 2),
-      //    (ksi, eta) => 0.125*(1 + eta)*Pow(1 - ksi, 2)*(1 + ksi),
-      //    (ksi, eta) => 0.125*(1 + eta)*(-1 + ksi)*(-2 - eta + eta*eta + ksi + ksi*ksi),
-      //    (ksi, eta) => 0.125*(1 - eta)*Pow(1 + eta, 2)*(1 - ksi),
-      //    (ksi, eta) => 0.125*Pow(1 - eta, 2)*(1 + eta)*(1 - ksi)
-      // };
-      // /// <summary>Derivatives of basis functions in x direction.</summary>
-      // public static Func<dbl,dbl,dbl>[] PhiDx = new Func<dbl,dbl,dbl>[12] {
-      //    (dbl ksi, dbl eta) => 0.125*(1 - eta)*(-3 + eta + eta*eta + 3*eta*eta),
-      //    (dbl ksi, dbl eta) => 0.125*(1 - eta)*(-1 - 2*ksi + 3*ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(1 - eta)*(1 + ksi)*(1 - 3*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + eta)*(-3 + eta + eta*eta + 3*ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*Pow(1 - eta, 2)*(1 + eta),
-      //    (dbl ksi, dbl eta) => 0.125*(1 - eta)*Pow(1 + eta, 2),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 - eta)*(-3 - eta + eta*eta + 3*ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 - eta)*(-1 + 2*ksi + 3*ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(1 + eta)*(-1 + ksi)*(1 + 3*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(1 + eta)*(-3 - eta + eta*eta + 3*ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + eta)*Pow(1 + eta, 2),
-      //    (dbl ksi, dbl eta) => 0.125*Pow(1 - eta, 2)*(-1 - eta)
-      // };
-      // /// <summary>Derivatives of basis functions in y direction.</summary>
-      // public static Func<dbl,dbl,dbl>[] PhiDy = new Func<dbl,dbl,dbl>[12] {
-      //    (dbl ksi, dbl eta) => 0.125*(1 - ksi)*(-3 + 3*eta*eta + ksi + ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*Pow(1 - ksi, 2)*(-1 - ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + ksi)*Pow(1 + ksi, 2),
-      //    (dbl ksi, dbl eta) => 0.125*(1 + ksi)*(-3 + 3*eta*eta - ksi + ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + eta)*(1 + 3*eta)*(1 + ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + 2*eta + 3*eta*eta)*(1 + ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 - ksi)*(-3 + 3*eta*eta - ksi + ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(1 - ksi)*Pow(1 + ksi, 2),
-      //    (dbl ksi, dbl eta) => 0.125*Pow(1 - ksi, 2)*(1 + ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 + ksi)*(-3 + 3*eta*eta + ksi + ksi*ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(1 + eta)*(1 - 3*eta)*(1 - ksi),
-      //    (dbl ksi, dbl eta) => 0.125*(-1 - 2*eta + 3*eta*eta)*(1 - ksi)
-      // };
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds in CCW direction.</summary>
-      public MeshNode[] P {get;}
+      public MeshNode[] P { get; }
       //public double
       // Matrices to compute inverse transformation of specified element.
       readonly double[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
@@ -117,43 +73,43 @@ namespace Fluid.Internals.Meshing {
                   η = SimpleEta(in pos); }
          return new Pos(ξ, η);
       }
-      double FuncA(in Pos pos) =>
+      dbl FuncA(in Pos pos) =>
          pos.X*MG.Tr() - pos.Y*MF.Tr() + NA.Det() - NB.Det();
 
-      double FuncB(in Pos pos) =>
+      dbl FuncB(in Pos pos) =>
          pos.X * MG.Tr() - pos.Y*MF.Tr() + MC.Det() + MD.Det();
 
-      double FuncC(in Pos pos) =>
+      dbl FuncC(in Pos pos) =>
          MA.Sub(MB).Det()*(2*pos.X*MH.Tr() - 2*pos.Y*MJ.Tr() + MA.Add(MB).Det());      //Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Sum(MA(), MB()).Det());
       /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
-      double DistToLowerEdge(in Pos P) {
+      dbl DistToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in this.P[0].Pos, in this.P[3].Pos);    // Vector from lower left to lower right vertex.
          lowerEdgeVector.Normalize();
          var posVec = new Vec2(in this.P[0].Pos, in P);            // Choose a point Q on lower edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
          return Abs(lowerEdgeVector.Cross(in posVec));       // Take cross product of the two which will give you desired distance.
       }
       /// <summary>Distance of specified point P to a line going thorugh left edge.</summary><param name="P">Specified point.</param>
-      double DistToLeftEdge(in Pos P) {
+      dbl DistToLeftEdge(in Pos P) {
          var leftEdgeVec = new Vec2(in this.P[0].Pos, in this.P[9].Pos);     // Vector from lower left to lower right vertex.
          leftEdgeVec.Normalize();
          var posVec = new Vec2(in this.P[0].Pos, in P);            // Choose a point Q on left edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
          return Abs(leftEdgeVec.Cross(in posVec));       // Take cross product of the two which will give you desired distance.
       }
       /// <summary>Used when horizontal edges are virtually parallel.</summary><param name="pos">Position in terms of x and y.</param>
-      double SimpleXi(in Pos pos) {
-         double wholeStretchDist = DistToLeftEdge(in P[3].Pos);       // Distance between parallel edges.
-         double posDist = DistToLeftEdge(in pos);                       // Distance of pos from left edge.
+      dbl SimpleXi(in Pos pos) {
+         dbl wholeStretchDist = DistToLeftEdge(in P[3].Pos);       // Distance between parallel edges.
+         dbl posDist = DistToLeftEdge(in pos);                       // Distance of pos from left edge.
          return 2.0*(posDist/wholeStretchDist) - 1.0;                      // Transform to [-1,+1] interval.
       }
       /// <summary>Used when vertical edges are virtually parallel.</summary><param name="pos">Position in terms of x and y.</param>
-      double SimpleEta(in Pos pos) {
-         double wholeStretchDist = DistToLowerEdge(in P[9].Pos);
-         double posDist = DistToLowerEdge(in pos);
+      dbl SimpleEta(in Pos pos) {
+         dbl wholeStretchDist = DistToLowerEdge(in P[9].Pos);
+         dbl posDist = DistToLowerEdge(in pos);
          return 2.0*(posDist/wholeStretchDist) - 1.0;
       }
       /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary><param name="pos">Position on reference square in terms of (ksi, eta).</param><param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
-      public double[] Values(in Pos pos, params int[] varInxs) {
-         var vals = new double[varInxs.Length];
+      public dbl[] Values(in Pos pos, params int[] varInxs) {
+         var vals = new dbl[varInxs.Length];
          for(int varInx = 0; varInx < varInxs.Length; ++varInx)
             for(int nodInx = 0; nodInx < 12; ++nodInx)
                vals[varInx] += P[nodInx].Vars[varInx].Val*ϕ[0][nodInx](pos.X, pos.Y);

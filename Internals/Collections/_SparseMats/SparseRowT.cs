@@ -80,12 +80,10 @@ namespace Fluid.Internals.Collections {
                Remove(inx2); }                                   // Else nothing happens, both are 0.
          }
          /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
-         public void ApplySwaps(SparseMat<int,IntArithmetic> swapMatrix) {
-            foreach(var rowKVPair in swapMatrix)
-               foreach(var colKVPair in rowKVPair.Value)
-                  SwapElms(rowKVPair.Key, colKVPair.Key);
+         public void ApplySwaps(SCG.Dictionary<int,int> swapDict) {
+            foreach(var kVPair in swapDict)
+               SwapElms(kVPair.Key, kVPair.Value);   
          }
-         // TODO: Move this to IO class perhaps?
          /// <summary>Create a string of form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}..</summary>
          public override string ToString() {
             StringBuilder sb = new StringBuilder(72);
