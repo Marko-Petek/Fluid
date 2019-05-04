@@ -187,7 +187,7 @@ namespace Fluid.Internals.Meshing {
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);
-         double[] funcValues = quadEmt.Values(in squarePos, vars);
+         double[] funcValues = quadEmt.Vals(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>

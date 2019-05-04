@@ -28,4 +28,13 @@ namespace Fluid.Internals.Numerics {
       public double Abs(double val) => Math.Abs(val);
       public double Neg(double val) => -val;
    }
+
+   public struct NoArithmetic : IArithmetic<int> {
+      public int Add(int a, int b) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Sub(int a, int b) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Mul(int a, int b) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Div(int a, int b) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Abs(int a) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Neg(int a) => throw new NotImplementedException("You are not supposed to use arithmetic.");
+   }
 }

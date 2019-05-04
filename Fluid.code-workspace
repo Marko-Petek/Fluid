@@ -18,7 +18,7 @@
 		//"jupyter.appendResults": true,
       "latex-workshop.view.pdf.viewer": "tab",
       "latex-workshop.latex.autoBuild.run": "onFileChange",
-      //"omnisharp.path": "latest",
+      "omnisharp.path": "latest",
 		"python.jediEnabled": false,
 		"python.linting.pylintEnabled": true,
 		"python.pythonPath": "/usr/bin/python3.7",
@@ -114,6 +114,6 @@
 		},
 		"[latex]": {
 			"editor.lineNumbers": "off"
-		}
+      }
 	}
 }
