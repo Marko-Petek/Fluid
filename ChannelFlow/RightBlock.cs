@@ -12,7 +12,7 @@ namespace Fluid.ChannelFlow {
    using SparseMat = SparseMat<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
    public sealed class RightBlock : RectBlock {
-      ChannelFlow ChannelFlow { get; }
+      ChannelCylinderSystem ChannelFlow { get; }
       ChannelMesh ChannelMesh { get; }
       /// <summary>Basis function overlap integrals over a single element, since all elements are the same.</summary><remarks>[j][k][n][m] = [12 basis funcs][12-j basis funcs][5 terms][5 terms]</remarks>
       static double[][][][] _RectStiffnessIntegrals;
@@ -32,7 +32,7 @@ namespace Fluid.ChannelFlow {
          //_RectForcingIntegrals = ReadRectForcingIntegrals("./Input/rectElementForcingIntegrals.txt");
       }
       /// <summary>Create a Cartesian mesh block.</summary><param name="channelMesh">Mesh block's owner.</param><param name="lowerLeftX">Lower left corner x coordinate.</param><param name="lowerLeftY">Lower left corner y coordinate.</param><param name="upperRightX">Upper right corner x coordinate.</param><param name="upperRightY">Upper right corner y coordinate.</param><param name="rowCount">Number of elements in y direction.</param><param name="columnCount">Number of elements in x direction.</param>
-      public RightBlock(ChannelMesh channelMesh, ChannelFlow channelFlow, EastBlock eastBlock,
+      public RightBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow, EastBlock eastBlock,
          double lowerLeftX, double lowerLeftY, double upperRightX, double upperRightY,
          int rowCount, int columnCount)
          : base(channelMesh, lowerLeftX, lowerLeftY, upperRightX, upperRightY,

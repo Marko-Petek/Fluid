@@ -11,6 +11,8 @@ namespace Fluid.Internals.Meshing {
    /// <summary>Represents a method that takes three indices and returns a position by reference.</summary>
    //public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
 
+   // TODO: Implement abstract J(stdInx,p,q) and J(cmtInx,p,q) methods that return Jacobians for each element.
+
    // cmt = compact, std = standard, lcl = local, gbl = global; descriptors connected to position indices.
    /// <summary>A structured submesh that provides access to global node indices via element indices.</summary>
    public abstract class MeshBlock {   
@@ -149,43 +151,43 @@ namespace Fluid.Internals.Meshing {
          int endCol = NCols - 1;
          int nRows = NRows;                                                      // Row count of current frame.
          int nCols = NCols;
-         var vertices = new Pos[4];
-         vertices[0] = NodeStd(startRow, startCol, 0).Pos;
-         vertices[1] = NodeStd(startRow, endCol, 3).Pos;
-         vertices[2] = NodeStd(endRow, endCol, 6).Pos;
-         vertices[3] = NodeStd(endRow, startCol, 9).Pos;
+         var verts = new Pos[4];                                  // Vertices.
+         verts[0] = NodeStd(startRow, startCol, 0).Pos;
+         verts[1] = NodeStd(startRow, endCol, 3).Pos;
+         verts[2] = NodeStd(endRow, endCol, 6).Pos;
+         verts[3] = NodeStd(endRow, startCol, 9).Pos;
          int newEndRow = 0;
          int newEndCol = 0;
          while(nRows > 1 || nCols > 1) {                                            // As long as we have not narrowed our frame down to a single element.
             if(nRows > 1) {
                newEndRow = startRow + nRows/2 - 1;                                  // Set row at half frame width as end. No problem if nRows is odd.
-               vertices[3] = NodeStd(newEndRow, startCol, 9).Pos;                  // New upper left.
-               vertices[2] = NodeStd(newEndRow, endCol, 6).Pos;                    // New upper right.
-               if(pos.IsInsidePolygon(vertices)) {
+               verts[3] = NodeStd(newEndRow, startCol, 9).Pos;                  // New upper left.
+               verts[2] = NodeStd(newEndRow, endCol, 6).Pos;                    // New upper right.
+               if(pos.IsInsidePolygon(verts)) {
                   endRow = newEndRow;
-                  vertices[3] = NodeStd(endRow, startCol, 9).Pos;                  // UL
-                  vertices[2] = NodeStd(endRow, endCol, 6).Pos; }                  // UR
+                  verts[3] = NodeStd(endRow, startCol, 9).Pos;                  // UL
+                  verts[2] = NodeStd(endRow, endCol, 6).Pos; }                  // UR
                else {
                   startRow = newEndRow + 1;
-                  vertices[0] = NodeStd(startRow, startCol, 0).Pos;                // LL
-                  vertices[1] = NodeStd(startRow, endCol, 3).Pos; }                // LR
+                  verts[0] = NodeStd(startRow, startCol, 0).Pos;                // LL
+                  verts[1] = NodeStd(startRow, endCol, 3).Pos; }                // LR
                nRows = endRow - startRow + 1; }
             if(nCols > 1) {
                newEndCol = startCol + nCols/2 - 1;
-               vertices[1] = NodeStd(startRow, newEndCol, 3).Pos;                  // new LR.
-               vertices[2] = NodeStd(endRow, newEndCol, 6).Pos;
-               if(pos.IsInsidePolygon(vertices)) {
+               verts[1] = NodeStd(startRow, newEndCol, 3).Pos;                  // new LR.
+               verts[2] = NodeStd(endRow, newEndCol, 6).Pos;
+               if(pos.IsInsidePolygon(verts)) {
                   endCol = newEndCol;
-                  vertices[1] = NodeStd(startRow, endCol, 3).Pos;
-                  vertices[2] = NodeStd(endRow, endCol, 6).Pos; }
+                  verts[1] = NodeStd(startRow, endCol, 3).Pos;
+                  verts[2] = NodeStd(endRow, endCol, 6).Pos; }
                else {
                   startCol = newEndCol + 1;
-                  vertices[3] = NodeStd(endRow, startCol, 9).Pos;
-                  vertices[0] = NodeStd(startRow, startCol, 0).Pos; }
+                  verts[3] = NodeStd(endRow, startCol, 9).Pos;
+                  verts[0] = NodeStd(startRow, startCol, 0).Pos; }
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);
-         double[] funcValues = quadEmt.Values(in squarePos, vars);
+         double[] funcValues = quadEmt.Vals(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>

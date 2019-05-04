@@ -3,17 +3,18 @@ using System;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Meshing {
+   using dbl = Double;
    public class MeshNode : IEquatable<MeshNode> {
       /// <summary>Node's position (x,y).</summary>
       public Pos Pos;
       /// <summary>An array of doubles. One double for each variable.</summary>
       public Variable[] Vars;
-      public double X => Pos.X;
-      public double Y => Pos.Y;
+      public dbl X => Pos.X;
+      public dbl Y => Pos.Y;
 
 
       /// <summary>Create a Node with specified coordinates and 0.0 values for variables, all of which are set unconstrained.</summary><param name="x">Node's x position.</param><param name="y">Node's y position.</param><param name="nVars">Number of variables.</param>
-      public MeshNode(double x, double y, int nVars) {
+      public MeshNode(dbl x, dbl y, int nVars) {
          Pos = new Pos(x,y);
          Vars = new Variable[nVars];
       }

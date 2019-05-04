@@ -48,7 +48,7 @@ namespace Fluid.ChannelFlow {
 
 
       /// <summary>Constructs main mesh covering whole channel.</summary><remarks>Parameters cannot yet be changed because currently, element integrals have to be computed outside (e.g.static by Mathematica) which requires manual setup.</remarks>
-      public ChannelMesh(ChannelFlow channelFlow, double width = 1.0,
+      public ChannelMesh(ChannelCylinderSystem channelFlow, double width = 1.0,
          double relObstructionDiameter = 0.25, int elementDensity = 20) : base(8) {
             NPos = 0;
             Width = width;
@@ -83,7 +83,7 @@ namespace Fluid.ChannelFlow {
       }
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-      public SparseMat AssembleSfsMatrix(ChannelFlow channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+      public SparseMat AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
          var sfsMatrix = new SparseMat(15_620 * 8, 15_620 * 8, 10_000);
          double dt = channelFlow.Dt;
          double viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
@@ -94,7 +94,7 @@ namespace Fluid.ChannelFlow {
          RightBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);
          return sfsMatrix;
       }
-      public SparseRow AssembleFcgVector(ChannelFlow channelFlow) {
+      public SparseRow AssembleFcgVector(ChannelCylinderSystem channelFlow) {
          var fcgVector = new SparseRow(15_620 * 8, 10_000);
          double dt = channelFlow.Dt;
          double viscosity = channelFlow.Viscosity;

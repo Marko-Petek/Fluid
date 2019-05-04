@@ -113,5 +113,14 @@ namespace Fluid.Internals.IO {
          Write(array6d, tw);
          tw.WriteLine();
       }
+
+      public static Array Read<T>(TextReader tr) {
+         var hier = ReadHierarchy<T>(tr);
+         (bool succ, Array res) = hier.ConvertToArray();
+         if(succ)
+            return res;
+         else
+            throw new InvalidOperationException("Read data cannot be converted to array.");
+      }
    }
 }

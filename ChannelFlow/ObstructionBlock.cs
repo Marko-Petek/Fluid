@@ -18,7 +18,7 @@ namespace Fluid.ChannelFlow {
    using SparseMat = SparseMat<double,DblArithmetic>;
    /// <summary>TFI block representing a quarter of square mesh surrounding obstruction.</summary>
    public abstract class ObstructionBlock : TfiBlock {
-      public ChannelFlow ChannelFlow { get; protected set; }
+      public ChannelCylinderSystem ChannelFlow { get; protected set; }
       /// <summary>Main mesh.</summary>
       public ChannelMesh Mesh { get; protected set; }
       /// <summary>Height measured from one of lower corners that lie on upeer part of obstruction to top of obstruction.</summary>
@@ -45,7 +45,7 @@ namespace Fluid.ChannelFlow {
          _ForcingIntegrals = (double[][][][]) TB.FileReader.ReadArray<double>();
       }
       public ObstructionBlock() : base() { }
-      public ObstructionBlock(ChannelMesh channelMesh, ChannelFlow channelFlow,
+      public ObstructionBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow,
          double lowerLeftX, double lowerLeftY,
          double lowerRightX, double lowerRightY,
          double upperRightX, double upperRightY,
