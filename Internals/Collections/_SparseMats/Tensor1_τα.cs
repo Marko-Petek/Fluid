@@ -6,44 +6,44 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
+   /// <summary>A rank 1 tensor with specified dimension of its only slot for values of type τ. Type τ can use arithmetic defined inside an interface of type α.</summary><typeparam name="τ">Type of values the tensor holds.</typeparam><typeparam name="α">Type of interface that defines arithmetic between values of type τ.</typeparam>
    public class Tensor1<τ,α> : Tensor1<τ>,
-      IEquatable<Tensor1<τ,α>>                                         // So that we can equate two SparseRows via the Equals method.
+      IEquatable<Tensor1<τ,α>>                                         // So that we can equate two rank 1 tensors via the Equals method.
       where τ : IEquatable<τ>, IComparable<τ>, new()
       where α : IArithmetic<τ>, new() {
          /// <summary>Contains arithmetic operations.</summary>
          static α Arith { get; } = new α();
-
-         /// <summary>Does not assigns width. User of this constructor must do it manually.</summary>
+         /// <summary>Does not assign Dim1. User of this constructor must do it manually.</summary>
          protected Tensor1() : base() {}
-         /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param><param name="capacity">Initial capacity.</param>
-         public Tensor1(int width, int capacity = 6) : base(capacity) {
-            Dim1 = width;
-         }
-         /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
+         /// <summary>Create a rank 1 tensor with arithmetic α, specified dimension of its only slot for values of type τ and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param><param name="capacity">Initial capacity.</param>
+         public Tensor1(int dim1, int capacity = 6) : base(dim1, capacity) { }
+         /// <summary>Factory method that creates a rank 1 tensor with specified dimension and initial capacity.</summary><param name="dim1">Number of slots available for values of type τ.</param><param name="capacity">Actual initially assigned memory.</param>
+         new public static Tensor1<τ,α> Create(int dim1, int capacity = 6) => new Tensor1<τ,α>(dim1, capacity);
+         /// <summary>Create a rank 1 tensor as a copy of another.</summary><param name="source">Rank 1 tensor to copy.</param>
          public Tensor1(Tensor1<τ,α> source) : this(source.Dim1, source.Count) {
             foreach(var pair in source)
                Add(pair.Key, pair.Value);
          }
-
-         /// <summary>Creates an instance of the same (most derived) type as instance on which it is invoked.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
-         new public static Tensor1<τ,α> CreateSparseRow(int width, int capacity = 6) => new Tensor1<τ,α>(width, capacity);
-         /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
-         public static Tensor1<τ,α> CreateSparseRow(Tensor1<τ,α> source) => new Tensor1<τ,α>(source);
-         /// <summary>Create a new SparseRow by copying an array.</summary><param name="arr">Array to copy.</param>
-         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startCol, int nCols,
-            int startInx, int width) {
-               var row = CreateSparseRow(width, arr.Length);
-               for(int i = startCol, j = startInx; i < startCol + nCols; ++i, ++j)
-                  row[j] = arr[i];
-               return row;
+         /// <summary>Factory method that creates a rank 1 tensor as a copy of another rank 1 tensor.</summary><param name="source">Rank 1 tensor to copy.</param>
+         public static Tensor1<τ,α> Create(Tensor1<τ,α> source) => new Tensor1<τ,α>(source);
+         /// <summary>Create a new rank 1 tensor by copying values from an array. Manually specify its dimension.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy.</param><param name="startTenEmtInx">What index to assign to first element copied to tensor.</param><param name="tenDim1">Dimension of new rank 1 tensor.</param>
+         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startArrEmtInx, int nArrEmts,
+            int startTenEmtInx, int tenDim1) {
+               var ten1 = Create(tenDim1, arr.Length);
+               for(int i = startArrEmtInx, j = startTenEmtInx; i < startArrEmtInx + nArrEmts; ++i, ++j)
+                  ten1[j] = arr[i];
+               return ten1;
          }
+         /// <summary>Create a new rank 1 tensor by copying values from an array. Dimension of created tensor is same as number of copied elements.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy. Also the dimension of new tensor.</param><param name="startTenEmtInx">What index to assign to first element copied to tensor.</param>
+         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startArrEmtInx, int nArrEmts,
+            int startTenEmtInx) => CreateFromArray(arr, startArrEmtInx, nArrEmts, startTenEmtInx, nArrEmts);
+         /// <summary>Create a new rank 1 tensor by copying values from an array. Dimension of created tensor is deduced from number of copied elements. Index of first copied element is set to 0.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy. Also the dimension of new tensor.</param>
+         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startArrEmtInx, int nArrEmts) =>
+            CreateFromArray(arr, startArrEmtInx, nArrEmts, 0);
+         /// <summary>Splits a rank 1 tensor into two rank 1 tensors. Subject is modified (left remainder), while chopped-off part (right remainder) is returned as a separate (re-indexed from 0) rank 1 tensor.</summary><param name="inx">Index at which to split. Element at this index will end up as part of right remainder.</param>
+         new public Tensor1<τ,α> SplitAt(int inx) => (Tensor1<τ,α>)base.SplitAt(inx);
 
-         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startCol, int nCols,
-            int startInx) => CreateFromArray(arr, startCol, nCols, startInx, nCols);
-
-         new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int startCol, int nCols) =>
-            CreateFromArray(arr, startCol, nCols, 0);
-
+         // TODO: Continue refactoring Tensor1<τ,α>.
          /// <summary>New indexer definition (hides Dictionary's indexer). Returns 0 for non-existing elements.</summary>
          public new τ this[int i] {
             get {

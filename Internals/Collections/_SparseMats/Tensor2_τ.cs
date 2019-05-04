@@ -106,7 +106,7 @@ namespace Fluid.Internals.Collections {
          /// <summary>Swap columns with specified virtual indices. Correctly handles cases with non-existent rows.</summary><param name="inx1">Virtual index of first column to swap.</param><param name="inx2">Virtual index of second column to swap.</param>
          public void SwapCols(int inx1, int inx2) {
             foreach(var matKVPair in this)
-               matKVPair.Value.SwapElms(inx1, inx2);              // Swap elms of row.
+               matKVPair.Value.Swap(inx1, inx2);              // Swap elms of row.
          }
          public void ApplyColSwaps(SCG.Dictionary<int,int> swapDict) {
             foreach(var rowKVPair in swapDict)

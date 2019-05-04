@@ -6,6 +6,7 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
+   /// <summary>A rank 1 tensor with specified dimension of its only slot for values of type τ.</summary><typeparam name="τ">Type of values the tensor holds.</typeparam>
    public class Tensor1<τ> : SCG.Dictionary<int,τ> where τ : new() {
       /// <summary>Number of slots for values of type τ inside this rank 1 tensor.</summary>
       public int Dim1 { get; protected set; }
@@ -14,7 +15,7 @@ namespace Fluid.Internals.Collections {
 
       /// <summary>Does not assign Dim1. User of this constructor must do it manually.</summary>
       protected Tensor1() : base() {}
-      /// <summary>Create a rank 1 tensor with specified number of slots for values of type τ and specified initial capacity.</summary><param name="dim1">Width it would have in explicit form.</param><param name="capacity">Actual initially assigned memory.</param>
+      /// <summary>Create a rank 1 tensor with specified dimension of its only slot for values of type τ and specified initial capacity.</summary><param name="dim1">Width it would have in explicit form.</param><param name="capacity">Actual initially assigned memory.</param>
       public Tensor1(int dim1, int capacity = 6) : base(capacity) {
          Dim1 = dim1;
       }
@@ -22,7 +23,7 @@ namespace Fluid.Internals.Collections {
       public static Tensor1<τ> Create(int dim1, int capacity = 6) => new Tensor1<τ>(dim1, capacity);
       /// <summary>Overridable factory method that creates a rank 1 tensor with specified dimension and initial capacity.</summary><param name="dim1">Number of slots available for values of type τ.</param><param name="capacity">Actual initially assigned memory.</param>
       public virtual Tensor1<τ> CreateNew(int dim1, int capacity = 6) => new Tensor1<τ>(dim1, capacity);
-      /// <summary>Creates a rank 1 tensor as a copy of another.</summary><param name="source">Rank 1 tensor to copy.</param>
+      /// <summary>Create a rank 1 tensor as a copy of another.</summary><param name="source">Rank 1 tensor to copy.</param>
       public Tensor1(Tensor1<τ> source) : this(source.Dim1, source.Count) {
          foreach(var pair in source)
             Add(pair.Key, pair.Value);
@@ -38,13 +39,13 @@ namespace Fluid.Internals.Collections {
                row[j] = arr[i];
             return row;
       }
-      /// <summary>Create a new rank 1 tensor by copying values from an array. Dimension of created tensor is deduced from number of copied elements.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy. Also the dimension of new tensor.</param><param name="startTenEmtInx">What index to assign to first element copied to tensor.</param>
+      /// <summary>Create a new rank 1 tensor by copying values from an array. Dimension of created tensor is same as number of copied elements.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy. Also the dimension of new tensor.</param><param name="startTenEmtInx">What index to assign to first element copied to tensor.</param>
       public static Tensor1<τ> CreateFromArray(τ[] arr, int startArrEmtInx, int nArrEmts,
          int startTenEmtInx) => CreateFromArray(arr, startArrEmtInx, nArrEmts, startTenEmtInx, nArrEmts);
       /// <summary>Create a new rank 1 tensor by copying values from an array. Dimension of created tensor is deduced from number of copied elements. Index of first copied element is set to 0.</summary><param name="arr">Source array to copy.</param><param name="startArrEmtInx">Index of array element at which copying begins.</param><param name="nArrEmts">How many consecutive array elements to copy. Also the dimension of new tensor.</param>
       public static Tensor1<τ> CreateFromArray(τ[] arr, int startArrEmtInx, int nArrEmts) =>
          CreateFromArray(arr, startArrEmtInx, nArrEmts, 0);
-      /// <summary>Splits rank 1 tensor in two rank 1 tensors. Subject is modified (left remainder), while chopped-off part (right remainder) is returned as a separate (re-indexed from 0) rank 1 tensor.</summary><param name="inx">Index at which to split. Element at this index will end up as part of right remainder.</param>
+      /// <summary>Splits a rank 1 tensor into two rank 1 tensors. Subject is modified (left remainder), while chopped-off part (right remainder) is returned as a separate (re-indexed from 0) rank 1 tensor.</summary><param name="inx">Index at which to split. Element at this index will end up as part of right remainder.</param>
       public Tensor1<τ> SplitAt(int inx) {
          var remTen1 = CreateNew(Dim1 - inx);
          foreach(var kvPair in this.Where(pair => pair.Key >= inx))
@@ -60,9 +61,8 @@ namespace Fluid.Internals.Collections {
          foreach(var kvPair in rightPart)
             this[kvPair.Key] = kvPair.Value;
       }
-      /// <summary>Swap two elements specified by indices.</summary><param name="inx1">Index of first element.</param><param name="inx2">Index of second element.</param><remarks>Useful for swapping columns.</remarks>
-      public void SwapElms(int inx1, int inx2) {
-         //var asDict = (Dictionary<)
+      /// <summary>Swap two elements specified by indices.</summary><param name="inx1">Index of first element.</param><param name="inx2">Index of second element.</param>
+      public void Swap(int inx1, int inx2) {
          bool firstExists = TryGetValue(inx1, out τ val1);
          bool secondExists = TryGetValue(inx2, out τ val2);
          if(firstExists) {
@@ -76,12 +76,12 @@ namespace Fluid.Internals.Collections {
             Add(inx1, val2);
             Remove(inx2); }                                   // Else nothing happens, both are 0.
       }
-      /// <summary>Apply element swaps as specified by a given swap matrix.</summary><param name="swapMatrix">SparseMatrix where non-zero element at [i][j] signifies a permutation i --> j.</param>
-      public void ApplySwaps(SCG.Dictionary<int,int> swapDict) {
-         foreach(var kVPair in swapDict)
-            SwapElms(kVPair.Key, kVPair.Value);   
+      /// <summary>Apply element swaps as specified by a swap tensor.</summary><param name="swapTensor">Rank 1 tensor where an element at index i with integer value j instructs a permutation i->j.</param>
+      public void ApplySwaps(Tensor1<int> swapTensor) {
+         foreach(var kVPair in swapTensor)
+            Swap(kVPair.Key, kVPair.Value);   
       }
-      /// <summary>Create a string of form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}..</summary>
+      /// <summary>Create a string of all non-zero elements in form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}.</summary>
       public override string ToString() {
          StringBuilder sb = new StringBuilder(72);
          sb.Append("{");
@@ -95,16 +95,16 @@ namespace Fluid.Internals.Collections {
       /// <summary>New indexer definition (hides Dictionary's indexer). Returns 0 for non-existing elements.</summary>
       public new τ this[int i] {
          get {
-            TryGetValue(i, out τ val);                               // Outputs zero if value not found.
+            TryGetValue(i, out τ val);                                  // Outputs zero if value not found.
             return val; }
          set {
-            if(!value.Equals(default(τ))) {                           // Value different from 0.
-               if(this is DumTensor1<τ> dummyRow) {             // Try downcasting to DummyRow.
-                  var newRow = new Tensor1<τ>(Dim1);               // Add new row to its owner and add value to it.
-                  newRow.Add(i, value);
-                  dummyRow.SparseMat.Add(dummyRow.Index, newRow); }
+            if(!value.Equals(default(τ))) {                             // Value different from 0.
+               if(this is DumTensor1<τ> dumTen1) {                      // Try downcasting to a dummy tensor.
+                  var newTen1 = new Tensor1<τ>(Dim1);                    // Add new rank 1 tensor to its rank 2 owner.
+                  newTen1.Add(i, value);                                // Add value the setter accepted to new rank 1 tensor.
+                  dumTen1.Tensor2.Add(dumTen1.Index, newTen1); }
                else
-                  base[i] = value; }                                  // Indexers adds or modifies if entry already exists.
+                  base[i] = value; }                                  // Indexer adds or modifies if entry already exists.
             else if(!(this is DumTensor1<τ>))
                Remove(i); }                                           // Remove value at given index if value set is 0 and we are not in DummyRow.
       }
