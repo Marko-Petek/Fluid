@@ -15,7 +15,7 @@ using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.ChannelFlow {
    using SparseRow = SparseRow<double,DblArithmetic>;
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    /// <summary>TFI block representing a quarter of square mesh surrounding obstruction.</summary>
    public abstract class ObstructionBlock : TfiBlock {
       public ChannelCylinderSystem ChannelFlow { get; protected set; }
@@ -208,14 +208,14 @@ namespace Fluid.ChannelFlow {
             throw new ArgumentOutOfRangeException("Row index too big, above 22.");
       }
       /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public override void AddContribsToSfsMatrix(SparseMat A, double dt, double ni) {
+      public override void AddContribsToSfsMatrix(Tensor2 A, double dt, double ni) {
          for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col) {
                TB.Reporter.Write($"Element ({row},{col}).");
                AddEmtContribToSfsMatrix(A, row, col, dt, ni); }
       }
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      void AddEmtContribToSfsMatrix(SparseMat A, int row, int col, double dt, double ni) {
+      void AddEmtContribToSfsMatrix(Tensor2 A, int row, int col, double dt, double ni) {
          double[][] subResult;
          int globalRowBelt;                                                                  // Starting index of an octuple of rows which represent variable values at a single position.
          int globalColBelt;

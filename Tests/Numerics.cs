@@ -7,9 +7,9 @@ using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
-   using SparseMatInt = SparseMat<int,IntArithmetic>;
+   using SparseMatInt = Tensor2<int,IntArithmetic>;
    using SparseRowInt = SparseRow<int,IntArithmetic>;
    public partial class Thread2 {
 
@@ -22,7 +22,7 @@ namespace Fluid.Tests {
           0.0,  0.0, 0.0,     // Init vector.
           8.0, 12.0, 9.0 )]   // Solution vector.
       [Theory] public void ConjGrads3by3(params double[] input) {
-         var A = SparseMat.CreateFromArray(input, 6, 0, 3, 0, 3);
+         var A = Tensor2.CreateFromArray(input, 6, 0, 3, 0, 3);
          var b = SparseRow.CreateFromArray(input, 9, 3);
          var expSol = SparseRow.CreateFromArray(input, 15, 3);
          var initPoint = SparseRow.CreateFromArray(input, 12, 3);
@@ -41,7 +41,7 @@ namespace Fluid.Tests {
           1.0, 1.0, 1.0, 1.0,     // Init vector.
           1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
       [Theory] public void ConjGrads4by4(params double[] input) {
-         var A = SparseMat.CreateFromArray(input, 7, 0, 4, 0, 4);
+         var A = Tensor2.CreateFromArray(input, 7, 0, 4, 0, 4);
          var b = SparseRow.CreateFromArray(input, 16, 4);
          var initPoint = SparseRow.CreateFromArray(input, 20, 4);
          var expSol = SparseRow.CreateFromArray(input, 24, 4);

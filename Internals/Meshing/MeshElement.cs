@@ -9,8 +9,8 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Meshing {
    using dbl = Double;
-   using SparseMat = SparseMat<double,DblArithmetic>;
-   using FuncMat = SparseMat<Func<double,double,double>, NoArithmetic>;
+   using SparseMat = Tensor2<double,DblArithmetic>;
+   using FuncMat = Tensor2<Func<double,double,double>, NoArithmetic>;
    // TODO: Convert to class and add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
    /// <summary>A quadrilateral element.</summary>
    public class MeshElement {

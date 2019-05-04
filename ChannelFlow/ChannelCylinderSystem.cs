@@ -8,9 +8,9 @@ using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using SparseMat = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
-   using SparseMatInt = SparseMat<int,IntArithmetic>;
+   using SparseMatInt = Tensor2<int,IntArithmetic>;
    /// <summary>Sets up a linear system based on our input data and solves it.</summary>
    public class ChannelCylinderSystem {
       /// <summary>FlowSolver's step length for marching in time.</summary>

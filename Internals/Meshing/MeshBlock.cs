@@ -6,7 +6,7 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Meshing {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
    /// <summary>Represents a method that takes three indices and returns a position by reference.</summary>
    //public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
@@ -104,7 +104,7 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Set values of constrained nodes and set their Constrainedness property to true. Returns number of constrained nodes.</summary>
       protected abstract int ApplyConstraints();
       /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public abstract void AddContribsToSfsMatrix(SparseMat A, double dt, double ni);
+      public abstract void AddContribsToSfsMatrix(Tensor2 A, double dt, double ni);
       public abstract void AddContribsToFcgVector(SparseRow b, double dt, double ni);
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
       protected double[][] NodeOperatorMat0(MeshNode node, double dt, double ni) {

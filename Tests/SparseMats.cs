@@ -8,9 +8,9 @@ using SCG = System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
-   using SparseMatInt = SparseMat<int,IntArithmetic>;
+   using SparseMatInt = Tensor2<int,IntArithmetic>;
    using SparseRowInt = SparseRow<int,IntArithmetic>;
    
    public partial class Thread3 {//TODO: Log timing of methods for a large number of operations and save results.
@@ -174,8 +174,8 @@ namespace Fluid.Tests {
                   4.0, 3.0, 2.0, 1.0)]
       [Theory] public void MatColSwaps(params double[] arr) {
          int nCols = 4;
-         var sparseMat = SparseMat.CreateFromArray(arr, 4, 0, 4, 0, 4, 4, 4);
-         var transformedMatrix = new SparseMat(sparseMat);
+         var sparseMat = Tensor2.CreateFromArray(arr, 4, 0, 4, 0, 4, 4, 4);
+         var transformedMatrix = new Tensor2(sparseMat);
          for(int i = 0; i < nCols/2; ++i)
             transformedMatrix.SwapCols(i, nCols - 1 - i);                     // Swap each left half column with its counterpart on right side.
          Assert.All(transformedMatrix, rowPair => {
@@ -208,8 +208,8 @@ namespace Fluid.Tests {
       [Theory] public void MatRowSwaps(params double[] data) {
          var slice1 = new Span<double>(data, 0, 16);
          var slice2 = new Span<double>(data, 16, 16);
-         var sparseMat = SparseMat.CreateFromSpan(slice1, 4);
-         var exdResult = SparseMat.CreateFromSpan(slice2, 4);
+         var sparseMat = Tensor2.CreateFromSpan(slice1, 4);
+         var exdResult = Tensor2.CreateFromSpan(slice2, 4);
          sparseMat.SwapRows(0, 1);
          sparseMat.SwapRows(2, 3);
          Assert.True(sparseMat.Equals(exdResult));
@@ -288,9 +288,9 @@ namespace Fluid.Tests {
          5.55, 7.61, 5.44,
          6.51, 2.22, 7.65 )]
       [Theory] public void MatEquals(params double[] twoMats) {
-         var mat1 = SparseMat.CreateFromArray(twoMats, 6, 0, 3, 0, 3);
+         var mat1 = Tensor2.CreateFromArray(twoMats, 6, 0, 3, 0, 3);
          var tempMat2 = MatOps.CreateFromArray(twoMats, 6, 3, 3, 0, 3);
-         var mat2 = SparseMat.CreateFromArray(tempMat2);
+         var mat2 = Tensor2.CreateFromArray(tempMat2);
          Assert.True(mat1.Equals(mat2, 0.02));
       }
    }

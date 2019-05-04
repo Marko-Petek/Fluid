@@ -9,7 +9,7 @@ using static Fluid.Internals.Ops;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.ChannelFlow {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
    public sealed class RightBlock : RectBlock {
       ChannelCylinderSystem ChannelFlow { get; }
@@ -146,13 +146,13 @@ namespace Fluid.ChannelFlow {
       double GetForcingIntegral(int j, int n) {
          return _RectForcingIntegrals[j][n];
       }
-      public override void AddContribsToSfsMatrix(SparseMat A, double dt, double ni) {
+      public override void AddContribsToSfsMatrix(Tensor2 A, double dt, double ni) {
          for(int row = 0; row < 20; ++row)
             for(int col = 0; col < 60; ++col)
                AddEmtContribToSfsMatrix(A, row, col, dt, ni);
       }
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      void AddEmtContribToSfsMatrix(SparseMat A, int row, int col, double dt, double ni) {
+      void AddEmtContribToSfsMatrix(Tensor2 A, int row, int col, double dt, double ni) {
          double[][] subResult;
          int gblRowBelt;                                          // Starting index of an octuple of rows which represent variable values at a single position.
          int gblColBelt;

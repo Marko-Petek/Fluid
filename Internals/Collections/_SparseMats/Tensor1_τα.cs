@@ -17,10 +17,10 @@ namespace Fluid.Internals.Collections {
          protected Tensor1() : base() {}
          /// <summary>Create a SparseRow with specified width it would have in explicit form and specified initial capacity.</summary><param name="width">Width it would have in explicit form.</param><param name="capacity">Initial capacity.</param>
          public Tensor1(int width, int capacity = 6) : base(capacity) {
-            Width = width;
+            Dim1 = width;
          }
          /// <summary>Creates a SparseRow as a copy of specified SparseRow.</summary><param name="source">Source to copy.</param>
-         public Tensor1(Tensor1<τ,α> source) : this(source.Width, source.Count) {
+         public Tensor1(Tensor1<τ,α> source) : this(source.Dim1, source.Count) {
             foreach(var pair in source)
                Add(pair.Key, pair.Value);
          }
@@ -52,9 +52,9 @@ namespace Fluid.Internals.Collections {
             set {
                if(!value.Equals(default(τ))) {                           // Value different from 0.
                   if(this is DumTensor1<τ,α> dummyRow) {             // Try downcasting to DummyRow.
-                     var newRow = new Tensor1<τ,α>(Width);               // Add new row to its owner and add value to it.
+                     var newRow = new Tensor1<τ,α>(Dim1);               // Add new row to its owner and add value to it.
                      newRow.Add(i, value);
-                     dummyRow.SparseMat.Add(dummyRow.Index, newRow); }
+                     dummyRow.Tensor2.Add(dummyRow.Index, newRow); }
                   else
                      base[i] = value; }                                  // Indexers adds or modifies if entry already exists.
                else if(!(this is DumTensor1<τ,α>))
@@ -85,12 +85,12 @@ namespace Fluid.Internals.Collections {
          }
          public static Tensor1<τ,α> operator *(τ leftNum, Tensor1<τ,α> rRow) {
             if(!leftNum.Equals(default(τ))) {                                                // Not zero.
-               var result = new Tensor1<τ,α>(rRow.Width, rRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
+               var result = new Tensor1<τ,α>(rRow.Dim1, rRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
                foreach(var rRowKVPair in rRow)
                   result.Add(rRowKVPair.Key, Arith.Mul(rRowKVPair.Value, leftNum));
                return result; }
             else                                                                          // Zero.
-               return new Tensor1<τ,α>(rRow.Width);                               // Return empty row.
+               return new Tensor1<τ,α>(rRow.Dim1);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public τ NormSqr() {

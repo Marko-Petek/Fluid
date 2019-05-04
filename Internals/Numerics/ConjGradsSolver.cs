@@ -2,18 +2,18 @@ using System;
 using Fluid.Internals.Collections;
 
 namespace Fluid.Internals.Numerics {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
    public class ConjGradsSolver {
       /// <summary>Left-hand side matrix of A x = b.</summary>
-      SparseMat A { get; }
+      Tensor2 A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
       SparseRow b { get; }
 
       /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="matA">Left-hand side matrix of A x = b.</param><param name="rowB">Right-hand side vector of A x = b.</param>
-      public ConjGradsSolver(SparseMat matA, SparseRow rowB) {
+      public ConjGradsSolver(Tensor2 matA, SparseRow rowB) {
          A = matA;
          b = rowB;
       }

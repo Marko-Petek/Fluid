@@ -6,8 +6,8 @@ using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 // TODO: Write tests for constructors.
 namespace Fluid.Internals.Collections {
-   public class SparseMat<τ,α> : SCG.Dictionary<int,Tensor1<τ,α>>,
-      IEquatable<SparseMat<τ,α>>                                                        // So we can compare two SparseMats via Equals method.
+   public class Tensor2<τ,α> : SCG.Dictionary<int,Tensor1<τ,α>>,
+      IEquatable<Tensor2<τ,α>>                                                        // So we can compare two SparseMats via Equals method.
       where τ : IEquatable<τ>, IComparable<τ>, new()
       where α : IArithmetic<τ>, new() {
          /// <summary>Contains arithmetic operations.</summary>
@@ -17,59 +17,59 @@ namespace Fluid.Internals.Collections {
          /// <summary>Height (length of columns) that matrix would have in its explicit form.</summary>
          public int Height { get; protected set; }
          /// <summary>Used by indexer when fetching a row that does not actually exist. If a setter of that row then decides to add an element, row is copied to matrix.</summary>
-         internal DummyRow<τ> DummyRow { get; }
+         internal DumTensor1<τ> DummyRow { get; }
 
          /// <summary>Does not assign Width or Height. User of this constructor must do it manually.</summary>
-         protected SparseMat() : base() {
-            DummyRow = new DummyRow<τ>(this, Width);
+         protected Tensor2() : base() {
+            DummyRow = new DumTensor1<τ>(this, Width);
          }
          /// <summary>Create a SparseMatrix with given width, height and initial row capacity.</summary><param name="width">Width (length of rows) that matrix would have in its explicit form.</param><param name="height">Height (length of columns) that matrix would have in its explicit form.</param><param name="capacity">Initial row capacity.</param>
-         public SparseMat(int width, int height, int capacity = 6) : base(capacity) {
-            DummyRow = new DummyRow<τ,α>(this, Width);
+         public Tensor2(int width, int height, int capacity = 6) : base(capacity) {
+            DummyRow = new DumTensor1<τ,α>(this, Width);
             Width = width;
             Height = height;
          }
          /// <summary>Create a copy of specified SparseMatrix.</summary><param name="source">Source SparseMatrix to copy.</param>
-         public SparseMat(SparseMat<τ,α> source) : this(source.Width, source.Height, source.Count) {
+         public Tensor2(Tensor2<τ,α> source) : this(source.Width, source.Height, source.Count) {
             foreach(var matKVPair in source)
                Add(matKVPair.Key, new Tensor1<τ,α>(matKVPair.Value));
          }
 
-         public static SparseMat<τ,α> CreateFromArray(τ[][] arr) {
+         public static Tensor2<τ,α> CreateFromArray(τ[][] arr) {
             int nRows = arr.Length;
             int nCols = arr[0].Length;
-            var sparseMat = new SparseMat<τ,α>(nCols, nRows, nCols*nRows);
+            var sparseMat = new Tensor2<τ,α>(nCols, nRows, nCols*nRows);
             for(int i = 0; i < nRows; ++i)
                for(int j = 0; j < nCols; ++j)
                   sparseMat[i][j] = arr[i][j];
             return sparseMat;
          }
-         public static SparseMat<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
+         public static Tensor2<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
             int nRows, int startCol, int nCols, int width, int height, int startRowInx = 0, int startColInx = 0) {
                int allCols = arr.Length/allRows;
-               var sparseMat = new SparseMat<τ,α>(width, height, nCols*nRows);
+               var sparseMat = new Tensor2<τ,α>(width, height, nCols*nRows);
                for(int i = startRow, k = startRowInx; i < startRow + nRows; ++i, ++k)
                   for(int j = startCol, l = startColInx; j < startCol + nCols; ++j, ++l)
                      sparseMat[k][l] = arr[i*allCols + j];
                return sparseMat;
          }
 
-         public static SparseMat<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
+         public static Tensor2<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
             int nRows, int startCol, int nCols) =>
                CreateFromArray(arr, allRows, startRow, nRows, startCol, nCols, nCols, nRows);
 
-         public static SparseMat<τ,α> CreateFromSpan(Span<τ> slice, int nRows) {
+         public static Tensor2<τ,α> CreateFromSpan(Span<τ> slice, int nRows) {
             int nCols = slice.Length / nRows;
-            var sparseMat = new SparseMat<τ,α>(nCols, nRows, nCols*nRows);
+            var sparseMat = new Tensor2<τ,α>(nCols, nRows, nCols*nRows);
             for(int i = 0; i < nRows; ++i)
                for(int j = 0; j < nCols; ++j)
                   sparseMat[i][j] = slice[i*nCols + j];
             return sparseMat;
          }
          /// <summary>Split matrix on left and right part. Return right part. Element at specified index will be part of right part.</summary><param name="colInx">Index of element at which to split. This element will be part of right matrix.</param>
-         public SparseMat<τ,α> SplitAtCol(int colInx) {
+         public Tensor2<τ,α> SplitAtCol(int colInx) {
             int remWidth = Width - colInx;
-            var remMat = new SparseMat<τ,α>(remWidth, Height);
+            var remMat = new Tensor2<τ,α>(remWidth, Height);
             Width = colInx;                                                 // Adjust width of this Matrix.
             foreach(var matKVPair in this) {                                  // Split each SparseRow separately.
                var remRow = matKVPair.Value.SplitAt(colInx);
@@ -77,8 +77,8 @@ namespace Fluid.Internals.Collections {
             return remMat;
          }
          /// <summary>Split matrix on upper and lower part. Return lower part. Element at specified index will be part of lower part.</summary><param name="col">Index of element at which to split. This element will be part of lower matrix.</param>
-         public SparseMat<τ,α> SplitAtRow(int inx) {
-            var remMat = new SparseMat<τ,α>(Width, Height - inx); 
+         public Tensor2<τ,α> SplitAtRow(int inx) {
+            var remMat = new Tensor2<τ,α>(Width, Height - inx); 
             foreach(var matKVPair in this.Where(kvPair => kvPair.Key >= inx))
                remMat.Add(matKVPair.Key - inx, matKVPair.Value);
             foreach(var key in remMat.Keys)
@@ -123,18 +123,18 @@ namespace Fluid.Internals.Collections {
                   Remove(i); }
          }
          /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="lMat">Left operand.</param><param name="rMat">Right operand.</param>
-         public static SparseMat<τ,α> operator +
-            (SparseMat<τ,α> lMat, SparseMat<τ,α> rMat) {
+         public static Tensor2<τ,α> operator +
+            (Tensor2<τ,α> lMat, Tensor2<τ,α> rMat) {
                TB.Assert.AreEqual(lMat.Width, rMat.Width);                                         // Check that width and height of operands match.
                TB.Assert.AreEqual(lMat.Height, rMat.Height);
-               var res = new SparseMat<τ,α>(rMat);
+               var res = new Tensor2<τ,α>(rMat);
                foreach(var lMatKVPair in lMat) {
                   res[lMatKVPair.Key] = lMatKVPair.Value + rMat[lMatKVPair.Key]; }
                return res;
          }
          public static Tensor1<τ,α> operator *
-            (SparseMat<τ,α> lMat, Tensor1<τ,α> rRow) {
-               TB.Assert.AreEqual(lMat.Width, rRow.Width);                                 // Check that matrix and row can be multiplied.                                        
+            (Tensor2<τ,α> lMat, Tensor1<τ,α> rRow) {
+               TB.Assert.AreEqual(lMat.Width, rRow.Dim1);                                 // Check that matrix and row can be multiplied.                                        
                var resultRow = new Tensor1<τ,α>(lMat.Width);           // lMat.Count = # of non-zero rows.
                τ sum;
                foreach(var lMatKVPair in lMat) {                                           // Go through each row in lMat. Rows that do not exist, create no entries in result row.
@@ -146,8 +146,8 @@ namespace Fluid.Internals.Collections {
                return resultRow;
          }
          public static Tensor1<τ,α> operator *
-            (Tensor1<τ,α> lRow, SparseMat<τ,α> rMat) {
-               TB.Assert.AreEqual(rMat.Width, lRow.Width);                                      // Check that matrix and row can be multiplied.
+            (Tensor1<τ,α> lRow, Tensor2<τ,α> rMat) {
+               TB.Assert.AreEqual(rMat.Width, lRow.Dim1);                                      // Check that matrix and row can be multiplied.
                var resultRow = new Tensor1<τ,α>(rMat.Height, rMat.Width);
                foreach(var rMatKVPair in rMat)
                   if(lRow.TryGetValue(rMatKVPair.Key, out τ lRowVal)) {
@@ -158,14 +158,14 @@ namespace Fluid.Internals.Collections {
 
          
          /// <summary>Compare two SparseMats.</summary><param name="other">The other SparseMat to compare with.</param>
-         public bool Equals(SparseMat<τ,α> other) {
+         public bool Equals(Tensor2<τ,α> other) {
             foreach(var matKVPair in this)
                if(!(other.TryGetValue(matKVPair.Key, out Tensor1<τ,α> val) && matKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
                   return false;
             return true;
          }
 
-         public bool Equals(SparseMat<τ,α> other, τ eps) {
+         public bool Equals(Tensor2<τ,α> other, τ eps) {
             foreach(var matKVPair in this) {
                if(!(other.TryGetValue(matKVPair.Key, out Tensor1<τ,α> otherRow)))  // Fetch did not suceed.
                   return false;

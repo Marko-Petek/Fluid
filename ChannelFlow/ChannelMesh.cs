@@ -9,7 +9,7 @@ using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
-   using SparseMat = SparseMat<double,DblArithmetic>;
+   using Tensor2 = Tensor2<double,DblArithmetic>;
    using SparseRow = SparseRow<double,DblArithmetic>;
    /// <summary>Block structured mesh covering whole channel. Channel length is 4 times its width.</summary>
    public class ChannelMesh : BlockStructuredMesh {
@@ -83,8 +83,8 @@ namespace Fluid.ChannelFlow {
       }
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-      public SparseMat AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
-         var sfsMatrix = new SparseMat(15_620 * 8, 15_620 * 8, 10_000);
+      public Tensor2 AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+         var sfsMatrix = new Tensor2(15_620 * 8, 15_620 * 8, 10_000);
          double dt = channelFlow.Dt;
          double viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
          SouthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
