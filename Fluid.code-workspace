@@ -34,7 +34,6 @@
 			"FIXME": {}
 		},
 		//"window.titleBarStyle": "custom",
-		"window.zoomLevel": 1.8,
 		"workbench.colorTheme": "Visual Studio Light",
 		"workbench.colorCustomizations": {
 			"activityBar.background": "#272424",

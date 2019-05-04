@@ -5885,23 +5885,23 @@
     ]
   },
   "packageFolders": {
-    "/home/marko/.nuget/packages/": {},
-    "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "C:\\Users\\Korisnik\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/marko/Dokumenti/Fluid/Tests/Tests.csproj",
+      "projectUniqueName": "c:\\Users\\Korisnik\\Fluid\\Tests\\Tests.csproj",
       "projectName": "Tests",
-      "projectPath": "/home/marko/Dokumenti/Fluid/Tests/Tests.csproj",
-      "packagesPath": "/home/marko/.nuget/packages/",
-      "outputPath": "/home/marko/Dokumenti/Fluid/Tests/obj/",
+      "projectPath": "c:\\Users\\Korisnik\\Fluid\\Tests\\Tests.csproj",
+      "packagesPath": "C:\\Users\\Korisnik\\.nuget\\packages\\",
+      "outputPath": "c:\\Users\\Korisnik\\Fluid\\Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "/usr/share/dotnet/sdk/NuGetFallbackFolder"
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "/home/marko/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Korisnik\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
@@ -5912,8 +5912,8 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "/home/marko/Dokumenti/Fluid/ChannelFlow/ChannelFlow.csproj": {
-              "projectPath": "/home/marko/Dokumenti/Fluid/ChannelFlow/ChannelFlow.csproj"
+            "c:\\Users\\Korisnik\\Fluid\\ChannelFlow\\ChannelFlow.csproj": {
+              "projectPath": "c:\\Users\\Korisnik\\Fluid\\ChannelFlow\\ChannelFlow.csproj"
             }
           }
         }
