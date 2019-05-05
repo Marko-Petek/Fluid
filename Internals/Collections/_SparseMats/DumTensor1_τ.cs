@@ -11,10 +11,10 @@ namespace Fluid.Internals.Collections {
       /// <param name="capacity"></param>
       /// <returns></returns>
       internal DumTensor1(Tensor2<τ> owner, int capacity = 1) : base(width, capacity) {
-         Tensor2 = owner;
+         Tnr2 = owner;
       }
       internal DumTensor1(SparseRow<τ> source, Tensor2<τ> owner) : base(source) {
-         Tensor2 = owner;
+         Tnr2 = owner;
       }
    }
 }

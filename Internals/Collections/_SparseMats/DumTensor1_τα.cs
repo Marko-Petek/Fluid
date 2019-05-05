@@ -8,10 +8,10 @@ namespace Fluid.Internals.Collections {
       where α : IArithmetic<τ>, new() {
          public int Index { get; set; }
          internal DumTensor1(Tensor2<τ,α> owner, int width, int capacity = 1) : base(width, capacity) {
-            Tensor2 = owner;
+            Tnr2 = owner;
          }
          internal DumTensor1(Tensor1<τ,α> source, Tensor2<τ,α> owner) : base(source) {
-            Tensor2 = owner;
+            Tnr2 = owner;
          }
    }
 }

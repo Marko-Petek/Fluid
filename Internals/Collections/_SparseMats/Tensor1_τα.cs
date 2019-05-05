@@ -53,7 +53,7 @@ namespace Fluid.Internals.Collections {
                   if(this is DumTensor1<τ,α> dumTnr1) {             // Try downcasting to dummy tensor.
                      var newTnr1 = new Tensor1<τ,α>(Dim1);               // Add new row to its owner and add value to it.
                      newTnr1.Add(i, value);
-                     dumTnr1.Tensor2.Add(dumTnr1.Index, newTnr1); }
+                     dumTnr1.Tnr2.Add(dumTnr1.Index, newTnr1); }
                   else
                      base[i] = value; }                                  // Indexers adds or modifies if entry already exists.
                else if(!(this is DumTensor1<τ,α>))
@@ -62,32 +62,35 @@ namespace Fluid.Internals.Collections {
          /// <summary>Sum two rank 1 tensors.</summary><param name="lTnr">Left operand.</param><param name="rTnr">Right operand.</param><returns>A new rank 1 tensor.</returns>
          public static Tensor1<τ,α> operator + (Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
             var resTnr = new Tensor1<τ,α>(rTnr);    // Copy right operand. Result will appear here.
-            foreach(var lTnrKVPair in lTnr)
-               resTnr[lTnrKVPair.Key] = Arith.Add(lTnrKVPair.Value, rTnr[lTnrKVPair.Key]);
+            foreach(var lTnrKV in lTnr)
+               resTnr[lTnrKV.Key] = Arith.Add(lTnrKV.Value, rTnr[lTnrKV.Key]);
             return resTnr;
          }
-         public static Tensor1<τ,α> operator - (Tensor1<τ,α> lRow, Tensor1<τ,α> rRow) {
-            var resRow = new Tensor1<τ,α>(lRow);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-            foreach(var rRowKVPair in rRow)
-               resRow[rRowKVPair.Key] = Arith.Sub(lRow[rRowKVPair.Key], rRowKVPair.Value);
+         public static Tensor1<τ,α> operator - (Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
+            var resRow = new Tensor1<τ,α>(lTnr);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
+            foreach(var rTnrKV in rTnr)
+               resRow[rTnrKV.Key] = Arith.Sub(lTnr[rTnrKV.Key], rTnrKV.Value);
             return resRow;
          }
+
+
+
          /// <summary>Dot (scalar) product.</summary>
-         public static τ operator *(Tensor1<τ,α> lRow, Tensor1<τ,α> rRow) {
+         public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
             τ res = default(τ);
-            foreach(var lRowKVPair in lRow)
-               if(rRow.TryGetValue(lRowKVPair.Key, out τ rVal))
+            foreach(var lRowKVPair in lTnr)
+               if(rTnr.TryGetValue(lRowKVPair.Key, out τ rVal))
                   res = Arith.Add(res, Arith.Mul(lRowKVPair.Value, rVal));
             return res;
          }
-         public static Tensor1<τ,α> operator *(τ leftNum, Tensor1<τ,α> rRow) {
-            if(!leftNum.Equals(default(τ))) {                                                // Not zero.
-               var result = new Tensor1<τ,α>(rRow.Dim1, rRow.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
-               foreach(var rRowKVPair in rRow)
-                  result.Add(rRowKVPair.Key, Arith.Mul(rRowKVPair.Value, leftNum));
-               return result; }
+         public static Tensor1<τ,α> operator *(τ lVal, Tensor1<τ,α> rTnr) {
+            if(!lVal.Equals(default(τ))) {                                                // Not zero.
+               var res = new Tensor1<τ,α>(rTnr.Dim1, rTnr.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
+               foreach(var rTnrKV in rTnr)
+                  res.Add(rTnrKV.Key, Arith.Mul(rTnrKV.Value, lVal));
+               return res; }
             else                                                                          // Zero.
-               return new Tensor1<τ,α>(rRow.Dim1);                               // Return empty row.
+               return new Tensor1<τ,α>(rTnr.Dim1);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public τ NormSqr() {
@@ -97,18 +100,18 @@ namespace Fluid.Internals.Collections {
             return result;
          }
 
-         public bool Equals(Tensor1<τ,α> other) {
-            foreach(var rowKVPair in this)
-               if(!(other.TryGetValue(rowKVPair.Key, out τ val) && rowKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
+         public bool Equals(Tensor1<τ,α> tnr1) {
+            foreach(var tnrKV in this)
+               if(!(tnr1.TryGetValue(tnrKV.Key, out τ val) && tnrKV.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
                   return false;
             return true;
          }
 
-         public bool Equals(Tensor1<τ,α> other, τ eps) {
-            foreach(var rowKVPair in this) {
-               if(!(other.TryGetValue(rowKVPair.Key, out τ val)))                      // Fetch did not suceed.
+         public bool Equals(Tensor1<τ,α> tnr1, τ eps) {
+            foreach(var tnrKV in this) {
+               if(!(tnr1.TryGetValue(tnrKV.Key, out τ val)))                      // Fetch did not suceed.
                   return false;
-               if(Arith.Abs(Arith.Sub(rowKVPair.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
+               if(Arith.Abs(Arith.Sub(tnrKV.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
                   return false; }
             return true;                                                              // All values agree within tolerance.
          }

@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Number of slots for values of type τ inside this rank 1 tensor.</summary>
       public int Dim1 { get; protected set; }
       /// <summary>Rank 2 tensor in which this rank 1 tensor resides. Can be null.</summary>
-      public Tensor2<τ> Tensor2 { get; set; }
+      public Tensor2<τ> Tnr2 { get; set; }
 
       /// <summary>Does not assign Dim1. User of this constructor must do it manually.</summary>
       protected Tensor1() : base() {}
@@ -102,7 +102,7 @@ namespace Fluid.Internals.Collections {
                if(this is DumTensor1<τ> dumTen1) {                      // Try downcasting to a dummy tensor.
                   var newTen1 = new Tensor1<τ>(Dim1);                    // Add new rank 1 tensor to its rank 2 owner.
                   newTen1.Add(i, value);                                // Add value the setter accepted to new rank 1 tensor.
-                  dumTen1.Tensor2.Add(dumTen1.Index, newTen1); }
+                  dumTen1.Tnr2.Add(dumTen1.Index, newTen1); }
                else
                   base[i] = value; }                                  // Indexer adds or modifies if entry already exists.
             else if(!(this is DumTensor1<τ>))
