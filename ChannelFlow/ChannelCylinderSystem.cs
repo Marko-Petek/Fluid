@@ -50,7 +50,7 @@ namespace Fluid.ChannelFlow {
          var stfsMat = Mesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
          var frcgVec = Mesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
          stfsMat.ApplyColSwaps(SwapDict);                                                      // Swap columns so that constrained variables end up at right side.
-         int stfsMatW = stfsMat.Width;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
+         int stfsMatW = stfsMat.Dim1;                                               TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          frcgVec.ApplySwaps(SwapDict);                                                           // Swap elements so that constrained elements end up at end.
          int frcgVecW = frcgVec.Width;
          int nConts = Mesh.NConstraints;                                            TB.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
