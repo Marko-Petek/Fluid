@@ -9,7 +9,7 @@ namespace Fluid.Internals.Collections {
    /// <summary>A rank 1 (R1) tensor with specified dimension of its only rank which holds values of type τ. Type τ can use arithmetic defined inside type α.</summary>
    /// <typeparam name="τ">Type of R1 elements.</typeparam>
    /// <typeparam name="α">Type that defines arithmetic between values of type τ.</typeparam>
-   public class Tensor1<τ,α> : Tensor1<τ>,
+   public class Tensor1<τ,α> : Tensor<τ>,
       IEquatable<Tensor1<τ,α>>                                         // So that we can equate two rank 1 tensors via the Equals method.
       where τ : IEquatable<τ>, IComparable<τ>, new()
       where α : IArithmetic<τ>, new() {
@@ -27,7 +27,7 @@ namespace Fluid.Internals.Collections {
          new public static Tensor1<τ,α> Create(int dimR1, int cap = 6) => new Tensor1<τ,α>(dimR1, cap);
          /// <summary>Creates a R1 tensor with arithmetic α as a copy of another.</summary>
          /// <param name="src">R1 tensor to copy.</param>
-         public Tensor1(Tensor1<τ,α> src) : this(src.DimR1, src.Count) {
+         public Tensor1(Tensor1<τ,α> src) : this(src.Dim, src.Count) {
             foreach(var pair in src)
                Add(pair.Key, pair.Value);
          }
@@ -93,12 +93,12 @@ namespace Fluid.Internals.Collections {
          }
          public static Tensor1<τ,α> operator *(τ lVal, Tensor1<τ,α> rTnr) {
             if(!lVal.Equals(default(τ))) {                                                // Not zero.
-               var res = new Tensor1<τ,α>(rTnr.DimR1, rTnr.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
+               var res = new Tensor1<τ,α>(rTnr.Dim, rTnr.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
                foreach(var rTnrKV in rTnr)
                   res.Add(rTnrKV.Key, Arith.Mul(rTnrKV.Value, lVal));
                return res; }
             else                                                                          // Zero.
-               return new Tensor1<τ,α>(rTnr.DimR1);                               // Return empty row.
+               return new Tensor1<τ,α>(rTnr.Dim);                               // Return empty row.
          }
          /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
          public τ NormSqr() {

@@ -8,7 +8,7 @@ using TB = Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Collections {
    /// <summary>Rank 2 tensor holding rank 1 tensors sparsly. Does not posess arithmetic operations.</summary>
    /// <typeparam name="τ">Type of values inside rank 1 tensor.</typeparam>
-   public class Tensor2<τ> : SCG.Dictionary<int,Tensor1<τ>> where τ : new() {
+   public class Tensor2<τ> : SCG.Dictionary<int,Tensor<τ>> where τ : new() {
       /// <summary>Size of rank 2 slot (holding rank 1 tensors).</summary>
       public int Dim2 { get; protected set; }
       /// <summary>Size of rank 1 slot (holding values of type τ).</summary>
@@ -39,7 +39,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="src">Source tensor to copy.</param>
       public Tensor2(Tensor2<τ> src) : this(src.Dim2, src.Dim1, src.Count) {
          foreach(var matKVPair in src)
-            Add(matKVPair.Key, new Tensor1<τ>(matKVPair.Value));
+            Add(matKVPair.Key, new Tensor<τ>(matKVPair.Value));
       }
       /// <summary>Factory method that creates a rank 2 tensor from a rank 2 array.</summary>
       /// <param name="arr">Rank 2 source array.</param>
