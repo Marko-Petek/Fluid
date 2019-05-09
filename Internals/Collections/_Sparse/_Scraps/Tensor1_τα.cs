@@ -1,3 +1,4 @@
+#if true
 using System;
 using System.Text;
 using System.Linq;
@@ -60,68 +61,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of tensor.</param>
       new public static Tensor1<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts) =>
             CreateFromArray(arr, srtArrInx, nArrEmts, 0);
-      /// <summary>Splits a R1 tensor into two R1 tensors. Caller (left remainder) is modified, while right remainder is returned as a separate R1 tensor re-indexed from 0.</summary>
-      /// <param name="inx">Element at this index will end up as part of right remainder.</param>
-      new public Tensor1<τ,α> SplitAt(int inx) => (Tensor1<τ,α>)base.SplitAt(inx);
       
-         /// <summary>Sum two R1 tensors.</summary>
-         /// <param name="lTnr">Left operand.</param>
-         /// <param name="rTnr">Right operand.</param>
-         /// <returns>A new R1 tensor.</returns>
-         public static Tensor1<τ,α> operator + (Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
-            var resTnr = new Tensor1<τ,α>(rTnr);    // Copy right operand. Result will appear here.
-            foreach(var lTnrKV in lTnr)
-               resTnr[lTnrKV.Key] = Arith.Add(lTnrKV.Value, rTnr[lTnrKV.Key]);
-            return resTnr;
-         }
-         public static Tensor1<τ,α> operator - (Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
-            var resRow = new Tensor1<τ,α>(lTnr);    // Copy right operand. Result will appear here. Upcast to dictionary so that Dictionary's indexer is used in loop.
-            foreach(var rTnrKV in rTnr)
-               resRow[rTnrKV.Key] = Arith.Sub(lTnr[rTnrKV.Key], rTnrKV.Value);
-            return resRow;
-         }
-
-
-
-         /// <summary>Dot (scalar) product.</summary>
-         public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
-            τ res = default(τ);
-            foreach(var lRowKVPair in lTnr)
-               if(rTnr.TryGetValue(lRowKVPair.Key, out τ rVal))
-                  res = Arith.Add(res, Arith.Mul(lRowKVPair.Value, rVal));
-            return res;
-         }
-         public static Tensor1<τ,α> operator *(τ lVal, Tensor1<τ,α> rTnr) {
-            if(!lVal.Equals(default(τ))) {                                                // Not zero.
-               var res = new Tensor1<τ,α>(rTnr.Dim, rTnr.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
-               foreach(var rTnrKV in rTnr)
-                  res.Add(rTnrKV.Key, Arith.Mul(rTnrKV.Value, lVal));
-               return res; }
-            else                                                                          // Zero.
-               return new Tensor1<τ,α>(rTnr.Dim);                               // Return empty row.
-         }
-         /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
-         public τ NormSqr() {
-            τ result = default(τ);
-            foreach(var val in this.Values)
-               result = Arith.Add(result, Arith.Mul(val,val));
-            return result;
-         }
-
-         public bool Equals(Tensor1<τ,α> tnr1) {
-            foreach(var tnrKV in this)
-               if(!(tnr1.TryGetValue(tnrKV.Key, out τ val) && tnrKV.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
-                  return false;
-            return true;
-         }
-
-         public bool Equals(Tensor1<τ,α> tnr1, τ eps) {
-            foreach(var tnrKV in this) {
-               if(!(tnr1.TryGetValue(tnrKV.Key, out τ val)))                      // Fetch did not suceed.
-                  return false;
-               if(Arith.Abs(Arith.Sub(tnrKV.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
-                  return false; }
-            return true;                                                              // All values agree within tolerance.
-         }
    }
 }
+#endif

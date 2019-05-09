@@ -8,8 +8,6 @@ namespace Fluid.Internals.Collections {
       public int Rank { get; protected set; }
       /// <summary>Dimension: equals tensor's number of direct subordinates (tensors of one rank less).</summary>
       public int Dim { get; protected set; }
-      /// <summary>Superior: a tensor directly above in the hierarchy. Is null if this is the tensor with highest rank.</summary>
-      public TensorBase<τ> Sup { get; set; }
 
       public TensorBase(int rank, int cap = 6) : base(cap) {
          Rank = rank;
