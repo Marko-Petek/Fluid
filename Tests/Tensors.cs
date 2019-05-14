@@ -36,17 +36,21 @@ namespace Fluid.Tests {
          var expRes = VectorInt.CreateFromArray(data, 6, 3);
          Assert.True(res.Equals(expRes));
       }
+#if false
+
       /// <summary>Dot (inner product) two vectors.</summary>
-      [InlineData(2,1,3,  5,2,3,  21)]
-      [InlineData(2,1,3, 0,2,3,  11)]
-      [InlineData(9,8,1,  2,6,7,  73)]
-      [Theory] public void DotTwoVecs(params int[] data) {
+      [InlineData(2, 1, 3, 5, 2, 3, 21)]
+      [InlineData(2, 1, 3, 0, 2, 3, 11)]
+      [InlineData(9, 8, 1, 2, 6, 7, 73)]
+      [Theory]
+      public void DotTwoVecs(params int[] data) {  // TODO: Reimplement.
          var vec1 = VectorInt.CreateFromArray(data, 0, 3);
          var vec2 = VectorInt.CreateFromArray(data, 3, 3);
          var expRes = data[6];
          var res = vec1 * vec2;
          Assert.True(res == expRes);
-      }
+      } 
+
       /// <summary>Add two 2nd rank tensors.</summary>
       [InlineData(
          1, 2, 3,
@@ -278,7 +282,7 @@ namespace Fluid.Tests {
          var expRes = SparseRowInt.CreateFromArray(bothRows, 0, 12, 0);
          Assert.True(row1.Equals(expRes));
       }
-
+#endif
       [InlineData(
          1.01, 2.63, 3.21,
          5.56, 7.62, 5.45,

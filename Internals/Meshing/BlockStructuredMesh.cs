@@ -4,7 +4,9 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Meshing {
-   using SparseRow = SparseRow<double,DblArithmetic>;
+   using dbl = Double;
+   using dA = DblArithmetic;
+   using Vector = Vector<double,DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
    public abstract class BlockStructuredMesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
@@ -22,10 +24,10 @@ namespace Fluid.Internals.Meshing {
 
 
       /// <summary>Create a SparseRow out of Nodes array. Simply flatten list and copy it to SparseRow.</summary>
-      public SparseRow NodesArrayToSparseRow() {
+      public Vector NodesArrayToSparseRow() {
          int rowWidth = G.Length * NVars;
-         var sparseRow = new SparseRow(rowWidth, rowWidth);
-         int index = 0;
+         var sparseRow = new Vector(rowWidth, rowWidth);
+         int index;
          for(int i = 0; i < G.Length; ++i) {
             for(int j = 0; j < NVars; ++j) {
                index = 8*i + j;

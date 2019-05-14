@@ -54,13 +54,15 @@ namespace Fluid.Internals.Numerics {
       //    } while(r[i].NormSqr() > maxResidual);
       //    return rowX[i];
       // }
-      public Vector Solve(Vector x0, double maxRes) {
+      public Vector Solve(Vector x0, double maxRes) { // TODO: Implement dot product via contraction.
+         throw new NotImplementedException();
+#if false
          int iteration = 0;
-         double maxResSqr = maxRes*maxRes;
+         double maxResSqr = maxRes * maxRes;
          var r = new Vector[2];
-         var d0 = b - A*x0;                        // TODO: Implement dot product via contraction.
-         var d = new Vector[2] {null, d0};
-         var x = new Vector[2] {x0, null};
+         var d0 = b - A * x0;
+         var d = new Vector[2] { null, d0 };
+         var x = new Vector[2] { x0, null };
          var rr = new double[2];
 
          double alfa;
@@ -68,24 +70,26 @@ namespace Fluid.Internals.Numerics {
          Vector Ad;
          int i = 0;
          int j = 1;
-         while(true) {
-            r[i] = b - A*x[i];
+         while (true) {
+            r[i] = b - A * x[i];
             d[i] = d[j];
-            for(int k = 0; k < b.Width; ++k) {
+            for (int k = 0; k < b.Width; ++k) {
                ++iteration;
-               rr[i] = r[i]*r[i];
-               if(rr[i] < maxResSqr)
+               rr[i] = r[i] * r[i];
+               if (rr[i] < maxResSqr)
                   return x[i];
-               Ad = A*d[i];
-               alfa = rr[i]/(d[i]*Ad);
-               x[j] = x[i] + alfa*d[i];
-               r[j] = r[i] - alfa*Ad;
-               rr[j] = r[j]*r[j];
-               beta = rr[j]/rr[i];
-               d[j] = r[j] + beta*d[i];
+               Ad = A * d[i];
+               alfa = rr[i] / (d[i] * Ad);
+               x[j] = x[i] + alfa * d[i];
+               r[j] = r[i] - alfa * Ad;
+               rr[j] = r[j] * r[j];
+               beta = rr[j] / rr[i];
+               d[j] = r[j] + beta * d[i];
                i = (i + 1) % 2;
-               j = (j + 1) % 2; } 
-         }
+               j = (j + 1) % 2;
+            }
+         } 
+#endif
 
 
 
@@ -116,7 +120,7 @@ namespace Fluid.Internals.Numerics {
          // }
          //return x0;
 
-         
+
       }
    }
 }

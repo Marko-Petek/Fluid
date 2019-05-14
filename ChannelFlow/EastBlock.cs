@@ -6,6 +6,7 @@ using Fluid.Internals.Meshing;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow {
+   using dbl = Double;
    /// <summary>Block on east side of obstruction.</summary><remarks>Sealed, because we call a virtual method in constructor.</remarks>
    public class EastBlock : ObstructionBlock {   
       /// <summary>Create a mesh block just east of circular obstruction.</summary><param name="channelMesh">Main mesh.</param>
@@ -23,32 +24,32 @@ namespace Fluid.ChannelFlow {
 
 
       /// <summary>Returns real-world position of upper boundary node located at a given arc length coordinate.</summary><param name="ksi">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcUpperBoundaryPos(double ksi) {
+      protected override Pos CalcUpperBoundaryPos(dbl ksi) {
          ref var upperLeft = ref _quadrilateral._UL;
-         double y = upperLeft.Y - ksi * Mesh.Width;
-         double x = upperLeft.X;
+         dbl y = upperLeft.Y - ksi * Mesh.Width;
+         dbl x = upperLeft.X;
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of lower boundary node located at a given arc length coordinate.</summary>param name="ksi">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcLowerBoundaryPos(double ksi) {
+      protected override Pos CalcLowerBoundaryPos(dbl ksi) {
          ref var lowerLeft = ref _quadrilateral._LL;
          ref var lowerRight = ref _quadrilateral._LR;
-         double y = lowerLeft.Y - (lowerLeft.Y-lowerRight.Y) * (0.5 + Cos((PI/4)*(3-2*ksi)) / Sqrt(2));
-         double x = lowerLeft.X + QuarterMoonHeight * (Sin((PI/4)*(3-2*ksi)) - 1/Sqrt(2)) / (1 - 1/Sqrt(2));
+         dbl y = lowerLeft.Y - (lowerLeft.Y-lowerRight.Y) * (0.5 + Cos((PI/4)*(3-2*ksi)) / Sqrt(2));
+         dbl x = lowerLeft.X + QuarterMoonHeight * (Sin((PI/4)*(3-2*ksi)) - 1/Sqrt(2)) / (1 - 1/Sqrt(2));
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of left boundary node located at a given arc length coordinate.</summary><param name="eta">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcLeftBoundaryPos(double eta) {
+      protected override Pos CalcLeftBoundaryPos(dbl eta) {
          ref var lowerLeft = ref _quadrilateral._LL;
-         double y = lowerLeft.Y + eta * DiagonalProjection;
-         double x = lowerLeft.X + eta * DiagonalProjection;
+         dbl y = lowerLeft.Y + eta * DiagonalProjection;
+         dbl x = lowerLeft.X + eta * DiagonalProjection;
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of left boundary node located at a given arc length coordinate.</summary><param name="eta">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcRightBoundaryPos(double eta) {
+      protected override Pos CalcRightBoundaryPos(dbl eta) {
          ref var lowerRight = ref _quadrilateral._LR;
-         double y = lowerRight.Y - eta * DiagonalProjection;
-         double x = lowerRight.X + eta * DiagonalProjection;
+         dbl y = lowerRight.Y - eta * DiagonalProjection;
+         dbl x = lowerRight.X + eta * DiagonalProjection;
          return new Pos(x,y);
       }
       protected override int ApplyConstraints() {        // We apply only to points on obstruction.

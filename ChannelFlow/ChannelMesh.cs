@@ -9,8 +9,9 @@ using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
-   using Tensor2 = Tensor2<double,DblArithmetic>;
-   using SparseRow = SparseRow<double,DblArithmetic>;
+   using dbl = Double;
+   using Tensor = Tensor<double,DblArithmetic>;
+   using Vector = Vector<double,DblArithmetic>;
    /// <summary>Block structured mesh covering whole channel. Channel length is 4 times its width.</summary>
    public class ChannelMesh : BlockStructuredMesh {
       /// <summary>SubMesh right of square submesh.</summary>
@@ -24,9 +25,9 @@ namespace Fluid.ChannelFlow {
       /// <summary>East quarter of square submesh.</summary>
       protected EastBlock EastBlock { get; }
       /// <summary>Channel width in real-world units.</summary>
-      public double Width { get; protected set; }
+      public dbl Width { get; protected set; }
       /// <summary>Obstruction diameter in terms of channel width.</summary>
-      public double RelObstructionDiameter { get; protected set; }
+      public dbl RelObstructionDiameter { get; protected set; }
       /// <summary>Number of elements per square submesh side.</summary>
       public int ElementDensity { get; }
       /// <summary>Corners of right rectangular block.</summary>
@@ -38,18 +39,18 @@ namespace Fluid.ChannelFlow {
       /// <summary>Number of positions that nodes reside at.</summary>
       public int NPos { get; set; }
       /// <summary>Obstruction's center x coordinate.</summary>
-      protected double ObstructionX => 0.5 * Width;
+      protected dbl ObstructionX => 0.5 * Width;
       /// <summary>Obstruction's center y coordinate.</summary>
-      protected double ObstructionY => 0.5 * Width;
+      protected dbl ObstructionY => 0.5 * Width;
       /// <summary>Obstruction diameter in real-world units.</summary>
-      public double ObstructionDiameter => RelObstructionDiameter * Width;
+      public dbl ObstructionDiameter => RelObstructionDiameter * Width;
       /// <summary>Obstruction radius in real-world units.</summary>
-      public double ObstructionRadius => 0.5 * ObstructionDiameter;
+      public dbl ObstructionRadius => 0.5 * ObstructionDiameter;
 
 
       /// <summary>Constructs main mesh covering whole channel.</summary><remarks>Parameters cannot yet be changed because currently, element integrals have to be computed outside (e.g.static by Mathematica) which requires manual setup.</remarks>
-      public ChannelMesh(ChannelCylinderSystem channelFlow, double width = 1.0,
-         double relObstructionDiameter = 0.25, int elementDensity = 20) : base(8) {
+      public ChannelMesh(ChannelCylinderSystem channelFlow, dbl width = 1.0,
+         dbl relObstructionDiameter = 0.25, int elementDensity = 20) : base(8) {
             NPos = 0;
             Width = width;
             RelObstructionDiameter = relObstructionDiameter;
@@ -59,7 +60,7 @@ namespace Fluid.ChannelFlow {
                Width, 0.0, 
                Width, Width,
                0.0, Width );
-            double tiltedRadiusX = 0.5 * Sqrt(2.0) * ObstructionRadius;                // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
+            dbl tiltedRadiusX = 0.5 * Sqrt(2.0) * ObstructionRadius;                // Obstruction's radius tilted at 45 deg to x axis, projected onto x axis.
             ObstructionRect = new Tetragon(                                           // Fixed.
                ObstructionX - tiltedRadiusX, ObstructionY - tiltedRadiusX,
                ObstructionX + tiltedRadiusX, ObstructionY - tiltedRadiusX,
@@ -83,10 +84,10 @@ namespace Fluid.ChannelFlow {
       }
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-      public Tensor2 AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
-         var sfsMatrix = new Tensor2(15_620 * 8, 15_620 * 8, 10_000);
-         double dt = channelFlow.Dt;
-         double viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
+      public Tensor AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+         var sfsMatrix = new Tensor(new int[] {15_620 * 8, 15_620 * 8});
+         dbl dt = channelFlow.Dt;
+         dbl viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
          SouthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
          WestBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);        TB.Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
          NorthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
@@ -94,10 +95,10 @@ namespace Fluid.ChannelFlow {
          RightBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);
          return sfsMatrix;
       }
-      public SparseRow AssembleFcgVector(ChannelCylinderSystem channelFlow) {
-         var fcgVector = new SparseRow(15_620 * 8, 10_000);
-         double dt = channelFlow.Dt;
-         double viscosity = channelFlow.Viscosity;
+      public Vector AssembleFcgVector(ChannelCylinderSystem channelFlow) {
+         var fcgVector = new Vector(15_620 * 8, 10_000);
+         dbl dt = channelFlow.Dt;
+         dbl viscosity = channelFlow.Viscosity;
          SouthBlock.AddContribsToFcgVector(fcgVector, dt, viscosity);
          WestBlock.AddContribsToFcgVector(fcgVector, dt, viscosity);
          NorthBlock.AddContribsToFcgVector(fcgVector, dt, viscosity);
@@ -118,7 +119,7 @@ namespace Fluid.ChannelFlow {
             sw.WriteLine($"{node10}}}"); }
       }
       /// <summary>Returns solution (only specified variables) at any specified point inside solution domain which is [0,width]x[0,4*width]. Returns a set of double.NaN values for a point outside the domain.</summary><param name="pos">Position in terms of x ans y.</param><param name="vars">Desired variables in terms of variable indices.</param>
-      public override double[] Solution(in Pos pos, params int[] vars) {
+      public override dbl[] Solution(in Pos pos, params int[] vars) {
          if(SouthBlock.IsPointInside(in pos))                                // First determine if specified point is inside any block at all.
             return SouthBlock.Solution(in pos, vars);
          else if(EastBlock.IsPointInside(in pos))
@@ -130,9 +131,9 @@ namespace Fluid.ChannelFlow {
          else if(RightBlock.IsPointInside(in pos))
             return RightBlock.Solution(in pos, vars);
          else {                                                               // Return Double.NaN for points outside domain.
-            var outsideDomain = new double[vars.Length];
+            var outsideDomain = new dbl[vars.Length];
             for(int i = 0; i < vars.Length; ++i)
-               outsideDomain[i] = double.NaN;
+               outsideDomain[i] = dbl.NaN;
             return outsideDomain; }
       }
    }

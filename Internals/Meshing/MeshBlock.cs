@@ -6,8 +6,9 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Meshing {
-   using Tensor2 = Tensor2<double,DblArithmetic>;
-   using SparseRow = SparseRow<double,DblArithmetic>;
+   using dbl = Double;
+   using Tensor = Tensor<double,DblArithmetic>;
+   using Vector = Vector<double,DblArithmetic>;
    /// <summary>Represents a method that takes three indices and returns a position by reference.</summary>
    //public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
 
@@ -104,47 +105,47 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Set values of constrained nodes and set their Constrainedness property to true. Returns number of constrained nodes.</summary>
       protected abstract int ApplyConstraints();
       /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public abstract void AddContribsToSfsMatrix(Tensor2 A, double dt, double ni);
-      public abstract void AddContribsToFcgVector(SparseRow b, double dt, double ni);
+      public abstract void AddContribsToSfsMatrix(Tensor A, dbl dt, dbl ni);
+      public abstract void AddContribsToFcgVector(Vector b, dbl dt, dbl ni);
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
-      protected double[][] NodeOperatorMat0(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 1.0/dt + node.Vars[2].Val, node.Vars[3].Val, node.Vars[0].Val, node.Vars[1].Val, 0, 0, 1, 0 },
-            new double[8] { node.Vars[4].Val, 1.0/dt - node.Vars[2].Val, -node.Vars[1].Val, 0, node.Vars[0].Val, 0, 0, 1 },
-            new double[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 1, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 1 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
+      protected dbl[][] NodeOperatorMat0(MeshNode node, dbl dt) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 1.0/dt + node.Vars[2].Val, node.Vars[3].Val, node.Vars[0].Val, node.Vars[1].Val, 0, 0, 1, 0 },
+            new dbl[8] { node.Vars[4].Val, 1.0/dt - node.Vars[2].Val, -node.Vars[1].Val, 0, node.Vars[0].Val, 0, 0, 1 },
+            new dbl[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 1 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
          return A;
       }
-      protected double[][] NodeOperatorMat1(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
-            new double[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, -1, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
+      protected dbl[][] NodeOperatorMat1(dbl ni) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
+            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, -1, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
          return A;
       }
-      protected double[][] NodeOperatorMat2(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
-            new double[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
+      protected dbl[][] NodeOperatorMat2(dbl ni) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
          return A;
       }
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="x">X coordinate.</param><param name="y">Y coordinate.</param><param name="vars">Indices of variables we wish to retrieve.</param>
-      public virtual double[] Solution(in Pos pos, params int[] vars) {
+      public virtual dbl[] Solution(in Pos pos, params int[] vars) {
          int startRow = 0;                                                          // Where current frame begins.
          int endRow = NRows - 1;                                                 // Where current frame ends.
          int startCol = 0;
@@ -187,7 +188,7 @@ namespace Fluid.Internals.Meshing {
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);
-         double[] funcValues = quadEmt.Vals(in squarePos, vars);
+         dbl[] funcValues = quadEmt.Vals(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>

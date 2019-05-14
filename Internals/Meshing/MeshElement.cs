@@ -9,8 +9,9 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Meshing {
    using dbl = Double;
-   using SparseMat = Tensor2<double,DblArithmetic>;
-   using FuncMat = Tensor2<Func<double,double,double>, NoArithmetic>;
+   using dA = DblArithmetic;
+   using Tensor = Tensor<double,DblArithmetic>;
+   //using FuncMat = Tensor<Func<double,double,double>, NoArithmetic>;
    // TODO: Convert to class and add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
    /// <summary>A quadrilateral element.</summary>
    public class MeshElement {
@@ -52,10 +53,10 @@ namespace Fluid.Internals.Meshing {
          dbl a = FuncA(in pos);
          dbl b = FuncB(in pos);
          dbl c = FuncC(in pos);
-         dbl detMALessMB = MA.Sub(MB).Det();
-         dbl detNALessNB = NA.Sub(NB).Det();
-         dbl ξ = 0.0;
-         dbl η = 0.0;
+         dbl detMALessMB = MA.Sub<dbl,dA>(MB).Det<dbl,dA>();
+         dbl detNALessNB = NA.Sub<dbl,dA>(NB).Det<dbl,dA>();
+         dbl ξ;
+         dbl η;
          if(pos.X*pos.Y >= 0) {                                          // Quadrants I and III.
             if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
                ξ = (-b + Sqrt(b*b + c))/detMALessMB;
@@ -77,13 +78,14 @@ namespace Fluid.Internals.Meshing {
          return new Pos(ξ, η);
       }
       dbl FuncA(in Pos pos) =>
-         pos.X*MG.Tr() - pos.Y*MF.Tr() + NA.Det() - NB.Det();
+         pos.X*MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + NA.Det<dbl,dA>() - NB.Det<dbl,dA>();
 
       dbl FuncB(in Pos pos) =>
-         pos.X * MG.Tr() - pos.Y*MF.Tr() + MC.Det() + MD.Det();
+         pos.X * MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + MC.Det<dbl,dA>() + MD.Det<dbl,dA>();
 
       dbl FuncC(in Pos pos) =>
-         MA.Sub(MB).Det()*(2*pos.X*MH.Tr() - 2*pos.Y*MJ.Tr() + MA.Add(MB).Det());      //Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Sum(MA(), MB()).Det());
+         MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() -
+            2*pos.Y*MJ.Tr<dbl,dA>() + MA.Add<dbl,dA>(MB).Det<dbl,dA>());      //Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Sum(MA(), MB()).Det());
       /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
       dbl DistToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in this.P[0].Pos, in this.P[3].Pos);    // Vector from lower left to lower right vertex.
@@ -119,7 +121,7 @@ namespace Fluid.Internals.Meshing {
          return vals;
       }
 
-      public static 
+      //public static 
 
       /// <summary>
       /// Integrand belonging to integral in first part of final variational statement.</summary><param name="ξ">Horizontal coordinate on reference square (from -1 to 1).</param><param name="η">Vertical coordinate on reference square (from -1 to 1).</param><param name="b">Index of first basis function.</param><param name="c">Index of second basis function.</param><param name="p">First index of first Jacobian.</param><param name="a">Index of third basis function.</param><param name="q">First index of second Jacobian.</param><param name="d">Index of fourth basis function.</param>

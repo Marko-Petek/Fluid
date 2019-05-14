@@ -10,9 +10,7 @@ namespace Fluid.Internals.Numerics {
       where τ : IEquatable<τ>, IComparable<τ> {
          int pivotCol = 0, pivotRow = 0;
          int n = mat.Length;
-         τ biggestElement = default;
-         τ pivotInverse = default;
-         τ dummy = default;
+         τ biggestElement, pivotInverse, dummy;
          int[] pivotIndices = new int[n];
          int[] colIndices = new int[n];
          int[] rowIndices = new int[n];
@@ -74,7 +72,7 @@ namespace Fluid.Internals.Numerics {
          return result;
       }
       /// <summary>Transpose a square matrix. Result is created on specified matrix.</summary><param name="mat">Square matrix to transpose.</param>
-      public static void Transpose<τ,α>(this τ[][] mat) {
+      public static void Transpose<τ>(this τ[][] mat) {
          int length = mat.Length;
          τ temp;
          for(int i = 0; i < length; ++i)
@@ -127,8 +125,7 @@ namespace Fluid.Internals.Numerics {
       where τ : IEquatable<τ>, IComparable<τ> =>
          O<τ,α>.A.Add(mat[0][0], mat[1][1]);
       /// <summary>Extends the capacity of an array if it does not satisfy the specified capacity.</summary>
-      public static τ[] EnsureCapacity<τ>(this τ[] mat, int capacity)
-      where τ : struct {
+      public static τ[] EnsureCapacity<τ>(this τ[] mat, int capacity) {
          if(mat.Length < capacity) {
             var biggerArray = new τ[2 * mat.Length];
             Array.Copy(mat, biggerArray, mat.Length);
@@ -170,6 +167,10 @@ namespace Fluid.Internals.Numerics {
             return true; }
          return false;
       }
+      public static bool Equals<τ,α>(this τ[] mat1, τ[] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> =>
+         Equals<τ,α>(mat1, mat2, default);
       public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -180,6 +181,10 @@ namespace Fluid.Internals.Numerics {
             return true; }
          return false;
       }
+      public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> =>
+         Equals<τ,α>(mat1, mat2, default);
       public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -190,5 +195,9 @@ namespace Fluid.Internals.Numerics {
             return true; }
          return false;
       }
+      public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> =>
+         Equals<τ,α>(mat1, mat2, default);
    }
 }

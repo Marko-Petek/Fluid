@@ -13,8 +13,6 @@ namespace Fluid.Internals.Collections {
    public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      /// <summary>Contains methods that perform arithmetic.</summary>
-      protected static α Arith { get; } = new α();
       /// <summary>Hierarchy's dimensional structure. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank equal to 5 and last rank to 3.</summary>
       public int[] Structure { get; protected set; }
       /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
@@ -193,46 +191,59 @@ namespace Fluid.Internals.Collections {
                tnr.Remove(inx[n]); } }
       }
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor..</param>
-         public bool Equals(Tensor<τ,α> tnr2) { // TODO: Implement Equals method on Tensor.
-            //TODO First check that structures equal. 
-            //for()
-            Structure.Equals(tnr2.Structure)
-            //foreach(var inxVec in this)
-            //   if(!(tnr2.TryGetValue(inxVec.Key, out Vector<τ,α> vec2) && inxVec.Value.Equals(vec2)))        // Fetch did not suceed or values are not equal.
-            //      return false;
-            return true;
+      public bool Equals(Tensor<τ,α> tnr2) {
+         Structure.Equals<int, IntArithmetic>(tnr2.Structure);
+         return TnrRecursion(this, tnr2);
 
-            bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
-               if(sup1.Rank > 2) {
-                  foreach(var inx_subTnr1 in sup1) {
-                     if(sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2))
-                        return TnrRecursion(inx_subTnr1.Value, subTnr2);
-                     else
-                        return false; } }
-               else
-                  return VecRecursion(sup1, sup2);
-               throw new InvalidOperationException("We shouldn't be here.");
-            }
-
-            bool VecRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+         bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+            if(sup1.Rank > 2) {
                foreach(var inx_subTnr1 in sup1) {
-                  var vec = (Vector<τ,α>) inx_subTnr1.Value;
-                  sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2);
-                  var vec2 = (Vector<τ,α>) subTnr2;
-                  if(!vec.Equals(vec2))
-                     return false; }
-               return true;
-            }
+                  if(sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2))
+                     return TnrRecursion(inx_subTnr1.Value, subTnr2);
+                  else
+                     return false; } }
+            else
+               return VecRecursion(sup1, sup2);
+            throw new InvalidOperationException("We shouldn't be here.");
          }
 
-         public bool Equals(Tensor2<τ,α> other, τ eps) {
-            foreach(var matKVPair in this) {
-               if(!(other.TryGetValue(matKVPair.Key, out Tensor1<τ,α> otherRow)))  // Fetch did not suceed.
-                  return false;
-               if(!matKVPair.Value.Equals(otherRow, eps))                             // Fetch suceeded and values do not agree within tolerance.
+         bool VecRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+            foreach(var inx_subTnr1 in sup1) {
+               var vec = (Vector<τ,α>) inx_subTnr1.Value;
+               sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2);
+               var vec2 = (Vector<τ,α>) subTnr2;
+               if(!vec.Equals(vec2))
                   return false; }
-            return true;                                                              // All values agree within tolerance.
+            return true;
          }
+      }
+
+      public bool Equals(Tensor<τ,α> tnr2, τ eps) {
+         Structure.Equals<int, IntArithmetic>(tnr2.Structure);
+         return TnrRecursion(this, tnr2);
+
+         bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+            if(sup1.Rank > 2) {
+               foreach(var inx_subTnr1 in sup1) {
+                  if(sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2))
+                     return TnrRecursion(inx_subTnr1.Value, subTnr2);
+                  else
+                     return false; } }
+            else
+               return VecRecursion(sup1, sup2);
+            throw new InvalidOperationException("We shouldn't be here.");
+         }
+
+         bool VecRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+            foreach(var inx_subTnr1 in sup1) {
+               var vec = (Vector<τ,α>) inx_subTnr1.Value;
+               sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2);
+               var vec2 = (Vector<τ,α>) subTnr2;
+               if(!vec.Equals(vec2, eps))
+                  return false; }
+            return true;
+         }                                                         // All values agree within tolerance.
+      }
       #if false // TODO: Implement Merge, Swap and ToString on Tensor.
       /// <summary>Append specified vector to caller.</summary>
       /// <param name="appTnr">Vector to append.</param>

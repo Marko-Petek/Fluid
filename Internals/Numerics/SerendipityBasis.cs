@@ -1,13 +1,14 @@
 using System;
 using static System.Math;
 
-using Fluid.Internals.Meshing;
+//using Fluid.Internals.Meshing;
 
 namespace Fluid.Internals.Numerics {
+   using Func2D = Func<double,double,double>;
    public static class SerendipityBasis {
       /// <summary>12 Serendipity basis functions [0][i from 0 to 11] and their partials over ξ [1][i from 0 to 11] and η[2][i from 0 to 11]. All defined on reference square</summary>
-      public static Func<double,double,double>[][] ϕ { get; } = new Func<double,double,double>[][] {
-         new Func<double,double,double>[] {                             // Basis functions.
+      public static Func2D[][] ϕ { get; } = new Func2D[][] {
+         new Func2D[] {                             // Basis functions.
             (ξ,η) => ((-1 + η)*(1 - ξ)*(-2 + η + η*η + ξ + ξ*ξ))/8.0,
             (ξ,η) => -((-1 + η)*Pow(-1 + ξ,2)*(1 + ξ))/8.0,
             (ξ,η) => ((-1 + η)*(-1 + ξ)*Pow(1 + ξ,2))/8.0,
@@ -21,7 +22,7 @@ namespace Fluid.Internals.Numerics {
             (ξ,η) => ((-1 + η)*Pow(1 + η,2)*(-1 + ξ))/8.0,
             (ξ,η) => (Pow(-1 + η,2)*(1 + η)*(1 - ξ))/8.0
          },
-         new Func<double,double,double>[] {                             // Partials over ξ.
+         new Func2D[] {                             // Partials over ξ.
             (ξ,η) => -((-1 + η)*(-3 + η + η*η + 3*ξ*ξ))/8.0,
             (ξ,η) => -((-1 + η)*(-1 - 2*ξ + 3*ξ*ξ))/8.0,
             (ξ,η) => ((-1 + η)*(1 + ξ)*(-1 + 3*ξ))/8.0,
@@ -35,7 +36,7 @@ namespace Fluid.Internals.Numerics {
             (ξ,η) => ((-1 + η)*Pow(1 + η,2))/8.0,
             (ξ,η) => -(Pow(-1 + η,2)*(1 + η))/8.0
          },
-         new Func<double,double,double>[] {                             // Partials over η.
+         new Func2D[] {                             // Partials over η.
             (ξ,η) => -((-1 + ξ)*(-3 + 3*η*η + ξ + ξ*ξ))/8.0,
             (ξ,η) => -(Pow(-1 + ξ,2)*(1 + ξ))/8.0,
             (ξ,η) => ((-1 + ξ)*Pow(1 + ξ,2))/8.0,

@@ -5,19 +5,22 @@ using System.Threading;
 using Xunit;
 
 using Fluid.Internals;
+using Fluid.Internals.Numerics;
 using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Tests {
+   using dbl = Double;
+   using DA = DblArithmetic;
    public partial class Thread1 {
 
       [Fact] public void ReadAndParseArray() {
           TB.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
           var inputArray = (double[]) TB.FileReader.ReadArray<double>();
           var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
-          Assert.True(inputArray.Equals(actualArray, 0.000001));
+          Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
       }
       [Fact] public void HierarchyOutput() {
          var node4 = new RankedNode();
@@ -59,7 +62,7 @@ namespace Fluid.Tests {
                new double[] {9,7},
                new double[] {6,3},
                new double[] {5,2} };
-            Assert.True(result.Equals(expected, 0.000001)); }
+            Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
       }
       [Fact] public void HierarchyInput2() {
          TB.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
@@ -81,7 +84,7 @@ namespace Fluid.Tests {
                   new double[] {33,56},
                   new double[] {96,28},
                   new double[] {28,51} } };
-            Assert.True(result.Equals(expected, 0.000001)); }
+            Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
       }
    }
 }

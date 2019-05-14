@@ -90,13 +90,13 @@ namespace Fluid.Internals.Collections {
       public static Vector<τ,α> operator + (Vector<τ,α> lVec, Vector<τ,α> rVec) {
          var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, 4);
          foreach(var kv in lVec.Vals)
-            res[kv.Key] = Arith.Add(kv.Value, rVec[kv.Key]);
+            res[kv.Key] = O<τ,α>.A.Add(kv.Value, rVec[kv.Key]);
          return res;
       }
       public static Vector<τ,α> operator - (Vector<τ,α> lVec, Vector<τ,α> rVec) {
          var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, 4);                     // Copy right operand. Result will appear here.
          foreach(var kv in rVec.Vals)
-            res[kv.Key] = Arith.Sub(lVec[kv.Key], kv.Value);
+            res[kv.Key] = O<τ,α>.A.Sub(lVec[kv.Key], kv.Value);
          return res;
       }
 
@@ -124,7 +124,7 @@ namespace Fluid.Internals.Collections {
       public τ NormSqr() {
          τ res = default;
          foreach(var kv in Vals)
-            res = Arith.Add(res, Arith.Mul(kv.Value, kv.Value));
+            res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
          return res;
       }
 
@@ -139,7 +139,7 @@ namespace Fluid.Internals.Collections {
          foreach(var kv in Vals) {
             if(!(vec.Vals.TryGetValue(kv.Key, out τ val)))                      // Fetch did not suceed.
                return false;
-            if(Arith.Abs(Arith.Sub(kv.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
+            if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(kv.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
                return false; }
          return true;                                                              // All values agree within tolerance.
       }
