@@ -2,20 +2,20 @@ using System;
 using Fluid.Internals.Collections;
 
 namespace Fluid.Internals.Numerics {
-   using Tensor2 = Tensor2<double,DblArithmetic>;
-   using SparseRow = SparseRow<double,DblArithmetic>;
+   using Tensor = Tensor<double,DblArithmetic>;
+   using Vector = Vector<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
    public class ConjGradsSolver {
       /// <summary>Left-hand side matrix of A x = b.</summary>
-      Tensor2 A { get; }
+      Tensor A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
-      SparseRow b { get; }
+      Vector b { get; }
 
-      /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="matA">Left-hand side matrix of A x = b.</param><param name="rowB">Right-hand side vector of A x = b.</param>
-      public ConjGradsSolver(Tensor2 matA, SparseRow rowB) {
-         A = matA;
-         b = rowB;
+      /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
+      public ConjGradsSolver(Tensor tnrA, Vector vecB) {
+         A = tnrA;
+         b = vecB;
       }
 
       /// <summary>Finds and returns solution of system as a SparseRow.</summary><param name="x0">A SparseRow with same width as solution. Provides starting point in phase space.</param><param name="maxRes">Value of residual at which iterative solution process stops.</param>
@@ -54,18 +54,18 @@ namespace Fluid.Internals.Numerics {
       //    } while(r[i].NormSqr() > maxResidual);
       //    return rowX[i];
       // }
-      public SparseRow Solve(SparseRow x0, double maxRes) {
+      public Vector Solve(Vector x0, double maxRes) {
          int iteration = 0;
          double maxResSqr = maxRes*maxRes;
-         var r = new SparseRow[2];
-         var d0 = b - A*x0;
-         var d = new SparseRow[2] {null, d0};
-         var x = new SparseRow[2] {x0, null};
+         var r = new Vector[2];
+         var d0 = b - A*x0;                        // TODO: Implement dot product via contraction.
+         var d = new Vector[2] {null, d0};
+         var x = new Vector[2] {x0, null};
          var rr = new double[2];
 
          double alfa;
          double beta;
-         SparseRow Ad;
+         Vector Ad;
          int i = 0;
          int j = 1;
          while(true) {

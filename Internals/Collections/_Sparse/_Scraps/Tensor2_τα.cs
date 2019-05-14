@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Linq;
 using SCG = System.Collections.Generic;
@@ -29,37 +30,7 @@ namespace Fluid.Internals.Collections {
                Add(matKVPair.Key, new Tensor1<τ,α>(matKVPair.Value));
          }
 
-         public static Tensor2<τ,α> CreateFromArray(τ[][] arr) {
-            int nRows = arr.Length;
-            int nCols = arr[0].Length;
-            var sparseMat = new Tensor2<τ,α>(nCols, nRows, nCols*nRows);
-            for(int i = 0; i < nRows; ++i)
-               for(int j = 0; j < nCols; ++j)
-                  sparseMat[i][j] = arr[i][j];
-            return sparseMat;
-         }
-         public static Tensor2<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
-            int nRows, int startCol, int nCols, int width, int height, int startRowInx = 0, int startColInx = 0) {
-               int allCols = arr.Length/allRows;
-               var sparseMat = new Tensor2<τ,α>(width, height, nCols*nRows);
-               for(int i = startRow, k = startRowInx; i < startRow + nRows; ++i, ++k)
-                  for(int j = startCol, l = startColInx; j < startCol + nCols; ++j, ++l)
-                     sparseMat[k][l] = arr[i*allCols + j];
-               return sparseMat;
-         }
-
-         public static Tensor2<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
-            int nRows, int startCol, int nCols) =>
-               CreateFromArray(arr, allRows, startRow, nRows, startCol, nCols, nCols, nRows);
-
-         public static Tensor2<τ,α> CreateFromSpan(Span<τ> slice, int nRows) {
-            int nCols = slice.Length / nRows;
-            var sparseMat = new Tensor2<τ,α>(nCols, nRows, nCols*nRows);
-            for(int i = 0; i < nRows; ++i)
-               for(int j = 0; j < nCols; ++j)
-                  sparseMat[i][j] = slice[i*nCols + j];
-            return sparseMat;
-         }
+         
          /// <summary>Split matrix on left and right part. Return right part. Element at specified index will be part of right part.</summary><param name="colInx">Index of element at which to split. This element will be part of right matrix.</param>
          public Tensor2<τ,α> SplitAtCol(int colInx) {
             int remWidth = Dim1 - colInx;
@@ -151,21 +122,7 @@ namespace Fluid.Internals.Collections {
          }
 
          
-         /// <summary>Compare two SparseMats.</summary><param name="other">The other SparseMat to compare with.</param>
-         public bool Equals(Tensor2<τ,α> other) {
-            foreach(var matKVPair in this)
-               if(!(other.TryGetValue(matKVPair.Key, out Tensor1<τ,α> val) && matKVPair.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
-                  return false;
-            return true;
-         }
-
-         public bool Equals(Tensor2<τ,α> other, τ eps) {
-            foreach(var matKVPair in this) {
-               if(!(other.TryGetValue(matKVPair.Key, out Tensor1<τ,α> otherRow)))  // Fetch did not suceed.
-                  return false;
-               if(!matKVPair.Value.Equals(otherRow, eps))                             // Fetch suceeded and values do not agree within tolerance.
-                  return false; }
-            return true;                                                              // All values agree within tolerance.
-         }
+         
    }
 }
+#endif

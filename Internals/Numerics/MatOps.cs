@@ -1,75 +1,82 @@
-using System;
+﻿using System;
 using static System.Math;
 
 namespace Fluid.Internals.Numerics {
-    public static class MatOps {   
+   public static class MatOps {
+      //public static α A<α> { get; } = new α();
       /// <summary>Invert a square matrix. Matrix M itself is transformed in its own inverse in process.</summary><param name="mat">Square matrix to invert.</param>
-      public static void Invert(this double[][] mat) {
+      public static void Invert<τ,α>(this τ[][] mat)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          int pivotCol = 0, pivotRow = 0;
          int n = mat.Length;
-         double biggestElement = 0.0;
-         double pivotInverse = 0.0;
-         double dummy = 0.0;
+         τ biggestElement = default;
+         τ pivotInverse = default;
+         τ dummy = default;
          int[] pivotIndices = new int[n];
          int[] colIndices = new int[n];
          int[] rowIndices = new int[n];
          for(int i = 0; i < n; ++i) {
-            biggestElement = 0.0;
+            biggestElement = default;
             for(int row = 0; row < n; ++row)
                if(pivotIndices[row] != 1)
                   for(int col = 0; col < n; ++col)
                      if(pivotIndices[col] == 0)
-                        if(Abs(mat[row][col]) >= biggestElement) {
-                           biggestElement = Abs(mat[row][col]);
+                        if(O<τ,α>.A.Abs(mat[row][col]).CompareTo(biggestElement) >= 0) {
+                           biggestElement = O<τ,α>.A.Abs(mat[row][col]);
                            pivotRow = row;
                            pivotCol = col; }
             ++(pivotIndices[pivotCol]);
             if(pivotCol != pivotRow)
                for(int col = 0; col < n; ++col)
-                  mat.Swap<double>(pivotRow, col, pivotCol, col);
+                  Swap(mat, pivotRow, col, pivotCol, col);
             rowIndices[i] = pivotRow;
             colIndices[i] = pivotCol;
-            if(mat[pivotCol][pivotCol] == 0.0)
+            if(mat[pivotCol][pivotCol].Equals(default))
                throw new ArgumentException("Singular input matrix.");
-            pivotInverse = 1.0 / mat[pivotCol][pivotCol];
-            mat[pivotCol][pivotCol] = 1.0;
+            pivotInverse = O<τ,α>.A.Div(O<τ,α>.A.Unit(), mat[pivotCol][pivotCol]);
+            mat[pivotCol][pivotCol] = O<τ,α>.A.Unit();
             for(int col = 0; col < n; ++col)
-               mat[pivotCol][col] *= pivotInverse;
+               mat[pivotCol][col] = O<τ,α>.A.Mul(mat[pivotCol][col], pivotInverse);
             for(int row = 0; row < n; ++row)
                if(row != pivotCol) {
                   dummy = mat[row][pivotCol];
-                  mat[row][pivotCol] = 0.0;
+                  mat[row][pivotCol] = default;
                   for(int col = 0; col < n; ++col)
-                     mat[row][col] -= mat[pivotCol][col] * dummy; }}
+                     mat[row][col] = O<τ,α>.A.Sub(mat[row][col], O<τ,α>.A.Mul(mat[pivotCol][col], dummy)); }}
          for(int i = n - 1; i > -1; --i)
             if(rowIndices[i] != colIndices[i])
                for(int row = 0; row < n; ++row)
-                  mat.Swap<double>(row, rowIndices[i], row, colIndices[i]);
+                  Swap(mat, row, rowIndices[i], row, colIndices[i]);
       }
       /// <summary>Dot two matrices.</summary><param name="mat1">Left operand.</param><param name="mat2">Right operand.</param>
-      public static double[][] Dot(this double[][] mat1, double[][] mat2) {
+      public static τ[][] Dot<τ,α>(this τ[][] mat1, τ[][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          if(mat1.Length == mat2.Length) {
-            double[][] result = new double[mat1.Length][];
+            τ[][] result = new τ[mat1.Length][];
             for(int i = 0; i < mat1.Length; ++i) {
-               result[i] = new double[mat1.Length];
+               result[i] = new τ[mat1.Length];
                for(int j = 0; j < mat1.Length; ++j)
-                  result[i][j] = mat1[i][j] * mat2[j][i]; }
+                  result[i][j] = O<τ,α>.A.Mul(mat1[i][j], mat2[j][i]); }
             return result; }
          throw new ArgumentException("The two arrays multiplied have to have the same dimension.");
       }
       /// <summary>Multiply a scalar with a matrix.</summary><param name="dbl">Scalar.</param><param name="mat">Matrix.</param>
-      public static double[][] Mul(this double dbl, double[][] mat) {
-         double[][] result = new double[mat.Length][];
+      public static τ[][] Mul<τ,α>(this τ dbl, τ[][] mat)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
+         τ[][] result = new τ[mat.Length][];
          for(int i = 0; i < mat.Length; ++i) {
-            result[i] = new double[mat[i].Length];
+            result[i] = new τ[mat[i].Length];
             for(int j = 0; j < mat[i].Length; ++j)
-               result[i][j] = dbl * mat[i][j]; }
+               result[i][j] = O<τ,α>.A.Mul(dbl, mat[i][j]); }
          return result;
       }
       /// <summary>Transpose a square matrix. Result is created on specified matrix.</summary><param name="mat">Square matrix to transpose.</param>
-      public static void Transpose(this double[][] mat) {
+      public static void Transpose<τ,α>(this τ[][] mat) {
          int length = mat.Length;
-         double temp;
+         τ temp;
          for(int i = 0; i < length; ++i)
             for(int j = i + 1; j < length; ++j) {
                temp = mat[j][i];
@@ -77,90 +84,108 @@ namespace Fluid.Internals.Numerics {
                mat[i][j] = temp; }
       }
       /// <summary>Add two square matrices.</summary><param name="mat1">Left matrix.</param><param name="mat2">Right matrix.</param>
-      public static double[][] Add(this double[][] mat1, double[][] mat2) {
+      public static τ[][] Add<τ,α>(this τ[][] mat1, τ[][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;
-         double[][] result = new double[lgh][];
+         τ[][] result = new τ[lgh][];
          for(int i = 0; i < lgh; ++i) {
-            result[i] = new double[lgh];
+            result[i] = new τ[lgh];
             for(int j = 0; j < lgh; ++j)
-               result[i][j] = mat1[i][j] + mat2[i][j]; }
+               result[i][j] = O<τ,α>.A.Add(mat1[i][j], mat2[i][j]); }
          return result;
       }
       /// <summary>Take a matrix and add to it another matrix.</summary><param name="mat1">Matrix to be added to.</param><param name="mat2">Matrix that will be added to addee.</param>
-      public static void AddTo(this double[][] mat1, double[][] mat2) {
+      public static void AddTo<τ,α>(this τ[][] mat1, τ[][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;
          for(int i = 0; i < lgh; ++i)
             for(int j = 0; j < lgh; ++j)
-               mat1[i][j] += mat2[i][j];
+               mat1[i][j] = O<τ,α>.A.Add(mat1[i][j], mat2[i][j]);
       }
       /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
-      public static double[][] Sub(this double[][] mat1, double[][] mat2) {
+      public static τ[][] Sub<τ,α>(this τ[][] mat1, τ[][] mat2)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;
-         double[][] result = new double[lgh][];
+         τ[][] result = new τ[lgh][];
          for(int i = 0; i < lgh; ++i) {
-            result[i] = new double[lgh];
+            result[i] = new τ[lgh];
             for(int j = 0; j < lgh; ++j)
-               result[i][j] = mat1[i][j] - mat2[i][j]; }
+               result[i][j] = O<τ,α>.A.Sub(mat1[i][j], mat2[i][j]); }
          return result;
       }
       /// <summary>Coumpute determinant of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
-      public static double Det(this double[][] mat) =>
-         mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0];
+      public static τ Det<τ,α>(this τ[][] mat)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> =>
+         O<τ,α>.A.Sub(O<τ,α>.A.Mul(mat[0][0], mat[1][1]), O<τ,α>.A.Mul(mat[0][1], mat[1][0]));
       /// <summary>Coumpute trace of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
-      public static double Tr(this double[][] mat) =>
-         mat[0][0] + mat[0][1] + mat[1][0] + mat[1][1];
+      public static τ Tr<τ,α>(this τ[][] mat)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> =>
+         O<τ,α>.A.Add(mat[0][0], mat[1][1]);
       /// <summary>Extends the capacity of an array if it does not satisfy the specified capacity.</summary>
-      public static void EnsureCapacity<T>(this T[] mat, int capacity) {
+      public static τ[] EnsureCapacity<τ>(this τ[] mat, int capacity)
+      where τ : struct {
          if(mat.Length < capacity) {
-            var biggerArray = new T[2 * mat.Length];
+            var biggerArray = new τ[2 * mat.Length];
             Array.Copy(mat, biggerArray, mat.Length);
-            mat = biggerArray; }
+            return biggerArray; }
+         else return mat;
       }
       /// <summary>Swaps two elements in a 2D matrix.</summary><param name="mat">Matrix to operate on.</param><param name="row1">Row index of first element.</param><param name="col1">Column index of first element.</param><param name="row2">Row index of second element.</param><param name="col2">Column index of second element.</param>
-      public static void Swap<T>(this T[][] mat, int row1, int col1, int row2, int col2) {
-         T temp = mat[row2][col2];
+      public static void Swap<τ>(this τ[][] mat, int row1, int col1, int row2, int col2) {
+         τ temp = mat[row2][col2];
          mat[row2][col2] = mat[row1][col1];
          mat[row1][col1] = temp;
       }
-      public static void SwapRows<T>(this T[][] mat, int row1, int row2) {
-         T[] temp = mat[row1];
+      public static void SwapRows<τ>(this τ[][] mat, int row1, int row2) {
+         τ[] temp = mat[row1];
          mat[row1] = mat[row2];
          mat[row2] = temp;
       }
-      public static void SwapCols<T>(this T[][] mat, int col1, int col2) {
+      public static void SwapCols<τ>(this τ[][] mat, int col1, int col2) {
          for(int i = 0; i < mat.Length; ++i)
             Swap(mat, i, col1, i, col2);
       }
-      public static T[][] CreateFromArray<T>(T[] row, int allRows, int startRow, int nRows,
+      public static τ[][] CreateFromArray<τ>(τ[] row, int allRows, int startRow, int nRows,
          int startCol, int nCols) {
             int allCols = row.Length/allRows;
-            T[][] mat = new T[nRows][];
+            τ[][] mat = new τ[nRows][];
             for(int i = 0; i < nRows; ++i) {
-               mat[i] = new T[nCols];
+               mat[i] = new τ[nCols];
                for(int j = 0; j < nCols; ++j)
                   mat[i][j] = row[allCols*(startRow + i) + startCol + j]; }
             return mat;
       }
-      public static bool Equals(this double[] mat1, double[] mat2, double epsilon) {
+      public static bool Equals<τ,α>(this τ[] mat1, τ[] mat2, τ epsilon)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          if(mat1.Length == mat2.Length) {
             for(int i = 0; i < mat1.Length; ++i)
-               if(Abs(mat1[i] - mat2[i]) > epsilon)
+               if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(mat1[i], mat2[i])).CompareTo(epsilon) > 0)
                   return false;
             return true; }
          return false;
       }
-      public static bool Equals(this double[][] mat1, double[][] mat2, double epsilon) {
+      public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2, τ eps)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          if(mat1.Length == mat2.Length) {
             for(int i = 0; i < mat1.Length; ++i)
-               if(!Equals(mat1[i], mat2[i], epsilon))
+               if(!Equals<τ,α>(mat1[i], mat2[i], eps))
                   return false;
             return true; }
          return false;
       }
-      public static bool Equals(this double[][][] mat1, double[][][] mat2, double epsilon) {
+      public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2, τ eps)
+      where α : IArithmetic<τ>, new()
+      where τ : IEquatable<τ>, IComparable<τ> {
          if(mat1.Length == mat2.Length) {
             for(int i = 0; i < mat1.Length; ++i)
-               if(!Equals(mat1[i], mat2[i], epsilon))
+               if(!Equals<τ,α>(mat1[i], mat2[i], eps))
                   return false;
             return true; }
          return false;
