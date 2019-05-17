@@ -8,6 +8,7 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
+   using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
    /// <typeparam name="τ">Type of direct subordinates.</typeparam>
    public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
@@ -19,6 +20,9 @@ namespace Fluid.Internals.Collections {
       public int Rank { get; protected set; }
       /// <summary>Superior: a tensor directly above in the hierarchy. Null if this is the highest rank tensor.</summary>
       public Tensor<τ,α> Sup { get; protected set; }
+
+      public static readonly CopySpecs DefaultCopySpec = new CopySpecs();
+      public static CopySpecs CopySpec = DefaultCopySpec;
       protected Tensor(int cap) : base(cap) { }
       protected Tensor(int[] structure, int rank, Tensor<τ,α> sup, int cap) : base(cap) {
          Structure = structure ?? null;
@@ -28,37 +32,46 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
       /// <param name="structure">Specifies dimension of each rank.</param>
       /// <param name="cap">Initially assigned memory.</param>
-      public Tensor(int[] structure) : this(structure, structure.Length, null, 6) { }
+      public Tensor(int[] structure, int cap = 6) : this(structure, structure.Length, null, cap) { }
       /// <summary>Creates a non-top tensor with specified superior and initial capacity. Rank is assigned as one less that superior.</summary>
       /// <param name="sup">Tensor directly above in hierarchy.</param>
       /// <param name="cap">Initially assigned memory.</param>
       public Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) { }
-      // TODO: Make a copy method that creates a different structure and assigns another superior?
-      public Tensor(Tensor<τ,α> src) : base(src.Count) {
-         Copy(src, this);
+      /// <summary>Creates a deep copy of specified tensor. You can optionally specify which meta-fields (Structure, Rank ...) to copy.</summary>
+      /// <param name="src">Source tensor to copy.</param>
+      /// <param name="extraCap">How much more top rank space should the new tensor have (newCap = oldCap + extraCap).</param>
+      /// <param name="cs">Exact specification of fields to copy. Default is all.</param>
+      public Tensor(Tensor<τ,α> src, int extraCap, CopySpecs cs = CopySpecs.All) :
+       base(src.Count + extraCap) {
+         Copy(src, this, cs);
       }
-      /// <summary>Creates a tensor as a copy of this one: same Rank, Structure and Superior.</summary>
+      /// <summary>Creates a tensor as a deep copy of this one: same Rank, Structure and Superior.</summary>
       public virtual Tensor<τ,α> Copy() {
          var res = new Tensor<τ,α>(Count);
          Copy(this, res);
          return res;
       }
-      /// <summary>You have to provide the already instantiated target.</summary>
+      /// <summary>Make a shallow or deep copy of a tensor. Set CopySpec field for fine tunning.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
-      public static void Copy(Tensor<τ,α> src, Tensor<τ,α> tgt) {
+      /// <param name="cs">Exact specification of what fields to copy. Default is all.</param>
+      public static void Copy(in Tensor<τ,α> src, Tensor<τ,α> tgt) {
          TB.Assert.True(src.Rank > 1,
             "Tensors's rank has to be at least 2 to be copied via this method.");
-         tgt.Structure = src.Structure;
-         tgt.Rank = src.Rank;
-         tgt.Sup = src.Sup ?? null;
-         Recursion(src, tgt);
+         CopyMetaFields(src, tgt, in CopySpec.MCSpec, in CopySpec.SCSpec);
+         if((CopySpec.MSpec & MainSpecs.Vals) == MainSpecs.Vals) {
+            int endRank = CopySpec.EndRank;
+            Recursion(src, tgt);
 
-         void Recursion(Tensor<τ,α> src1, Tensor<τ,α> tgt1) {
+            void Recursion(Tensor<τ,α> src1, Tensor<τ,α> tgt1) {
             if(src1.Rank > 2) {                                       // Subordinates are tensors.
                foreach (var kv in src1) {
                   var tnr = new Tensor<τ,α>(kv.Value.Structure, kv.Value.Rank, kv.Value.Sup, kv.Value.Count);
+                  if(src1.Rank > endRank)
                   Recursion(kv.Value, tnr);
+                  tnr.Structure = tgt1.Structure;
+                  tnr.Rank = tgt1.Rank - 1;
+                  tnr.Sup = tgt1;
                   tgt1.Add(kv.Key, tnr); } }
             else if(src1.Rank == 2) {                                 // Subordinates are vectors.
                foreach (var kv in src1)
@@ -66,7 +79,20 @@ namespace Fluid.Internals.Collections {
             else
                throw new InvalidOperationException(
                   "Tensors's rank has to be at least 2 to be copied via this method.");
+            }
          }
+      }
+      public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in MetaSpecs mcs,
+      in StructureSpecs scs) {
+         if((mcs & MetaSpecs.Structure) == MetaSpecs.Structure) {
+            if((scs & StructureSpecs.RefCopy) == StructureSpecs.RefCopy)
+               Array.Copy(src.Structure, tgt.Structure, src.Structure.Length);
+            else
+               tgt.Structure = src.Structure; }
+         if((mcs & MetaSpecs.Rank) == MetaSpecs.Rank)
+            tgt.Rank = src.Rank;
+         if((mcs & MetaSpecs.Sup) == MetaSpecs.Sup)
+            tgt.Sup = src.Sup ?? null;
       }
       public static Tensor<τ,α> CreateFromArray(τ[][] arr) {
          int nRows = arr.Length;
@@ -190,7 +216,95 @@ namespace Fluid.Internals.Collections {
                      return; }
                tnr.Remove(inx[n]); } }
       }
-      /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor..</param>
+      /// <summary>Plus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
+      public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
+         TB.Assert.True(tnr1.Structure.Equals<int, IA>(tnr2.Structure));
+         return Recursion(tnr1, tnr2);
+
+         Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
+            var res = new Tensor<τ,α>(t2, t2.Count + 4, CopySpecs.All);                // Must be a copy.
+            if(t1.Rank > 2) {
+               foreach(var int_tnr1 in t1) {
+                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
+                     var subRes = Recursion(int_tnr1.Value, tnr2Val);
+                     res.Add(int_tnr1.Key, subRes); } } }
+            else {
+               foreach(var int_tnr1 in t1) {
+                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
+                     var vec1 = (Vector<τ,α>) int_tnr1.Value;
+                     var vec2 = (Vector<τ,α>) tnr2Val;
+                     res.Add(int_tnr1.Key, vec1 + vec2); } } }
+            return res;
+         }
+      }
+      /// <summary>Multiply tensor with a scalar.</summary>
+      /// <param name="scl">Scalar.</param>
+      /// <param name="tnr">Tensor.</param>
+      public static Tensor<τ,α> operator * (τ scl, Tensor<τ,α> tnr) {
+
+         Tensor<τ,α> Recursion(Tensor<τ,α> src) {
+            var res = new Tensor<τ,α>(src, 0, CopySpecs.AllExceptVals);  // TODO: wE NEED A SHALLOW COPY.
+            if(src.Rank > 2) {                                       // Subordinates are tensors.
+               foreach (var kv in src) {
+                   = new Tensor<τ,α>(kv.Value.Structure, kv.Value.Rank, kv.Value.Sup, kv.Value.Count);
+                  var subTnr = Recursion(kv.Value);
+                  subTnr.Structure = kv.Value.Structure;
+                  subTnr.Sup = res;
+
+                  tgt1.Add(kv.Key, subTnr); } }
+            else if(src.Rank == 2) {                                 // Subordinates are vectors.
+               foreach (var kv in src)
+                  tgt1.Add(kv.Key, new Vector<τ,α>((Vector<τ,α>) kv.Value)); }
+            else
+               throw new InvalidOperationException(
+                  "Tensors's rank has to be at least 2 to be copied via this method.");
+         }
+      }
+      ///// <summary>Minus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
+      //public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
+      //   TB.Assert.True(tnr1.Structure.Equals<int, IA>(tnr2.Structure));
+      //   return Recursion(tnr1, tnr2);
+
+      //   Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
+      //      Tensor<τ,α> res = new Tensor<τ,α>(t1, t1.Count + 4);        // Must be a copy.
+      //      if(t1.Rank > 2) {
+      //         foreach(var int_tnr2 in t2) {
+      //            if(t1.TryGetValue(int_tnr2.Key, out var tnr2Val)) {
+      //               var subRes = Recursion(int_tnr2.Value, tnr2Val);
+      //               res.Add(int_tnr2.Key, subRes); } } }
+      //      else {
+      //         foreach(var int_tnr1 in t2) {
+      //            if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
+      //               var vec1 = (Vector<τ,α>) int_tnr1.Value;
+      //               var vec2 = (Vector<τ,α>) tnr2Val;
+      //               res.Add(int_tnr1.Key, vec1 + vec2); } } }
+      //      return res;
+      //   }
+      //}
+      /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
+      /// <param name="tnr2">Right-hand operand.</param>
+      public Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+
+      }
+      /// <summary>Contracts (generalized trace) two tensors over specified ranks. Ranks are specified intuitively - in the order indices are written out (sacrificing formal correctness), e.g.: (ijkl)(mnip) is specified as a (0,2) contraction, not a (3,1) contraction.</summary>
+      /// <param name="inx1">Index (rank) on this tensor over which to to contract.</param>
+      /// <param name="tnr2">Other tensor.</param>
+      /// <param name="inx2">Index (rank) on other tensor over which to contract.</param>
+      /// <returns></returns>
+      public Tensor<τ,α> Contract(int inx1, Tensor<τ,α> tnr2, int inx2) {
+         TB.Assert.AreEqual(Structure[inx1], tnr2.Structure[inx2],
+            "Rank dimensions at specified indices must be equal when contracting.");
+         int nRanks1 = Structure.Length;
+         int nRanks2 = tnr2.Structure.Length;
+         int dim = Structure[inx1];             // Dimension of rank we're contracting.
+         //var parSeq1 = Enumerable.Range(0, dim).Select(i => {
+         //      Array.Copy(Structure, new int[nRanks1], nRanks1)
+         //   }
+         for(int i = 0, n = dim - 1; i < n; ++i) {
+
+         }
+      }
+      /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {
          Structure.Equals<int, IntArithmetic>(tnr2.Structure);
          return TnrRecursion(this, tnr2);
@@ -287,5 +401,44 @@ namespace Fluid.Internals.Collections {
          return sb.ToString();
       }
       #endif
+
+      public readonly struct CopySpecs {
+         /// <summary>General CopySpec with available options: Meta (copy meta fields, specify which in MCSpec) and Vals (copy values, either shallowly or deeply - specify with VCDepth).</summary>
+         public readonly MainSpecs MSpec;
+         /// <summary>Spcify which meta fields to copy (effective only if CSpec.Meta = 1): Structure, Rank, Superior.</summary>
+         public readonly MetaSpecs MCSpec;
+         /// <summary>Specify how to copy Structure field (effective only if MCSpec.Structure = 1): TrueCopy (create a new Structure array on heap), RefCopy (copy only a reference to Structure array on source Tensor.)</summary>
+         public readonly StructureSpecs SCSpec;
+         /// <summary>Rank at which copying stops (inclusive bound, effective only if CSPec.Vals = 1)</summary>
+         public readonly int EndRank;
+         
+         public CopySpecs(MainSpecs ms = MainSpecs.All, MetaSpecs mcs = MetaSpecs.All,
+         StructureSpecs scs = StructureSpecs.TrueCopy, int endRank = 0) {
+            MSpec = ms;
+            MCSpec = mcs;
+            SCSpec = scs;
+            EndRank = endRank;
+         }
+      }
+      /// <summary>Possible CopySpec settings.</summary>
+      [Flags] public enum MainSpecs {
+         Meta  = 1,
+         Vals  = 1 << 1,
+         All = Meta | Vals
+      }
+      /// <summary>Possible StructureCopySpec settings.</summary>
+      [Flags] public enum StructureSpecs {
+         TrueCopy = 1,
+         RefCopy  = 1 << 1
+      }
+      /// <summary>Possible MetaCopySpec settings.</summary>
+      [Flags] public enum MetaSpecs {
+         None        = 0,
+         Structure   = 1,
+         Rank        = 1 << 1,
+         Sup         = 1 << 2,
+         All = Structure | Rank | Sup,
+         AllExceptSup = All & ~Sup
+      }
    }
 }

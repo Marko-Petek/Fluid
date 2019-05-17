@@ -18,17 +18,23 @@ namespace Fluid.Internals.Collections {
       protected Vector(int cap) : this(null, null, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
-      public Vector(Vector<τ,α> src) : base(src) {
-         Copy(src, this);
+      /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
+      /// <param name="src"></param>
+      public Vector(Vector<τ,α> src, CopySpecs cs = CopySpecs.AllExceptSup) : base(src.Count) {
+         Copy(src, this, cs);
       }
-      /// <summary>You have to provide the already instantiated target.</summary>
+      /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
-      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt) {
-         tgt.Structure = src.Structure;
-         tgt.Rank = 1;
-         tgt.Sup = src.Sup ?? null;
-         tgt.Vals = new Dictionary<int,τ>(src.Vals);
+      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, CopySpecs cs = CopySpecs.All) {
+         if((cs & CopySpecs.Structure) == CopySpecs.Structure)
+            tgt.Structure = src.Structure;
+         if((cs & CopySpecs.Rank) == CopySpecs.Rank)
+            tgt.Rank = src.Rank;
+         if((cs & CopySpecs.Sup) == CopySpecs.Sup)
+            tgt.Sup = src.Sup ?? null;
+         if((cs & CopySpecs.Vals) == CopySpecs.Vals)
+            tgt.Vals = new Dictionary<int,τ>(src.Vals);
       }
       /// <summary>Creates a vector with specified dimension from an array.</summary>
       /// <param name="arr">Array to copy.</param>
@@ -88,18 +94,25 @@ namespace Fluid.Internals.Collections {
       /// <param name="rVec">Right operand.</param>
       /// <returns>A new R1 tensor.</returns>
       public static Vector<τ,α> operator + (Vector<τ,α> lVec, Vector<τ,α> rVec) {
-         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, 4);
+         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);
          foreach(var kv in lVec.Vals)
             res[kv.Key] = O<τ,α>.A.Add(kv.Value, rVec[kv.Key]);
          return res;
       }
       public static Vector<τ,α> operator - (Vector<τ,α> lVec, Vector<τ,α> rVec) {
-         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, 4);                     // Copy right operand. Result will appear here.
+         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);                     // Copy right operand. Result will appear here.
          foreach(var kv in rVec.Vals)
             res[kv.Key] = O<τ,α>.A.Sub(lVec[kv.Key], kv.Value);
          return res;
       }
-
+      /// <summary>Negate operator.</summary>
+      /// <param name="vec">Vector to negate.</param>
+      public static Vector<τ,α> operator - (Vector<τ,α> vec) {
+         var res = new Vector<τ,α>(vec.Structure, vec.Sup, vec.Count);                     // Copy right operand. Result will appear here.
+         foreach(var kv in vec.Vals)
+            res[kv.Key] = O<τ,α>.A.Neg(vec[kv.Key]);
+         return res;
+      }
 
       #if false   // TODO: Implement Contract on Vector.
       /// <summary>Dot (scalar) product.</summary>
