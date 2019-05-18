@@ -20,20 +20,16 @@ namespace Fluid.Internals.Collections {
       public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
       /// <param name="src"></param>
-      public Vector(Vector<τ,α> src, CopySpecs cs = CopySpecs.AllExceptSup) : base(src.Count) {
+      public Vector(Vector<τ,α> src, CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
          Copy(src, this, cs);
       }
+      public Vector(Vector<τ,α> src) : this(src, CopySpecs.Default) { }
       /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
-      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, CopySpecs cs = CopySpecs.All) {
-         if((cs & CopySpecs.Structure) == CopySpecs.Structure)
-            tgt.Structure = src.Structure;
-         if((cs & CopySpecs.Rank) == CopySpecs.Rank)
-            tgt.Rank = src.Rank;
-         if((cs & CopySpecs.Sup) == CopySpecs.Sup)
-            tgt.Sup = src.Sup ?? null;
-         if((cs & CopySpecs.Vals) == CopySpecs.Vals)
+      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, CopySpecStruct cs) {
+         CopyMetaFields(src, tgt, cs.MetaFields, cs.Structure);
+         if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);
       }
       /// <summary>Creates a vector with specified dimension from an array.</summary>
@@ -111,6 +107,12 @@ namespace Fluid.Internals.Collections {
          var res = new Vector<τ,α>(vec.Structure, vec.Sup, vec.Count);                     // Copy right operand. Result will appear here.
          foreach(var kv in vec.Vals)
             res[kv.Key] = O<τ,α>.A.Neg(vec[kv.Key]);
+         return res;
+      }
+      public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
+         var res = new Vector<τ,α>(vec, CopySpecs.ScalarMultiply);
+         foreach(var kv in vec.Vals)
+            res[kv.Key] = O<τ,α>.A.Mul(scal, vec[kv.Key]);
          return res;
       }
 
