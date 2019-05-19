@@ -291,14 +291,24 @@ namespace Fluid.Internals.Collections {
       public Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {  // TODO: Implement Tensor Product on tensor.
          throw new NotImplementedException();
       }
+      /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
+      /// <param name="rInx">Intuitive rank index.</param>
+      /// <param name="eInx">Element index in that rank.</param>
+      /// <returns></returns>
+      Tensor<τ,α> Eliminate(int rInx, int eInx) {
+
+      }
       /// <summary>Contracts  two tensors over specified (rank) indices. Indices are specified intuitively - in the order they are written out (sacrificing consistency with regards to rank indexing in this class, chosen so that the value rank has the lowest index (zero). CLarification by example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B (not a (3,1) contraction).</summary>
       /// <param name="inx1">Index on this tensor over which to to contract.</param>
       /// <param name="tnr2">Other tensor.</param>
       /// <param name="inx2">Index on other tensor over which to contract (the rank on tnr2 that this index represents must have the same dimension as the rank on tnr1 represented by inx1).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(int inx1, Tensor<τ,α> tnr2, int inx2) {
-         // Take into account: What if the tensors are both part of another higher rank tensor and have the contraction indices specified relative to them?
-         // Decision: Returned contracted tensor will be its own independent tensor (it will be top rank).
+         // 1) Take into account: What if the tensors are both part of another higher rank tensor and have the contraction indices specified relative to them?
+         // 2) Decision: Returned contracted tensor will be its own independent tensor (it will be top rank).
+         // 3) Note: It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1+ R2, where you properly remap the rank indices and do the multiplication on rank 0 elements on demand.
+         // 4) On the other hand, you do not want to use the indexer to perform the calculation. It's best to use the enumerator. Therefore, the approach in point 3 is not good.
+         // 5) Write an Absorb method where you specify the rank index at which to absorb and an index of the tensor inside that rank that will get absorbed (thus, all other tensors at that rank being discarded).
          int hostTopRank1 = Structure.Length - 1,                                      // host = tensor at the top of the hierarchy.
              hostTopRank2 = tnr2.Structure.Length - 1,
              hostRankDif1 = hostTopRank1 - Rank,
@@ -312,15 +322,13 @@ namespace Fluid.Internals.Collections {
             structure2 = tnr2.Structure.Skip(hostRankDif2).ToArray();
          else
             structure2 = tnr2.Structure;
-         TB.Assert.AreEqual(structure1[inx1], structure2[inx2],                        // First, check that the dimensions of ranks being contracted are equal.
+         TB.Assert.AreEqual(structure1[inx1], structure2[inx2],                        // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal when contracting.");
-         
-         int dim1 = Structure[inx1];            // Dimension of rank we're contracting on tnr1.
-         int dim2 = tnr2.Structure[inx2];       // Dimension of rank we're contracting on tnr2.
+         int cDim = Structure[inx1];            // Dimension of rank we're contracting.
          //var parSeq1 = Enumerable.Range(0, dim).Select(i => {
          //      Array.Copy(Structure, new int[nRanks1], nRanks1)
          //   }
-         for(int i = 0, n = dim1 - 1; i < n; ++i) {
+         for(int i = 0; i < cDim; ++i) {
 
          }
       }
