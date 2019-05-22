@@ -29,6 +29,12 @@ namespace Fluid.Internals.Collections {
          //   GeneralSpecs.Meta, MetaSpecs.All, StructureSpecs.TrueCopy);
          public static readonly CopySpecStruct ScalarMultiply = new CopySpecStruct(
             GeneralSpecs.Meta, MetaSpecs.All, StructureSpecs.RefCopy);
+         public static readonly CopySpecStruct ElimRank3 = new CopySpecStruct(          // Used on ElimRank method.
+            GeneralSpecs.Both, MetaSpecs.Rank);
+         public static readonly CopySpecStruct ElimRank2 = new CopySpecStruct(          // Used on ElimRank method.
+            GeneralSpecs.Both, MetaSpecs.Rank | MetaSpecs.Sup);
+         public static readonly CopySpecStruct ElimRank = new CopySpecStruct(
+            GeneralSpecs.Both, MetaSpecs.Rank);
       }
       protected Tensor(int cap) : base(cap) { }
       protected Tensor(int[] structure, int rank, Tensor<τ,α> sup, int cap) : base(cap) {
@@ -131,6 +137,14 @@ namespace Fluid.Internals.Collections {
             for(int j = 0; j < nCols; ++j)
                tnr[i,j] = slice[i*nCols + j];
          return tnr;
+      }
+      public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
+         int rank = structure.Length;
+         if(rank > 2) {
+            for(int i = 0; i < rank - 2; ++i) {
+               
+            }
+         }
       }
       /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g. i from previous example has index 2, k has 0).</summary>
       /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
@@ -306,27 +320,52 @@ namespace Fluid.Internals.Collections {
       Tensor<τ,α> ElimRank(int natElimRank, int emtInx) {
          // 1) Create a new structure. New tensor's rank will be one less. Skip the eliminated rank.
          // 2) Start copying recursively until you reach one rank above the rank to be eliminated. When copying, lower the Rank of each tensor by 1.
-         // 3) Do the following for each tensor ('tnr1') situated one rank above the rank to be eliminated with superior 'sup1': First, remove 'tnr1' from 'sup1', then pick a tensor one rank below at element index 'emtInx' ('tnr2') and assign it to 'sup1' at the same element index that 'tnr1' was situated. For the reassigned tensor, do not touch its rank (or the ranks of any tensors below it).
+         // 3) Do the following for each tensor ('tnr1') situated one rank above the rank to be eliminated with superior 'sup1': First, remove 'tnr1' from 'sup1', then pick a tensor one rank below at element index 'emtInx' ('tnr2') and assign all its subordinates to 'sup1' at the same indices. For the reassigned tensors, do not touch their rank values (or of any tensors below it).
          // 4) You will have to handle a special case when the rank being eliminated is the value rank (lowest lying rank).
          // 5) There, you will have to recreate 'sup1' as a vector. And add to its Vals field.
          // Notice: What about when you have a tensor of 2nd rank? Or when the rank being eliminated is the top rank?
          int elimRank = ToTrueRank(natElimRank);
+         TB.Assert.True(elimRank > 0, "You can only eliminate a rank above 0.");
          var newStructureL = Structure.Take(natElimRank);
          var newStructureR = Structure.Skip(natElimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
+         if(elimRank > 1)
+            return Recursion2(this);
+         else
+            return Recursion1(this);
 
-         Tensor<τ,α> Recursion(Tensor<τ,α> src) {
+         Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2.
             var res = new Tensor<τ,α>(src.Sup, src.Count);                 // We have to copy the superior and capacity.
             res.Rank = src.Rank - 1;                                       // Reduce the rank by 1.
             res.Structure = newStructure;                                  // Assign new structure  by ref.
-            if(src.Rank > elimRank + 2) {                                   // If we are still above 'sup1'. Can happen only on a rank 3 tensor.
+            if(src.Rank > elimRank + 1) {                                   // If we are still above 'sup1'. Can happen only on a rank 3 tensor.
                foreach(var int_tnr in src)
-                  res.Add(int_tnr.Key, Recursion(int_tnr.Value)); }
-            else if(src.Rank == elimRank + 2){                              // We are at level of 'sup1'.
-               if(elimRank > 2) {                                             // When elim rank is at least 3 we can do all reasignments through the lens of Tensor class.
+                  res.Add(int_tnr.Key, Recursion2(int_tnr.Value));
+               return res; }
+            else {                                // We are at level of 'sup1'.
+               if(src.TryGetValue(emtInx, out Tensor<τ,α> elimTnr)) {         //Elim rank is guaranteed to be at least 2 so we can do all reassignments through the lens of Tensor class.
+                  foreach(var int_tnr in elimTnr) {
+                     var tnrAtEmt = new Tensor<τ,α>(int_tnr.Value, in CopySpecs.ElimRank);   // Copy the rest deeply with vals and rank.
+                     tnrAtEmt.Structure = newStructure;                                      // Specify new structure.
+                     tnrAtEmt.Sup = res;                                                     // And new superior.
+                     res.Add(int_tnr.Key, tnrAtEmt); } }
+               return res; }
+         }
 
-               }
-            }
+         Tensor<τ,α> Recursion1(Tensor<τ,α> src) {         // When elimRank is 1.
+            var res = new Tensor<τ,α>(src.Sup, src.Count);
+            if(src.Rank > 2) {
+               res.Rank = src.Rank - 1;
+               res.Structure = newStructure;
+               foreach(var int_tnr in src)
+                  res.Add(int_tnr.Key, Recursion1(int_tnr.Value));
+               return res; }
+            else {                                       // src.Rank = 2
+               foreach(var int_vec in src) {
+                  var vec = new Vector<τ,α>((Vector<τ,α>) src, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
+                  vec.Sup = res;
+                  res.Add(int_vec.Key, vec); }
+               return res; }
          }
       }
       /// <summary>Contracts  two tensors over specified (rank) indices. Indices are specified intuitively - in the order they are written out (sacrificing consistency with regards to rank indexing in this class, chosen so that the value rank has the lowest index (zero). CLarification by example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B (not a (3,1) contraction).</summary>
@@ -340,6 +379,7 @@ namespace Fluid.Internals.Collections {
          // 3) Note: It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1+ R2, where you properly remap the rank indices and do the multiplication on rank 0 elements on demand.
          // 4) On the other hand, you do not want to use the indexer to perform the calculation. It's best to use the enumerator. Therefore, the approach in point 3 is not good.
          // 5) Write an Absorb method where you specify the rank index at which to absorb and an index of the tensor inside that rank that will get absorbed (thus, all other tensors at that rank being discarded).
+         throw new NotImplementedException();
          int hostTopRank1 = Structure.Length - 1,                                      // host = tensor at the top of the hierarchy.
              hostTopRank2 = tnr2.Structure.Length - 1,
              hostRankDif1 = hostTopRank1 - Rank,

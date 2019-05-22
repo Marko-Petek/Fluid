@@ -20,14 +20,14 @@ namespace Fluid.Internals.Collections {
       public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
       /// <param name="src"></param>
-      public Vector(Vector<τ,α> src, CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
+      public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
          Copy(src, this, cs);
       }
       public Vector(Vector<τ,α> src) : this(src, CopySpecs.Default) { }
       /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
-      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, CopySpecStruct cs) {
+      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
          CopyMetaFields(src, tgt, cs.MetaFields, cs.Structure);
          if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);

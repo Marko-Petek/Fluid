@@ -37,6 +37,14 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
+      [InlineData(
+         7, 5,
+         3, 1 
+      )]
+      [Theory] public void ElimRank(params int[] data) {
+
+      }
+
       // TODO: Implement dot two vecs.
       ///// <summary>Dot (inner product) two vectors.</summary>
       //[InlineData(2, 1, 3, 5, 2, 3, 21)]
