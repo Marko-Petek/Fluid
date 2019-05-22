@@ -7,7 +7,7 @@ namespace Fluid.Tests
 {
    public partial class Thread1 {
       static Thread1() {
-         TB.EntryPointSetup("Starting Thread1 tests.", () => Thread.Sleep(200));
+         TB.EntryPointSetup("Starting Thread1 tests.");
       }
       /// <summary>Test transformation from standard block indices to compact block indices.</summary>
       [Fact] public void CmtToStdIndexTransform() {               // Uses TB.FileReader inside ObstructionBlock.

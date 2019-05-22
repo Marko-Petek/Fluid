@@ -90,8 +90,8 @@ namespace Fluid.Internals.Development {
             FileWriter.Flush(); }
       }
       public void Dispose() {
-         FileWriter.Dispose();
-         System.GC.SuppressFinalize(this);
+         GC.SuppressFinalize(this);
+         FileWriter?.Dispose();
       }
       ~ReportWriter() => Dispose();
    }

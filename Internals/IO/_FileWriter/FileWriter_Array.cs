@@ -11,6 +11,9 @@ namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 
    /// see results written on HD (empty RAM buffer to HD).</summary>
    public partial class FileWriter : FileRWBase, IDisposable {
+      public const string DefaultDirPath = "";
+      public const string DefaultFileName = "output";
+      public const string DefaultExt = ".txt";
       StreamWriter Writer { get; set; }
       /// <summary>Whether Writer should append to currently set file or overwrite it.</summary>
       public bool Append { get; protected set; }
@@ -183,8 +186,8 @@ namespace Fluid.Internals.IO {
          Writer.WriteLine(val);
       }
       public void Dispose() {
-         Writer.Dispose();
          GC.SuppressFinalize(this);
+         Writer?.Dispose();
       }
       ~FileWriter() => Dispose();
    }

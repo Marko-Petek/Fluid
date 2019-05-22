@@ -138,14 +138,14 @@ namespace Fluid.Internals.Collections {
                tnr[i,j] = slice[i*nCols + j];
          return tnr;
       }
-      public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
-         int rank = structure.Length;
-         if(rank > 2) {
-            for(int i = 0; i < rank - 2; ++i) {
+      //public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
+      //   int rank = structure.Length;
+      //   if(rank > 2) {
+      //      for(int i = 0; i < rank - 2; ++i) {
                
-            }
-         }
-      }
+      //      }
+      //   }
+      //}
       /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g. i from previous example has index 2, k has 0).</summary>
       /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToNatRank(int trueInx) =>
@@ -261,10 +261,13 @@ namespace Fluid.Internals.Collections {
                      res.Add(int_tnr1.Key, subRes); } } }
             else {
                foreach(var int_tnr1 in t1) {
-                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
-                     var vec1 = (Vector<τ,α>) int_tnr1.Value;
+                  var vec1 = (Vector<τ,α>) int_tnr1.Value;
+                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {      // Entry exists in t2, we must sum.
                      var vec2 = (Vector<τ,α>) tnr2Val;
-                     res.Add(int_tnr1.Key, vec1 + vec2); } } }
+                     var resAsBase = (TensorBase<Tensor<τ,α>>)res;
+                     resAsBase[int_tnr1.Key] = vec1 + vec2; }
+                  else {
+                     res.Add(int_tnr1.Key, int_tnr1.Value); } } }          // Entry does not exist in t2, simply Add.
             return res;
          }
       }
@@ -342,7 +345,7 @@ namespace Fluid.Internals.Collections {
                foreach(var int_tnr in src)
                   res.Add(int_tnr.Key, Recursion2(int_tnr.Value));
                return res; }
-            else {                                // We are at level of 'sup1'.
+            else {                                                            // We are at level of 'sup1'.
                if(src.TryGetValue(emtInx, out Tensor<τ,α> elimTnr)) {         //Elim rank is guaranteed to be at least 2 so we can do all reassignments through the lens of Tensor class.
                   foreach(var int_tnr in elimTnr) {
                      var tnrAtEmt = new Tensor<τ,α>(int_tnr.Value, in CopySpecs.ElimRank);   // Copy the rest deeply with vals and rank.

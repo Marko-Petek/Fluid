@@ -15,13 +15,12 @@ namespace Fluid.Tests {
    
    public partial class Thread3 {      //TODO: Log timing of methods for a large number of operations and save results.
       static Thread3() {
-         TB.EntryPointSetup("Starting Thread3 tests.", () => Thread.Sleep(200));
+         TB.EntryPointSetup("Starting Thread3 tests.");
       }
       
       /// <summary>Add two sparse vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
-      [Theory] public void AddTwoVecs(params int[] data) {
-         var vec1 = VectorInt.CreateFromArray(data, 0, 3);
+      [Theory] public void AddTwoVecs(params int[] data) {       var vec1 = VectorInt.CreateFromArray(data, 0, 3);
          var vec2 = VectorInt.CreateFromArray(data, 3, 3);
          var res = vec1 + vec2;
          var expRes = VectorInt.CreateFromArray(data, 6, 3);
@@ -80,20 +79,20 @@ namespace Fluid.Tests {
          var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
          Assert.True(tnr3.Equals(expMat));
       }
-      /// <summary>Dot a 2nd rank tensor with a vector.</summary>
-      [InlineData(
-         1, 2, 3,
-         2, 1, 4,
-         3, 4, 1,
+      ///// <summary>Dot a 2nd rank tensor with a vector.</summary>
+      //[InlineData(
+      //   1, 2, 3,
+      //   2, 1, 4,
+      //   3, 4, 1,
 
-         2, 1, 3,   13, 17, 13
-      )]
-      [InlineData(
-         0, 0, 0,
-         5, 2, 3,
-         2, 1, 0,
+      //   2, 1, 3,   13, 17, 13
+      //)]
+      //[InlineData(
+      //   0, 0, 0,
+      //   5, 2, 3,
+      //   2, 1, 0,
 
-         5, 2, 3,  0, 38, 12 )]
+      //   5, 2, 3,  0, 38, 12 )]
       //[Theory] public void TnrDotVec(params int[] data) {
       //   var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
       //   var vec = VectorInt.CreateFromArray(data, 9, 3);
