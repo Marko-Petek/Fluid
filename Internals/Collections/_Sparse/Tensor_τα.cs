@@ -49,7 +49,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a non-top tensor with specified superior and initial capacity. Rank is assigned as one less that superior.</summary>
       /// <param name="sup">Tensor directly above in hierarchy.</param>
       /// <param name="cap">Initially assigned memory.</param>
-      public Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) { }
+      public Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup ?? null, cap) { }
       /// <summary>Creates a deep copy of specified tensor. You can optionally specify which meta-fields (Structure, Rank ...) to copy.</summary>
       /// <param name="src">Source tensor to copy.</param>
       /// <param name="extraCap">How much more top rank space should the new tensor have (newCap = oldCap + extraCap).</param>
@@ -348,10 +348,11 @@ namespace Fluid.Internals.Collections {
          if(elimRank > 1)
             return Recursion2(this);
          else
-            return Recursion1(this);
+            return Recursion1(0, this);
 
          Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2.
-            var res = new Tensor<τ,α>(src.Sup, src.Count);                 // We have to copy the superior and capacity.
+            var res = new Tensor<τ,α>(src.Count);                 // We have to copy the superior and capacity.
+            res.Sup = src.Sup ?? null;
             res.Rank = src.Rank - 1;                                       // Reduce the rank by 1.
             res.Structure = newStructure;                                  // Assign new structure  by ref.
             if(src.Rank > elimRank + 1) {                                   // If we are still above 'sup1'. Can happen only on a rank 3 tensor.
@@ -368,20 +369,27 @@ namespace Fluid.Internals.Collections {
                return res; }
          }
 
-         Tensor<τ,α> Recursion1(Tensor<τ,α> src) {         // When elimRank is 1.
-            var res = new Tensor<τ,α>(src.Sup, src.Count);
+         Tensor<τ,α> Recursion1(int inx, Tensor<τ,α> src) {         // When elimRank is 1.
             if(src.Rank > 2) {
+               var res = new Tensor<τ,α>(src.Count);
+               res.Sup = src.Sup ?? null;
                res.Rank = src.Rank - 1;
                res.Structure = newStructure;
-               foreach(var int_tnr in src)
-                  res.Add(int_tnr.Key, Recursion1(int_tnr.Value));
+               foreach(var int_tnr in src) {
+                  var subTnr = Recursion1(int_tnr.Key, int_tnr.Value);
+                  if(subTnr != null)
+                     res.Add(int_tnr.Key, subTnr); }  
                return res; }
-            else {                                       // src.Rank = 2
-               foreach(var int_vec in src) {
-                  var vec = new Vector<τ,α>((Vector<τ,α>) src, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
-                  vec.Sup = res;
-                  res.Add(int_vec.Key, vec); }
-               return res; }
+            else {                                       // src.Rank = 2 Remove this rank 2 from src.Sup. Choose only one vector from src and add it.
+               var newRank2 = src.Sup;
+               newRank2?.Remove(inx);
+               if(src.TryGetValue(emtInx, out var selectedVec)) {
+                  var vecCopy = new Vector<τ,α>((Vector<τ,α>) selectedVec, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
+                  vecCopy.Structure = newStructure;
+                  vecCopy.Sup = newRank2 ?? null;
+                  return vecCopy; }
+               else 
+                  return null; }
          }
       }
       /// <summary>Contracts  two tensors over specified (rank) indices. Indices are specified intuitively - in the order they are written out (sacrificing consistency with regards to rank indexing in this class, chosen so that the value rank has the lowest index (zero). CLarification by example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B (not a (3,1) contraction).</summary>

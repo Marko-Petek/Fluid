@@ -43,6 +43,7 @@ namespace Fluid.Tests {
       )]
       [Theory] public void ElimRank(params int[] data) {
          var tnr = Tensor<int,IA>.CreateFromFlatSpec(data.AsSpan(), new int[] {2,2});
+         var tnr2 = tnr.ElimRank(1, 1);
          Thread.Sleep(200);
       }
 

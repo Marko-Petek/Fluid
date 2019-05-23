@@ -15,6 +15,7 @@ namespace Fluid.Internals {
    public static class Toolbox {
       static bool _Initializing = false;
       public static Task _Initialization = new Task(() => {
+         Thread.Sleep(200);                                 // Wait for Console to initialize.
          System.Console.OutputEncoding = Encoding.UTF8;
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
