@@ -145,11 +145,12 @@ namespace Fluid.Internals.Collections {
 
          Tensor<τ,α> Recursion(Span<τ> slc, int dim) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
             int trueRank = NatRankToTrueRank(structure.Length, dim);
-            int nIter = slc.Length / structure[dim];
+            int nIter = structure[dim];                              // As many iterations as it is the size of the dimension.
+            int nEmtsInSlice = slc.Length / nIter;
             if(trueRank > 1) {
                var res = new Tensor<τ,α>(structure, trueRank, null, structure[dim]);
                for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
-                  var newSlc = slc.Slice(i*structure[dim], structure[dim]);
+                  var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
                   var newTnr = Recursion(newSlc, dim + 1);
                   newTnr.Sup = res;
                   res.Add(i, newTnr); }
@@ -348,7 +349,7 @@ namespace Fluid.Internals.Collections {
          if(elimRank > 1)
             return Recursion2(this);
          else
-            return Recursion1(0, this);
+            return Recursion1(this);
 
          Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2.
             var res = new Tensor<τ,α>(src.Count);                 // We have to copy the superior and capacity.
@@ -369,24 +370,28 @@ namespace Fluid.Internals.Collections {
                return res; }
          }
 
-         Tensor<τ,α> Recursion1(int inx, Tensor<τ,α> src) {         // When elimRank is 1.
+         Tensor<τ,α> Recursion1(Tensor<τ,α> src) {         // When elimRank is 1.
             if(src.Rank > 2) {
                var res = new Tensor<τ,α>(src.Count);
                res.Sup = src.Sup ?? null;
                res.Rank = src.Rank - 1;
                res.Structure = newStructure;
-               foreach(var int_tnr in src) {
-                  var subTnr = Recursion1(int_tnr.Key, int_tnr.Value);
+               if(src.Rank == 3) {
+                  foreach(var int_tnr in src) {
+                  var subTnr = Recursion1(int_tnr.Value);
+                  res.Remove(int_tnr.Key);
                   if(subTnr != null)
-                     res.Add(int_tnr.Key, subTnr); }  
+                     res.Add(int_tnr.Key, subTnr); } }
+               else {
+                  foreach(var int_tnr in src) {
+                  var subTnr = Recursion1(int_tnr.Value);
+                  res.Add(int_tnr.Key, subTnr); } }
                return res; }
             else {                                       // src.Rank = 2 Remove this rank 2 from src.Sup. Choose only one vector from src and add it.
-               var newRank2 = src.Sup;
-               newRank2?.Remove(inx);
                if(src.TryGetValue(emtInx, out var selectedVec)) {
                   var vecCopy = new Vector<τ,α>((Vector<τ,α>) selectedVec, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
                   vecCopy.Structure = newStructure;
-                  vecCopy.Sup = newRank2 ?? null;
+                  vecCopy.Sup = src.Sup ?? null;
                   return vecCopy; }
                else 
                   return null; }
