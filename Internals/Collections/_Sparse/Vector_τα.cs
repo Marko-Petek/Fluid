@@ -59,7 +59,12 @@ namespace Fluid.Internals.Collections {
       /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of vector.</param>
       public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts) =>
          CreateFromArray(arr, srtArrInx, nArrEmts, 0);
-
+      public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {           // TODO: Test Vector.CreateFromSpan method.
+            var vec = new Vector<τ,α>(slc.Length, slc.Length);
+            for(int i = 0, j = 0; i < slc.Length; ++i, ++j)
+               vec[j] = slc[i];
+            return vec;
+      }
       new public τ this[int i] {
          get {
             Vals.TryGetValue(i, out τ val);

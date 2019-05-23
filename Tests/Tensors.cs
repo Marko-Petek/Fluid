@@ -12,6 +12,7 @@ namespace Fluid.Tests {
    using Vector = Vector<double,DblArithmetic>;
    using TensorInt = Tensor<int,IntArithmetic>;
    using VectorInt = Vector<int,IntArithmetic>;
+   using IA = IntArithmetic;
    
    public partial class Thread3 {      //TODO: Log timing of methods for a large number of operations and save results.
       static Thread3() {
@@ -36,12 +37,13 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
-      [InlineData(
+      [InlineData( // TODO: FInish ElimRank method in tensor tests.
          7, 5,
          3, 1 
       )]
       [Theory] public void ElimRank(params int[] data) {
-
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(data.AsSpan(), new int[] {2,2});
+         Thread.Sleep(200);
       }
 
       // TODO: Implement dot two vecs.

@@ -138,14 +138,26 @@ namespace Fluid.Internals.Collections {
                tnr[i,j] = slice[i*nCols + j];
          return tnr;
       }
-      //public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
-      //   int rank = structure.Length;
-      //   if(rank > 2) {
-      //      for(int i = 0; i < rank - 2; ++i) {
-               
-      //      }
-      //   }
-      //}
+      public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
+         int tnrRank = structure.Length;
+         TB.Assert.True(tnrRank > 1, "You are trying to create a rank 1 tensor = vector. This method is not intended for creation of vectors.");
+         return Recursion(slice, 0);
+
+         Tensor<τ,α> Recursion(Span<τ> slc, int dim) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
+            int trueRank = NatRankToTrueRank(structure.Length, dim);
+            int nIter = slc.Length / structure[dim];
+            if(trueRank > 1) {
+               var res = new Tensor<τ,α>(structure, trueRank, null, structure[dim]);
+               for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
+                  var newSlc = slc.Slice(i*structure[dim], structure[dim]);
+                  var newTnr = Recursion(newSlc, dim + 1);
+                  newTnr.Sup = res;
+                  res.Add(i, newTnr); }
+               return res; }
+            else                                                   // We are at rank 1 = vector rank.
+               return Vector<τ,α>.CreateFromSpan(slc);
+         }
+      }
       /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g. i from previous example has index 2, k has 0).</summary>
       /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToNatRank(int trueInx) =>
@@ -153,8 +165,9 @@ namespace Fluid.Internals.Collections {
       /// <summary>Transforms from true rank index (as situated in the hierarchy, i.e. higher number equates to being higher in the hierarchy) to true rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2).</summary>
       /// <param name="naturalInx">Rank index as written by hand, e.g. A^ijk ==> i -> 0, k -> 2.</param>
       /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
-      int ToTrueRank(int naturalInx) =>
-         Structure.Length - naturalInx;
+      int ToTrueRank(int natInx) => NatRankToTrueRank(Structure.Length, natInx);
+      static int NatRankToTrueRank(int nRanks, int natInx) =>
+         nRanks - natInx;
       public Tensor<τ,α> this[uint overloadDummy, params int[] inx] {
          get {
             Tensor<τ,α> tnr = this;
@@ -320,7 +333,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
       /// <param name="natElimRank">Index of rank to be eliminated in natural notation.</param>
       /// <param name="emtInx">Element index in that rank.</param>
-      Tensor<τ,α> ElimRank(int natElimRank, int emtInx) {
+      public Tensor<τ,α> ElimRank(int natElimRank, int emtInx) {
          // 1) Create a new structure. New tensor's rank will be one less. Skip the eliminated rank.
          // 2) Start copying recursively until you reach one rank above the rank to be eliminated. When copying, lower the Rank of each tensor by 1.
          // 3) Do the following for each tensor ('tnr1') situated one rank above the rank to be eliminated with superior 'sup1': First, remove 'tnr1' from 'sup1', then pick a tensor one rank below at element index 'emtInx' ('tnr2') and assign all its subordinates to 'sup1' at the same indices. For the reassigned tensors, do not touch their rank values (or of any tensors below it).
