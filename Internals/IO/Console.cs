@@ -6,15 +6,13 @@ using System.Diagnostics;
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write out nicely formatted values to console.</summary>
    public class Console {
-      public int BufferWidth => System.Console.BufferWidth;
+      public int BufferWidth => System.Console.IsOutputRedirected ? 75 : System.Console.BufferWidth;
       /// <summary>TextWriter belonging to System.Console.</summary>
       TextWriter TW { get; }
 
       public Console() {
-         var process = Process.GetCurrentProcess();
-         TW = process.StandardInput;
          System.Console.OutputEncoding = Encoding.UTF8;
-         TW = System.Console.Out;
+         TW = System.Console.IsOutputRedirected ? new DebugTextWriter() : System.Console.Out;
       }
 
       /// <summary>Write a 1D array to console.</summary><param name="array1d">1D array.</param>

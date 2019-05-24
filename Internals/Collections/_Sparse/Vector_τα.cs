@@ -61,6 +61,7 @@ namespace Fluid.Internals.Collections {
          CreateFromArray(arr, srtArrInx, nArrEmts, 0);
       public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {           // TODO: Test Vector.CreateFromSpan method.
             var vec = new Vector<τ,α>(slc.Length, slc.Length);
+            vec.Structure = new int[] { slc.Length };
             for(int i = 0; i < slc.Length; ++i)
                vec.Vals.Add(i, slc[i]);
             return vec;

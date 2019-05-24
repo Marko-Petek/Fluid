@@ -4,8 +4,11 @@ using System.Linq;
 using SCG = System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
-
 using Fluid.Internals.Numerics;
+
+// We have two notations for rank indices:
+// 1) Natural index notation [1, N] which is how mathematicians would assign ordering to indices written above symbols. Here N is the rank of top tensor. E.g. A^ij...kl ˇ~~> i -> 1, j -> 2, ..., k-> N - 1. l -> N.
+// 2) True index notation [1, N], but now the value corresponds to the rank of indexed elements. E.g. A^ij...kl ˇ~~> l -> 0, k -> 1, ..., j -> N - 2, i -> N - 1.
 
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
@@ -62,15 +65,15 @@ namespace Fluid.Internals.Collections {
       public Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.Default) { }
       /// <summary>Creates a tensor as a deep copy of this one: same Rank, Structure and Superior.</summary>
       public virtual Tensor<τ,α> Copy(in CopySpecStruct cs) {
-         // if(Rank == 1) {
-         //    var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
-         //    var thisVector = (Vector<τ,α>) this;
-         //    Vector<τ,α>.Copy(thisVector, res, in cs);
-         //    return res; }
-         // else { }
-         var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-         Copy(this, res, in cs);
-         return res;
+         if (Rank == 1) {
+            var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
+            var thisVector = (Vector<τ,α>)this;
+            Vector<τ,α>.Copy(thisVector, res, in cs);
+            return res; }
+         else {
+            var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
+            Copy(this, res, in cs);
+            return res; }
       }
       /// <summary>Make a shallow or deep copy of a tensor. Set CopySpec field for fine tunning, ensure proper capacity of the target tensor.</summary>
       /// <param name="src">Copy source.</param>
@@ -145,10 +148,15 @@ namespace Fluid.Internals.Collections {
                tnr[i,j] = slice[i*nCols + j];
          return tnr;
       }
+      /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
+      /// <param name="slice">Span of values.</param>
+      /// <param name="structure">Structure of new tensor.</param>
       public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
          int tnrRank = structure.Length;
-         TB.Assert.True(tnrRank > 1, "You are trying to create a rank 1 tensor = vector. This method is not intended for creation of vectors.");
-         return Recursion(slice, 0);
+         if(tnrRank == 1)
+            return Vector<τ,α>.CreateFromSpan(slice);
+         else
+            return Recursion(slice, 0);
 
          Tensor<τ,α> Recursion(Span<τ> slc, int dim) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
             int trueRank = NatRankToTrueRank(structure.Length, dim);
@@ -170,11 +178,12 @@ namespace Fluid.Internals.Collections {
       /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g. i from previous example has index 2, k has 0).</summary>
       /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToNatRank(int trueInx) =>
-         Structure.Length - trueInx;
+         NatRankToTrueRank(Structure.Length, trueInx);
       /// <summary>Transforms from true rank index (as situated in the hierarchy, i.e. higher number equates to being higher in the hierarchy) to true rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2).</summary>
       /// <param name="naturalInx">Rank index as written by hand, e.g. A^ijk ==> i -> 0, k -> 2.</param>
       /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
-      int ToTrueRank(int natInx) => NatRankToTrueRank(Structure.Length, natInx);
+      int ToTrueRank(int natInx) =>
+         NatRankToTrueRank(Structure.Length, natInx);
       static int NatRankToTrueRank(int nRanks, int natInx) =>
          nRanks - natInx;
       public Tensor<τ,α> this[uint overloadDummy, params int[] inx] {
@@ -340,7 +349,7 @@ namespace Fluid.Internals.Collections {
          throw new NotImplementedException();
       }
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
-      /// <param name="natElimRank">Index of rank to be eliminated in natural notation.</param>
+      /// <param name="natElimRank"> Zero-based index of rank to be eliminated in natural notation.</param>
       /// <param name="emtInx">Element index in that rank.</param>
       public Tensor<τ,α> ElimRank(int natElimRank, int emtInx) {
          // 1) Create a new structure. New tensor's rank will be one less. Skip the eliminated rank.
@@ -354,12 +363,13 @@ namespace Fluid.Internals.Collections {
          var newStructureL = Structure.Take(natElimRank);
          var newStructureR = Structure.Skip(natElimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
+         // TODO: Implement a path for when natElimRank = 1 (pick one within top most tensor).
          if(elimRank > 1)
             return Recursion2(this);
          else
             return Recursion1(this);
 
-         Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2.
+         Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2, but not N - 1 (highest).
             if(src.Rank > elimRank + 1) {
                var res = new Tensor<τ,α>(newStructure, src.Rank - 1, src.Sup, src.Count);
                if(src.Rank > elimRank + 2) {                              // More than 2 above elimRank.
@@ -374,10 +384,11 @@ namespace Fluid.Internals.Collections {
                return res; }
             else {                                                         // 1 above elimRank.
                if(src.TryGetValue(emtInx, out var selectedTnr)) {
-                  var tnrCopy = new Tensor<τ,α>(selectedTnr, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
+                  var tnrCopy = new Tensor<τ,α>(selectedTnr, in CopySpecs.ElimRank);     // Copy the rest deeply, with rank.
+                  // FIXME: Here you have to assign new Structure to all deeply copied subelements.
                   tnrCopy.Structure = newStructure;
                   tnrCopy.Sup = src.Sup ?? null;
-                  return tnrCopy; }
+                  return tnrCopy; }                   // TODO: Check the copy method.
                else 
                return null; }
             // var res = new Tensor<τ,α>(src.Count);                 // We have to copy the superior and capacity.

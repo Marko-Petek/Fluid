@@ -18,6 +18,27 @@ namespace Fluid.Tests {
       static Thread3() {
          TB.EntryPointSetup("Starting Thread3 tests.");
       }
+      /// <summary>Test Tensor.Copy method.</summary>
+      /// <param name="data"></param>
+      [InlineData(1,7,                    // Rank 1 tensor.
+         6,5,3,8,0,1,4)]
+      [InlineData(2,3,3,                  // Rank 2 tensor.
+         6,5,3,8,0,1,4,3,1)]
+      [InlineData(3,3,2,3,                // Rank 3 tensor.
+         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7)]
+      [InlineData(4,2,2,3,3,                // Rank 3 tensor.
+         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7,1,1,3,6,5,4)]
+      [Theory] public void Copy(params int[] data) {
+         int topRank = data[0];
+         var struc = data.Skip(1).Take(topRank).ToArray();
+         int count = 1;                                        // How many emts to take into slice.
+         foreach(int emt in struc)
+            count *= emt;
+         var slc = new Span<int>(data, 1 + topRank, count);
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(slc, struc);
+         var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.GeneralSpecs.Both, TensorInt.MetaSpecs.All, TensorInt.StructureSpecs.TrueCopy));
+         Assert.True(tnr.Equals(tnrCpy));
+      }
       
       /// <summary>Add two sparse vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
