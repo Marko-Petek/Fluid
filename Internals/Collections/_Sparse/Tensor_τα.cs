@@ -33,6 +33,7 @@ namespace Fluid.Internals.Collections {
             GeneralSpecs.Both, MetaSpecs.Rank);
          public static readonly CopySpecStruct ElimRank2 = new CopySpecStruct(          // Used on ElimRank method.
             GeneralSpecs.Both, MetaSpecs.Rank | MetaSpecs.Sup);
+         /// <summary>Copy values and rank.</summary>
          public static readonly CopySpecStruct ElimRank = new CopySpecStruct(
             GeneralSpecs.Both, MetaSpecs.Rank);
       }
@@ -61,6 +62,12 @@ namespace Fluid.Internals.Collections {
       public Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.Default) { }
       /// <summary>Creates a tensor as a deep copy of this one: same Rank, Structure and Superior.</summary>
       public virtual Tensor<τ,α> Copy(in CopySpecStruct cs) {
+         // if(Rank == 1) {
+         //    var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
+         //    var thisVector = (Vector<τ,α>) this;
+         //    Vector<τ,α>.Copy(thisVector, res, in cs);
+         //    return res; }
+         // else { }
          var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
          Copy(this, res, in cs);
          return res;
@@ -153,9 +160,10 @@ namespace Fluid.Internals.Collections {
                   var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
                   var newTnr = Recursion(newSlc, dim + 1);
                   newTnr.Sup = res;
+                  newTnr.Structure = structure;
                   res.Add(i, newTnr); }
                return res; }
-            else                                                   // We are at rank 1 = vector rank.
+            else                                                  // We are at rank 1 = vector rank.
                return Vector<τ,α>.CreateFromSpan(slc);
          }
       }
@@ -352,40 +360,56 @@ namespace Fluid.Internals.Collections {
             return Recursion1(this);
 
          Tensor<τ,α> Recursion2(Tensor<τ,α> src) {                          // When elimRank is at least 2.
-            var res = new Tensor<τ,α>(src.Count);                 // We have to copy the superior and capacity.
-            res.Sup = src.Sup ?? null;
-            res.Rank = src.Rank - 1;                                       // Reduce the rank by 1.
-            res.Structure = newStructure;                                  // Assign new structure  by ref.
-            if(src.Rank > elimRank + 1) {                                   // If we are still above 'sup1'. Can happen only on a rank 3 tensor.
-               foreach(var int_tnr in src)
-                  res.Add(int_tnr.Key, Recursion2(int_tnr.Value));
+            if(src.Rank > elimRank + 1) {
+               var res = new Tensor<τ,α>(newStructure, src.Rank - 1, src.Sup, src.Count);
+               if(src.Rank > elimRank + 2) {                              // More than 2 above elimRank.
+                  foreach(var int_tnr in src)
+                     res.Add(int_tnr.Key, Recursion2(int_tnr.Value)); }
+               else {                                                      // 2 above elimRank.
+                  foreach(var int_tnr in src) {
+                     var subTnr = Recursion2(int_tnr.Value);
+                     res.Remove(int_tnr.Key);
+                     if(subTnr != null)
+                        res.Add(int_tnr.Key, subTnr); } }
                return res; }
-            else {                                                            // We are at level of 'sup1'.
-               if(src.TryGetValue(emtInx, out Tensor<τ,α> elimTnr)) {         //Elim rank is guaranteed to be at least 2 so we can do all reassignments through the lens of Tensor class.
-                  foreach(var int_tnr in elimTnr) {
-                     var tnrAtEmt = new Tensor<τ,α>(int_tnr.Value, in CopySpecs.ElimRank);   // Copy the rest deeply with vals and rank.
-                     tnrAtEmt.Structure = newStructure;                                      // Specify new structure.
-                     tnrAtEmt.Sup = res;                                                     // And new superior.
-                     res.Add(int_tnr.Key, tnrAtEmt); } }
-               return res; }
+            else {                                                         // 1 above elimRank.
+               if(src.TryGetValue(emtInx, out var selectedTnr)) {
+                  var tnrCopy = new Tensor<τ,α>(selectedTnr, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
+                  tnrCopy.Structure = newStructure;
+                  tnrCopy.Sup = src.Sup ?? null;
+                  return tnrCopy; }
+               else 
+               return null; }
+            // var res = new Tensor<τ,α>(src.Count);                 // We have to copy the superior and capacity.
+            // res.Sup = src.Sup ?? null;
+            // res.Rank = src.Rank - 1;                                       // Reduce the rank by 1.
+            // res.Structure = newStructure;                                  // Assign new structure  by ref.
+            // if(src.Rank > elimRank + 1) {                                   // If we are still above 'sup1'. Can happen only on a rank 3 tensor.
+            //    foreach(var int_tnr in src)
+            //       res.Add(int_tnr.Key, Recursion2(int_tnr.Value));
+            //    return res; }
+            // else {                                                            // We are at level of 'sup1'.
+            //    if(src.TryGetValue(emtInx, out Tensor<τ,α> elimTnr)) {         //Elim rank is guaranteed to be at least 2 so we can do all reassignments through the lens of Tensor class.
+            //       foreach(var int_tnr in elimTnr) {
+            //          var tnrAtEmt = new Tensor<τ,α>(int_tnr.Value, in CopySpecs.ElimRank);   // Copy the rest deeply with vals and rank.
+            //          tnrAtEmt.Structure = newStructure;                                      // Specify new structure.
+            //          tnrAtEmt.Sup = res;                                                     // And new superior.
+            //          res.Add(int_tnr.Key, tnrAtEmt); } }
+            //    return res; }
          }
 
          Tensor<τ,α> Recursion1(Tensor<τ,α> src) {         // When elimRank is 1.
             if(src.Rank > 2) {
-               var res = new Tensor<τ,α>(src.Count);
-               res.Sup = src.Sup ?? null;
-               res.Rank = src.Rank - 1;
-               res.Structure = newStructure;
-               if(src.Rank == 3) {
-                  foreach(var int_tnr in src) {
-                  var subTnr = Recursion1(int_tnr.Value);
-                  res.Remove(int_tnr.Key);
-                  if(subTnr != null)
-                     res.Add(int_tnr.Key, subTnr); } }
+               var res = new Tensor<τ,α>(newStructure, src.Rank - 1, src.Sup, src.Count);
+               if(src.Rank > 3) {
+                  foreach(var int_tnr in src)
+                     res.Add(int_tnr.Key, Recursion1(int_tnr.Value)); }
                else {
                   foreach(var int_tnr in src) {
-                  var subTnr = Recursion1(int_tnr.Value);
-                  res.Add(int_tnr.Key, subTnr); } }
+                     var subTnr = Recursion1(int_tnr.Value);
+                     res.Remove(int_tnr.Key);
+                     if(subTnr != null)
+                        res.Add(int_tnr.Key, subTnr); } }
                return res; }
             else {                                       // src.Rank = 2 Remove this rank 2 from src.Sup. Choose only one vector from src and add it.
                if(src.TryGetValue(emtInx, out var selectedVec)) {

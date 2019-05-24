@@ -15,7 +15,7 @@ namespace Fluid.Internals.Collections {
          Vals = new Dictionary<int, τ>(cap);
       }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      protected Vector(int cap) : this(null, null, cap) { }
+      public Vector(int cap) : this(null, null, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>

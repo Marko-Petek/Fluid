@@ -79,6 +79,38 @@ namespace Fluid.Tests {
          Assert.True(tnr2.Equals(expRes));
       }
 
+      [InlineData(4, 2, 2, 2, 2,
+      1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
+      4,5,5,6, 2,4,0,3)]
+      [Theory] public void ElimRank4(params int[] data) {
+         int rank = data[0];
+         var structure = data.Skip(1).Take(rank).ToArray();
+         int nEmts = (int) Math.Pow(2,4);
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
+            nEmts), structure);
+         var tnr2 = tnr.ElimRank(3, 1);
+         var seq1 = data.Skip(7).Take(2);
+         var seq2 = data.Skip(11).Take(2);
+         var seq3 = data.Skip(15).Take(2);
+         var seq4 = data.Skip(19).Take(2);
+         var span = seq1.Concat(seq2).Concat(seq3).Concat(seq4).ToArray().AsSpan();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2,2});
+         Assert.True(tnr2.Equals(expRes));
+      }
+
+      [InlineData(2, 2, 2, 2,
+      1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
+      9,8,5,6, 8,9,0,3)]
+      [Theory] public void ElimRank4_2(params int[] data) {
+         var structure = data.Take(4).ToArray();
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, 4, // FIXME: Creates bad Structure array for vector (as if it was not part of other tensor.)
+            16), structure);
+         var tnr2 = tnr.ElimRank(2, 1);
+         var span = data.Skip(4 + 16).Take(8).ToArray().AsSpan();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2,2});
+         Assert.True(tnr2.Equals(expRes));
+      }
+
       // TODO: Implement dot two vecs.
       ///// <summary>Dot (inner product) two vectors.</summary>
       //[InlineData(2, 1, 3, 5, 2, 3, 21)]

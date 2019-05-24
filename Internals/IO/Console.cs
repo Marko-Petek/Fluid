@@ -1,14 +1,18 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write out nicely formatted values to console.</summary>
    public class Console {
+      public int BufferWidth => System.Console.BufferWidth;
       /// <summary>TextWriter belonging to System.Console.</summary>
       TextWriter TW { get; }
 
       public Console() {
+         var process = Process.GetCurrentProcess();
+         TW = process.StandardInput;
          System.Console.OutputEncoding = Encoding.UTF8;
          TW = System.Console.Out;
       }

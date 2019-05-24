@@ -15,11 +15,12 @@ namespace Fluid.Internals {
    public static class Toolbox {
       static bool _Initializing = false;
       public static Task _Initialization = new Task(() => {
-         Thread.Sleep(200);                                 // Wait for Console to initialize.
          System.Console.OutputEncoding = Encoding.UTF8;
+         _Console = new IO.Console();
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
-         _Console = new IO.Console();
+         if(System.Console.IsOutputRedirected) throw new Exception("Hmmmmm ...");
+         //Thread.Sleep(1000);                                 // Wait for Console to initialize.
          _Reporter = new AppReporter();
          _Rng = new Rng();
       });

@@ -31,7 +31,7 @@ namespace Fluid.Internals.Development {
       /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
       public ReportWriter(AppReporter appReporter) {
          int buffer;
-         if(System.Console.BufferWidth > NCols * 2 - 12 + 36 + 20)
+         if(TB.Console.BufferWidth > NCols * 2 - 12 + 36 + 20)
             buffer = System.Console.BufferWidth - NCols * 2 - 12;              // spaces, some slack
          else
             buffer = 36 + 60;
