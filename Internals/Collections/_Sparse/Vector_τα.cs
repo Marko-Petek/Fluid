@@ -10,7 +10,9 @@ namespace Fluid.Internals.Collections {
    public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      public Dictionary<int,τ> Vals { get; protected set; }          // An extra wrapped Dictionary which holds values.
+      public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.
+      internal Vector() : base(0) {
+         Rank = 1; }
       internal Vector(int[] structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
          Vals = new Dictionary<int, τ>(cap);
       }

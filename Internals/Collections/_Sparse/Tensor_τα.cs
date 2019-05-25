@@ -91,15 +91,21 @@ namespace Fluid.Internals.Collections {
             if(src1.Rank > 2) {                                       // Subordinates are tensors.
                foreach (var kv in src1) {
                   var tnr = new Tensor<τ,α>(kv.Value.Structure, kv.Value.Rank, kv.Value.Sup, kv.Value.Count);
-                  if(src1.Rank > endRank)
-                     Recursion(kv.Value, tnr);
                   tnr.Structure = tgt1.Structure;
                   tnr.Rank = tgt1.Rank - 1;
                   tnr.Sup = tgt1;
-                  tgt1.Add(kv.Key, tnr); } }
+                  tgt1.Add(kv.Key, tnr);
+                  if(src1.Rank > endRank)
+                     Recursion(kv.Value, tnr); } }
             else if(src1.Rank == 2) {                                 // Subordinates are vectors.
-               foreach (var kv in src1)
-                  tgt1.Add(kv.Key, new Vector<τ,α>((Vector<τ,α>) kv.Value)); }
+               foreach(var kv in src1) {
+                  var valAsVec = (Vector<τ,α>) kv.Value;
+                  var vecCopy = new Vector<τ,α>();
+                  vecCopy.Structure = tgt1.Structure;
+                  vecCopy.Sup = tgt1;
+                  tgt1.Add(kv.Key, vecCopy);
+                  vecCopy.Vals = new SCG.Dictionary<int,τ>(valAsVec.Vals);
+               } }
             else
                throw new InvalidOperationException(
                   "Tensors's rank has to be at least 2 to be copied via this method.");
@@ -363,7 +369,7 @@ namespace Fluid.Internals.Collections {
          var newStructureL = Structure.Take(natElimRank);
          var newStructureR = Structure.Skip(natElimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
-         // TODO: Implement a path for when natElimRank = 1 (pick one within top most tensor).
+         // TODO: Implement a path for when natElimRank = 1 (when you pick one within top most tensor).
          if(elimRank > 1)
             return Recursion2(this);
          else
