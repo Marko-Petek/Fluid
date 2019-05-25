@@ -315,9 +315,9 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr">Tensor.</param>
       public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> tnr) {
          return Recursion(tnr);
-
+            // TODO: Think about operators: How should they copy meta fields.
          Tensor<τ,α> Recursion(in Tensor<τ,α> src) {
-            var res = new Tensor<τ,α>(src, CopySpecs.ScalarMultiply);            // We copy only meta fields (whereby we copy Structure by value).
+            var res = new Tensor<τ,α>();            // We copy only meta fields (whereby we copy Structure by value).
             if(src.Rank > 2) {                                       // Subordinates are tensors.
                foreach (var kv in src)
                   res.Add(kv.Key, Recursion(kv.Value)); }
@@ -325,8 +325,7 @@ namespace Fluid.Internals.Collections {
                foreach (var kv in src)
                   res.Add(kv.Key, scal*((Vector<τ,α>) kv.Value)); }
             else
-               throw new InvalidOperationException(
-                  "Tensors's rank has to be at least 2 to be copied via this method.");
+               return scal*((Vector<τ,α>) src);
             return res;
          }
       }

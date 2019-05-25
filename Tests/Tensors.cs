@@ -132,6 +132,39 @@ namespace Fluid.Tests {
          Assert.True(tnr2.Equals(expRes));
       }
 
+      [InlineData(1,3, 1,3,            // Specs: Rank, dims, rank, dims
+         1,5,6, 6,5,2,                 // Operands
+         6,5,2, 30,25,10, 36,30,12)]   // Expected result.
+      [Theory] public void TensorProduct(params int[] data) {
+         int pos = 0;
+         var rank1 = data[pos];
+         pos += 1;
+         var structure1 = data.Skip(pos).Take(rank1).ToArray();
+         pos += rank1;
+         var rank2 = data[pos];
+         pos += 1;
+         var structure2 = data.Skip(pos).Take(rank2).ToArray();
+         pos += rank2;
+         int count1 = 1;
+         foreach(int val in structure1)
+            count1 *= val;
+         int count2 = 1;
+         foreach(int val in structure2)
+            count2 *= val;
+         var span1 = data.Skip(pos).Take(count1).ToArray().AsSpan();
+         pos += count1;
+         var operand1 = Tensor<int,IA>.CreateFromFlatSpec(span1, structure1);
+         var span2 = data.Skip(pos).Take(count2).ToArray().AsSpan();
+         pos += count2;
+         var operand2 = Tensor<int,IA>.CreateFromFlatSpec(span2, structure2);
+         var res = operand1.TnrProduct(operand2);
+         var count = count1 * count2;
+         var span3 = data.Skip(pos).Take(count).ToArray().AsSpan();
+         var structure3 = structure1.Concat(structure2).ToArray();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span3, structure3);
+         Assert.True(res.Equals(expRes));
+      }
+
       // TODO: Implement dot two vecs.
       ///// <summary>Dot (inner product) two vectors.</summary>
       //[InlineData(2, 1, 3, 5, 2, 3, 21)]
