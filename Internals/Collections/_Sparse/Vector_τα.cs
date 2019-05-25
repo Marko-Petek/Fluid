@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
@@ -61,7 +62,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of vector.</param>
       public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts) =>
          CreateFromArray(arr, srtArrInx, nArrEmts, 0);
-      public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {           // TODO: Test Vector.CreateFromSpan method.
+      public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {
             var vec = new Vector<τ,α>(slc.Length, slc.Length);
             vec.Structure = new int[] { slc.Length };
             for(int i = 0; i < slc.Length; ++i)
@@ -78,7 +79,17 @@ namespace Fluid.Internals.Collections {
             else
                Vals.Remove(i); }
       }
-      
+
+      public override Tensor<τ, α> TnrProduct(Tensor<τ, α> tnr2) {
+         int newRank = Rank + tnr2.Rank;
+         var newStructure = Structure.Concat(tnr2.Structure).ToArray();
+         // We must substitute this vector with a tensor whose elements are multiples of tnr2.
+         var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
+         foreach(var int_val in Vals)
+            res.Add(int_val.Key, int_val.Value*tnr2);
+         return res;
+      }
+
       #if false   // TODO: Implement Split on Vector.
       /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>
       /// <param name="inx">Element at this index will end up as part of right remainder.</param>

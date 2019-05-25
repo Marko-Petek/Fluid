@@ -27,7 +27,7 @@ namespace Fluid.Tests {
       [InlineData(3,3,2,3,                // Rank 3 tensor.
          6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7)]
       [InlineData(4,2,2,3,3,                // Rank 3 tensor.
-         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7,1,1,3,6,5,4)]
+         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7,1,1,3,6,5,4,0,0,4,2,8,5,3,3,5,7,5,3)]
       [Theory] public void Copy(params int[] data) {
          int topRank = data[0];
          var struc = data.Skip(1).Take(topRank).ToArray();
