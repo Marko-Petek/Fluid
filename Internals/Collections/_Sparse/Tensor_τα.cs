@@ -183,7 +183,7 @@ namespace Fluid.Internals.Collections {
                return Vector<τ,α>.CreateFromSpan(slc);
          }
       }
-      /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g. i from previous example has index 2, k has 0).</summary>
+      /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g., i from previous example has index 2, k has 0).</summary>
       /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToNatRank(int trueInx) =>
          NatRankToTrueRank(Structure.Length, trueInx);
@@ -375,18 +375,17 @@ namespace Fluid.Internals.Collections {
          }
       }
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
-      /// <param name="natElimRank"> Zero-based index of rank to be eliminated in natural notation.</param>
-      /// <param name="emtInx">Element index in that rank.</param>
-      public Tensor<τ,α> ElimRank(int natElimRank, int emtInx) {
+      /// <param name="elimRank"> True, zero-based rank index of rank to be eliminated.</param>
+      /// <param name="emtInx">Zero-based element index in that rank.</param>
+      public Tensor<τ,α> ElimRank(int elimRank, int emtInx) {
          // 1) Create a new structure. New tensor's rank will be one less. Skip the eliminated rank.
          // 2) Start copying recursively until you reach one rank above the rank to be eliminated. When copying, lower the Rank of each tensor by 1.
          // 3) Do the following for each tensor ('tnr1') situated one rank above the rank to be eliminated with superior 'sup1': First, remove 'tnr1' from 'sup1', then pick a tensor one rank below at element index 'emtInx' ('tnr2') and assign all its subordinates to 'sup1' at the same indices. For the reassigned tensors, do not touch their rank values (or of any tensors below it).
          // 4) You will have to handle a special case when the rank being eliminated is the value rank (lowest lying rank).
          // 5) There, you will have to recreate 'sup1' as a vector. And add to its Vals field.
-         int elimRank = ToTrueRank(natElimRank);
-         TB.Assert.True(elimRank < Rank && elimRank > 0, "You can only eliminate a rank above 0 and under top rank.");
-         var newStructureL = Structure.Take(natElimRank);
-         var newStructureR = Structure.Skip(natElimRank + 1);
+         TB.Assert.True(elimRank < Rank - 1 && elimRank > 0, "You can only eliminate a rank above 0 and under top rank.");
+         var newStructureL = Structure.Take(elimRank);
+         var newStructureR = Structure.Skip(elimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
          if(elimRank > 1)
             return Recursion2(this);
