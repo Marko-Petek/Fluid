@@ -98,6 +98,8 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
+      public 
+
       #if false   // TODO: Implement Split on Vector.
       /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>
       /// <param name="inx">Element at this index will end up as part of right remainder.</param>

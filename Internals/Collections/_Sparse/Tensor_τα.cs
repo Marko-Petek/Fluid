@@ -310,6 +310,35 @@ namespace Fluid.Internals.Collections {
             return res;
          }
       }
+      /// <summary>This destroys tnr2, don't use the tnr2 reference afterwards.</summary>
+      /// <param name="tnr2">Disposable operand 2 whose elements will be absorbed into the caller.</param>
+      public void Add(Tensor<τ,α> tnr2) {
+         Tensor<τ,α> tnr1 = this;
+         TB.Assert.AreEqual(tnr1.Rank, tnr2.Rank, "Ranks must be equal when performin tensor addition.");
+         Recursion(tnr1, tnr2);
+
+         // You must make sure that the collection is not modified during enumeration!!!
+         // Maybe cut short if t2 is disposable.
+         void Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
+            //var res = new Tensor<τ,α>(t1, CopySpecs.AddSubtract);            // Must be a deep copy with a bit of extra capacity.
+            if(t2.Rank > 2) {
+               foreach(var int_subT2 in t2) {
+                  if(t1.TryGetValue(int_subT2.Key, out var subT1))            // Equivalent subtensor exists in T1.
+                     Recursion(subT1, int_subT2.Value);
+                  else                                                      // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
+                     t1.Add(int_subT2.Key, int_subT2.Value); } }
+            else {
+               foreach(var int_subT2 in t2) {
+                  var vec2 = (Vector<τ,α>) int_subT2.Value;
+                  if(t1.TryGetValue(int_tnr1.Key, out var tnr2Val)) {      // Entry exists in t2, we must sum.
+                     var vec2 = (Vector<τ,α>) tnr2Val;
+                     var resAsBase = (TensorBase<Tensor<τ,α>>)res;
+                     resAsBase[int_tnr1.Key] = vec1 + vec2; }
+                  else {
+                     res.Add(int_tnr1.Key, int_tnr1.Value); } } }          // Entry does not exist in t2, simply Add.
+            return res;
+         }
+      }
       /// <summary>Multiply tensor with a scalar. Operator copies structure and superior by reference.</summary>
       /// <param name="scal">Scalar.</param>
       /// <param name="tnr">Tensor.</param>
@@ -434,41 +463,31 @@ namespace Fluid.Internals.Collections {
                   return null; }
          }
       }
-      /// <summary>Contracts  two tensors over specified (rank) indices. Indices are specified intuitively - in the order they are written out (sacrificing consistency with regards to rank indexing in this class, chosen so that the value rank has the lowest index (zero). CLarification by example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B (not a (3,1) contraction).</summary>
-      /// <param name="inx1">Index on this tensor over which to to contract.</param>
-      /// <param name="tnr2">Other tensor.</param>
-      /// <param name="inx2">Index on other tensor over which to contract (the rank on tnr2 that this index represents must have the same dimension as the rank on tnr1 represented by inx1).</param>
+      /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
+      /// <param name="tnr2">Tensor 2.</param>
+      /// <param name="natInx1">Zero-based natural index on this tensor over which to contract.</param>
+      /// <param name="natInx2">Zero-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
-      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int inx1, int inx2) {
-         // 1) Take into account: What if the tensors are both part of another higher rank tensor and have the contraction indices specified relative to them?
-         // 2) Decision: Returned contracted tensor will be its own independent tensor (it will be top rank).
-         // 3) Note: It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1+ R2, where you properly remap the rank indices and do the multiplication on rank 0 elements on demand.
-         // 4) On the other hand, you do not want to use the indexer to perform the calculation. It's best to use the enumerator. Therefore, the approach in point 3 is not good.
-         // 5) Write an Absorb method where you specify the rank index at which to absorb and an index of the tensor inside that rank that will get absorbed (thus, all other tensors at that rank being discarded).
-
-         // First eliminate, creating new tensors. Then add them together.
-         throw new NotImplementedException();
-         int hostTopRank1 = Structure.Length - 1,                                      // host = tensor at the top of the hierarchy.
-             hostTopRank2 = tnr2.Structure.Length - 1,
-             hostRankDif1 = hostTopRank1 - Rank,
-             hostRankDif2 = hostTopRank2 - tnr2.Rank;
-         int[] structure1, structure2;                                                 // Reshaped as if tnr1 and tnr2 were top-most tensors.
-         if(hostRankDif1 > 0)
-            structure1 = Structure.Skip(hostRankDif1).ToArray();                       // Create a new, trimmed Structure array for tnr1.
-         else
-            structure1 = Structure;
-         if(hostRankDif2 > 0)
-            structure2 = tnr2.Structure.Skip(hostRankDif2).ToArray();
-         else
-            structure2 = tnr2.Structure;
-         TB.Assert.AreEqual(structure1[inx1], structure2[inx2],                        // Check that the dimensions of contracted ranks are equal.
-            "Rank dimensions at specified indices must be equal when contracting.");
-         int cDim = Structure[inx1];            // Dimension of rank we're contracting.
-         //var parSeq1 = Enumerable.Range(0, dim).Select(i => {
-         //      Array.Copy(Structure, new int[nRanks1], nRanks1)
-         //   }
-         for(int i = 0; i < cDim; ++i) {
-
+      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
+         // 1) It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1 + R2
+         // 2) First eliminate, creating new tensors. Then add them together.
+         int[] struc1 = Structure, 
+               struc2 = tnr2.Structure;
+         int rank1 = struc1.Length,
+             rank2 = struc2.Length;
+         TB.Assert.True(rank1 == Rank && rank2 == tnr2.Rank,
+            "One of the tensors is not top rank.");
+         TB.Assert.AreEqual(struc1[natInx1], struc2[natInx2],              // Check that the dimensions of contracted ranks are equal.
+            "Rank dimensions at specified indices must be equal.");
+         int   conDim = Structure[natInx1],                                // Dimension of rank we're contracting.
+               truInx1 = ToTrueRank(natInx1),
+               truInx2 = tnr2.ToTrueRank(natInx2);
+         Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
+         for(int i = 0; i < conDim; ++i) {                                 // This will probably work (for now) only for non-top contractions.
+            elimTnr1 = ElimRank(truInx1, i);
+            elimTnr2 = tnr2.ElimRank(truInx2, i);
+            sumand = elimTnr1.TnrProduct(elimTnr2);
+            // TODO: Write a Sum method that modifies the left operand. This avoids a copy operation.
          }
       }
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
