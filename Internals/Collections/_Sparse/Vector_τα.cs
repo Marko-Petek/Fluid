@@ -17,6 +17,8 @@ namespace Fluid.Internals.Collections {
       internal Vector(int[] structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
          Vals = new Dictionary<int, τ>(cap);
       }
+
+      internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int cap) : this(null, null, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
@@ -69,6 +71,12 @@ namespace Fluid.Internals.Collections {
                vec.Vals.Add(i, slc[i]);
             return vec;
       }
+      /// <summary>Adds value without checking if it is equal to zero.</summary>
+      /// <param name="key">Index.</param>
+      /// <param name="val">Value.</param>
+      internal void Add(int key, τ val) =>
+         Vals.Add(key, val);
+
       new public τ this[int i] {
          get {
             Vals.TryGetValue(i, out τ val);
@@ -80,13 +88,13 @@ namespace Fluid.Internals.Collections {
                Vals.Remove(i); }
       }
 
-      public override Tensor<τ, α> TnrProduct(Tensor<τ, α> tnr2) {
+      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
          int newRank = Rank + tnr2.Rank;
          var newStructure = Structure.Concat(tnr2.Structure).ToArray();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
          var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
          foreach(var int_val in Vals)
-            res.Add(int_val.Key, int_val.Value*tnr2);
+            res.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
          return res;
       }
 

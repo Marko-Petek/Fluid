@@ -310,14 +310,13 @@ namespace Fluid.Internals.Collections {
             return res;
          }
       }
-      /// <summary>Multiply tensor with a scalar.</summary>
+      /// <summary>Multiply tensor with a scalar. Operator copies structure and superior by reference.</summary>
       /// <param name="scal">Scalar.</param>
       /// <param name="tnr">Tensor.</param>
       public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> tnr) {
          return Recursion(tnr);
-            // TODO: Think about operators: How should they copy meta fields.
          Tensor<τ,α> Recursion(in Tensor<τ,α> src) {
-            var res = new Tensor<τ,α>();            // We copy only meta fields (whereby we copy Structure by value).
+            var res = new Tensor<τ,α>(tnr.Structure, tnr.Rank, tnr.Sup, tnr.Count);            // We copy only meta fields (whereby we copy Structure by value).
             if(src.Rank > 2) {                                       // Subordinates are tensors.
                foreach (var kv in src)
                   res.Add(kv.Key, Recursion(kv.Value)); }
@@ -370,7 +369,7 @@ namespace Fluid.Internals.Collections {
                   var vec = (Vector<τ,α>) int_vec.Value;
                   var subTnr = new Tensor<τ,α>(newStructure, resRank, null, src.Count);
                   foreach(var int_val in vec.Vals)
-                     subTnr.Add(int_val.Key, int_val.Value*tnr2);
+                     subTnr.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, subTnr)); // ScalMul so that the correct superior propagares downwards.
                   res.Add(int_vec.Key, subTnr); } }
             return res;
          }
