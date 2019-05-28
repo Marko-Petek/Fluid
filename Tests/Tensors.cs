@@ -39,33 +39,18 @@ namespace Fluid.Tests {
          var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.GeneralSpecs.Both, TensorInt.MetaSpecs.All, TensorInt.StructureSpecs.TrueCopy));
          Assert.True(tnr.Equals(tnrCpy));
       }
-
-      /// <summary>Add a sparse vectors destructively to another.</summary>
-      [InlineData(1, 3, 2,   2, 3, 7,  3, 6, 9)]
-      [Theory] public void AddVecToVec(params int[] data) {
-         var vec1 = VectorInt.CreateFromArray(data, 0, 3);
-         var vec2 = VectorInt.CreateFromArray(data, 3, 3);
-         vec1.Add(vec2);
-         var expRes = VectorInt.CreateFromArray(data, 6, 3);
-         Assert.True(vec1.Equals(expRes));
-      }
-
-      /// <summary>Add a tensor destructively to another.</summary>
       [InlineData(
-         1,3,2, 2,3,7, 9,4,0,
-         6,0,3, 2,9,4, 3,7,5,
-         7,3,5, 4,12,11, 12,11,5)]
-      [Theory] public void AddTnrToTnr(params int[] data) {
-         var span1 = new Span<int>(data, 0, 9);
-         var tnr1 = TensorInt.CreateFromFlatSpec(span1, new int[] {3,3});
-         var span2 = new Span<int>(data, 9, 9);
-         var tnr2 = TensorInt.CreateFromFlatSpec(span2, new int[] {3,3});
-         var span3 = new Span<int>(data, 18, 9);
-         var tnr3 = TensorInt.CreateFromFlatSpec(span3, new int[] {3,3});
-         tnr1.Add(tnr2);
-         Assert.True(tnr1.Equals(tnr3));
+         5,3,2, 7,3,9, 12,6,11)]
+      [Theory] public void AddVecToVec(params int[] data) {
+         var span1 = new Span<int>(data, 0, 3);
+         var span2 = new Span<int>(data, 3, 3);
+         var span3 = new Span<int>(data, 6, 3);
+         var vec1 = VectorInt.CreateFromSpan(span1);
+         var vec2 = Vector<int,IA>.CreateFromSpan(span2);
+         var vec3 = Vector<int,IA>.CreateFromSpan(span3);
+         vec1.Add(vec2);
+         Assert.True(vec1.Equals(vec3));
       }
-      
       /// <summary>Add two sparse vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
       [Theory] public void AddTwoVecs(params int[] data) {
@@ -83,6 +68,35 @@ namespace Fluid.Tests {
          var res = vec1 - vec2;
          var expRes = VectorInt.CreateFromArray(data, 6, 3);
          Assert.True(res.Equals(expRes));
+      }
+      [InlineData(
+         5,3,2, 7,6,9, 0,4,2,
+         3,1,0, 4,2,8, 7,2,3,
+         8,4,2, 11,8,17, 7,6,5)]
+      [Theory] public void AddTnrToTnr(params int[] data) {
+         var span1 = new Span<int>(data, 0, 9);
+         var span2 = new Span<int>(data, 9, 9);
+         var span3 = new Span<int>(data, 18, 9);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, new int[] {3,3});
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, new int[] {3,3});
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, new int[] {3,3});
+         tnr1.Add(tnr2);
+         Assert.True(tnr1.Equals(tnr3));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  26,16, 30,14,  59,37, 66,32,   52,32, 60,28,  49,35, 42,28
+            )]
+      [Theory] public void TnrContractRank2(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span1, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 2, 2);
+         Assert.True(res.Equals(tnr3));
       }
 
       //[InlineData(
