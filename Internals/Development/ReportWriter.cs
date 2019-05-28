@@ -32,7 +32,7 @@ namespace Fluid.Internals.Development {
       public ReportWriter(AppReporter appReporter) {
          int buffer;
          if(TB.Console.BufferWidth > 6 * 2 - 12 + 36 + 20)
-            buffer = System.Console.BufferWidth - 6 * 2 - 12;              // spaces, some slack
+            buffer = TB.Console.BufferWidth - 6 * 2 - 12;              // spaces, some slack
          else
             buffer = 36 + 60;
          int remainder = buffer - 8 - 8 - 16 - 4;

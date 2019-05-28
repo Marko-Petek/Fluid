@@ -98,7 +98,18 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
-      public 
+      public void Add(Vector<τ,α> vec2) {
+         foreach(var int_val2 in vec2.Vals) {
+            if(Vals.TryGetValue(int_val2.Key, out τ val1)) {                  // Value exists in Vec1.
+               τ sum = O<τ,α>.A.Add(val1, int_val2.Value);
+               if(sum != default)                                             // Sum is not zero.
+                  Vals[int_val2.Key] = O<τ,α>.A.Add(val1, int_val2.Value);
+               else
+                  Vals.Remove(int_val2.Key); }
+            else
+               Vals.Add(int_val2.Key, int_val2.Value);
+         }
+      }
 
       #if false   // TODO: Implement Split on Vector.
       /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>

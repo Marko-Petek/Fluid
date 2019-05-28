@@ -314,29 +314,32 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr2">Disposable operand 2 whose elements will be absorbed into the caller.</param>
       public void Add(Tensor<τ,α> tnr2) {
          Tensor<τ,α> tnr1 = this;
-         TB.Assert.AreEqual(tnr1.Rank, tnr2.Rank, "Ranks must be equal when performin tensor addition.");
+         TB.Assert.AreEqual(tnr1.Rank, tnr2.Rank, "Ranks must be equal when performing tensor addition.");
          Recursion(tnr1, tnr2);
 
          // You must make sure that the collection is not modified during enumeration!!!
          // Maybe cut short if t2 is disposable.
          void Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
-            //var res = new Tensor<τ,α>(t1, CopySpecs.AddSubtract);            // Must be a deep copy with a bit of extra capacity.
             if(t2.Rank > 2) {
-               foreach(var int_subT2 in t2) {
-                  if(t1.TryGetValue(int_subT2.Key, out var subT1))            // Equivalent subtensor exists in T1.
-                     Recursion(subT1, int_subT2.Value);
+               foreach(var int_subTnr2 in t2) {
+                  if(t1.TryGetValue(int_subTnr2.Key, out var subTnr1))            // Equivalent subtensor exists in T1.
+                     Recursion(subTnr1, int_subTnr2.Value);
                   else                                                      // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
-                     t1.Add(int_subT2.Key, int_subT2.Value); } }
-            else {
-               foreach(var int_subT2 in t2) {
-                  var vec2 = (Vector<τ,α>) int_subT2.Value;
-                  if(t1.TryGetValue(int_tnr1.Key, out var tnr2Val)) {      // Entry exists in t2, we must sum.
-                     var vec2 = (Vector<τ,α>) tnr2Val;
-                     var resAsBase = (TensorBase<Tensor<τ,α>>)res;
-                     resAsBase[int_tnr1.Key] = vec1 + vec2; }
+                     t1.Add(int_subTnr2.Key, int_subTnr2.Value); } }
+            else if(t2.Rank == 2) {
+               foreach(var int_subTnr2 in t2) {
+                  //var vec2 = (Vector<τ,α>) int_subTnr2.Value;
+                  if(t1.TryGetValue(int_subTnr2.Key, out var subTnr1)) {      // Entry exists in t1, we must sum.
+                     var vec1 = (Vector<τ,α>) subTnr1;
+                     var vec2 = (Vector<τ,α>) int_subTnr2.Value;
+                     vec1.Add(vec2); }
                   else {
-                     res.Add(int_tnr1.Key, int_tnr1.Value); } } }          // Entry does not exist in t2, simply Add.
-            return res;
+                     t1.Add(int_subTnr2.Key, int_subTnr2.Value); } } }          // Entry does not exist in t2, simply Add.
+            else {                                                            // We have a vector.
+               var vec1 = (Vector<τ,α>) t1;
+               var vec2 = (Vector<τ,α>) t2;
+               t1.Add(t2);
+            }
          }
       }
       /// <summary>Multiply tensor with a scalar. Operator copies structure and superior by reference.</summary>
@@ -469,6 +472,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="natInx2">Zero-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
+         throw new NotImplementedException();
          // 1) It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1 + R2
          // 2) First eliminate, creating new tensors. Then add them together.
          int[] struc1 = Structure, 
