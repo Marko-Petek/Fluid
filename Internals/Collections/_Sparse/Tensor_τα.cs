@@ -428,15 +428,24 @@ namespace Fluid.Internals.Collections {
             if(src.Rank > elimRank + 1) {
                var res = new Tensor<τ,α>(newStructure, src.Rank - 1, null, src.Count);
                if(src.Rank > elimRank + 2) {                              // More than 2 above elimRank.
-                  foreach(var int_tnr in src)
-                     res.Add(int_tnr.Key, Recursion2(int_tnr.Value)); }
+                  foreach(var int_tnr in src) {
+                     var subTnr = Recursion2(int_tnr.Value);
+                     if(subTnr != null)
+                        res.Add(int_tnr.Key, subTnr); }
+                  if(res.Count != 0)
+                     return res;
+                  else
+                     return null; }
                else {                                                      // 2 above elimRank.
                   foreach(var int_tnr in src) {
                      var subTnr = Recursion2(int_tnr.Value);
                      res.Remove(int_tnr.Key);
                      if(subTnr != null)
-                        res.Add(int_tnr.Key, subTnr); } }
-               return res; }
+                        res.Add(int_tnr.Key, subTnr); }
+                  if(res.Count != 0)
+                     return res;
+                  else
+                     return null; } }
             else {                                                         // 1 above elimRank.
                if(src.TryGetValue(emtInx, out var selectedTnr)) {
                   var tnrCopy = new Tensor<τ,α>(selectedTnr, in CopySpecs.ElimRank);     // Copy the rest deeply, with rank.
@@ -449,15 +458,24 @@ namespace Fluid.Internals.Collections {
             if(src.Rank > 2) {
                var res = new Tensor<τ,α>(newStructure, src.Rank - 1, src.Sup, src.Count);
                if(src.Rank > 3) {
-                  foreach(var int_tnr in src)
-                     res.Add(int_tnr.Key, Recursion1(int_tnr.Value)); }
+                  foreach(var int_tnr in src) {
+                     var subTnr = Recursion1(int_tnr.Value);
+                     if(subTnr != null)
+                        res.Add(int_tnr.Key, subTnr); }
+                  if(res.Count != 0)
+                     return res;
+                  else
+                     return null; }
                else {
                   foreach(var int_tnr in src) {
                      var subTnr = Recursion1(int_tnr.Value);
                      res.Remove(int_tnr.Key);
                      if(subTnr != null)
-                        res.Add(int_tnr.Key, subTnr); } }
-               return res; }
+                        res.Add(int_tnr.Key, subTnr); }
+                  if(res.Count != 0)
+                     return res;
+                  else
+                     return null; } }
             else {                                       // src.Rank = 2 Remove this rank 2 from src.Sup. Choose only one vector from src and add it.
                if(src.TryGetValue(emtInx, out var selectedVec)) {
                   var vecCopy = new Vector<τ,α>((Vector<τ,α>) selectedVec, in CopySpecs.ElimRank);          // Copy the rest deeply, with rank.
@@ -472,7 +490,6 @@ namespace Fluid.Internals.Collections {
       /// <param name="natInx2">Zero-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
-         throw new NotImplementedException();
          // 1) It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1 + R2
          // 2) First eliminate, creating new tensors. Then add them together.
          int[] struc1 = Structure, 
@@ -486,14 +503,23 @@ namespace Fluid.Internals.Collections {
          int   conDim = Structure[natInx1],                                // Dimension of rank we're contracting.
                truInx1 = ToTrueRank(natInx1),
                truInx2 = tnr2.ToTrueRank(natInx2);
+         var struc3_1 = struc1.Where((emt, i) => i != natInx1);
+         var struc3_2 = struc2.Where((emt, i) => i != natInx2);
+         var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
          Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
+         sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
          for(int i = 0; i < conDim; ++i) {                                 // This will probably work (for now) only for non-top contractions.
             elimTnr1 = ElimRank(truInx1, i);
             elimTnr2 = tnr2.ElimRank(truInx2, i);
-            sumand = elimTnr1.TnrProduct(elimTnr2);
-            // TODO: Write a Sum method that modifies the left operand. This avoids a copy operation.
-         }
+            if(elimTnr1 != null && elimTnr2 != null) {
+               sumand = elimTnr1.TnrProduct(elimTnr2);
+               sum.Add(sumand); } }
+         if(sum.Count != 0)
+            return sum;
+         else
+            return null;
       }
+
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {
          Structure.Equals<int, IntArithmetic>(tnr2.Structure);

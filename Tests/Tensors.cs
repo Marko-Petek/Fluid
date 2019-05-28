@@ -83,6 +83,21 @@ namespace Fluid.Tests {
          Assert.True(tnr1.Equals(tnr3));
       }
 
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  26,16, 30,14,  59,37, 66,32,   52,32, 60,28,  49,35, 42,28
+            )]
+      [Theory] public void TnrContractRank2(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span1, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 2, 2);
+         Assert.True(res.Equals(tnr3));
+      }
+
       //[InlineData(
       //2, 2, 2,
       //7, 5,
