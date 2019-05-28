@@ -94,8 +94,10 @@ namespace Fluid.Tests {
          var span3 = new Span<int>(data, 16, 16);
          var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
          var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
-         var tnr3 = TensorInt.CreateFromFlatSpec(span1, 2,2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
          var res = tnr1.Contract(tnr2, 2, 2);
+         // TB.Console.WriteLine(tnr3);
+         // TB.Console.WriteLine(res);
          Assert.True(res.Equals(tnr3));
       }
 

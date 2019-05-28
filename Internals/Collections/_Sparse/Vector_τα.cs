@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 
@@ -197,6 +198,17 @@ namespace Fluid.Internals.Collections {
             if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(kv.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
                return false; }
          return true;                                                              // All values agree within tolerance.
+      }
+
+      public override string ToString() {
+         var sb = new StringBuilder(2*Count);
+         sb.Append("{");
+         foreach(var emt in Vals) {
+            sb.Append($"{emt.ToString()}, ");
+         }
+         sb.Remove(sb.Length - 2, 2);
+         sb.Append("}");
+         return sb.ToString();
       }
    }
 }

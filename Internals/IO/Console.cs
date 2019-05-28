@@ -39,7 +39,7 @@ namespace Fluid.Internals.IO {
       public void WriteLine<T>(T[][][][][] array5d) => IO.WriteLine(array5d, TW);
       /// <summary>Write a 6D array to console and append a NewLine.</summary><param name="array6d">6D array.</param>
       public void WriteLine<T>(T[][][][][][] array6d) => IO.WriteLine(array6d, TW);
-      public void Write<T>(T input) => System.Console.Write(input);
-      public void WriteLine<T>(T input) => System.Console.WriteLine(input);
+      public void Write<T>(T input) => TW.Write(input.ToString());
+      public void WriteLine<T>(T input) => TW.WriteLine(input);
    }
 }

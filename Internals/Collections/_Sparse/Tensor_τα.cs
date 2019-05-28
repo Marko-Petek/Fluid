@@ -490,7 +490,6 @@ namespace Fluid.Internals.Collections {
       /// <param name="natInx2">Zero-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
-         throw new NotImplementedException();
          // 1) It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1 + R2
          // 2) First eliminate, creating new tensors. Then add them together.
          int[] struc1 = Structure, 
@@ -606,6 +605,7 @@ namespace Fluid.Internals.Collections {
          foreach(var kVPair in swapVec)
             Swap(kVPair.Key, kVPair.Value);   
       }
+      #endif
       /// <summary>Create a string of all non-zero elements in form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}.</summary>
       public override string ToString() {
          StringBuilder sb = new StringBuilder(72);
@@ -617,7 +617,6 @@ namespace Fluid.Internals.Collections {
          sb.Append("}");
          return sb.ToString();
       }
-      #endif
       /// <summary>Structure that tells Tensor's Copy method how to copy a tensor.</summary>
       public readonly struct CopySpecStruct {
          /// <summary>General CopySpec specifies whether to copy only values, only meta fields or both. Contains flags: Meta (copy meta fields, specify which in MetaFields), Vals (copy values, either shallowly or deeply, specify with EndRank).</summary>
