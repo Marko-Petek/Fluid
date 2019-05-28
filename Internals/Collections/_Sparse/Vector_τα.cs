@@ -97,8 +97,19 @@ namespace Fluid.Internals.Collections {
             res.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
          return res;
       }
-
-      public 
+      /// <summary>Adds a vector to caller (modifies caller).</summary>
+      /// <param name="vec2">Vector 2.</param>
+      public void Add(Vector<τ,α> vec2) {
+         foreach(var int_val in vec2.Vals) {
+            if(Vals.TryGetValue(int_val.Key, out τ val1)) {       // Value exists in vec1.
+               τ sum = O<τ,α>.A.Add(val1, int_val.Value);
+               if(sum != default)                                 // Sum not zero.
+                  Vals[int_val.Key] = sum;
+               else
+                  Vals.Remove(int_val.Key); }
+            else
+               Vals.Add(int_val.Key, int_val.Value); }
+      }
 
       #if false   // TODO: Implement Split on Vector.
       /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>

@@ -19,8 +19,6 @@ namespace Fluid.Internals {
          _Console = new IO.Console();
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
-         if(System.Console.IsOutputRedirected) throw new Exception("Hmmmmm ...");
-         //Thread.Sleep(1000);                                 // Wait for Console to initialize.
          _Reporter = new AppReporter();
          _Rng = new Rng();
       });
