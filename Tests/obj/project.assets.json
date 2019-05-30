@@ -5891,11 +5891,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\Marko\\Documents\\Fluid\\Tests\\Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Marko\\Documents\\Fluid\\Tests\\Tests.csproj",
       "projectName": "Tests",
-      "projectPath": "c:\\Users\\Marko\\Documents\\Fluid\\Tests\\Tests.csproj",
+      "projectPath": "C:\\Users\\Marko\\Documents\\Fluid\\Tests\\Tests.csproj",
       "packagesPath": "C:\\Users\\Marko\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\Marko\\Documents\\Fluid\\Tests\\obj\\",
+      "outputPath": "C:\\Users\\Marko\\Documents\\Fluid\\Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -5914,8 +5914,8 @@
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "c:\\Users\\Marko\\Documents\\Fluid\\ChannelFlow\\ChannelFlow.csproj": {
-              "projectPath": "c:\\Users\\Marko\\Documents\\Fluid\\ChannelFlow\\ChannelFlow.csproj"
+            "C:\\Users\\Marko\\Documents\\Fluid\\ChannelFlow\\ChannelFlow.csproj": {
+              "projectPath": "C:\\Users\\Marko\\Documents\\Fluid\\ChannelFlow\\ChannelFlow.csproj"
             }
           }
         }

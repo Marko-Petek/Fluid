@@ -86,9 +86,8 @@ namespace Fluid.Tests {
 
       [InlineData(3,6, 2,5,  6,0, 4,7,
                   4,2, 7,5,  6,2, 6,4,
-                  26,16, 30,14,  59,37, 66,32,   52,32, 60,28,  49,35, 42,28
-            )]
-      [Theory] public void TnrContractRank2(params int[] data) {
+                  26,16, 30,14,  59,37, 66,32,   52,32, 60,28,  49,35, 42,28 )]
+      [Theory] public void TnrContractSlots2_2(params int[] data) {
          var span1 = new Span<int>(data, 0, 8);
          var span2 = new Span<int>(data, 8, 8);
          var span3 = new Span<int>(data, 16, 16);
@@ -96,6 +95,22 @@ namespace Fluid.Tests {
          var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
          var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
          var res = tnr1.Contract(tnr2, 2, 2);
+         // TB.Console.WriteLine(tnr3);
+         // TB.Console.WriteLine(res);
+         Assert.True(res.Equals(tnr3));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  24,51, 30,42,  18,39, 22,32,   24,42, 36,36,  30,63, 38,52 )]
+      [Theory] public void TnrContractSlots3_3(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 3, 3);
          // TB.Console.WriteLine(tnr3);
          // TB.Console.WriteLine(res);
          Assert.True(res.Equals(tnr3));
