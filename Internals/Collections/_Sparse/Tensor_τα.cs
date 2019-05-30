@@ -36,8 +36,8 @@ namespace Fluid.Internals.Collections {
             GeneralSpecs.Both, MetaSpecs.Rank);
          public static readonly CopySpecStruct ElimRank2 = new CopySpecStruct(          // Used on ElimRank method.
             GeneralSpecs.Both, MetaSpecs.Rank | MetaSpecs.Sup);
-         /// <summary>Copy values and rank.</summary>
-         public static readonly CopySpecStruct ElimRank = new CopySpecStruct(
+         /// <summary>Copy values and rank, structure by value.</summary>
+         public static readonly CopySpecStruct S35200 = new CopySpecStruct(
             GeneralSpecs.Both, MetaSpecs.Rank);
       }
       protected Tensor(int cap) : base(cap) { }
@@ -415,34 +415,69 @@ namespace Fluid.Internals.Collections {
          // 3) Do the following for each tensor ('tnr1') situated one rank above the rank to be eliminated with superior 'sup1': First, remove 'tnr1' from 'sup1', then pick a tensor one rank below at element index 'emtInx' ('tnr2') and assign all its subordinates to 'sup1' at the same indices. For the reassigned tensors, do not touch their rank values (or of any tensors below it).
          // 4) You will have to handle a special case when the rank being eliminated is the value rank (lowest lying rank).
          // 5) There, you will have to recreate 'sup1' as a vector. And add to its Vals field.
-         TB.Assert.True(elimRank < Rank - 1 && elimRank > -1, "You can only eliminate a non-negative rank under top rank.");
+         TB.Assert.True(elimRank <= Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
          Func<Tensor<τ,α>,Tensor<τ,α>> CopyTensor = null;
+         Tensor<τ,α> res;
+
+         if(elimRank == Rank) {                                                        // Top rank eliminated.
+            if(Rank > 2) {                                                             // Result is Tensor, top tensor at least rank 3.
+               if(TryGetValue(emtInx, out var subTnr))                                    // Sought after subordinate exists.
+                  return new Tensor<τ,α>(subTnr, in CopySpecs.S35200);
+               return null; }
+            else if(Rank == 2) {                                                       // Result is Vector, top tensor rank 2.
+               if(TryGetValue(emtInx, out var subTnr))                                    // Sought after subordinate exists.
+                  return new Vector<τ,α>((Vector<τ,α>) subTnr, in CopySpecs.S35200);
+               return null; }
+            else                                       // Rank <= 1: impossible.
+               throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor.");
+         }
+         else if(elimRank > 1) {                                              // Non-top rank of at least 2 eliminated. Applicable only for Rank 3 or higher tensors.
+            res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
+            if(Rank > 2)                                                      // No special treatment due to Vector needed.
+               RecursionHigh(emtInx, this, res, elimRank + 2, TnrElimination);
+            else
+               throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1 tensor."); }
+         else if(elimRank == 1) {
+            if(Rank > 2) {                                // Result is tensor.
+            }
+            else if(Rank == 2) {                         // Result is vector.
+
+            }
+            else
+               throw new ArgumentException("Cannot eliminate rank 1 on rank 1 tensor.");
+         }
+         else {                                          // Rank 0 being eliminated.
+            if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
+
+            }
+            else if(Rank == 2) {                         // Result is vector. Choose one value from each vector, build a new vector and add those values to it.
+
+            }
+         }
+
+         
+
          if(elimRank == 0) {
             var tgt = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             Recursion2(this, tgt);
             return tgt;
          }
          else if(elimRank > 1)
-            CopyTensor = (tnr) => new Tensor<τ,α>(tnr, in CopySpecs.ElimRank);
+            CopyTensor = (tnr) => new Tensor<τ,α>(tnr, in CopySpecs.S35200);
          else
-            CopyTensor = (tnr) => new Vector<τ,α>((Vector<τ,α>) tnr, in CopySpecs.ElimRank);
+            CopyTensor = (tnr) => new Vector<τ,α>((Vector<τ,α>) tnr, in CopySpecs.S35200);
          return Recursion(this);
 
-         Tensor<τ,α> Recursion(Tensor<τ,α> src) {                          // When elimRank is at least 1, but not N - 1 (highest).
-            if(src.Rank > elimRank + 1) {
-               var res = new Tensor<τ,α>(newStructure, src.Rank - 1, null, src.Count);
-               if(src.Rank > elimRank + 2) {                              // More than 2 above elimRank.
-                  foreach(var int_tnr in src) {
-                     var subTnr = Recursion(int_tnr.Value);
-                     if(subTnr != null)
-                        res.Add(int_tnr.Key, subTnr); }
-                  if(res.Count != 0)
-                     return res;
-                  else
-                     return null; }
+         void Recursion(Tensor<τ,α> src, Tensor<τ,α> tgt) {               // When elimRank is at least 1, but not N - 1 (highest).
+            if(src.Rank > 3) {                                          // More than 2 above elimRank.
+               foreach(var int_tnr in src) {
+                  var subTnr = new Tensor<τ,α>(tgt, src.Count);
+                  Recursion(int_tnr.Value, subTnr);
+                  if(subTnr.Count != 0)
+                     tgt.Add(int_tnr.Key, subTnr); } }
                else {                                                      // 2 above elimRank. Choose one tensor from elimRank and swap it in for the tensor at this rank.
                   foreach(var int_tnr in src) {
                      var subTnr = Recursion(int_tnr.Value);
@@ -452,7 +487,9 @@ namespace Fluid.Internals.Collections {
                   if(res.Count != 0)
                      return res;
                   else
-                     return null; } }
+                     return null; }
+
+
             else {                                                         // 1 above elimRank.
                if(src.TryGetValue(emtInx, out var selectedTnr))            // Copy the rest deeply, with rank.
                   return CopyTensor(selectedTnr);
@@ -467,7 +504,7 @@ namespace Fluid.Internals.Collections {
                   Recursion2(int_tnr.Value, subTnr);
                   if(subTnr.Count != 0)
                      tgt.Add(int_tnr.Key, subTnr); } }
-            else if(src.Rank == 3) {                                     // src.Rank == 2. Choose one value from elimRank and swap it in for the tensor at this rank.
+            else if(src.Rank == 3) {                                     // src.Rank == 3. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to this rank 3 tensor.
                foreach(var int_tnr in src) {                            // int_tnr.Value.Rank == 2
                   var newVec = new Vector<τ,α>(tgt, 4);
                   foreach(var int_vec in int_tnr.Value) {
@@ -476,6 +513,39 @@ namespace Fluid.Internals.Collections {
                         newVec.Vals.Add(int_vec.Key, val); }                    // Add the value to vector. 
                   if(newVec.Vals.Count != 0)
                      tgt.Add(int_tnr.Key, newVec); } }          // Add vector in place of new entry.
+            else if(src.Rank == 2) {                                    //  src.Rank == 2. Choose one value from each vector, create a new vector and add these values to it.
+               var newVec = new Vector<τ,α>(null, 4);
+               foreach(var int_vec in src) {
+                  
+               }
+            }
+            else
+               throw new ArgumentException("Tried to eliminate rank 0 on tensor of rank 1.");
+         }
+
+
+         void RecursionHigh(int emtInx1, Tensor<τ,α> src, Tensor<τ,α> tgt, int stop, Action<int,Tensor<τ,α>,Tensor<τ,α>> action) {      // Recursively copies tensors.
+            if(src.Rank > stop) {
+               foreach(var int_tnr in src) {
+               var subTnr = new Tensor<τ,α>(tgt, src.Count);
+               RecursionHigh(emtInx1, int_tnr.Value, subTnr, stop, action);
+               if(subTnr.Count != 0)
+                  tgt.Add(int_tnr.Key, subTnr); } }
+            else
+               action(emtInx1, src, tgt);
+         }
+
+          void TnrElimination(int emtInx1, Tensor<τ,α> src, Tensor<τ,α> tgt) {        // src is 2 ranks above elimRank and at least rank 3.
+            foreach(var int_tnr in src) {
+               if(int_tnr.Value.TryGetValue(emtInx1, out var subTnr))
+                  tgt.Add(int_tnr.Key, subTnr); }
+         }
+
+         void ValElimination(int emtInx1, Tensor<τ,α> src, Vector<τ,α> tgt) {        // src is rank 2.
+            foreach(var int_vec in src) {
+               var subVec = (Vector<τ,α>) int_vec.Value;
+               if(subVec.Vals.TryGetValue(emtInx1, out var val))
+                  tgt.Add(int_vec.Key, val); }
          }
       }
       /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
