@@ -132,30 +132,31 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(tnr3));
       }
 
-      //[InlineData(
-      //2, 2, 2,
-      //7, 5,
-      //3, 1 )]
-      //[InlineData(
-      //2, 3, 3,
-      //7, 5, 9,
-      //3, 1, 2,
-      //0, 3, 4 )]
-      //[InlineData(
-      //2, 4, 4,
-      //7, 5, 9, 0,
-      //3, 1, 2, 3,
-      //0, 3, 4, 8,
-      //6, 5, 2, 2 )]
-      //[Theory] public void ElimRank2(params int[] data) {      // Testing elimination of rank 1 from a second rank tensor.
-      //   int rank = data[0];
-      //   var structure = data.Skip(1).Take(rank).ToArray();
-      //   var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
-      //      structure[0]*structure[1]), structure);
-      //   var tnr2 = tnr.ElimRank(1, 1);
-      //   var expRes = Vector<int,IA>.CreateFromSpan(new Span<int>(data, rank + 1 + structure[1], structure[1]));
-      //   Assert.True(tnr2.Equals(expRes));
-      //}
+      [InlineData(
+      2, 2, 2,
+      7, 5,
+      3, 1)]
+      [InlineData(
+      2, 3, 3,
+      7, 5, 9,
+      3, 1, 2,
+      0, 3, 4)]
+      [InlineData(
+      2, 4, 4,
+      7, 5, 9, 0,
+      3, 1, 2, 3,
+      0, 3, 4, 8,
+      6, 5, 2, 2)]
+      [Theory]
+      public void ElimRank2(params int[] data) {      // Testing elimination of rank 1 from a second rank tensor.
+         int rank = data[0];
+         var structure = data.Skip(1).Take(rank).ToArray();
+         var tnr = Tensor<int, IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
+            structure[0] * structure[1]), structure);
+         var tnr2 = tnr.ElimRank(1, 1);
+         var expRes = Vector<int, IA>.CreateFromSpan(new Span<int>(data, rank + 1 + structure[1], structure[1]));
+         Assert.True(tnr2.Equals(expRes));
+      }
 
       [InlineData(3, 2, 2, 2,
       1,2,4,5,9,8,5,6,

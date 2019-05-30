@@ -157,6 +157,10 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
+      new public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx2) {
+
+
+      }
       #if false   // TODO: Implement Contract on Vector.
       /// <summary>Dot (scalar) product.</summary>
       public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {

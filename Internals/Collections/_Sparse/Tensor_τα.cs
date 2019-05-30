@@ -491,8 +491,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="natInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
-         // 1) It is most intuitive to treat the two tensors being contracted (one of rank R1, another of rank R2) as one tensor of rank R1 + R2
-         // 2) First eliminate, creating new tensors. Then add them together.
+         // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          int[] struc1 = Structure, 
                struc2 = tnr2.Structure;
          int rank1 = struc1.Length,
@@ -507,19 +506,52 @@ namespace Fluid.Internals.Collections {
          var struc3_1 = struc1.Where((emt, i) => i != (natInx1 - 1));
          var struc3_2 = struc2.Where((emt, i) => i != (natInx2 - 1));
          var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
-         Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
-         sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
-         for(int i = 0; i < conDim; ++i) {                                 // This will probably work (for now) only for non-top contractions.
-            elimTnr1 = ElimRank(truInx1, i);
-            elimTnr2 = tnr2.ElimRank(truInx2, i);
-            if(elimTnr1 != null && elimTnr2 != null) {
-               sumand = elimTnr1.TnrProduct(elimTnr2);
-               sum.Add(sumand); } }
-         if(sum.Count != 0)
-            return sum;
-         else
-            return null;
+         if(Rank > 1) {
+            if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.
+               Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
+               sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
+               for(int i = 0; i < conDim; ++i) {
+                  elimTnr1 = ElimRank(truInx1, i);
+                  elimTnr2 = tnr2.ElimRank(truInx2, i);
+                  if(elimTnr1 != null && elimTnr2 != null) {
+                     sumand = elimTnr1.TnrProduct(elimTnr2);
+                     sum.Add(sumand); } }
+               if(sum.Count != 0)
+                  return sum;
+               else
+                  return null; }
+            else {                                                // Second tensor is rank 1 (a vector).
+               Vector<τ,α> vec = (Vector<τ,α>) tnr2;
+               if(Rank == 2) {                                    // Result will be vector.
+                  Vector<τ,α> elimVec, sumand, sum;
+                  sum = new Vector<τ,α>();
+                  for(int i = 0; i < conDim; ++i) {
+                     elimVec = (Vector<τ,α>) ElimRank(truInx1, i);
+                     if(elimVec != null && vec.Vals.TryGetValue(i, out var val)) {
+                        sumand = val*elimVec;
+                        sum.Add(sumand); } }
+                  if(sum.Count != 0)
+                     return sum;
+                  else
+                     return null; }
+               else {                                             // Result will be tensor.
+                  Tensor<τ,α> elimTnr1, sumand, sum;
+                  sum = new Tensor<τ,α>(struc3);
+                  for(int i = 0; i < conDim; ++i) {
+                     elimTnr1 = ElimRank(truInx1, i);
+                     if(elimTnr1 != null && vec.Vals.TryGetValue(i, out var val)) {
+                        sumand = val*elimTnr1;
+                        sum.Add(sumand); } }
+                  if(sum.Count != 0)
+                     return sum;
+                  else
+                     return null; } } }
+         else {                                                   // First tensor is rank 1 (a vector).
+            var vec1 = (Vector<τ,α>) this;
+            vec1.Contract(tnr2, natInx2); }
       }
+
+      public 
 
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {
