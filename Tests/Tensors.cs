@@ -12,12 +12,45 @@ namespace Fluid.Tests {
    using Vector = Vector<double,DblArithmetic>;
    using TensorInt = Tensor<int,IntArithmetic>;
    using VectorInt = Vector<int,IntArithmetic>;
+   using IA = IntArithmetic;
    
    public partial class Thread3 {      //TODO: Log timing of methods for a large number of operations and save results.
       static Thread3() {
-         TB.EntryPointSetup("Starting Thread3 tests.", () => Thread.Sleep(200));
+         TB.EntryPointSetup("Starting Thread3 tests.");
       }
-      
+      /// <summary>Test Tensor.Copy method.</summary>
+      /// <param name="data"></param>
+      [InlineData(1,7,                    // Rank 1 tensor.
+         6,5,3,8,0,1,4)]
+      [InlineData(2,3,3,                  // Rank 2 tensor.
+         6,5,3,8,0,1,4,3,1)]
+      [InlineData(3,3,2,3,                // Rank 3 tensor.
+         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7)]
+      [InlineData(4,2,2,3,3,                // Rank 3 tensor.
+         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7,1,1,3,6,5,4,0,0,4,2,8,5,3,3,5,7,5,3)]
+      [Theory] public void Copy(params int[] data) {
+         int topRank = data[0];
+         var struc = data.Skip(1).Take(topRank).ToArray();
+         int count = 1;                                        // How many emts to take into slice.
+         foreach(int emt in struc)
+            count *= emt;
+         var slc = new Span<int>(data, 1 + topRank, count);
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(slc, struc);
+         var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.GeneralSpecs.Both, TensorInt.MetaSpecs.All, TensorInt.StructureSpecs.TrueCopy));
+         Assert.True(tnr.Equals(tnrCpy));
+      }
+      [InlineData(
+         5,3,2, 7,3,9, 12,6,11)]
+      [Theory] public void AddVecToVec(params int[] data) {
+         var span1 = new Span<int>(data, 0, 3);
+         var span2 = new Span<int>(data, 3, 3);
+         var span3 = new Span<int>(data, 6, 3);
+         var vec1 = VectorInt.CreateFromSpan(span1);
+         var vec2 = Vector<int,IA>.CreateFromSpan(span2);
+         var vec3 = Vector<int,IA>.CreateFromSpan(span3);
+         vec1.Add(vec2);
+         Assert.True(vec1.Equals(vec3));
+      }
       /// <summary>Add two sparse vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
       [Theory] public void AddTwoVecs(params int[] data) {
@@ -34,6 +67,188 @@ namespace Fluid.Tests {
          var vec2 = VectorInt.CreateFromArray(data, 3, 3);
          var res = vec1 - vec2;
          var expRes = VectorInt.CreateFromArray(data, 6, 3);
+         Assert.True(res.Equals(expRes));
+      }
+      [InlineData(
+         5,3,2, 7,6,9, 0,4,2,
+         3,1,0, 4,2,8, 7,2,3,
+         8,4,2, 11,8,17, 7,6,5)]
+      [Theory] public void AddTnrToTnr(params int[] data) {
+         var span1 = new Span<int>(data, 0, 9);
+         var span2 = new Span<int>(data, 9, 9);
+         var span3 = new Span<int>(data, 18, 9);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, new int[] {3,3});
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, new int[] {3,3});
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, new int[] {3,3});
+         tnr1.Add(tnr2);
+         Assert.True(tnr1.Equals(tnr3));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  26,16, 30,14,  59,37, 66,32,   52,32, 60,28,  49,35, 42,28 )]
+      [Theory] public void TnrContractSlots2_2(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 2, 2);
+         // TB.Console.WriteLine(tnr3);
+         // TB.Console.WriteLine(res);
+         Assert.True(res.Equals(tnr3));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  24,51, 30,42,  18,39, 22,32,   24,42, 36,36,  30,63, 38,52 )]
+      [Theory] public void TnrContractSlots3_3(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 3, 3);
+         // TB.Console.WriteLine(tnr3);
+         // TB.Console.WriteLine(res);
+         Assert.True(res.Equals(tnr3));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,
+                  4,2, 7,5,  6,2, 6,4,
+                  48,18, 57,39,  24,12, 42,30,   32,12, 38,26,  62,24, 77,53 )]
+      [Theory] public void TnrContractSlots1_1(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 8);
+         var span3 = new Span<int>(data, 16, 16);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var tnr2 = TensorInt.CreateFromFlatSpec(span2, 2,2,2);
+         var tnr3 = TensorInt.CreateFromFlatSpec(span3, 2,2,2,2);
+         var res = tnr1.Contract(tnr2, 1, 1);
+         // TB.Console.WriteLine(tnr3);
+         // TB.Console.WriteLine(res);
+         Assert.True(res.Equals(tnr3));
+      }
+
+      [InlineData(
+      2, 2, 2,
+      7, 5,
+      3, 1)]
+      [InlineData(
+      2, 3, 3,
+      7, 5, 9,
+      3, 1, 2,
+      0, 3, 4)]
+      [InlineData(
+      2, 4, 4,
+      7, 5, 9, 0,
+      3, 1, 2, 3,
+      0, 3, 4, 8,
+      6, 5, 2, 2)]
+      [Theory]
+      public void ElimRank2(params int[] data) {      // Testing elimination of rank 1 from a second rank tensor.
+         int rank = data[0];
+         var structure = data.Skip(1).Take(rank).ToArray();
+         var tnr = Tensor<int, IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
+            structure[0] * structure[1]), structure);
+         var tnr2 = tnr.ElimRank(1, 1);
+         var expRes = Vector<int, IA>.CreateFromSpan(new Span<int>(data, rank + 1 + structure[1], structure[1]));
+         Assert.True(tnr2.Equals(expRes));
+      }
+
+      [InlineData(3, 2, 2, 2,
+      1,2,4,5,9,8,5,6,
+      4,5,5,6)]
+      [Theory] public void ElimRank3(params int[] data) {
+         int rank = data[0];
+         var structure = data.Skip(1).Take(rank).ToArray();
+         int nEmts = structure[0]*structure[1]*structure[2];
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
+            nEmts), structure);
+         var tnr2 = tnr.ElimRank(1, 1);
+         var seq1 = data.Skip(6).Take(2);
+         var seq2 = data.Skip(10).Take(2);
+         var span = seq1.Concat(seq2).ToArray().AsSpan();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2});
+         Assert.True(tnr2.Equals(expRes));
+      }
+
+      [InlineData(4, 2, 2, 2, 2,
+      1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
+      4,5,5,6, 2,4,0,3)]
+      [Theory] public void ElimRank4(params int[] data) {
+         int rank = data[0];
+         var structure = data.Skip(1).Take(rank).ToArray();
+         int nEmts = (int) Math.Pow(2,4);
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
+            nEmts), structure);
+         var tnr2 = tnr.ElimRank(1, 1);
+         var seq1 = data.Skip(7).Take(2);
+         var seq2 = data.Skip(11).Take(2);
+         var seq3 = data.Skip(15).Take(2);
+         var seq4 = data.Skip(19).Take(2);
+         var span = seq1.Concat(seq2).Concat(seq3).Concat(seq4).ToArray().AsSpan();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2,2});
+         Assert.True(tnr2.Equals(expRes));
+      }
+
+      [InlineData(2, 2, 2, 2,
+      1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
+      9,8,5,6, 8,9,0,3)]
+      [Theory] public void ElimRank4_2(params int[] data) {
+         var structure = data.Take(4).ToArray();
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, 4, // FIXME: Creates bad Structure array for vector (as if it was not part of other tensor.)
+            16), structure);
+         var tnr2 = tnr.ElimRank(2, 1);
+         var span = data.Skip(4 + 16).Take(8).ToArray().AsSpan();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2,2});
+         Assert.True(tnr2.Equals(expRes));
+      }
+
+      [InlineData(1,3, 1,3,            // Specs: Rank, dims, rank, dims
+         1,5,6, 6,5,2,                 // Operands
+         6,5,2, 30,25,10, 36,30,12)]   // Expected result.
+      [InlineData(2,2,2, 2,2,2,
+         4,3, 1,6,   8,4, 2,5,
+         32,16,8,20, 24,12,6,15, 8,4,2,5, 48,24,12,30
+         )]
+      [InlineData(1,3, 2,3,2,
+         6,2,1,
+         2,7, 8,8, 1,4,
+         12,42, 48,48, 6,24,   4,14, 16,16, 2,8,   2,7, 8,8, 1,4)]
+      [InlineData(3,2,2,3, 1,3,
+         5,5,3, 2,7,1,  6,5,0, 0,7,5,
+         1,2,4,
+         5,10,20, 5,10,20, 3,6,12,  2,4,8, 7,14,28, 1,2,4,  6,12,24, 5,10,20, 0,0,0,  0,0,0, 7,14,28, 5,10,20)]
+      [Theory] public void TensorProduct(params int[] data) {
+         int pos = 0;
+         var rank1 = data[pos];
+         pos += 1;
+         var structure1 = data.Skip(pos).Take(rank1).ToArray();
+         pos += rank1;
+         var rank2 = data[pos];
+         pos += 1;
+         var structure2 = data.Skip(pos).Take(rank2).ToArray();
+         pos += rank2;
+         int count1 = 1;
+         foreach(int val in structure1)
+            count1 *= val;
+         int count2 = 1;
+         foreach(int val in structure2)
+            count2 *= val;
+         var span1 = data.Skip(pos).Take(count1).ToArray().AsSpan();
+         pos += count1;
+         var operand1 = Tensor<int,IA>.CreateFromFlatSpec(span1, structure1);
+         var span2 = data.Skip(pos).Take(count2).ToArray().AsSpan();
+         pos += count2;
+         var operand2 = Tensor<int,IA>.CreateFromFlatSpec(span2, structure2);
+         var res = operand1.TnrProduct(operand2);
+         var count = count1 * count2;
+         var span3 = data.Skip(pos).Take(count).ToArray().AsSpan();
+         var structure3 = structure1.Concat(structure2).ToArray();
+         var expRes = Tensor<int,IA>.CreateFromFlatSpec(span3, structure3);
          Assert.True(res.Equals(expRes));
       }
 
@@ -72,105 +287,110 @@ namespace Fluid.Tests {
          var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
          Assert.True(tnr3.Equals(expMat));
       }
-      /// <summary>Dot a 2nd rank tensor with a vector.</summary>
+      ///// <summary>Dot a 2nd rank tensor with a vector.</summary>
       [InlineData(
          1, 2, 3,
          2, 1, 4,
          3, 4, 1,
 
-         2, 1, 3,   13, 17, 13
+         2, 1, 3, 13, 17, 13
       )]
       [InlineData(
          0, 0, 0,
          5, 2, 3,
          2, 1, 0,
 
-         5, 2, 3,  0, 38, 12 )]
-      //[Theory] public void TnrDotVec(params int[] data) {
-      //   var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-      //   var vec = VectorInt.CreateFromArray(data, 9, 3);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 3);
-      //   var res = tnr*vec;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         5, 2, 3, 0, 38, 12)]
+      [Theory] public void TnrDotVec(params int[] data) {
+         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
+         var vec = VectorInt.CreateFromArray(data, 9, 3);
+         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var res = (VectorInt) tnr.Contract(vec, 2, 1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      //[InlineData(
-      //   3,1,9,4,
-      //   8,5,3,2,
+      [InlineData(
+         3, 1, 9, 4,
+         8, 5, 3, 2,
 
-      //   9,7,3,1,  65,118 )]
-      //[InlineData(
-      //   3,1,9,4,
-      //   8,5,3,2,
+         9, 7, 3, 1, 65, 118)]
+      [InlineData(
+         3, 1, 9, 4,
+         8, 5, 3, 2,
 
-      //   9,0,3,1,  58,83 )]
-      //[InlineData(
-      //   3,1,9,0,
-      //   8,0,3,2,
+         9, 0, 3, 1, 58, 83)]
+      [InlineData(
+         3, 1, 9, 0,
+         8, 0, 3, 2,
 
-      //   9,7,3,1,  61,83 )]
-      //[InlineData(
-      //   3,1,9,0,
-      //   8,0,3,2,
+         9, 7, 3, 1, 61, 83)]
+      [InlineData(
+         3, 1, 9, 0,
+         8, 0, 3, 2,
 
-      //   9,7,0,1,  34,74 )]
-      //[Theory] public void TnrDotVecAsym(params int[] data) {
-      //   var span = new Span<int>(data, 0, 8);
-      //   var tnr = TensorInt.CreateFromSpan(span, 2);
-      //   var vec = VectorInt.CreateFromArray(data, 8, 4);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 2);
-      //   var res = tnr*vec;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         9, 7, 0, 1, 34, 74)]
+      [Theory]
+      public void TnrDotVecAsym(params int[] data) {
+         var span = new Span<int>(data, 0, 8);
+         var tnr = TensorInt.CreateFromSpan(span, 2);
+         var vec = VectorInt.CreateFromArray(data, 8, 4);
+         var expRes = VectorInt.CreateFromArray(data, 12, 2);
+         var res = tnr.Contract(vec,2,1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      //[InlineData(
-      //   1, 2, 3,
-      //   2, 1, 4,
-      //   3, 4, 1,
+      [InlineData(
+         1, 2, 3,
+         2, 1, 4,
+         3, 4, 1,
 
-      //   2, 1, 3,   13, 17, 13 )]
-      //[InlineData(
-      //   2, 6, 1,
-      //   3, 9, 4,
-      //   7, 1, 6,
+         2, 1, 3, 13, 17, 13)]
+      [InlineData(
+         2, 6, 1,
+         3, 9, 4,
+         7, 1, 6,
 
-      //   3, 1, 5,   44, 32, 37 )]
-      //[Theory] public void VecDotTnr(params int[] data) {
-      //   var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-      //   var vec = VectorInt.CreateFromArray(data, 9, 3);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 3);
-      //   var res = vec*tnr;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         3, 1, 5, 44, 32, 37)]
+      [Theory]
+      public void VecDotTnr(params int[] data) {
+         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
+         var vec = VectorInt.CreateFromArray(data, 9, 3);
+         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var res = vec.Contract(tnr,1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      // TODO: Implement num times vec.
-      //[InlineData(
-      //   5,3,0,2,  6,
-      //   30,18,0,12 )]
-      //[Theory] public void NumTimesVec(params int[] data) {
-      //   var num = data[4];
-      //   var vec = VectorInt.CreateFromArray(data, 0, 4);
-      //   var res = num*vec;
-      //   var expRes = VectorInt.CreateFromArray(data,5,4);
-      //   Assert.True(res.Equals(expRes));
-      //}
+      [InlineData(
+         5, 3, 0, 2, 6,
+         30, 18, 0, 12)]
+      [Theory]
+      public void NumTimesVec(params int[] data) {
+         var num = data[4];
+         var vec = VectorInt.CreateFromArray(data, 0, 4);
+         var res = num * vec;
+         var expRes = VectorInt.CreateFromArray(data, 5, 4);
+         Assert.True(res.Equals(expRes));
+      }
 
-      // [InlineData(
-      //    2,6,0,
-      //    3,7,1,
-      //    6,0,4,
-      //    3,
-      //    6,18,0,
-      //    9,21,3,
-      //    18,0,12
-      // )]
-      // [Theory] public void MulNumMat(params int[] data) {
-      //    var slice = new Span<int>(data, 0, 9);
-      //    var mat = SparseMatInt.CreateFromSpan(slice, 3);
-      //    var num = data[9];
-      //    var res = num*mat;
-      //    var expRes = 
-      // }
+      [InlineData(
+         2, 6, 0,
+         3, 7, 1,
+         6, 0, 4,
+         3,
+         6, 18, 0,
+         9, 21, 3,
+         18, 0, 12
+      )]
+      [Theory]
+      public void MulNumMat(params int[] data) {
+         var slc1 = new Span<int>(data, 0, 9);
+         var slc2 = new Span<int>(data, 10, 9);
+         var mat = TensorInt.CreateFromFlatSpec(slc1, 3,3);
+         var num = data[9];
+         var res = num * mat;
+         var expRes = TensorInt.CreateFromFlatSpec(slc2,3,3);
+         Assert.True(res.Equals(expRes));
+       }
 
       ///// <summary>Test wether column swapping in SparseMatrix functions correctly.</summary>
       //[InlineData(1.0, 2.0, 3.0, 4.0,
@@ -205,7 +425,7 @@ namespace Fluid.Tests {
       //   9.0,3.0,4.0,2.0,
       //   0.0,4.0,3.0,7.0,
       //   1.0,8.0,5.0,3.0,
-         
+
       //   9.0,3.0,4.0,2.0,
       //   5.0,2.0,8.0,4.0,
       //   1.0,8.0,5.0,3.0,
@@ -260,7 +480,7 @@ namespace Fluid.Tests {
       //   9,3,4,2,
       //   0,4,3,7,
       //   1,8,5,3,
-         
+
       //   4,2,8,5,
       //   2,3,4,9,
       //   7,4,3,0,

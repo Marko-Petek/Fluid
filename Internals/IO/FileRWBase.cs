@@ -15,18 +15,16 @@ namespace Fluid.Internals.IO {
       protected string DirPath { get; set; }
       protected string FileNameNoExt { get; set; }
       protected string FileExt { get; set; }
-      public const string DefaultDirPath = "";
-      public const string DefaultFileName = "output";
-      public const string DefaultExt = ".txt";
+      
 
       /// <summary>Writes data to hard drive.</summary>
-      public FileRWBase(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName,
-         string fileExt = DefaultExt) {
+      public FileRWBase(string dirPath, string fileNameNoExt,
+         string fileExt) {
             var assembly = Assembly.GetExecutingAssembly();
             var dllLocation = assembly.Location;
             File = new FileInfo(dllLocation);
             AppDirectory = new DirectoryInfo(File.DirectoryName);
-            DirPath = DefaultDirPath;
+            DirPath = dirPath;
             FileNameNoExt = fileNameNoExt;
             FileExt = fileExt;
             var parent = AppDirectory.Parent;

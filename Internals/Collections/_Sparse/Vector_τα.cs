@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 
@@ -10,27 +12,34 @@ namespace Fluid.Internals.Collections {
    public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      public Dictionary<int,τ> Vals { get; protected set; }          // An extra wrapped Dictionary which holds values.
+      public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.
+      internal Vector() : base(0) {
+         Vals = new Dictionary<int, τ>();
+         Rank = 1; }
       internal Vector(int[] structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
          Vals = new Dictionary<int, τ>(cap);
       }
+
+      internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      protected Vector(int cap) : this(null, null, cap) { }
+      public Vector(int cap) : this(null, null, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
       /// <param name="src"></param>
-      public Vector(Vector<τ,α> src, CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
+      public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
          Copy(src, this, cs);
       }
       public Vector(Vector<τ,α> src) : this(src, CopySpecs.Default) { }
       /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
-      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, CopySpecStruct cs) {
+      public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
          CopyMetaFields(src, tgt, cs.MetaFields, cs.Structure);
          if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);
+         else
+            tgt.Vals = new Dictionary<int,τ>();
       }
       /// <summary>Creates a vector with specified dimension from an array.</summary>
       /// <param name="arr">Array to copy.</param>
@@ -59,6 +68,18 @@ namespace Fluid.Internals.Collections {
       /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of vector.</param>
       public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts) =>
          CreateFromArray(arr, srtArrInx, nArrEmts, 0);
+      public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {
+            var vec = new Vector<τ,α>(slc.Length, slc.Length);
+            vec.Structure = new int[] { slc.Length };
+            for(int i = 0; i < slc.Length; ++i)
+               vec.Vals.Add(i, slc[i]);
+            return vec;
+      }
+      /// <summary>Adds value without checking if it is equal to zero.</summary>
+      /// <param name="key">Index.</param>
+      /// <param name="val">Value.</param>
+      internal void Add(int key, τ val) =>
+         Vals.Add(key, val);
 
       new public τ this[int i] {
          get {
@@ -70,7 +91,30 @@ namespace Fluid.Internals.Collections {
             else
                Vals.Remove(i); }
       }
-      
+
+      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+         int newRank = Rank + tnr2.Rank;
+         var newStructure = Structure.Concat(tnr2.Structure).ToArray();
+         // We must substitute this vector with a tensor whose elements are multiples of tnr2.
+         var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
+         foreach(var int_val in Vals)
+            res.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
+         return res;
+      }
+
+      public void Add(Vector<τ,α> vec2) {
+         foreach(var int_val2 in vec2.Vals) {
+            if(Vals.TryGetValue(int_val2.Key, out τ val1)) {                  // Value exists in Vec1.
+               τ sum = O<τ,α>.A.Add(val1, int_val2.Value);
+               if(sum != default)                                             // Sum is not zero.
+                  Vals[int_val2.Key] = O<τ,α>.A.Add(val1, int_val2.Value);
+               else
+                  Vals.Remove(int_val2.Key); }
+            else
+               Vals.Add(int_val2.Key, int_val2.Value);
+         }
+      }
+
       #if false   // TODO: Implement Split on Vector.
       /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>
       /// <param name="inx">Element at this index will end up as part of right remainder.</param>
@@ -116,6 +160,47 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx2, int[] struc3, int conDim) {
+         if(tnr2.Rank > 2) {                                                  // Result is tensor.
+            Tensor<τ,α> elimTnr2, sumand, sum;
+            sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
+            for(int i = 0; i < conDim; ++i) {
+               elimTnr2 = tnr2.ElimRank(truInx2, i);
+               if(Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
+                  sumand = val*elimTnr2;
+                  sum.Add(sumand); } }
+            if(sum.Count != 0)
+               return sum;
+            else
+               return null; }
+         else if(tnr2.Rank == 2) {
+            Vector<τ,α> elimVec2, sumand, sum;
+            sum = new Vector<τ,α>(struc3, null, 4);
+            for(int i = 0; i < conDim; ++i) {
+               elimVec2 = (Vector<τ,α>) tnr2.ElimRank(truInx2, i);
+               if(Vals.TryGetValue(i, out var val) && elimVec2 != null) {
+                  sumand = val*elimVec2;
+                  sum.Add(sumand); } }
+            if(sum.Vals.Count != 0)
+               return sum;
+            else
+               return null; }
+         else {                                                               // Result is scalar.
+            throw new ArgumentException("Explicitly cast tnr2 to vector before using contract."); }
+      }
+
+      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx2) {
+         (int[] struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
+         return ContractPart2(tnr2, truInx2, struc3, conDim);
+      }
+
+      public τ Contract(Vector<τ,α> vec2) {
+         τ res = default;
+         foreach(var int_val1 in Vals) {
+            if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
+               res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
+         return res;
+      }
       #if false   // TODO: Implement Contract on Vector.
       /// <summary>Dot (scalar) product.</summary>
       public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
@@ -157,6 +242,17 @@ namespace Fluid.Internals.Collections {
             if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(kv.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
                return false; }
          return true;                                                              // All values agree within tolerance.
+      }
+
+      public override string ToString() {
+         var sb = new StringBuilder(2*Count);
+         sb.Append("{");
+         foreach(var emt in Vals) {
+            sb.Append($"{emt.ToString()}, ");
+         }
+         sb.Remove(sb.Length - 2, 2);
+         sb.Append("}");
+         return sb.ToString();
       }
    }
 }

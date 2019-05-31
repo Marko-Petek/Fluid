@@ -14,7 +14,7 @@ using TB = Fluid.Internals.Toolbox;
 namespace Fluid.Tests {
    public partial class Thread2 {
       static Thread2() {
-         TB.EntryPointSetup("Starting Thread2 tests.", () => Thread.Sleep(200));
+         TB.EntryPointSetup("Starting Thread2 tests.");
       }
 
       [InlineData(-0.5, 0.5)]

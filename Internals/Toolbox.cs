@@ -16,9 +16,9 @@ namespace Fluid.Internals {
       static bool _Initializing = false;
       public static Task _Initialization = new Task(() => {
          System.Console.OutputEncoding = Encoding.UTF8;
+         _Console = new IO.Console();
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
-         _Console = new IO.Console();
          _Reporter = new AppReporter();
          _Rng = new Rng();
       });
@@ -29,13 +29,18 @@ namespace Fluid.Internals {
       static IO.Console _Console;
       public static IO.Console Console => _Console;
       static AppReporter _Reporter;
-      public static AppReporter Reporter => _Reporter;
+      public static AppReporter Reporter {                     // Reported.Write can only be called from one thread at once.
+         get {
+            lock(_Reporter)
+               return _Reporter; }
+      }
       static Rng _Rng;
       public static Rng Rng => _Rng;
 
       /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
       public static void EntryPointSetup(string initMsg = "Program started.",
-         Action main = null, VerbositySettings verbosity = VerbositySettings.Moderate) {
+      Action main = null, VerbositySettings verbosity = VerbositySettings.Moderate) {
+         lock(_Initialization) {
             if(!_Initializing) {
                _Initializing = true;
                _Initialization.Start(); }
@@ -51,7 +56,7 @@ namespace Fluid.Internals {
                   finally {
                      Reporter.Write("Exiting application.");
                      FileWriter.Flush(); } },
-               TaskContinuationOptions.ExecuteSynchronously); 
+               TaskContinuationOptions.ExecuteSynchronously); }
       }
       /// <summary>A class which simplifies exception coding.</summary>
       public static class Assert {
