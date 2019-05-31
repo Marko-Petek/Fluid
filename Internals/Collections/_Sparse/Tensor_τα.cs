@@ -120,9 +120,9 @@ namespace Fluid.Internals.Collections {
       in StructureSpecs scs) {
          if((mcs & MetaSpecs.Structure) == MetaSpecs.Structure) {
             if((scs & StructureSpecs.RefCopy) == StructureSpecs.RefCopy)
-               Array.Copy(src.Structure, tgt.Structure, src.Structure.Length);
+               tgt.Structure = src.Structure;
             else
-               tgt.Structure = src.Structure; }
+                Array.Copy(src.Structure, tgt.Structure, src.Structure.Length);}
          if((mcs & MetaSpecs.Rank) == MetaSpecs.Rank)
             tgt.Rank = src.Rank;
          if((mcs & MetaSpecs.Sup) == MetaSpecs.Sup)
@@ -444,7 +444,7 @@ namespace Fluid.Internals.Collections {
                Recursion03(emtInx, this, res);
                return res; }
             else if(Rank == 2) {
-               var res = new Vector<τ,α>(4);
+               var res = new Vector<τ,α>(newStructure, null, 4);
                Recursion02(emtInx, this, res);
                return res; }
             else
@@ -485,12 +485,9 @@ namespace Fluid.Internals.Collections {
                   if(subVec.Vals.TryGetValue(emtInx1, out var val))
                      tgt.Add(int_vec.Key, val); } }
       }
-      /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
-      /// <param name="tnr2">Tensor 2.</param>
-      /// <param name="natInx1">One-based natural index on this tensor over which to contract.</param>
-      /// <param name="natInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
-      /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
-      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
+
+      protected (int[] struc, int truInx1, int truInx2, int conDim) ContractPart1(
+      Tensor<τ,α> tnr2, int natInx1, int natInx2) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          int[] struc1 = Structure, 
                struc2 = tnr2.Structure;
@@ -506,6 +503,11 @@ namespace Fluid.Internals.Collections {
          var struc3_1 = struc1.Where((emt, i) => i != (natInx1 - 1));
          var struc3_2 = struc2.Where((emt, i) => i != (natInx2 - 1));
          var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
+         return (struc3, truInx1, truInx2, conDim);
+      }
+      
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx1, int truInx2, int[] struc3, int conDim) {
+         // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          if(Rank > 1) {
             if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.
                Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
@@ -524,13 +526,13 @@ namespace Fluid.Internals.Collections {
                Vector<τ,α> vec = (Vector<τ,α>) tnr2;
                if(Rank == 2) {                                    // Result will be vector.
                   Vector<τ,α> elimVec, sumand, sum;
-                  sum = new Vector<τ,α>();
+                  sum = new Vector<τ,α>(struc3, null, 4);
                   for(int i = 0; i < conDim; ++i) {
                      elimVec = (Vector<τ,α>) ElimRank(truInx1, i);
                      if(elimVec != null && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimVec;
                         sum.Add(sumand); } }
-                  if(sum.Count != 0)
+                  if(sum.Vals.Count != 0)
                      return sum;
                   else
                      return null; }
@@ -548,10 +550,19 @@ namespace Fluid.Internals.Collections {
                      return null; } } }
          else {                                                   // First tensor is rank 1 (a vector).
             var vec1 = (Vector<τ,α>) this;
-            vec1.Contract(tnr2, natInx2); }
+            return vec1.ContractPart2(tnr2, truInx2, struc3, conDim);}
       }
 
-      public 
+      /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
+      /// <param name="tnr2">Tensor 2.</param>
+      /// <param name="natInx1">One-based natural index on this tensor over which to contract.</param>
+      /// <param name="natInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
+      /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
+      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
+         (int[] struc3, int truInx1, int truInx2, int conDim) = ContractPart1(tnr2, natInx1, natInx2);
+         return ContractPart2(tnr2, truInx1, truInx2, struc3, conDim);
+      }
+
 
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {

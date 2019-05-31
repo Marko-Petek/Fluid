@@ -288,104 +288,109 @@ namespace Fluid.Tests {
          Assert.True(tnr3.Equals(expMat));
       }
       ///// <summary>Dot a 2nd rank tensor with a vector.</summary>
-      //[InlineData(
-      //   1, 2, 3,
-      //   2, 1, 4,
-      //   3, 4, 1,
+      [InlineData(
+         1, 2, 3,
+         2, 1, 4,
+         3, 4, 1,
 
-      //   2, 1, 3,   13, 17, 13
-      //)]
-      //[InlineData(
-      //   0, 0, 0,
-      //   5, 2, 3,
-      //   2, 1, 0,
+         2, 1, 3, 13, 17, 13
+      )]
+      [InlineData(
+         0, 0, 0,
+         5, 2, 3,
+         2, 1, 0,
 
-      //   5, 2, 3,  0, 38, 12 )]
-      //[Theory] public void TnrDotVec(params int[] data) {
-      //   var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-      //   var vec = VectorInt.CreateFromArray(data, 9, 3);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 3);
-      //   var res = tnr*vec;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         5, 2, 3, 0, 38, 12)]
+      [Theory] public void TnrDotVec(params int[] data) {
+         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
+         var vec = VectorInt.CreateFromArray(data, 9, 3);
+         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var res = (VectorInt) tnr.Contract(vec, 2, 1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      //[InlineData(
-      //   3,1,9,4,
-      //   8,5,3,2,
+      [InlineData(
+         3, 1, 9, 4,
+         8, 5, 3, 2,
 
-      //   9,7,3,1,  65,118 )]
-      //[InlineData(
-      //   3,1,9,4,
-      //   8,5,3,2,
+         9, 7, 3, 1, 65, 118)]
+      [InlineData(
+         3, 1, 9, 4,
+         8, 5, 3, 2,
 
-      //   9,0,3,1,  58,83 )]
-      //[InlineData(
-      //   3,1,9,0,
-      //   8,0,3,2,
+         9, 0, 3, 1, 58, 83)]
+      [InlineData(
+         3, 1, 9, 0,
+         8, 0, 3, 2,
 
-      //   9,7,3,1,  61,83 )]
-      //[InlineData(
-      //   3,1,9,0,
-      //   8,0,3,2,
+         9, 7, 3, 1, 61, 83)]
+      [InlineData(
+         3, 1, 9, 0,
+         8, 0, 3, 2,
 
-      //   9,7,0,1,  34,74 )]
-      //[Theory] public void TnrDotVecAsym(params int[] data) {
-      //   var span = new Span<int>(data, 0, 8);
-      //   var tnr = TensorInt.CreateFromSpan(span, 2);
-      //   var vec = VectorInt.CreateFromArray(data, 8, 4);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 2);
-      //   var res = tnr*vec;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         9, 7, 0, 1, 34, 74)]
+      [Theory]
+      public void TnrDotVecAsym(params int[] data) {
+         var span = new Span<int>(data, 0, 8);
+         var tnr = TensorInt.CreateFromSpan(span, 2);
+         var vec = VectorInt.CreateFromArray(data, 8, 4);
+         var expRes = VectorInt.CreateFromArray(data, 12, 2);
+         var res = tnr.Contract(vec,2,1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      //[InlineData(
-      //   1, 2, 3,
-      //   2, 1, 4,
-      //   3, 4, 1,
+      [InlineData(
+         1, 2, 3,
+         2, 1, 4,
+         3, 4, 1,
 
-      //   2, 1, 3,   13, 17, 13 )]
-      //[InlineData(
-      //   2, 6, 1,
-      //   3, 9, 4,
-      //   7, 1, 6,
+         2, 1, 3, 13, 17, 13)]
+      [InlineData(
+         2, 6, 1,
+         3, 9, 4,
+         7, 1, 6,
 
-      //   3, 1, 5,   44, 32, 37 )]
-      //[Theory] public void VecDotTnr(params int[] data) {
-      //   var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-      //   var vec = VectorInt.CreateFromArray(data, 9, 3);
-      //   var expRes = VectorInt.CreateFromArray(data, 12, 3);
-      //   var res = vec*tnr;
-      //   Assert.True(res.Equals(expRes));
-      //}
+         3, 1, 5, 44, 32, 37)]
+      [Theory]
+      public void VecDotTnr(params int[] data) {
+         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
+         var vec = VectorInt.CreateFromArray(data, 9, 3);
+         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var res = vec.Contract(tnr,1);
+         Assert.True(res.Equals(expRes));
+      }
 
-      // TODO: Implement num times vec.
-      //[InlineData(
-      //   5,3,0,2,  6,
-      //   30,18,0,12 )]
-      //[Theory] public void NumTimesVec(params int[] data) {
-      //   var num = data[4];
-      //   var vec = VectorInt.CreateFromArray(data, 0, 4);
-      //   var res = num*vec;
-      //   var expRes = VectorInt.CreateFromArray(data,5,4);
-      //   Assert.True(res.Equals(expRes));
-      //}
+      [InlineData(
+         5, 3, 0, 2, 6,
+         30, 18, 0, 12)]
+      [Theory]
+      public void NumTimesVec(params int[] data) {
+         var num = data[4];
+         var vec = VectorInt.CreateFromArray(data, 0, 4);
+         var res = num * vec;
+         var expRes = VectorInt.CreateFromArray(data, 5, 4);
+         Assert.True(res.Equals(expRes));
+      }
 
-      // [InlineData(
-      //    2,6,0,
-      //    3,7,1,
-      //    6,0,4,
-      //    3,
-      //    6,18,0,
-      //    9,21,3,
-      //    18,0,12
-      // )]
-      // [Theory] public void MulNumMat(params int[] data) {
-      //    var slice = new Span<int>(data, 0, 9);
-      //    var mat = SparseMatInt.CreateFromSpan(slice, 3);
-      //    var num = data[9];
-      //    var res = num*mat;
-      //    var expRes = 
-      // }
+      [InlineData(
+         2, 6, 0,
+         3, 7, 1,
+         6, 0, 4,
+         3,
+         6, 18, 0,
+         9, 21, 3,
+         18, 0, 12
+      )]
+      [Theory]
+      public void MulNumMat(params int[] data) {
+         var slc1 = new Span<int>(data, 0, 9);
+         var slc2 = new Span<int>(data, 10, 9);
+         var mat = TensorInt.CreateFromFlatSpec(slc1, 3,3);
+         var num = data[9];
+         var res = num * mat;
+         var expRes = TensorInt.CreateFromFlatSpec(slc2,3,3);
+         Assert.True(res.Equals(expRes));
+       }
 
       ///// <summary>Test wether column swapping in SparseMatrix functions correctly.</summary>
       //[InlineData(1.0, 2.0, 3.0, 4.0,
@@ -420,7 +425,7 @@ namespace Fluid.Tests {
       //   9.0,3.0,4.0,2.0,
       //   0.0,4.0,3.0,7.0,
       //   1.0,8.0,5.0,3.0,
-         
+
       //   9.0,3.0,4.0,2.0,
       //   5.0,2.0,8.0,4.0,
       //   1.0,8.0,5.0,3.0,
@@ -475,7 +480,7 @@ namespace Fluid.Tests {
       //   9,3,4,2,
       //   0,4,3,7,
       //   1,8,5,3,
-         
+
       //   4,2,8,5,
       //   2,3,4,9,
       //   7,4,3,0,
