@@ -5885,37 +5885,35 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Korisnik\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "/home/marko/.nuget/packages/": {},
+    "/usr/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Korisnik\\Fluid\\Tests\\Tests.csproj",
+      "projectUniqueName": "/home/marko/Dokumenti/Fluid/Tests/Tests.csproj",
       "projectName": "Tests",
-      "projectPath": "C:\\Users\\Korisnik\\Fluid\\Tests\\Tests.csproj",
-      "packagesPath": "C:\\Users\\Korisnik\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Korisnik\\Fluid\\Tests\\obj\\",
+      "projectPath": "/home/marko/Dokumenti/Fluid/Tests/Tests.csproj",
+      "packagesPath": "/home/marko/.nuget/packages/",
+      "outputPath": "/home/marko/Dokumenti/Fluid/Tests/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        "/usr/share/dotnet/sdk/NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Korisnik\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/marko/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.2"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp2.2": {
           "projectReferences": {
-            "C:\\Users\\Korisnik\\Fluid\\ChannelFlow\\ChannelFlow.csproj": {
-              "projectPath": "C:\\Users\\Korisnik\\Fluid\\ChannelFlow\\ChannelFlow.csproj"
+            "/home/marko/Dokumenti/Fluid/ChannelFlow/ChannelFlow.csproj": {
+              "projectPath": "/home/marko/Dokumenti/Fluid/ChannelFlow/ChannelFlow.csproj"
             }
           }
         }
