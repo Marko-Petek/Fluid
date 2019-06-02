@@ -14,6 +14,7 @@ namespace Fluid.Internals.Collections {
    where α : IArithmetic<τ>, new() {
       public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.
       internal Vector() : base(0) {
+         Vals = new Dictionary<int, τ>();
          Rank = 1; }
       internal Vector(int[] structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
          Vals = new Dictionary<int, τ>(cap);
@@ -37,6 +38,8 @@ namespace Fluid.Internals.Collections {
          CopyMetaFields(src, tgt, cs.MetaFields, cs.Structure);
          if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);
+         else
+            tgt.Vals = new Dictionary<int,τ>();
       }
       /// <summary>Creates a vector with specified dimension from an array.</summary>
       /// <param name="arr">Array to copy.</param>
@@ -157,6 +160,47 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx2, int[] struc3, int conDim) {
+         if(tnr2.Rank > 2) {                                                  // Result is tensor.
+            Tensor<τ,α> elimTnr2, sumand, sum;
+            sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
+            for(int i = 0; i < conDim; ++i) {
+               elimTnr2 = tnr2.ElimRank(truInx2, i);
+               if(Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
+                  sumand = val*elimTnr2;
+                  sum.Add(sumand); } }
+            if(sum.Count != 0)
+               return sum;
+            else
+               return null; }
+         else if(tnr2.Rank == 2) {
+            Vector<τ,α> elimVec2, sumand, sum;
+            sum = new Vector<τ,α>(struc3, null, 4);
+            for(int i = 0; i < conDim; ++i) {
+               elimVec2 = (Vector<τ,α>) tnr2.ElimRank(truInx2, i);
+               if(Vals.TryGetValue(i, out var val) && elimVec2 != null) {
+                  sumand = val*elimVec2;
+                  sum.Add(sumand); } }
+            if(sum.Vals.Count != 0)
+               return sum;
+            else
+               return null; }
+         else {                                                               // Result is scalar.
+            throw new ArgumentException("Explicitly cast tnr2 to vector before using contract."); }
+      }
+
+      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx2) {
+         (int[] struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
+         return ContractPart2(tnr2, truInx2, struc3, conDim);
+      }
+
+      public τ Contract(Vector<τ,α> vec2) {
+         τ res = default;
+         foreach(var int_val1 in Vals) {
+            if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
+               res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
+         return res;
+      }
       #if false   // TODO: Implement Contract on Vector.
       /// <summary>Dot (scalar) product.</summary>
       public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
