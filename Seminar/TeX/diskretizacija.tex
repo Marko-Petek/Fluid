@@ -196,46 +196,67 @@ nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajsk
 
 Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev elementov Kartezična. Mreža je lahko pri \texttt{FEM} tudi nestrukturirana, kar je ena izmed prednosti metode.
 
-Potem omejimo Diskretizacija problema 
-
-Galerkin, Najmanših kvadratov \cite{JiangB-LSFEM}
-Basic lemma of variational principles: Temeljni lema variacijskih načel.
-
-
+Naj bodo:
 \begin{equation}
-   \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \phi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \phi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \phi^{d0} \frac{\pd}{\pd x_e}\right) \left(u^g_m \mkern1mu \phi^{g0}\right) - f^g_j \mkern1mu \phi^{g0}}
+   \mathbf{P_1} = (x_1,y_1), \quad \mathbf{P_2} = (x_2,y_2), \quad \mathbf{P_3} = (x_3,y_3), \quad \mathbf{P_4} = (x_4,y_4)
 \end{equation}
-
+oglišča pravega elementa.
+Imejmo preslikavo iz referenčnega kvadrata $\bm{\chi}$ v pravi element $\mathbf{x}$:
 \begin{equation}
-   \sum_i \bra{A^{ab}_{jk} v^c_k \phi^{a0} \phi^{cb}}\ket{A^{de}_{jm} u^g_m \phi^{d0} \phi^{ge} - f^g_j \phi^{g0}}
+   \begin{pmatrix}
+      x(\bm{\chi}) \\
+      y(\bm{\chi})
+   \end{pmatrix}
+   =
+   \begin{pmatrix}
+      x_1 S_1(\bm{\chi}) + x_2 S_2(\bm{\chi}) + x_3 S_3(\bm{\chi}) + x_4 S_4(\bm{\chi}) \\
+      y_1 S_1(\bm{\chi}) + y_2 S_2(\bm{\chi}) + y_3 S_3(\bm{\chi}) + y_4 S_4(\bm{\chi})
+   \end{pmatrix}
 \end{equation}
-
+ali kompaktneje:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{g0}} \mkern2mu \right) = 0
+   \begin{pmatrix}
+      x(\bm{\chi}) \\
+      y(\bm{\chi})
+   \end{pmatrix}
+   =
+   \begin{pmatrix}
+      x_1 & x_2 & x_3 & x_4 \\
+      y_1 & y_2 & y_3 & y_4
+   \end{pmatrix}
+   \begin{pmatrix}
+      S_1(\bm{\chi}) \\
+      S_2(\bm{\chi}) \\
+      S_3(\bm{\chi}) \\
+      S_4(\bm{\chi})
+   \end{pmatrix}
 \end{equation}
-
+$\psi$ in $\phi$ sta skalarni funkciji. $\bar{\texttt{J}}$ je inverz Jakobijana preslikave, ki slika iz referenčnega kvadrata $\bm{\chi}$ v realni prostor $\mathbf{x}$:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{g0}} \mkern2mu \right) = 0
+   \mathbf{\nabla_{\mkern-3mu x}} \psi(\mathbf{x}) = \bar{\texttt{J}} \mkern3mu \mathbf{\nabla_{\mkern-4mu \chi}} \phi(\bm{\chi}) \ .
 \end{equation}
-
+$\bar{\texttt{J}}$ je enak:
 \begin{equation}
-   \mathbf{\nabla} \psi^{a}(\mathbf{x}) = \texttt{J} \mathbf{\nabla} \phi^{a}(\bm{\rho})
+   \bar{\texttt{J}}
+   =
+   \frac{1}{|\texttt{J}|}
+   \begin{pmatrix}
+      +J_{22} & -J_{12} \\
+      -J_{21} & +J_{11}
+   \end{pmatrix}
+   \ .
 \end{equation}
-
+Odvod $\psi$ po $x_1$ označimo kot $\psi^1$:
 \begin{equation}
-   \psi^{a1} = \widetilde{J}^{a}_{11} \phi^{a1} + \widetilde{J}^{a}_{12} \phi^{a2}
+   \psi^1 = \frac{1}{|\texttt{J}|} \left(\bar{J}_{11} \phi^1 + \bar{J}_{12} \phi^2 \right) \ .
 \end{equation}
-
+Zapisano na konvencionalen način:
 \begin{equation}
-   \frac{\pd \psi^a}{\pd x} = \widetilde{J}^{a}_{11} \frac{\pd \phi^a}{\pd \xi} + \widetilde{J}^{a}_{12} \frac{\pd \phi^a}{\pd \eta}
+   \frac{\pd \psi}{\pd x} = \frac{1}{|\texttt{J}|} \left(\bar{J}_{11} \frac{\pd \phi}{\pd \xi} + \bar{J}_{12} \frac{\pd \phi}{\pd \eta} \right) \ ,
 \end{equation}
-
+oziroma:
 \begin{equation}
-   \widetilde{J}^{a}_{11} = \frac{\pd \xi}{\pd x} \quad \widetilde{J}^{a}_{12} = \frac{\pd \eta}{\pd x}
-\end{equation}
-
-\begin{equation}
-   \frac{\pd \psi^a}{\pd x} = \frac{\pd \xi}{\pd x} \frac{\pd \phi^a}{\pd \xi} + \frac{\pd \eta}{\pd x} \frac{\pd \phi^a}{\pd \eta}
+   \frac{\pd \psi}{\pd x} = \frac{1}{|\texttt{J}|} \left(\frac{\pd \xi}{\pd x} \frac{\pd \phi}{\pd \xi} + \frac{\pd \eta}{\pd x} \frac{\pd \phi}{\pd \eta} \right)
 \end{equation}
 
 \begin{equation}
@@ -288,8 +309,16 @@ $\widetilde{J}$ ima posebna ničta elementa: $|\mathbsf{J}|$.
 \end{equation}
 
 \begin{equation}
-   \sum_i \bra{\left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi^{\phantom{b}0}_b \frac{\pd}{\pd x_p}\right) \left(v^a_{\phantom{a}k} \mkern1mu \psi^{\phantom{a}0}_a\right)}\ket{\left(A^{cqjl} \mkern1mu \psi^{\phantom{c}0}_c \frac{\pd}{\pd x_q}\right) \left(u^{dl} \mkern1mu \psi^{\phantom{d}0}_d\right) - f^{dj} \mkern1mu \psi^{\phantom{d}0}_d}
+   \sum_i \bra{\left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right) \left(v^a_{\phantom{a}k} \mkern1mu \psi_a\right)}\ket{\left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right) \left(u^{dl} \mkern1mu \psi_d\right) - f^{dj} \mkern1mu \psi_d}
 \end{equation}
+
+\begin{equation}
+   \sum_i \bra{\left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right) \left(v^a_{\circ k} \mkern1mu \psi^\circ_a\right)}\ket{\left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right) \left(u^{dl}_\circ \mkern1mu \psi^\circ_d + u^{dl}_\ast \mkern1mu \psi^\ast_d \right) - (f^{dj}_\circ \mkern1mu \psi^\circ_d + f^{dj}_\ast \mkern1mu \psi^\ast_d)}
+\end{equation}
+
+\begin{equation*}
+   \sum_i \bra{\left( A^{bp}_{\mkern14mu jk} \psi_b \right) v^a_{\circ k} \psi^{\circ p}_a \mkern4mu}\ket{\mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right) \mkern-5mu \left(u^{dl}_\circ \mkern1mu \psi^{\circ q}_d + u^{dl}_\ast \mkern1mu \psi^{\ast q}_d \right) - f^{dj} \mkern1mu \psi_d}
+\end{equation*}
 
 \begin{equation}
    \sum_i v^a_{\phantom{a}k} A^{bp}_{\phantom{bp}jk} \left( \left\langle \frac{1}{\widetilde{J}_{00}} \phi^{\phantom{b}0}_b \phi^{\phantom{c}0}_c \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \mkern1mu \widetilde{J}_{qs}  \phi^{\phantom{d}s}_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cqjl} u^{dl} \mkern1mu - \mkern1mu \left\langle\phi^{\phantom{b}0}_b \phi^{\phantom{d}0}_d \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^{dj} \mkern2mu \right) = 0
