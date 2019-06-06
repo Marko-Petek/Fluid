@@ -198,11 +198,12 @@ Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev e
 
 Naj bodo:
 \begin{equation}
-   \mathbf{P_1} = (x_1,y_1), \quad \mathbf{P_2} = (x_2,y_2), \quad \mathbf{P_3} = (x_3,y_3), \quad \mathbf{P_4} = (x_4,y_4)
+   \mathbf{T_1} = (x_1,y_1), \quad \mathbf{T_2} = (x_2,y_2), \quad \mathbf{T_3} = (x_3,y_3), \quad \mathbf{T_4} = (x_4,y_4)
 \end{equation}
-oglišča pravega elementa.
-Imejmo preslikavo iz referenčnega kvadrata $\bm{\chi}$ v pravi element $\mathbf{x}$:
+oglišča pravega elementa. Imejmo preslikavo $\mathbf{r}(\bm{\chi})$, ki slika iz referenčnega kvadrata $\bm{\chi}$ v realni prostor $\mathbf{x}$:
 \begin{equation}
+   \mathbf{r}(\bm{\chi})
+   =
    \begin{pmatrix}
       x(\bm{\chi}) \\
       y(\bm{\chi})
@@ -211,6 +212,17 @@ Imejmo preslikavo iz referenčnega kvadrata $\bm{\chi}$ v pravi element $\mathbf
    \begin{pmatrix}
       x_1 S_1(\bm{\chi}) + x_2 S_2(\bm{\chi}) + x_3 S_3(\bm{\chi}) + x_4 S_4(\bm{\chi}) \\
       y_1 S_1(\bm{\chi}) + y_2 S_2(\bm{\chi}) + y_3 S_3(\bm{\chi}) + y_4 S_4(\bm{\chi})
+   \end{pmatrix} \ ,
+\end{equation}
+kjer so $S_i$ ogliščne funkcije:
+\begin{equation}
+   \mathbf{S}
+   =
+   \begin{pmatrix}
+      (1+\xi)(1+\eta) \\
+      (1+\xi)(1-\eta) \\
+      (1-\xi)(1+\eta) \\
+      (1-\xi)(1-\eta)
    \end{pmatrix}
 \end{equation}
 ali kompaktneje:
@@ -229,17 +241,26 @@ ali kompaktneje:
       S_2(\bm{\chi}) \\
       S_3(\bm{\chi}) \\
       S_4(\bm{\chi})
-   \end{pmatrix}
+   \end{pmatrix} \ .
 \end{equation}
-$\psi$ in $\phi$ sta skalarni funkciji. $\bar{\texttt{J}}$ je inverz Jakobijana preslikave, ki slika iz referenčnega kvadrata $\bm{\chi}$ v realni prostor $\mathbf{x}$:
+Jakobijevka preslikave $\mathbf{r}(\bm{\chi})$ je enaka:
 \begin{equation}
-   \mathbf{\nabla_{\mkern-3mu x}} \psi(\mathbf{x}) = \bar{\texttt{J}} \mkern3mu \mathbf{\nabla_{\mkern-4mu \chi}} \phi(\bm{\chi}) \ .
+   \mathbsf{J}
+   =
+   \begin{pmatrix}
+      \frac{\pd x}{\pd \xi} & \frac{\pd x}{\pd \eta} \\
+      \frac{\pd y}{\pd \xi} & \frac{\pd y}{\pd \eta}
+   \end{pmatrix} \ .
+\end{equation}
+$\psi$ in $\phi$ sta skalarni funkciji. $\bar{\texttt{J}}$ je inverz Jakobijevke:
+\begin{equation}
+   \mathbf{\nabla_{\mkern-3mu x}} \psi(\mathbf{x}) = \bar{\mathbsf{J}} \mkern3mu \mathbf{\nabla_{\mkern-4mu \chi}} \phi(\bm{\chi}) \ .
 \end{equation}
 $\bar{\texttt{J}}$ je enak:
 \begin{equation}
-   \bar{\texttt{J}}
+   \bar{\mathbsf{J}}
    =
-   \frac{1}{|\texttt{J}|}
+   \frac{1}{\det \mathbsf{J}}
    \begin{pmatrix}
       +J_{22} & -J_{12} \\
       -J_{21} & +J_{11}
@@ -248,20 +269,130 @@ $\bar{\texttt{J}}$ je enak:
 \end{equation}
 Odvod $\psi$ po $x_1$ označimo kot $\psi^1$:
 \begin{equation}
-   \psi^1 = \frac{1}{|\texttt{J}|} \left(\bar{J}_{11} \phi^1 + \bar{J}_{12} \phi^2 \right) \ .
+   \psi^1 = \left(\bar{J}_{11} \phi^1 + \bar{J}_{12} \phi^2 \right) \ .
 \end{equation}
 Zapisano na konvencionalen način:
 \begin{equation}
-   \frac{\pd \psi}{\pd x} = \frac{1}{|\texttt{J}|} \left(\bar{J}_{11} \frac{\pd \phi}{\pd \xi} + \bar{J}_{12} \frac{\pd \phi}{\pd \eta} \right) \ ,
+   \left(\frac{\pd \psi}{\pd x}\right)_{\mkern-4mu y}
+   =
+   \bar{J}_{11} \mkern-2mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
+   +
+   \bar{J}_{12} \mkern-2mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi} \ ,
 \end{equation}
 oziroma:
 \begin{equation}
-   \frac{\pd \psi}{\pd x} = \frac{1}{|\texttt{J}|} \left(\frac{\pd \xi}{\pd x} \frac{\pd \phi}{\pd \xi} + \frac{\pd \eta}{\pd x} \frac{\pd \phi}{\pd \eta} \right)
+   \left(\frac{\pd \psi}{\pd x} \right)_{\mkern-3mu y}
+   =
+   \left(\frac{\pd \xi}{\pd x} \right)_{\mkern-4mu y}
+      \mkern-4mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
+   +
+   \left(\frac{\pd \eta}{\pd x}\right)_{\mkern-4mu y}
+      \mkern-4mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi}
+\end{equation}
+Če definiramo:
+\begin{equation}
+   \mathbsf{\gimel}
+   =
+   \frac{1}{\det \mathbsf{J}}
+   \begin{pmatrix}
+      1 & 0 & 0 \\
+      0 & +J_{22} & -J_{12} \\
+      0 & -J_{21} & +J_{11}
+   \end{pmatrix} \ ,
+\end{equation}
+lahko zapišemo:
+\begin{equation}
+   \psi^p = \gimel_{pq} \phi^{q} \ .
+   \label{eq:refToEmt}
 \end{equation}
 
 \begin{equation}
-   \psi^{ab} = \widetilde{J}_{bc} \phi^{ac} \quad J_{0c} = 1
+   \sum_i \bra{
+      \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
+         \left(v^a_{\triangleright k} \mkern1mu \psi^\triangleright_a\right)}
+   \ket{
+      \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
+         \left(u^{dl}_\triangleright \mkern1mu \psi^\triangleright_d + u^{dl}_\triangleleft \mkern1mu \psi^\triangleleft_d \right)
+      -
+      (f^{dj}_\triangleright \mkern1mu \psi^\triangleright_d
+      +
+      f^{dj}_\triangleleft \mkern1mu \psi^\triangleleft_d)}
 \end{equation}
+
+\begin{equation*}
+   \sum_i \bra{
+      \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
+         v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
+   \ket{
+      \mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right)
+         \mkern-5mu \left(u^{dl}_\triangleright \mkern1mu \psi^{\triangleright q}_d
+         +
+         u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
+      -
+      f^{dj} \mkern1mu \psi_d}
+\end{equation*}
+Uporabimo povezavo med referenčnim kvadratom in realnim elementom \eqref{eq:refToEmt}: Preuredimo:
+\begin{equation*}
+   \sum_i v^a_{\triangleright k} A^{bp}_{\bowtie \mkern2mu jk} \bra{
+      \psi^{\bowtie}_{b0}
+         \psi^{\triangleright}_{ap} \mkern4mu}
+   \ket{
+      \mkern2mu
+         A^{cqjl}_{\bowtie} \mkern1mu \psi^{\bowtie}_{c0} u^{dl}_\triangleright \mkern1mu \psi^{\triangleright}_{dq}
+         +
+         A^{cqjl}_{\bowtie} \mkern1mu \psi^{\bowtie}_{c0} u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft}_{dq}
+      -
+      f^{dj}_{\bowtie} \mkern1mu \psi^{\bowtie}_{d0}}
+\end{equation*}
+
+\begin{equation*}
+   \sum_i v^a_{\triangleright k} \left(
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+      +
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+      -
+      \left\langle \psi_{b0} \psi_{ap} \psi_{d0} \right\rangle A^{bp}_{\mkern14mu jk} f^{dj}_{\bowtie}
+   \right)
+\end{equation*}
+Definiramo tenzorja $\mathbsf{S^1}$ in $\mathbsf{S^2}$:
+\begin{equation}
+   S^1_{bapcdq} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle
+\end{equation}
+\begin{equation}
+   S^2_{bapd} = \left\langle \psi_{b0} \psi_{ap} \psi_{d0} \right\rangle \ .
+\end{equation}
+Tako imamo:
+\begin{equation}
+   \sum_i v^a_{\triangleright k} \left(
+      S^1_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+      +
+      S^1_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+      -
+      S^2_{bapd} A^{bp}_{\mkern14mu jk} f^{dj}_{\bowtie}
+   \right)
+\end{equation}
+\begin{equation}
+   \sum_i v^a_{\phantom{a}k} A^{bp}_{\phantom{bp}jk} \left( \left\langle \frac{1}{\widetilde{J}_{00}} \phi^{\phantom{b}0}_b \phi^{\phantom{c}0}_c \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \mkern1mu \widetilde{J}_{qs}  \phi^{\phantom{d}s}_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cqjl} u^{dl} \mkern1mu - \mkern1mu \left\langle\phi^{\phantom{b}0}_b \phi^{\phantom{d}0}_d \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^{dj} \mkern2mu \right) = 0
+\end{equation}
+
+Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
+
+Podobno stori za asociirane pare $(i, d)$. Vsota po $l$ bo ponovno imela $m$ seštevancev. Seštevanci iz različnih asociiranih parov z istimi $l$ prispevajo k istemu stolpcu globalne matrike.
+
+To pomeni \(2 \times 2 = 4\) prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
+
+Lahko pa sestavljaš po elementih. $(i, a)$ določi pas vrstic, $k$ določi mesto znotraj pasu. $(i, d)$ določi pas stolpcev, $l$ pa mesto znotraj pasu.
+
+\begin{equation}
+   \mathbsf{\widetilde{J}}
+   =
+   \begin{pmatrix}
+      |\mathbsf{J}| & 0 & 0 \\
+      0 & +J_{22} & -J_{12} \\
+      0 & -J_{21} & +J_{11}
+   \end{pmatrix}
+\end{equation}
+
 
 \begin{equation}
    \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \psi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \psi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \psi^{d0} \frac{\pd}{\pd x_e}\right) \left(u^g_m \mkern1mu \psi^{g0}\right) - f^g_j \mkern1mu \psi^{g0}}
@@ -310,34 +441,4 @@ $\widetilde{J}$ ima posebna ničta elementa: $|\mathbsf{J}|$.
 
 \begin{equation}
    \sum_i \bra{\left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right) \left(v^a_{\phantom{a}k} \mkern1mu \psi_a\right)}\ket{\left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right) \left(u^{dl} \mkern1mu \psi_d\right) - f^{dj} \mkern1mu \psi_d}
-\end{equation}
-
-\begin{equation}
-   \sum_i \bra{\left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right) \left(v^a_{\circ k} \mkern1mu \psi^\circ_a\right)}\ket{\left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right) \left(u^{dl}_\circ \mkern1mu \psi^\circ_d + u^{dl}_\ast \mkern1mu \psi^\ast_d \right) - (f^{dj}_\circ \mkern1mu \psi^\circ_d + f^{dj}_\ast \mkern1mu \psi^\ast_d)}
-\end{equation}
-
-\begin{equation*}
-   \sum_i \bra{\left( A^{bp}_{\mkern14mu jk} \psi_b \right) v^a_{\circ k} \psi^{\circ p}_a \mkern4mu}\ket{\mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right) \mkern-5mu \left(u^{dl}_\circ \mkern1mu \psi^{\circ q}_d + u^{dl}_\ast \mkern1mu \psi^{\ast q}_d \right) - f^{dj} \mkern1mu \psi_d}
-\end{equation*}
-
-\begin{equation}
-   \sum_i v^a_{\phantom{a}k} A^{bp}_{\phantom{bp}jk} \left( \left\langle \frac{1}{\widetilde{J}_{00}} \phi^{\phantom{b}0}_b \phi^{\phantom{c}0}_c \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \mkern1mu \widetilde{J}_{qs}  \phi^{\phantom{d}s}_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cqjl} u^{dl} \mkern1mu - \mkern1mu \left\langle\phi^{\phantom{b}0}_b \phi^{\phantom{d}0}_d \mkern2mu \widetilde{J}_{pr}  \phi^{\phantom{a}r}_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^{dj} \mkern2mu \right) = 0
-\end{equation}
-
-Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
-
-Podobno stori za asociirane pare $(i, d)$. Vsota po $l$ bo ponovno imela $m$ seštevancev. Seštevanci iz različnih asociiranih parov z istimi $l$ prispevajo k istemu stolpcu globalne matrike.
-
-To pomeni \(2 \times 2 = 4\) prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
-
-Lahko pa sestavljaš po elementih. $(i, a)$ določi pas vrstic, $k$ določi mesto znotraj pasu. $(i, d)$ določi pas stolpcev, $l$ pa mesto znotraj pasu.
-
-\begin{equation}
-   \mathbsf{\widetilde{J}}
-   =
-   \begin{pmatrix}
-      |\mathbsf{J}| & 0 & 0 \\
-      0 & +J_{22} & -J_{12} \\
-      0 & -J_{21} & +J_{11}
-   \end{pmatrix}
 \end{equation}
