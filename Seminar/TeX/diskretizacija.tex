@@ -309,14 +309,14 @@ lahko zapišemo:
 \begin{equation}
    \sum_i \bra{
       \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
-         \left(v^a_{\triangleright k} \mkern1mu \psi^\triangleright_a\right)}
+         \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
    \ket{
       \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
-         \left(u^{dl}_\triangleright \mkern1mu \psi^\triangleright_d + u^{dl}_\triangleleft \mkern1mu \psi^\triangleleft_d \right)
+         \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
       -
-      (f^{dj}_\triangleright \mkern1mu \psi^\triangleright_d
+      (f^{dj}_\triangleright \mkern1mu \psi_d
       +
-      f^{dj}_\triangleleft \mkern1mu \psi^\triangleleft_d)}
+      f^{dj}_\triangleleft \mkern1mu \psi_d)}
 \end{equation}
 
 \begin{equation*}
@@ -333,16 +333,16 @@ lahko zapišemo:
 \end{equation*}
 Uporabimo povezavo med referenčnim kvadratom in realnim elementom \eqref{eq:refToEmt}: Preuredimo:
 \begin{equation*}
-   \sum_i v^a_{\triangleright k} A^{bp}_{\bowtie \mkern2mu jk} \bra{
-      \psi^{\bowtie}_{b0}
-         \psi^{\triangleright}_{ap} \mkern4mu}
+   \sum_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
+      \psi_{b0}
+         \psi_{ap} \mkern4mu}
    \ket{
       \mkern2mu
-         A^{cqjl}_{\bowtie} \mkern1mu \psi^{\bowtie}_{c0} u^{dl}_\triangleright \mkern1mu \psi^{\triangleright}_{dq}
+         A^{cqjl} \mkern1mu \psi_{c0} u^{dl}_\triangleright \mkern1mu \psi_{dq}
          +
-         A^{cqjl}_{\bowtie} \mkern1mu \psi^{\bowtie}_{c0} u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft}_{dq}
+         A^{cqjl} \mkern1mu \psi_{c0} u^{dl}_\triangleleft \mkern1mu \psi_{dq}
       -
-      f^{dj}_{\bowtie} \mkern1mu \psi^{\bowtie}_{d0}}
+      f^{dj}_{\bowtie} \mkern1mu \psi_{d0}}
 \end{equation*}
 
 \begin{equation*}
@@ -369,7 +369,7 @@ Tako imamo:
       S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
       -
       T_{bapd} A^{bp}_{\mkern14mu jk} f^{dj}_{\bowtie}
-   \right)
+   \right) = 0 \ .
 \end{equation}
 Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
