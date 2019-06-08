@@ -291,7 +291,7 @@ oziroma:
 \end{equation}
 Če definiramo:
 \begin{equation}
-   \mathbsf{\gimel}
+   \mathbsf{\mathfrak{J}}
    =
    \frac{1}{\det \mathbsf{J}}
    \begin{pmatrix}
@@ -302,25 +302,34 @@ oziroma:
 \end{equation}
 lahko zapišemo:
 \begin{equation}
-   \psi^p = \gimel_{pq} \phi^{q} \ .
+   \psi^p = \mathfrak{J}_{pq} \phi^{q} \ .
    \label{eq:refToEmt}
 \end{equation}
-
+Po vozliščih $(\alpha, \beta, \gamma, \delta \in [1,N])$:
 \begin{equation}
-   \sum_i \bra{
+   \bra{
+      \left(A^{\beta p}_{\phantom{\beta p}jk} \mkern1mu \Psi_\beta \frac{\pd}{\pd x_p}\right)
+         \left(v^\alpha_{\triangleright k} \mkern1mu \Psi_\alpha\right)}
+   \ket{
+      \left(A^{\gamma qjl} \mkern1mu \Psi_\gamma \frac{\pd}{\pd x_q}\right)
+         \left(u^{\delta l}_\triangleright \mkern1mu \Psi_\delta + u^{\delta l}_\triangleleft \mkern1mu \Psi_\delta \right)
+      -
+      f^{\gamma j} \mkern1mu \Psi_\gamma }
+\end{equation}
+Po elementih $(a,b,c,d) \in [1,12]$, kjer je $n$ število elementov.
+\begin{equation}
+   \sum^n_{i} \bra{
       \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
          \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
    \ket{
       \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
          \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
       -
-      (f^{dj}_\triangleright \mkern1mu \psi_d
-      +
-      f^{dj}_\triangleleft \mkern1mu \psi_d)}
+      f^{cj} \mkern1mu \psi_c}
 \end{equation}
-
+Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
 \begin{equation*}
-   \sum_i \bra{
+   \sum^n_i \bra{
       \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
          v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
    \ket{
@@ -329,20 +338,20 @@ lahko zapišemo:
          +
          u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
       -
-      f^{dj} \mkern1mu \psi_d}
+      f^{cj} \mkern1mu \psi_c}
 \end{equation*}
-Uporabimo povezavo med referenčnim kvadratom in realnim elementom \eqref{eq:refToEmt}: Preuredimo:
+Preuredimo:
 \begin{equation*}
-   \sum_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
+   \sum^n_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
       \psi_{b0}
          \psi_{ap} \mkern4mu}
    \ket{
       \mkern2mu
-         A^{cqjl} \mkern1mu \psi_{c0} u^{dl}_\triangleright \mkern1mu \psi_{dq}
+         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleright \psi_{dq}
          +
-         A^{cqjl} \mkern1mu \psi_{c0} u^{dl}_\triangleleft \mkern1mu \psi_{dq}
+         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleleft \psi_{dq}
       -
-      f^{dj}_{\bowtie} \mkern1mu \psi_{d0}}
+      f^{cj}_{\bowtie} \psi_{c0}}
 \end{equation*}
 
 \begin{equation*}
@@ -351,32 +360,80 @@ Uporabimo povezavo med referenčnim kvadratom in realnim elementom \eqref{eq:ref
       +
       \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
       -
-      \left\langle \psi_{b0} \psi_{ap} \psi_{d0} \right\rangle A^{bp}_{\mkern14mu jk} f^{dj}_{\bowtie}
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
    \right)
 \end{equation*}
-Definiramo tenzorja $\mathbsf{S^1}$ in $\mathbsf{S^2}$:
+Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 \begin{equation}
    S_{bapcdq} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle
 \end{equation}
 \begin{equation}
-   T_{bapd} = \left\langle \psi_{b0} \psi_{ap} \psi_{d0} \right\rangle \ .
+   T_{bapc} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle \ .
 \end{equation}
 Tako imamo:
 \begin{equation}
-   \sum_i v^{ak}_{\triangleright} \left(
+   \sum^n_i v^{ak}_{\triangleright} \left(
       S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
       +
       S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
       -
-      T_{bapd} A^{bp}_{\mkern14mu jk} f^{dj}_{\bowtie}
+      T_{bapc} A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
    \right) = 0 \ .
+\end{equation}
+\begin{equation*}
+   \sum^n_i v^{(i,a)k}_{\triangleright} \left(
+      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleright
+      +
+      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleleft
+      -
+      T_{ibapc} A^{(i,b)p}_{\mkern42mu jk} f^{(i,c)j}_{\bowtie}
+   \right) = 0 \ .
+\end{equation*}
+$A^{(i,b)p}_{\mkern42mu jk}$, ipd., dejansko ne obstajajo. Kjerkoli se pojavijo oklepaji, moraš uporabiti preslikavo iz elementarnih v gloablne indekse. Opomba: $S_{ibapcdq}$ seveda obstajajo.
+\begin{IEEEeqnarray*}{c}
+   (i,a) \rightarrow \alpha \\
+   (i,b) \rightarrow \beta \\
+   (i,c) \rightarrow \gamma \\
+   (i,d) \rightarrow \delta
+\end{IEEEeqnarray*}
+\begin{equation*}
+   v^{\alpha k}_{\triangleright} \left(
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      +
+      G_{\alpha k}
+      -
+      H_{\alpha k}
+   \right) = 0 \ .
+\end{equation*}
+\begin{equation*}
+   F_{\alpha k} = H_{\alpha k} - G_{\alpha k} \ .
+\end{equation*}
+\begin{equation*}
+   v^{\alpha k}_{\triangleright} \left(
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      -
+      F_{\alpha k}
+   \right) = 0 \quad \forall v \ .
+\end{equation*}
+Končno:
+\begin{equation}
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      =
+      F_{\alpha k} \ .
 \end{equation}
 Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
-   S_{bapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \gimel_{pr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \gimel_{qs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}}
+   S_{bapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{qs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}}
 \end{equation}
 \begin{equation}
-   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \gimel_{pr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}} \ .
+   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}} \ .
+\end{equation}
+Zapis, primeren za implementacijo:
+\begin{equation}
+   S_{ibapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{iqs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}}
+\end{equation}
+\begin{equation}
+   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu | \mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
 
 Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
