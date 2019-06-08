@@ -207,7 +207,7 @@ namespace Fluid.Internals.Collections {
                int n = inx.Length - 1;
                for(int i = 0; i < n; ++i) {
                   if(!tnr.TryGetValue(inx[i], out tnr))
-                     tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
+                     tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);        // TODO: Make sure structure is assigned by reference here.
                      tnr.Sup.Add(inx[i], tnr); }
                var dict = (TensorBase<Tensor<τ,α>>) tnr;
                dict[inx[n]] = value; }
@@ -305,10 +305,34 @@ namespace Fluid.Internals.Collections {
                      var vec2 = (Vector<τ,α>) tnr2Val;
                      var resAsBase = (TensorBase<Tensor<τ,α>>)res;
                      resAsBase[int_tnr1.Key] = vec1 + vec2; }
-                  else {
-                     res.Add(int_tnr1.Key, int_tnr1.Value); } } }          // Entry does not exist in t2, simply Add.
+                  else
+                     res.Add(int_tnr1.Key, int_tnr1.Value); } }          // Entry does not exist in t2, simply Add.
             return res;
          }
+      }
+      /// <summary>Minus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
+      public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
+         TB.Assert.True(tnr1.Structure.Equals<int, IA>(tnr2.Structure));
+         return Recursion(tnr1, tnr2);
+
+         Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
+            Tensor<τ,α> res = new Tensor<τ,α>(t1, t1.Count + 4);        // Must be a deep copy with a bit of extra capacity.
+            if(t1.Rank > 2) {
+               foreach(var int_tnr2 in t2) {
+                  if(t1.TryGetValue(int_tnr2.Key, out var tnr2Val)) {
+                     var subRes = Recursion(int_tnr2.Value, tnr2Val);
+                     res.Add(int_tnr2.Key, subRes); } } }
+            else {
+               foreach(var int_tnr2 in t2) {
+                  var vec2 = (Vector<τ,α>) int_tnr2.Value;
+                  if(t1.TryGetValue(int_tnr2.Key, out var tnr1Val)) {
+                     var vec1 = (Vector<τ,α>) tnr1Val;
+                     var resAsBase = (TensorBase<Tensor<τ,α>>)res;
+                     resAsBase[int_tnr2.Key] = vec1 - vec2; }
+                  else
+                     res.Add(int_tnr2.Key, -vec2); } }
+            return res;
+        }
       }
       /// <summary>This destroys tnr2, don't use the tnr2 reference afterwards.</summary>
       /// <param name="tnr2">Disposable operand 2 whose elements will be absorbed into the caller.</param>
@@ -360,27 +384,6 @@ namespace Fluid.Internals.Collections {
             return res;
          }
       }
-      ///// <summary>Minus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
-      //public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      //   TB.Assert.True(tnr1.Structure.Equals<int, IA>(tnr2.Structure));
-      //   return Recursion(tnr1, tnr2);
-
-      //   Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
-      //      Tensor<τ,α> res = new Tensor<τ,α>(t1, t1.Count + 4);        // Must be a copy.
-      //      if(t1.Rank > 2) {
-      //         foreach(var int_tnr2 in t2) {
-      //            if(t1.TryGetValue(int_tnr2.Key, out var tnr2Val)) {
-      //               var subRes = Recursion(int_tnr2.Value, tnr2Val);
-      //               res.Add(int_tnr2.Key, subRes); } } }
-      //      else {
-      //         foreach(var int_tnr1 in t2) {
-      //            if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
-      //               var vec1 = (Vector<τ,α>) int_tnr1.Value;
-      //               var vec2 = (Vector<τ,α>) tnr2Val;
-      //               res.Add(int_tnr1.Key, vec1 + vec2); } } }
-      //      return res;
-      //   }
-      //}
       /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
       /// <param name="tnr2">Right-hand operand.</param>
       public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {

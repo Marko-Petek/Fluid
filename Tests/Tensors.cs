@@ -287,6 +287,27 @@ namespace Fluid.Tests {
          var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
          Assert.True(tnr3.Equals(expMat));
       }
+      /// <summary>Subtract two 2nd rank tensors.</summary>
+      [InlineData(
+         1, 2, 3,
+         2, 1, 4,
+         3, 4, 1,
+
+         0, 0, 0,
+         5, 2, 3,
+         2, 1, 0,
+
+         1, 2, 3,
+         -3, -1, 1,
+         1, 3, 1
+      )]
+      [Theory] public void SubTwoTnrs(params int[] data) {
+         var tnr1 = TensorInt.CreateFromArray(data, 9, 0, 3, 0, 3);
+         var tnr2 = TensorInt.CreateFromArray(data, 9, 3, 3, 0, 3);
+         var tnr3 = tnr1 - tnr2;
+         var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
+         Assert.True(tnr3.Equals(expMat));
+      }
       ///// <summary>Dot a 2nd rank tensor with a vector.</summary>
       [InlineData(
          1, 2, 3,
