@@ -622,7 +622,7 @@ namespace Fluid.Internals.Collections {
             return true;
          }                                                         // All values agree within tolerance.
       }
-      #if false // TODO: Implement Merge, Swap and ToString on Tensor.
+      #if false // TODO: Implement Merge and Swap on Tensor.
       /// <summary>Append specified vector to caller.</summary>
       /// <param name="appTnr">Vector to append.</param>
       public void MergeWith(Tensor<τ> appTnr) {

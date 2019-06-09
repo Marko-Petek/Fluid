@@ -199,7 +199,7 @@ namespace Fluid.Tests {
       9,8,5,6, 8,9,0,3)]
       [Theory] public void ElimRank4_2(params int[] data) {
          var structure = data.Take(4).ToArray();
-         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, 4, // FIXME: Creates bad Structure array for vector (as if it was not part of other tensor.)
+         var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, 4,
             16), structure);
          var tnr2 = tnr.ElimRank(2, 1);
          var span = data.Skip(4 + 16).Take(8).ToArray().AsSpan();
@@ -252,19 +252,18 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
-      // TODO: Implement dot two vecs.
-      ///// <summary>Dot (inner product) two vectors.</summary>
-      //[InlineData(2, 1, 3, 5, 2, 3, 21)]
-      //[InlineData(2, 1, 3, 0, 2, 3, 11)]
-      //[InlineData(9, 8, 1, 2, 6, 7, 73)]
-      //[Theory]
-      //public void DotTwoVecs(params int[] data) {  // TODO: Reimplement.
-      //   var vec1 = VectorInt.CreateFromArray(data, 0, 3);
-      //   var vec2 = VectorInt.CreateFromArray(data, 3, 3);
-      //   var expRes = data[6];
-      //   var res = vec1 * vec2;
-      //   Assert.True(res == expRes);
-      //} 
+      /// <summary>Dot (inner product) two vectors.</summary>
+      [InlineData(2, 1, 3, 5, 2, 3, 21)]
+      [InlineData(2, 1, 3, 0, 2, 3, 11)]
+      [InlineData(9, 8, 1, 2, 6, 7, 73)]
+      [Theory]
+      public void DotTwoVecs(params int[] data) {
+        var vec1 = VectorInt.CreateFromArray(data, 0, 3);
+        var vec2 = VectorInt.CreateFromArray(data, 3, 3);
+        var expRes = data[6];
+        var res = vec1 * vec2;
+        Assert.True(res == expRes);
+      } 
 
       /// <summary>Add two 2nd rank tensors.</summary>
       [InlineData(

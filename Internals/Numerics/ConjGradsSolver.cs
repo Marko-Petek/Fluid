@@ -54,7 +54,7 @@ namespace Fluid.Internals.Numerics {
       //    } while(r[i].NormSqr() > maxResidual);
       //    return rowX[i];
       // }
-      public Vector Solve(Vector x0, double maxRes) { // TODO: Implement dot product via contraction.
+      public Vector Solve(Vector x0, double maxRes) {
          throw new NotImplementedException();
 #if false
          int iteration = 0;

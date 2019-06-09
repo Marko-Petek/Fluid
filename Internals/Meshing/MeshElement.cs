@@ -12,7 +12,7 @@ namespace Fluid.Internals.Meshing {
    using dA = DblArithmetic;
    using Tensor = Tensor<double,DblArithmetic>;
    //using FuncMat = Tensor<Func<double,double,double>, NoArithmetic>;
-   // TODO: Convert to class and add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
+   // TODO: Add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
    /// <summary>A quadrilateral element.</summary>
    public class MeshElement {
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds in CCW direction.</summary>

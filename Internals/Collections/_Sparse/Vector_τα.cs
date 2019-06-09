@@ -201,25 +201,10 @@ namespace Fluid.Internals.Collections {
                res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
          return res;
       }
-      #if false   // TODO: Implement Contract on Vector.
       /// <summary>Dot (scalar) product.</summary>
-      public static τ operator *(Tensor1<τ,α> lTnr, Tensor1<τ,α> rTnr) {
-         τ res = default;
-         foreach(var lRowKVPair in lTnr)
-            if(rTnr.TryGetValue(lRowKVPair.Key, out τ rVal))
-               res = Arith.Add(res, Arith.Mul(lRowKVPair.Value, rVal));
-         return res;
-      }
-      public static Tensor1<τ,α> operator *(τ lVal, Tensor1<τ,α> rTnr) {
-         if(!lVal.Equals(default)) {                                                // Not zero.
-            var res = new Tensor1<τ,α>(rTnr.Dim, rTnr.Count);      // Upcast to dictionary so that Dictionary's indexer is used.
-            foreach(var rTnrKV in rTnr)
-               res.Add(rTnrKV.Key, Arith.Mul(rTnrKV.Value, lVal));
-            return res; }
-         else                                                                          // Zero.
-            return new Tensor1<τ,α>(rTnr.Dim);                               // Return empty row.
-      }
-      #endif
+      public static τ operator *(Vector<τ,α> vec1, Vector<τ,α> vec2) =>
+         vec1.Contract(vec2);
+
       /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
       public τ NormSqr() {
          τ res = default;
