@@ -121,8 +121,9 @@ namespace Fluid.Internals.Collections {
          if((mcs & MetaSpecs.Structure) == MetaSpecs.Structure) {
             if((scs & StructureSpecs.RefCopy) == StructureSpecs.RefCopy)
                tgt.Structure = src.Structure;
-            else
-                Array.Copy(src.Structure, tgt.Structure, src.Structure.Length);}
+            else {
+               tgt.Structure = new int[src.Structure.Length];
+               Array.Copy(src.Structure, tgt.Structure, src.Structure.Length); } }
          if((mcs & MetaSpecs.Rank) == MetaSpecs.Rank)
             tgt.Rank = src.Rank;
          if((mcs & MetaSpecs.Sup) == MetaSpecs.Sup)
@@ -207,7 +208,7 @@ namespace Fluid.Internals.Collections {
                int n = inx.Length - 1;
                for(int i = 0; i < n; ++i) {
                   if(!tnr.TryGetValue(inx[i], out tnr))
-                     tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);        // TODO: Make sure structure is assigned by reference here.
+                     tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
                      tnr.Sup.Add(inx[i], tnr); }
                var dict = (TensorBase<Tensor<τ,α>>) tnr;
                dict[inx[n]] = value; }
@@ -292,7 +293,7 @@ namespace Fluid.Internals.Collections {
          return Recursion(tnr1, tnr2);
 
          Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
-            var res = new Tensor<τ,α>(t2, CopySpecs.AddSubtract);            // Must be a deep copy with a bit of extra capacity.
+            var res = new Tensor<τ,α>(t2, CopySpecs.AddSubtract);            // Deep copy with extra capacity, copy structure by value.
             if(t1.Rank > 2) {
                foreach(var int_tnr1 in t1) {
                   if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
