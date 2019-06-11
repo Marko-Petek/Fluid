@@ -193,7 +193,6 @@ namespace Fluid.Internals.Collections {
          (int[] struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
          return ContractPart2(tnr2, truInx2, struc3, conDim);
       }
-
       public τ Contract(Vector<τ,α> vec2) {
          τ res = default;
          foreach(var int_val1 in Vals) {

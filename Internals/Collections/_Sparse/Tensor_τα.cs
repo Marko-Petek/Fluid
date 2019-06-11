@@ -567,6 +567,48 @@ namespace Fluid.Internals.Collections {
          return ContractPart2(tnr2, truInx1, truInx2, struc3, conDim);
       }
 
+      // TODO; Implement and test self-contract (applicable to rank 2 and above). Then finish ConjugateGrads.
+      /// <summary>Use on rank 2 tensor.</summary>
+      /// <param name="natInx1">First one-based natural index on this tensor over which to contract.</param>
+      /// <param name="natInx2">Second one-based natural index on this tensor over which to contract.</param>
+      public τ SelfContractR2() {
+         TB.Assert.True(Rank == 2, "Tensor rank has to be 2 for this method.");
+         TB.Assert.True(Structure[0] == Structure[1], "Corresponding dimensions have to be equal.");
+         τ result = default;
+         foreach(var int_vec in this) {
+            var vec = (Vector<τ,α>) int_vec.Value;
+            if(vec.Vals.TryGetValue(int_vec.Key, out τ val))
+               result = O<τ,α>.A.Add(result, val); }
+         return result;
+      }
+
+      public Vector<τ,α> SelfContractR3(int natInx1, int natInx2) {
+         TB.Assert.True(Rank == 3, "Tensor rank has to be 3 for this method.");
+         TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
+            "Corresponding dimensions have to be equal.");
+         Vector<τ,α> res = new Vector<τ,α>(new int[] {Structure[2]}, null, 4);
+         int truInx1 = ToTrueRank(natInx1);
+         int truInx2 = ToTrueRank(natInx2);
+         if(natInx1 == 1) {
+            if(natInx2 == 2) {
+               foreach(var int_tnr in this) {
+                  if(int_tnr.Value.TryGetValue(int_tnr.Key, out var subTnr)) {
+                     var vec = (Vector<τ,α>) subTnr;
+                     res.Add(vec); } } }
+            if(natInx2 == 3) {
+               foreach(var int_tnr in this) {
+                  foreach(var int_subTnr in int_tnr.Value) {
+                     var subVec = (Vector<τ,α>) int_subTnr.Value;
+                     if(subVec.Vals.TryGetValue(int_tnr.Key, out τ val))
+                        res.Vals[int_subTnr.Key] = O<τ,α>.A.Add(res[int_subTnr.Key], val); } } } }
+         else if(natInx1 == 2) {                   // natInx2 == 3
+            foreach(var int_tnr in this) {
+               foreach(var int_subTnr in int_tnr.Value) {
+                  var subVec = (Vector<τ,α>) int_subTnr.Value;
+                  if(subVec.Vals.TryGetValue(int_subTnr.Key, out τ val))
+                     res.Vals[int_tnr.Key] = O<τ,α>.A.Add(res[int_tnr.Key], val); } } }
+         return res;
+      }
 
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {
@@ -622,38 +664,38 @@ namespace Fluid.Internals.Collections {
             return true;
          }                                                         // All values agree within tolerance.
       }
-      #if false // TODO: Implement Merge and Swap on Tensor.
-      /// <summary>Append specified vector to caller.</summary>
-      /// <param name="appTnr">Vector to append.</param>
-      public void MergeWith(Tensor<τ> appTnr) {
-         Dim += appTnr.Dim;                                      // Readjust width.
-         foreach(var kvPair in appTnr)
-            this[kvPair.Key] = kvPair.Value;
-      }
-      /// <summary>Swap two R1 elements specified by indices.</summary>
-      /// <param name="inx1">First element index.</param>
-      /// <param name="inx2">Second element index.</param>
-      public void Swap(int inx1, int inx2) {
-         bool firstExists = TryGetValue(inx1, out τ val1);
-         bool secondExists = TryGetValue(inx2, out τ val2);
-         if(firstExists) {
-            if(secondExists) {
-               base[inx1] = val2;
-               base[inx2] = val1; }
-            else {
-               Remove(inx1);                                   // Element at inx1 becomes 0 and is removed.
-               Add(inx2, val1); } }
-         else if(secondExists) {
-            Add(inx1, val2);
-            Remove(inx2); }                                   // Else nothing happens, both are 0.
-      }
-      /// <summary>Apply element swaps as specified by a swap vector.</summary>
-      /// <param name="swapVec">Vector where an element at index i with integer value j instructs a permutation i->j.</param>
-      public void ApplySwaps(Tensor<int> swapVec) {
-         foreach(var kVPair in swapVec)
-            Swap(kVPair.Key, kVPair.Value);   
-      }
-      #endif
+      // #if false // TODO: Implement Merge and Swap on Tensor.
+      // /// <summary>Append specified vector to caller.</summary>
+      // /// <param name="appTnr">Vector to append.</param>
+      // public void MergeWith(Tensor<τ> appTnr) {
+      //    Dim += appTnr.Dim;                                      // Readjust width.
+      //    foreach(var kvPair in appTnr)
+      //       this[kvPair.Key] = kvPair.Value;
+      // }
+      // /// <summary>Swap two R1 elements specified by indices.</summary>
+      // /// <param name="inx1">First element index.</param>
+      // /// <param name="inx2">Second element index.</param>
+      // public void Swap(int inx1, int inx2) {
+      //    bool firstExists = TryGetValue(inx1, out τ val1);
+      //    bool secondExists = TryGetValue(inx2, out τ val2);
+      //    if(firstExists) {
+      //       if(secondExists) {
+      //          base[inx1] = val2;
+      //          base[inx2] = val1; }
+      //       else {
+      //          Remove(inx1);                                   // Element at inx1 becomes 0 and is removed.
+      //          Add(inx2, val1); } }
+      //    else if(secondExists) {
+      //       Add(inx1, val2);
+      //       Remove(inx2); }                                   // Else nothing happens, both are 0.
+      // }
+      // /// <summary>Apply element swaps as specified by a swap vector.</summary>
+      // /// <param name="swapVec">Vector where an element at index i with integer value j instructs a permutation i->j.</param>
+      // public void ApplySwaps(Tensor<int> swapVec) {
+      //    foreach(var kVPair in swapVec)
+      //       Swap(kVPair.Key, kVPair.Value);   
+      // }
+      // #endif
       /// <summary>Create a string of all non-zero elements in form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}.</summary>
       public override string ToString() {
          StringBuilder sb = new StringBuilder(72);

@@ -207,6 +207,45 @@ namespace Fluid.Tests {
          Assert.True(tnr2.Equals(expRes));
       }
 
+      [InlineData(3,6, 2,5,  6,0, 4,7,   7,13)]
+      [InlineData(4,2, 7,5,  6,2, 6,4,   10,6)]
+      [InlineData(24,51, 30,42, 18,39, 22,32,   46,83)]
+      [InlineData(24,42, 36,36, 30,63, 38,52,   62,94)]
+      [Theory] public void SelfContractR3_12(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 2);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var expRes = TensorInt.CreateFromFlatSpec(span2, 2);
+         var res = tnr1.SelfContractR3(1,2);
+         Assert.True(res.Equals(expRes));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,   3,9)]
+      [InlineData(4,2, 7,5,  6,2, 6,4,   6,11)]
+      [InlineData(24,51, 30,42, 18,39, 22,32,   63,62)]
+      [InlineData(24,42, 36,36, 30,63, 38,52,   87,88)]
+      [Theory] public void SelfContractR3_13(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 2);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var expRes = TensorInt.CreateFromFlatSpec(span2, 2);
+         var res = tnr1.SelfContractR3(1,3);
+         Assert.True(res.Equals(expRes));
+      }
+
+      [InlineData(3,6, 2,5,  6,0, 4,7,   8,13)]
+      [InlineData(4,2, 7,5,  6,2, 6,4,   9,10)]
+      [InlineData(24,51, 30,42, 18,39, 22,32,   66,50)]
+      [InlineData(24,42, 36,36, 30,63, 38,52,   60,82)]
+      [Theory] public void SelfContractR3_23(params int[] data) {
+         var span1 = new Span<int>(data, 0, 8);
+         var span2 = new Span<int>(data, 8, 2);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 2,2,2);
+         var expRes = TensorInt.CreateFromFlatSpec(span2, 2);
+         var res = tnr1.SelfContractR3(2,3);
+         Assert.True(res.Equals(expRes));
+      }
+
       [InlineData(1,3, 1,3,            // Specs: Rank, dims, rank, dims
          1,5,6, 6,5,2,                 // Operands
          6,5,2, 30,25,10, 36,30,12)]   // Expected result.
@@ -250,6 +289,16 @@ namespace Fluid.Tests {
          var structure3 = structure1.Concat(structure2).ToArray();
          var expRes = Tensor<int,IA>.CreateFromFlatSpec(span3, structure3);
          Assert.True(res.Equals(expRes));
+      }
+      [InlineData(5,3,2, 7,6,9, 0,4,2,  13)]
+      [InlineData(3,1,0, 4,2,8, 7,2,3,  8)]
+      [InlineData(8,4,2, 11,8,17, 7,6,5,  21)]
+      [Theory] public void SelfContractR2(params int[] data) {
+         var span1 = new Span<int>(data, 0, 9);
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, new int[] {3,3});
+         var res = tnr1.SelfContractR2();
+         var expRes = data[9];
+         Assert.True(res == expRes);
       }
 
       /// <summary>Dot (inner product) two vectors.</summary>
