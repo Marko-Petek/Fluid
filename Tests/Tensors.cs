@@ -464,7 +464,7 @@ namespace Fluid.Tests {
       [InlineData(
          5,5,3, 2,7,1,  6,5,0, 0,7,5,           // R3: 2,2,3
          11,10,3, 2,14,6)]                      // R2: 2,3.
-       [Theory] public void RankEnumerator(params int[] data) {
+       [Theory] public void RankEnumerator1(params int[] data) {
           var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,12), 2,2,3);
           var res = new TensorInt(new int[] {2,3});
           var erator = tnr.RXEnumerator(2);
@@ -472,6 +472,20 @@ namespace Fluid.Tests {
              res = res + erator.Current;
           }
           var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(12,6), 2,3);
+          Assert.True(res.Equals(expRes));
+       }
+
+       [InlineData(
+         5,5, 3,2,  7,1, 6,5,   0,0, 7,5,  4,2, 8,9,           // R4: 2,2,2,2
+         16,8, 24,21)]                                         // R2: 2,2
+       [Theory] public void RankEnumerator2(params int[] data) {
+          var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,16), 2,2,2,2);
+          var res = new TensorInt(new int[] {2,2});
+          var erator = tnr.RXEnumerator(2);
+          while(erator.MoveNext()) {
+             res = res + erator.Current;
+          }
+          var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(16,4), 2,2);
           Assert.True(res.Equals(expRes));
        }
 
