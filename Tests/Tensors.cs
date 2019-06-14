@@ -295,7 +295,7 @@ namespace Fluid.Tests {
       [InlineData(8,4,2, 11,8,17, 7,6,5,  21)]
       [Theory] public void SelfContractR2(params int[] data) {
          var span1 = new Span<int>(data, 0, 9);
-         var tnr1 = TensorInt.CreateFromFlatSpec(span1, new int[] {3,3});
+         var tnr1 = TensorInt.CreateFromFlatSpec(span1, 3,3);
          var res = tnr1.SelfContractR2();
          var expRes = data[9];
          Assert.True(res == expRes);
@@ -459,6 +459,20 @@ namespace Fluid.Tests {
          var res = num * mat;
          var expRes = TensorInt.CreateFromFlatSpec(slc2,3,3);
          Assert.True(res.Equals(expRes));
+       }
+
+      [InlineData(
+         5,5,3, 2,7,1,  6,5,0, 0,7,5,           // R3: 2,2,3
+         11,10,3, 2,14,6)]                      // R2: 2,3.
+       [Theory] public void RankEnumerator(params int[] data) {
+          var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,12), 2,2,3);
+          var res = new TensorInt(new int[] {2,3});
+          var erator = tnr.RXEnumerator(2);
+          while(erator.MoveNext()) {
+             res = res + erator.Current;
+          }
+          var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(12,6), 2,3);
+          Assert.True(res.Equals(expRes));
        }
 
       ///// <summary>Test wether column swapping in SparseMatrix functions correctly.</summary>
