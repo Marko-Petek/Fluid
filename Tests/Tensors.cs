@@ -468,9 +468,8 @@ namespace Fluid.Tests {
           var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,12), 2,2,3);
           var res = new TensorInt(new int[] {2,3});
           var erator = tnr.RXEnumerator(2);
-          while(erator.MoveNext()) {
+          while(erator.MoveNext())
              res = res + erator.Current;
-          }
           var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(12,6), 2,3);
           Assert.True(res.Equals(expRes));
        }
@@ -482,9 +481,8 @@ namespace Fluid.Tests {
           var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,16), 2,2,2,2);
           var res = new TensorInt(new int[] {2,2});
           var erator = tnr.RXEnumerator(2);
-          while(erator.MoveNext()) {
+          while(erator.MoveNext())
              res = res + erator.Current;
-          }
           var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(16,4), 2,2);
           Assert.True(res.Equals(expRes));
        }

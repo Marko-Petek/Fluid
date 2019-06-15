@@ -618,7 +618,7 @@ namespace Fluid.Internals.Collections {
       }
 
       public Tensor<τ,α> SelfContract(int natInx1, int natInx2) {
-         throw new NotImplementedException();
+         //throw new NotImplementedException();
          TB.Assert.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
          TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
             "Dimensions of contracted slots have to be equal.");
@@ -630,9 +630,10 @@ namespace Fluid.Internals.Collections {
             var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
             var truInx1 = ToTrueRank(natInx1);
             var truInx2 = ToTrueRank(natInx2);
-            
             int n = Structure[natInx1 - 1];
-            //for(int)                            // First implement rank enumerator.
+            // Copy until you reach rank of truInx1, call it rank 1. Let's say there are n tensors at that rank. Reduce ranks by 2 and assigns new structure.
+            // Do the following for each tensor T at rank 1: eliminate rank at truInx2, call it rank 2, in favor of the tensor which sits at the index where T sits in its parent.
+            // Add all such contractions together. This is the result.
          }
          else
             return SelfContractR3(natInx1, natInx2);
