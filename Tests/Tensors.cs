@@ -246,6 +246,16 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
+      [InlineData(
+         5,5, 3,2,  7,1, 6,5,   0,0, 7,5,  4,2, 8,9,           // R4: 2,2,2,2
+         7,12, 5,13)]                                          // R2: 2,2
+      [Theory] public void SelfContractR4_34(params int[] data) {                // Contract rank 4 tensor overs slots 3 and 4.
+         var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,16), 2,2,2,2);
+         var res = tnr.SelfContract(3,4);
+         var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(16,4), 2,2);
+         Assert.True(res.Equals(expRes));
+      }
+
       [InlineData(1,3, 1,3,            // Specs: Rank, dims, rank, dims
          1,5,6, 6,5,2,                 // Operands
          6,5,2, 30,25,10, 36,30,12)]   // Expected result.

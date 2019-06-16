@@ -630,10 +630,67 @@ namespace Fluid.Internals.Collections {
             var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
             var truInx1 = ToTrueRank(natInx1);
             var truInx2 = ToTrueRank(natInx2);
-            int n = Structure[natInx1 - 1];
-            // Copy until you reach rank of truInx1, call it rank 1. Let's say there are n tensors at that rank. Reduce ranks by 2 and assigns new structure.
-            // Do the following for each tensor T at rank 1: eliminate rank at truInx2, call it rank 2, in favor of the tensor which sits at the index where T sits in its parent.
+            //int n = Structure[natInx1 - 1];
+            Recursion(this, res);
+            return res;
+
+            // Copy until you reach rank of truInx1, call it rank A. Let's say there are n tensors at that rank. Reduce ranks by 2 and assigns new structure.
+            // Do the following for each tensor T at rank A: eliminate rank at truInx2, call it rank 2, in favor of the tensor which sits at the index where T sits in its parent.
             // Add all such contractions together. This is the result.
+
+            void Recursion(Tensor<τ,α> src, Tensor<τ,α> tgt) {
+               if(src.Rank > truInx1 + 2) {                          // 3 ranks (or more) above rank that is contracted first.
+                  foreach(var int_tnr in src) {
+                     var newSubTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
+                     tgt.Add(int_tnr.Key, newSubTnr);
+                     Recursion(int_tnr.Value, newSubTnr);
+                  }
+               }
+               else {                                                // We are 2 ranks above contracted rank (src has tensors which have tensors to contract). 
+                  if(truInx2 != 0) {                                 // We can make use of elimRank method.
+                     foreach(var int_tnr in src) {                      // for each tensor S in source we have to create a new tensors that will be a contraction of its elements. We then put it in place where S used to sit.
+                        var newTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
+                        foreach(var int_subTnr in int_tnr.Value) {         // We have to sum these guys together after we have eliminated the appropriate rank on each of them.
+                           var sumand = int_subTnr.Value.ElimRank(truInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
+                           newTnr.Add(sumand);
+                        }
+                        tgt.Add(int_tnr.Key, newTnr);
+                     }
+                  }
+                  else {                                             // truInx2 == 0, we have to eliminate by hand.
+                     if(src.Rank > 3) {                              // Still only copy.
+
+                     }
+                     foreach(var int_tnr in src) {                      // for each tensor S in source we have to create a new tensors that will be a contraction of its elements. We then put it in place where S used to sit.
+                        var newTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
+                        foreach(var int_subTnr in int_tnr.Value) {         // We have to sum these guys together after we have eliminated the appropriate rank on each of them.
+                           var sumand = int_subTnr.Value.ElimRank(truInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
+                           newTnr.Add(sumand);
+                        }
+                        tgt.Add(int_tnr.Key, newTnr);
+                     }
+
+                     void InnerRecursion(Tensor<τ,α> srcI, Tensor<τ,α> tgtI, int elimEmt) {      // Initiates (at rank 3) when we have reached three ranks above truInx2 (which is 0 in this case). Make little one element vectors.
+                        foreach(var int_tnrR2 in srcI) {
+                           var vecReplacement = new Vector<τ,α>(newStruct, tgtI, 6);
+                            
+                           foreach(var int_tnrR1 in int_tnrR2.Value) {
+                              var vec = (Vector<τ,α>) int_tnrR1.Value;
+                              if(vec.Vals.TryGetValue(elimEmt, out τ val)) {
+                                 vec.Add(elimEmt, val);
+                              }
+                           }
+
+                           if(vecReplacement.Count != 0) {
+                              tgtI.Add(int_tnrR2.Key, vecReplacement);
+                           }
+                        }
+                           
+                     }
+                  }
+                  
+               }
+            }
          }
          else
             return SelfContractR3(natInx1, natInx2);
