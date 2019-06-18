@@ -438,14 +438,14 @@ namespace Fluid.Internals.Collections {
          else if(elimRank > 1) {                                                       // Sub-highest possible rank of at least 2 eliminated. Applicable only for Rank 4 or higher tensors.
             var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             if(Rank > 3) {                                                              // No special treatment due to Vector needed.
-               RecursiveCopy(emtInx, this, res, elimRank + 2);
+               RecursiveCopy(this, res, emtInx, elimRank + 2);
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1,2,3 tensor with this branch."); }
          else if(elimRank == 1) {                                                      // Sub-highest possible rank of 1 eliminated. Applicable only to rank 3 or higher tensors.
             var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             if(Rank > 2) {                                                             // Result is tensor.
-               RecursiveCopy(emtInx, this, res, 3);                    // ElimRank == 1 so we always stop at 3.
+               RecursiveCopy(this, res, emtInx, 3);                    // ElimRank == 1 so we always stop at 3.
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
@@ -466,21 +466,26 @@ namespace Fluid.Internals.Collections {
           
       }
 
-      void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
-         foreach(var int_tnr in src) {
-            if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
-               var subTnrCopy = subTnr.Copy(in CopySpecs.S35200);
-               tgt.Add(int_tnr.Key, subTnrCopy); } } }
-
-      static void RecursiveCopy(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx, int stop) {      // Recursively copies tensors.
-         if(src.Rank > stop) {
+      static void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
+          }
+      /// <summary>Can only be used to eliminate rank 3 or higher. Provided target has to be initiated one rank lower than source.</summary>
+      /// <param name="src">Source tensor whose rank we are eliminating.</param>
+      /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
+      /// <param name="emtInx">Element index in favor of which we are eliminating.</param>
+      /// <param name="elimRank"></param>
+      static void RecursiveCopy(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx, int elimRank) {      // Recursively copies tensors.
+         if(src.Rank > elimRank + 1) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
             foreach(var int_tnr in src) {
             var subTnr = new Tensor<τ,α>(tgt, src.Count);
-            RecursiveCopy(emtInx, int_tnr.Value, subTnr, stop);
+            RecursiveCopy(int_tnr.Value, subTnr, emtInx, elimRank);
             if(subTnr.Count != 0)
                tgt.Add(int_tnr.Key, subTnr); } }
-         else
-            TnrElimination(emtInx, src, tgt); }
+         else                                                              // We have reached rank directly above rank scheduled for elimination: eliminate.
+            foreach(var int_tnr in src) {
+            if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
+               var subTnrCopy = subTnr.Copy(in CopySpecs.S35200);
+               tgt.Add(int_tnr.Key, subTnrCopy); } }
+      }
 
       /// <summary>Eliminates rank 0 on a rank 2 tensor, resulting in a rank 1 tensor (vector),</summary>
       /// <param name="src">Rank 2 tensor.</param>
