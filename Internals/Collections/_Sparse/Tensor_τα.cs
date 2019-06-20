@@ -1,3 +1,38 @@
+/*
+   ____             _      ___           _ _               
+  |  _ \ __ _ _ __ | | __ |_ _|_ __   __| (_) ___ ___  ___ 
+  | |_) / _` | '_ \| |/ /  | || '_ \ / _` | |/ __/ _ \/ __|
+  |  _ < (_| | | | |   <   | || | | | (_| | | (_|  __/\__ \
+  |_| \_\__,_|_| |_|_|\_\ |___|_| |_|\__,_|_|\___\___||___/
+                                                           
+   We have two notations for rank indices. Let N be the tensor's top rank:
+   - Slot notation:
+      [1, N] which is how mathematicians would assign ordering to tensor's slots.
+   - Rank notation:
+      [0, N-1] where the value corresponds to the rank of tensors held by that slot.
+   
+   Relation between notations:
+   Slot 1 holds tensors of rank N-1.
+   Slot 2 holds tensors of rank N-2.
+   ...
+   Slot N-1 holds tensors of rank 1.
+   Slot N holds tensors of rank 0.
+
+   Relation is therefore: R = N - S  or  S = N - R.
+ 
+   ____             _        ____          _            _   _             
+  |  _ \ __ _ _ __ | | __   |  _ \ ___  __| |_   _  ___| |_(_) ___  _ __  
+  | |_) / _` | '_ \| |/ /   | |_) / _ \/ _` | | | |/ __| __| |/ _ \| '_ \ 
+  |  _ < (_| | | | |   <    |  _ <  __/ (_| | |_| | (__| |_| | (_) | | | |
+  |_| \_\__,_|_| |_|_|\_\   |_| \_\___|\__,_|\__,_|\___|\__|_|\___/|_| |_|
+                                                                          
+                                                                               
+   Rank reduction reduces a tensor's rank(R) by 1, therefore input tensor has to be at least R2. We eliminate a single rank in favor of an element(E) inside that rank at a specific index. Let's say we eliminate R2 in favor of E3. Imagine the whole tensor as a hierarchy, specifically, imagine R4 tensors laid out in a line as nodes, below them all R3 tensors and below those all R2 tensors as nodes. R3 tensors are connected to their respective R4 superiors and R2 tensors to their respective R3 superiors. We stop by each R3 node and choose its subordinate R2E3 (its whole branch). Now we substitute the R3 tensor we stopped by, with the chosen R2 tensor. That means each rank 3 node is removed and replaced by the chosen R2 subordinate. Therefore R3 becomes R2 and R4 becomes R3 - the whole tensor's rank is reduced by 1.
+
+   
+
+*/
+
 using System;
 using System.Text;
 using System.Linq;
@@ -5,10 +40,6 @@ using SCG = System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
-
-// We have two notations for rank indices:
-// 1) Natural index notation [1, N] which is how mathematicians would assign ordering to indices written above symbols. Here N is the rank of top tensor. E.g. A^ij...kl ˇ~~> i -> 1, j -> 2, ..., k-> N - 1. l -> N.
-// 2) True index notation [1, N], but now the value corresponds to the rank of indexed elements. E.g. A^ij...kl ˇ~~> l -> 0, k -> 1, ..., j -> N - 2, i -> N - 1.
 
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
