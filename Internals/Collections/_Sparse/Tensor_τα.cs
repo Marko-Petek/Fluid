@@ -454,37 +454,37 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
       /// <param name="elimRank"> True, zero-based rank index of rank to be eliminated.</param>
-      /// <param name="emtInx">Zero-based element index in that rank.</param>
+      /// <param name="emtInx">Zero-based element index in that rank in favor of which the elimination will take place.</param>
       public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
          TB.Assert.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
 
-         if(elimRank == Rank - 1) {                                                    // Higest possible rank eliminated == Pick one.
+         if(elimRank == Rank - 1) {                                                    // 1 rank exists above elimRank == Pick one from elimRank and return it.
             if(Rank > 1) {                                                             // Result is Tensor, top tensor at least rank 3.
                if(TryGetValue(emtInx, out var subTnr)) {                                   // Sought after subordinate exists.
                   var newTnr = subTnr.Copy(in CopySpecs.S35200);                          // Works properly even for Vector.
                   newTnr.Structure = newStructure;
                   return newTnr;}
                return null; }
-            else                                       // Rank <= 1: impossible.
+            else                                                                                      // Rank <= 1: impossible.
                throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
-         else if(elimRank > 1) {                                                       // Sub-highest possible rank of at least 2 eliminated. Applicable only for Rank 4 or higher tensors.
+         else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
             var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             if(Rank > 3) {                                                              // No special treatment due to Vector needed.
                RecursiveCopy(this, res, emtInx, elimRank + 2);
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1,2,3 tensor with this branch."); }
-         else if(elimRank == 1) {                                                      // Sub-highest possible rank of 1 eliminated. Applicable only to rank 3 or higher tensors.
+         else if(elimRank == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
             var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             if(Rank > 2) {                                                             // Result is tensor.
                RecursiveCopy(this, res, emtInx, 3);                    // ElimRank == 1 so we always stop at 3.
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
-         else {                                          // Sub-highest possible rank of 0 being eliminated. Applicable only to rank 2 or higher tensors.
+         else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
             if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
                var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
                ElimR0_R3Plus(this, res, emtInx);
@@ -495,10 +495,6 @@ namespace Fluid.Internals.Collections {
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
-
-         
-
-          
       }
 
       // static void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
@@ -672,21 +668,21 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
-      public Tensor<τ,α> SelfContract(int natInx1, int natInx2) {
+      public Tensor<τ,α> SelfContract(int slotInx1, int slotInx2) {
          //throw new NotImplementedException();
          TB.Assert.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
-         TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
+         TB.Assert.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1],
             "Dimensions of contracted slots have to be equal.");
          if(Rank > 3) {
-            var newStruct1 = Structure.Take(natInx1 - 1);
-            var newStruct2 = Structure.Take(natInx2 - 1).Skip(natInx1);
-            var newStruct3 = Structure.Skip(natInx2);
+            var newStruct1 = Structure.Take(slotInx1 - 1);
+            var newStruct2 = Structure.Take(slotInx2 - 1).Skip(slotInx1);
+            var newStruct3 = Structure.Skip(slotInx2);
             var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToArray();
             var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
-            var truInx1 = ToRankNotation(natInx1);
-            var truInx2 = ToRankNotation(natInx2);
+            var rankInx1 = ToRankNotation(slotInx1);
+            var rankInx2 = ToRankNotation(slotInx2);
             //int n = Structure[natInx1 - 1];
-            if(truInx2 != 0)
+            if(rankInx2 != 0)
                Recursion1(this, res);
             else
                Recursion2(this, res);
@@ -697,7 +693,7 @@ namespace Fluid.Internals.Collections {
             // Add all such contractions together. This is the result.
 
             void Recursion1(Tensor<τ,α> src, Tensor<τ,α> tgt) {         // truInx2 != 0  We can make use of elimRank method.
-               if(src.Rank > truInx1 + 2) {                          // 3 ranks (or more) above rank that is contracted first. Only copy, decreasing ranks by 2.
+               if(src.Rank > rankInx1 + 2) {                          // 3 ranks (or more) above rank that is contracted first. Only copy, decreasing ranks by 2.
                   foreach(var int_tnr in src) {
                      var newSubTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
                      tgt.Add(int_tnr.Key, newSubTnr);
@@ -706,7 +702,7 @@ namespace Fluid.Internals.Collections {
                   foreach(var int_tnr in src) {                      // for each tensor S in source we have to create a new tensors that will be a contraction of its elements. We then put it in place where S used to sit.
                      var newTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
                      foreach(var int_subTnr in int_tnr.Value) {         // We have to sum these guys together after we have eliminated the appropriate rank on each of them.
-                        var sumand = int_subTnr.Value.ReduceRank(truInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
+                        var sumand = int_subTnr.Value.ReduceRank(rankInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
                         newTnr.Add(sumand); }
                      tgt.Add(int_tnr.Key, newTnr); } }
             }
@@ -724,7 +720,7 @@ namespace Fluid.Internals.Collections {
             }
          }
          else
-            return SelfContractR3(natInx1, natInx2);
+            return SelfContractR3(slotInx1, slotInx2);
       }
 
       public Tensor<τ,α> SelfContractR4_34() {
