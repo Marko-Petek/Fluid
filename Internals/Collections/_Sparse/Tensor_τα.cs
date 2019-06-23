@@ -1,10 +1,10 @@
-/*
-   ____             _      ___           _ _               
-  |  _ \ __ _ _ __ | | __ |_ _|_ __   __| (_) ___ ___  ___ 
-  | |_) / _` | '_ \| |/ /  | || '_ \ / _` | |/ __/ _ \/ __|
-  |  _ < (_| | | | |   <   | || | | | (_| | | (_|  __/\__ \
-  |_| \_\__,_|_| |_|_|\_\ |___|_| |_|\__,_|_|\___\___||___/
-                                                           
+/*  
+ ██████╗  █████╗ ███╗   ██╗██╗  ██╗    ██╗███╗   ██╗██████╗ ██╗ ██████╗███████╗███████╗
+ ██╔══██╗██╔══██╗████╗  ██║██║ ██╔╝    ██║████╗  ██║██╔══██╗██║██╔════╝██╔════╝██╔════╝
+ ██████╔╝███████║██╔██╗ ██║█████╔╝     ██║██╔██╗ ██║██║  ██║██║██║     █████╗  ███████╗
+ ██╔══██╗██╔══██║██║╚██╗██║██╔═██╗     ██║██║╚██╗██║██║  ██║██║██║     ██╔══╝  ╚════██║
+ ██║  ██║██║  ██║██║ ╚████║██║  ██╗    ██║██║ ╚████║██████╔╝██║╚██████╗███████╗███████║
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝ ╚═════╝╚══════╝╚══════╝
    We have two notations for rank indices. Let N be the tensor's top rank:
    - Slot notation:
       [1, N] which is how mathematicians would assign ordering to tensor's slots.
@@ -19,18 +19,22 @@
    Slot N holds tensors of rank 0.
 
    Relation is therefore: R = N - S  or  S = N - R.
- 
-   ____             _        ____          _            _   _             
-  |  _ \ __ _ _ __ | | __   |  _ \ ___  __| |_   _  ___| |_(_) ___  _ __  
-  | |_) / _` | '_ \| |/ /   | |_) / _ \/ _` | | | |/ __| __| |/ _ \| '_ \ 
-  |  _ < (_| | | | |   <    |  _ <  __/ (_| | |_| | (__| |_| | (_) | | | |
-  |_| \_\__,_|_| |_|_|\_\   |_| \_\___|\__,_|\__,_|\___|\__|_|\___/|_| |_|
-                                                                          
-                                                                               
+    
+ ██████╗  █████╗ ███╗   ██╗██╗  ██╗    ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗
+ ██╔══██╗██╔══██╗████╗  ██║██║ ██╔╝    ██╔══██╗██╔════╝██╔══██╗██║   ██║██╔════╝╚══██╔══╝██║██╔═══██╗████╗  ██║
+ ██████╔╝███████║██╔██╗ ██║█████╔╝     ██████╔╝█████╗  ██║  ██║██║   ██║██║        ██║   ██║██║   ██║██╔██╗ ██║
+ ██╔══██╗██╔══██║██║╚██╗██║██╔═██╗     ██╔══██╗██╔══╝  ██║  ██║██║   ██║██║        ██║   ██║██║   ██║██║╚██╗██║
+ ██║  ██║██║  ██║██║ ╚████║██║  ██╗    ██║  ██║███████╗██████╔╝╚██████╔╝╚██████╗   ██║   ██║╚██████╔╝██║ ╚████║
+ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚══════╝╚═════╝  ╚═════╝  ╚═════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
    Rank reduction reduces a tensor's rank(R) by 1, therefore input tensor has to be at least R2. We eliminate a single rank in favor of an element(E) inside that rank at a specific index. Let's say we eliminate R2 in favor of E3. Imagine the whole tensor as a hierarchy, specifically, imagine R4 tensors laid out in a line as nodes, below them all R3 tensors and below those all R2 tensors as nodes. R3 tensors are connected to their respective R4 superiors and R2 tensors to their respective R3 superiors. We stop by each R3 node and choose its subordinate R2E3 (its whole branch). Now we substitute the R3 tensor we stopped by, with the chosen R2 tensor. That means each rank 3 node is removed and replaced by the chosen R2 subordinate. Therefore R3 becomes R2 and R4 becomes R3 - the whole tensor's rank is reduced by 1.
 
-   
+   Lowest rank we can eliminate: 0. Choose a R0Ei element for each R1Ej, wipe out entire R1 line this way. If R0Ej had a superior, add R0E1 to it.
+   Highest rank we can eliminate: N. Choose the RNEi element and return it.
 
+   Elimination process is dependent on how many ranks exist abouve the eliminated rank i:
+      2+: Choose a RiEx element on each RjEy, let RiEx take RjEy's place. Wipe out entire Rj line this way. Add RiEx to RjEy's superior RkEz.
+      1: Choose a RiEx element on RNE0 (the only element) and return it.
+      0: Throw exception.
 */
 
 using System;
@@ -201,7 +205,7 @@ namespace Fluid.Internals.Collections {
             return Recursion(slice, 0);
 
          Tensor<τ,α> Recursion(Span<τ> slc, int dim) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
-            int trueRank = NatRankToTrueRank(structure.Length, dim);
+            int trueRank = SlotToRankNotation(structure.Length, dim);
             int nIter = structure[dim];                              // As many iterations as it is the size of the dimension.
             int nEmtsInSlice = slc.Length / nIter;
             if(trueRank > 1) {
@@ -215,17 +219,17 @@ namespace Fluid.Internals.Collections {
                return Vector<τ,α>.CreateFromSpan(slc);
          }
       }
-      /// <summary>Transforms from natural rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g., i from previous example has index 2, k has 0).</summary>
-      /// <param name="trueInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
-      int ToNatRank(int trueInx) =>
-         NatRankToTrueRank(Structure.Length, trueInx);
+      /// <summary>Transforms from slot index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g., i from previous example has index 2, k has 0).</summary>
+      /// <param name="rankNotation">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
+      int ToSlotNotation(int rankNotation) =>
+         SlotToRankNotation(Structure.Length, rankNotation);
       /// <summary>Transforms from true rank index (as situated in the hierarchy, i.e. higher number equates to being higher in the hierarchy) to true rank index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2).</summary>
-      /// <param name="naturalInx">Rank index as written by hand, e.g. A^ijk ==> i -> 0, k -> 2.</param>
+      /// <param name="slotNotation">Rank index as written by hand, e.g. A^ijk ==> i -> 0, k -> 2.</param>
       /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
-      int ToTrueRank(int natInx) =>
-         NatRankToTrueRank(Structure.Length, natInx);
-      static int NatRankToTrueRank(int nRanks, int natInx) =>
-         nRanks - natInx;
+      int ToRankNotation(int slotNotation) =>
+         SlotToRankNotation(Structure.Length, slotNotation);
+      static int SlotToRankNotation(int nRanks, int slotNotation) =>
+         nRanks - slotNotation;
       public Tensor<τ,α> this[uint overloadDummy, params int[] inx] {
          get {
             Tensor<τ,α> tnr = this;
@@ -323,8 +327,8 @@ namespace Fluid.Internals.Collections {
          TB.Assert.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
          int topRank1 = tnr1.Structure.Length;                                      // We have to check that all dimensions below current ranks match.
          int topRank2 = tnr2.Structure.Length;
-         var strInx1 = tnr1.ToNatRank(tnr1.Rank - 1) - 1;                         // Index in structure array.
-         var strInx2 = tnr2.ToNatRank(tnr2.Rank - 1) - 1;
+         var strInx1 = tnr1.ToSlotNotation(tnr1.Rank - 1) - 1;                         // Index in structure array.
+         var strInx2 = tnr2.ToSlotNotation(tnr2.Rank - 1) - 1;
          for(int i = strInx1, j = strInx2; i < topRank1; ++i, ++j) {
             if(tnr1.Structure[i] != tnr2.Structure[j])
                throw new InvalidOperationException("Tensor addition: structures do not match."); }
@@ -451,7 +455,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
       /// <param name="elimRank"> True, zero-based rank index of rank to be eliminated.</param>
       /// <param name="emtInx">Zero-based element index in that rank.</param>
-      public Tensor<τ,α> ElimRank(int elimRank, int emtInx) {
+      public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
          TB.Assert.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
@@ -483,11 +487,11 @@ namespace Fluid.Internals.Collections {
          else {                                          // Sub-highest possible rank of 0 being eliminated. Applicable only to rank 2 or higher tensors.
             if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
                var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
-               ElimRankR3M_0(this, res, emtInx);
+               ElimR0_R3Plus(this, res, emtInx);
                return res; }
             else if(Rank == 2) {
                var res = new Vector<τ,α>(newStructure, null, 4);
-               ElimRankR2_0(this, res, emtInx);
+               ElimR0_R2(this, res, emtInx);
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
@@ -497,8 +501,9 @@ namespace Fluid.Internals.Collections {
           
       }
 
-      static void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
-          }
+      // static void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
+      //     }
+
       /// <summary>Can only be used to eliminate rank 3 or higher. Provided target has to be initiated one rank lower than source.</summary>
       /// <param name="src">Source tensor whose rank we are eliminating.</param>
       /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
@@ -522,7 +527,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="src">Rank 2 tensor.</param>
       /// <param name="tgt">Initialized result vector.</param>
       /// <param name="emtInx">Element index in favor of which the elimination will proceed.</param>
-      public static void ElimRankR2_0(Tensor<τ,α> src, Vector<τ,α> tgt, int emtInx) {
+      public static void ElimR0_R2(Tensor<τ,α> src, Vector<τ,α> tgt, int emtInx) {
          TB.Assert.True(src.Rank == 2, "This method is intended for rank 2 tensors only.");
          foreach(var int_tnrR1 in src) {
             var subVec = (Vector<τ,α>) int_tnrR1.Value;
@@ -533,18 +538,18 @@ namespace Fluid.Internals.Collections {
       /// <param name="src">Rank 3 or higher tensor.</param>
       /// <param name="tgt">Tensor one rank lower than source.</param>
       /// <param name="emtInx">Element index in favor of which to eliminate.</param>
-      public static void ElimRankR3M_0(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {
+      public static void ElimR0_R3Plus(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {
          TB.Assert.True(src.Rank > 2, "This method is applicable to rank 3 and higher tensors.");
          if(src.Rank > 3) {
             foreach(var int_tnr in src) {
                var subTnr = new Tensor<τ,α>(tgt, src.Count);
-               ElimRankR3M_0(int_tnr.Value, subTnr, emtInx);
+               ElimR0_R3Plus(int_tnr.Value, subTnr, emtInx);
                if(subTnr.Count != 0)
                   tgt.Add(int_tnr.Key, subTnr); } }
          else {                                                                  // src.Rank == 3.
             foreach(var int_tnr in src) {
                var newVec = new Vector<τ,α>(tgt, 4);
-               ElimRankR2_0(int_tnr.Value, newVec, emtInx);
+               ElimR0_R2(int_tnr.Value, newVec, emtInx);
                tgt.Add(int_tnr.Key, newVec); } } }
 
       protected (int[] struc, int truInx1, int truInx2, int conDim) ContractPart1(
@@ -559,8 +564,8 @@ namespace Fluid.Internals.Collections {
          TB.Assert.AreEqual(struc1[natInx1 - 1], struc2[natInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal.");
          int   conDim = Structure[natInx1 - 1],                                // Dimension of rank we're contracting.
-               truInx1 = ToTrueRank(natInx1),
-               truInx2 = tnr2.ToTrueRank(natInx2);
+               truInx1 = ToRankNotation(natInx1),
+               truInx2 = tnr2.ToRankNotation(natInx2);
          var struc3_1 = struc1.Where((emt, i) => i != (natInx1 - 1));
          var struc3_2 = struc2.Where((emt, i) => i != (natInx2 - 1));
          var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
@@ -574,8 +579,8 @@ namespace Fluid.Internals.Collections {
                Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
                sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
                for(int i = 0; i < conDim; ++i) {
-                  elimTnr1 = ElimRank(truInx1, i);
-                  elimTnr2 = tnr2.ElimRank(truInx2, i);
+                  elimTnr1 = ReduceRank(truInx1, i);
+                  elimTnr2 = tnr2.ReduceRank(truInx2, i);
                   if(elimTnr1 != null && elimTnr2 != null) {
                      sumand = elimTnr1.TnrProduct(elimTnr2);
                      sum.Add(sumand); } }
@@ -589,7 +594,7 @@ namespace Fluid.Internals.Collections {
                   Vector<τ,α> elimVec, sumand, sum;
                   sum = new Vector<τ,α>(struc3, null, 4);
                   for(int i = 0; i < conDim; ++i) {
-                     elimVec = (Vector<τ,α>) ElimRank(truInx1, i);
+                     elimVec = (Vector<τ,α>) ReduceRank(truInx1, i);
                      if(elimVec != null && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimVec;
                         sum.Add(sumand); } }
@@ -601,7 +606,7 @@ namespace Fluid.Internals.Collections {
                   Tensor<τ,α> elimTnr1, sumand, sum;
                   sum = new Tensor<τ,α>(struc3);
                   for(int i = 0; i < conDim; ++i) {
-                     elimTnr1 = ElimRank(truInx1, i);
+                     elimTnr1 = ReduceRank(truInx1, i);
                      if(elimTnr1 != null && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimTnr1;
                         sum.Add(sumand); } }
@@ -644,8 +649,8 @@ namespace Fluid.Internals.Collections {
          TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
             "Corresponding dimensions have to be equal.");
          Vector<τ,α> res = new Vector<τ,α>(new int[] {Structure[2]}, null, 4);
-         int truInx1 = ToTrueRank(natInx1);
-         int truInx2 = ToTrueRank(natInx2);
+         int truInx1 = ToRankNotation(natInx1);
+         int truInx2 = ToRankNotation(natInx2);
          if(natInx1 == 1) {
             if(natInx2 == 2) {
                foreach(var int_tnr in this) {
@@ -678,8 +683,8 @@ namespace Fluid.Internals.Collections {
             var newStruct3 = Structure.Skip(natInx2);
             var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToArray();
             var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
-            var truInx1 = ToTrueRank(natInx1);
-            var truInx2 = ToTrueRank(natInx2);
+            var truInx1 = ToRankNotation(natInx1);
+            var truInx2 = ToRankNotation(natInx2);
             //int n = Structure[natInx1 - 1];
             if(truInx2 != 0)
                Recursion1(this, res);
@@ -701,7 +706,7 @@ namespace Fluid.Internals.Collections {
                   foreach(var int_tnr in src) {                      // for each tensor S in source we have to create a new tensors that will be a contraction of its elements. We then put it in place where S used to sit.
                      var newTnr = new Tensor<τ,α>(newStruct, src.Rank - 2, tgt, int_tnr.Value.Count);
                      foreach(var int_subTnr in int_tnr.Value) {         // We have to sum these guys together after we have eliminated the appropriate rank on each of them.
-                        var sumand = int_subTnr.Value.ElimRank(truInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
+                        var sumand = int_subTnr.Value.ReduceRank(truInx2, int_subTnr.Key);     // Eliminate in favor of tensor sitting at subTnr.Key.
                         newTnr.Add(sumand); }
                      tgt.Add(int_tnr.Key, newTnr); } }
             }

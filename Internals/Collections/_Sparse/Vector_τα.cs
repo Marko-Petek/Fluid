@@ -165,7 +165,7 @@ namespace Fluid.Internals.Collections {
             Tensor<τ,α> elimTnr2, sumand, sum;
             sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
             for(int i = 0; i < conDim; ++i) {
-               elimTnr2 = tnr2.ElimRank(truInx2, i);
+               elimTnr2 = tnr2.ReduceRank(truInx2, i);
                if(Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
                   sumand = val*elimTnr2;
                   sum.Add(sumand); } }
@@ -177,7 +177,7 @@ namespace Fluid.Internals.Collections {
             Vector<τ,α> elimVec2, sumand, sum;
             sum = new Vector<τ,α>(struc3, null, 4);
             for(int i = 0; i < conDim; ++i) {
-               elimVec2 = (Vector<τ,α>) tnr2.ElimRank(truInx2, i);
+               elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
                if(Vals.TryGetValue(i, out var val) && elimVec2 != null) {
                   sumand = val*elimVec2;
                   sum.Add(sumand); } }

@@ -153,7 +153,7 @@ namespace Fluid.Tests {
          var structure = data.Skip(1).Take(rank).ToArray();
          var tnr = Tensor<int, IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
             structure[0] * structure[1]), structure);
-         var tnr2 = tnr.ElimRank(1, 1);
+         var tnr2 = tnr.ReduceRank(1, 1);
          var expRes = Vector<int, IA>.CreateFromSpan(new Span<int>(data, rank + 1 + structure[1], structure[1]));
          Assert.True(tnr2.Equals(expRes));
       }
@@ -167,7 +167,7 @@ namespace Fluid.Tests {
          int nEmts = structure[0]*structure[1]*structure[2];
          var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
             nEmts), structure);
-         var tnr2 = tnr.ElimRank(1, 1);
+         var tnr2 = tnr.ReduceRank(1, 1);
          var seq1 = data.Skip(6).Take(2);
          var seq2 = data.Skip(10).Take(2);
          var span = seq1.Concat(seq2).ToArray().AsSpan();
@@ -184,7 +184,7 @@ namespace Fluid.Tests {
          int nEmts = (int) Math.Pow(2,4);
          var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
             nEmts), structure);
-         var tnr2 = tnr.ElimRank(1, 1);
+         var tnr2 = tnr.ReduceRank(1, 1);
          var seq1 = data.Skip(7).Take(2);
          var seq2 = data.Skip(11).Take(2);
          var seq3 = data.Skip(15).Take(2);
@@ -201,7 +201,7 @@ namespace Fluid.Tests {
          var structure = data.Take(4).ToArray();
          var tnr = Tensor<int,IA>.CreateFromFlatSpec(new Span<int>(data, 4,
             16), structure);
-         var tnr2 = tnr.ElimRank(2, 1);
+         var tnr2 = tnr.ReduceRank(2, 1);
          var span = data.Skip(4 + 16).Take(8).ToArray().AsSpan();
          var expRes = Tensor<int,IA>.CreateFromFlatSpec(span, new int[] {2,2,2});
          Assert.True(tnr2.Equals(expRes));
