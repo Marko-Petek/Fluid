@@ -359,7 +359,7 @@ namespace Fluid.Tests {
          -3, -1, 1,
          1, 3, 1
       )]
-      [Theory] public void SubTwoTnrs(params int[] data) {
+      [Theory] public void SubTwoTnrs(params int[] data) {              // FIXME: Something wrong with subtraction. See Test Debug.
          var tnr1 = TensorInt.CreateFromArray(data, 9, 0, 3, 0, 3);
          var tnr2 = TensorInt.CreateFromArray(data, 9, 3, 3, 0, 3);
          var tnr3 = tnr1 - tnr2;
@@ -477,9 +477,9 @@ namespace Fluid.Tests {
        [Theory] public void RankEnumerator1(params int[] data) {
           var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,12), 2,2,3);
           var res = new TensorInt(new int[] {2,3});
-          var erator = tnr.RXEnumerator(2);
-          while(erator.MoveNext())
-             res = res + erator.Current;
+          var rankCollection = tnr.RankEnumerator(2);
+          foreach(var tnr2 in rankCollection)
+             res = res + tnr2;
           var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(12,6), 2,3);
           Assert.True(res.Equals(expRes));
        }
@@ -490,9 +490,9 @@ namespace Fluid.Tests {
        [Theory] public void RankEnumerator2(params int[] data) {
           var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan(0,16), 2,2,2,2);
           var res = new TensorInt(new int[] {2,2});
-          var erator = tnr.RXEnumerator(2);
-          while(erator.MoveNext())
-             res = res + erator.Current;
+          var rankCollection = tnr.RankEnumerator(2);
+          foreach(var tnr2 in rankCollection)
+             res = res + tnr2;
           var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan(16,4), 2,2);
           Assert.True(res.Equals(expRes));
        }
