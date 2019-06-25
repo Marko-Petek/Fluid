@@ -145,6 +145,11 @@ namespace Fluid.Internals.Collections {
             res[kv.Key] = O<τ,α>.A.Sub(lVec[kv.Key], kv.Value);
          return res;
       }
+      /// <summary>Modifies this vector by negating each element.</summary>
+      public override void Negate() {
+         foreach(var int_val in Vals)
+            Vals[int_val.Key] = O<τ,α>.A.Neg(int_val.Value);
+      }
       /// <summary>Negate operator.</summary>
       /// <param name="vec">Vector to negate.</param>
       public static Vector<τ,α> operator - (Vector<τ,α> vec) {
