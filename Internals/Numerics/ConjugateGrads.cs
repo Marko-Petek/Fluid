@@ -6,14 +6,14 @@ namespace Fluid.Internals.Numerics {
    using Vector = Vector<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
-   public class ConjGradsSolver {
+   public class ConjugateGrads {
       /// <summary>Left-hand side matrix of A x = b.</summary>
       Tensor A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
       Tensor b { get; }
 
       /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
-      public ConjGradsSolver(Tensor tnrA, Vector vecB) {
+      public ConjugateGrads(Tensor tnrA, Vector vecB) {
          A = tnrA;
          b = vecB;
       }
@@ -57,12 +57,12 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Special version with a rank 4 tensor as LH operand and a rank 2 tensor as RH operand.</summary>
       /// <param name="x0">Initial guess.</param>
       /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
-      public Tensor Solve(Tensor x0, double maxRes) {
+      public Tensor Solve(Tensor x0, double maxRes) {       // TODO: Test ConjugateGrads.
          //throw new NotImplementedException();
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;
          var r = new Tensor[2];                                   // rank 2
-         var d0 = b - A.Contract(x0, 3, 1).Contract(x0, 3, 2);           // First contract operates on rank 4 tensor, second contract on rank 3 tensor.
+         var d0 = b - A.Contract(x0, 3, 1).SelfContract(3, 4);    // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
          var d = new Tensor[2] { null, d0 };                      // rank 2
          var x = new Tensor[2] { x0, null };                      // rank 2
          var rr = new double[2];
@@ -73,23 +73,19 @@ namespace Fluid.Internals.Numerics {
          int i = 0;
          int j = 1;
          while (true) {
-            var intermediateR = A.Contract(x[i], 3, 1);              // This is now a rank 4 tensor.
-            r[i] = b - intermediateR.Contract(intermediateR, 3, 4);  // Contract last two ranks on intermediate to reach a rank 2 tensor.
+            r[i] = b - A.Contract(x[i], 3, 1).SelfContract(3, 4);
             d[i] = d[j];
             for (int k = 0; k < b.Structure[0]*b.Structure[1]; ++k) {
                ++iteration;
-               var intermediateVec = (Vector) r[i].Contract(r[i], 1, 1);  // Rank 1.
-               rr[i] = intermediateVec*intermediateVec;                   // Scalar.
+               rr[i] = r[i].Contract(r[i], 1, 1).SelfContractR2();         // Scalar.
                if (rr[i] < maxResSqr)
                   return x[i];
-               var intermediateAd = A.Contract(d[i], 3, 1);               // Rank 4.
-               Ad = intermediateAd.Contract(intermediateAd, 3, 4);         // Rank 2.
-               var intermediateDAd = d[i].Contract(Ad, 1, 1);              // Rank 2.
-               var dAd = intermediateDAd.Contract(intermediateDAd, 1, 2);  // Scalar.
-               alfa = default; //alfa = rr[i] / dAd;
+               Ad = A.Contract(d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
+               var dAd = d[i].Contract(Ad, 1, 1).SelfContractR2();         // Scalar.
+               alfa = alfa = rr[i] / dAd;
                x[j] = x[i] + alfa * d[i];
                r[j] = r[i] - alfa * Ad;
-               //rr[j] = r[j] * r[j];
+               rr[j] = r[j].Contract(r[j], 1, 1).SelfContractR2();
                beta = rr[j] / rr[i];
                d[j] = r[j] + beta * d[i];
                i = (i + 1) % 2;

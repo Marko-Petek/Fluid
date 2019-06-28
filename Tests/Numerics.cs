@@ -26,7 +26,7 @@ namespace Fluid.Tests {
         var b = Vector.CreateFromArray(input, 9, 3);
         var expSol = Vector.CreateFromArray(input, 15, 3);
         var initPoint = Vector.CreateFromArray(input, 12, 3);
-        var solver = new ConjGradsSolver(A, b);
+        var solver = new ConjugateGrads(A, b);
         var sol = solver.Solve(initPoint, 0.001);
         Assert.True(sol.Equals(expSol, 0.01));
       }
@@ -45,7 +45,7 @@ namespace Fluid.Tests {
         var b = Vector.CreateFromArray(input, 16, 4);
         var initPoint = Vector.CreateFromArray(input, 20, 4);
         var expSol = Vector.CreateFromArray(input, 24, 4);
-        var solver = new ConjGradsSolver(A, b);
+        var solver = new ConjugateGrads(A, b);
         var sol = solver.Solve(initPoint, 0.001);
         Assert.True(sol.Equals(expSol, 0.01));
       }

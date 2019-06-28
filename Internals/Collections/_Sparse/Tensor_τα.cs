@@ -657,8 +657,8 @@ namespace Fluid.Internals.Collections {
                ElimR0_R2(int_tnr.Value, newVec, emtInx);
                tgt.Add(int_tnr.Key, newVec); } } }
 
-      protected (int[] struc, int truInx1, int truInx2, int conDim) ContractPart1(
-      Tensor<τ,α> tnr2, int natInx1, int natInx2) {
+      protected (int[] struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
+      Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          int[] struc1 = Structure, 
                struc2 = tnr2.Structure;
@@ -666,26 +666,26 @@ namespace Fluid.Internals.Collections {
              rank2 = struc2.Length;
          TB.Assert.True(rank1 == Rank && rank2 == tnr2.Rank,
             "One of the tensors is not top rank.");
-         TB.Assert.AreEqual(struc1[natInx1 - 1], struc2[natInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
+         TB.Assert.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal.");
-         int   conDim = Structure[natInx1 - 1],                                // Dimension of rank we're contracting.
-               truInx1 = ToRankNotation(natInx1),
-               truInx2 = tnr2.ToRankNotation(natInx2);
-         var struc3_1 = struc1.Where((emt, i) => i != (natInx1 - 1));
-         var struc3_2 = struc2.Where((emt, i) => i != (natInx2 - 1));
+         int   conDim = Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
+               rankInx1 = ToRankNotation(slotInx1),
+               rankInx2 = tnr2.ToRankNotation(slotInx2);
+         var struc3_1 = struc1.Where((emt, i) => i != (slotInx1 - 1));
+         var struc3_2 = struc2.Where((emt, i) => i != (slotInx2 - 1));
          var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
-         return (struc3, truInx1, truInx2, conDim);
+         return (struc3, rankInx1, rankInx2, conDim);
       }
       
-      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx1, int truInx2, int[] struc3, int conDim) {
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int rankInx1, int rankInx2, int[] struc3, int conDim) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          if(Rank > 1) {
             if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.
                Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
                sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
                for(int i = 0; i < conDim; ++i) {
-                  elimTnr1 = ReduceRank(truInx1, i);
-                  elimTnr2 = tnr2.ReduceRank(truInx2, i);
+                  elimTnr1 = ReduceRank(rankInx1, i);
+                  elimTnr2 = tnr2.ReduceRank(rankInx2, i);
                   if(elimTnr1 != null && elimTnr2 != null) {
                      sumand = elimTnr1.TnrProduct(elimTnr2);
                      sum.Add(sumand); } }
@@ -699,7 +699,7 @@ namespace Fluid.Internals.Collections {
                   Vector<τ,α> elimVec, sumand, sum;
                   sum = new Vector<τ,α>(struc3, null, 4);
                   for(int i = 0; i < conDim; ++i) {
-                     elimVec = (Vector<τ,α>) ReduceRank(truInx1, i);
+                     elimVec = (Vector<τ,α>) ReduceRank(rankInx1, i);
                      if(elimVec != null && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimVec;
                         sum.Add(sumand); } }
@@ -711,7 +711,7 @@ namespace Fluid.Internals.Collections {
                   Tensor<τ,α> elimTnr1, sumand, sum;
                   sum = new Tensor<τ,α>(struc3);
                   for(int i = 0; i < conDim; ++i) {
-                     elimTnr1 = ReduceRank(truInx1, i);
+                     elimTnr1 = ReduceRank(rankInx1, i);
                      if(elimTnr1 != null && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimTnr1;
                         sum.Add(sumand); } }
@@ -721,17 +721,17 @@ namespace Fluid.Internals.Collections {
                      return null; } } }
          else {                                                   // First tensor is rank 1 (a vector).
             var vec1 = (Vector<τ,α>) this;
-            return vec1.ContractPart2(tnr2, truInx2, struc3, conDim);}
+            return vec1.ContractPart2(tnr2, rankInx2, struc3, conDim);}
       }
 
       /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
       /// <param name="tnr2">Tensor 2.</param>
-      /// <param name="natInx1">One-based natural index on this tensor over which to contract.</param>
-      /// <param name="natInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
+      /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
+      /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
-      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx1, int natInx2) {
-         (int[] struc3, int truInx1, int truInx2, int conDim) = ContractPart1(tnr2, natInx1, natInx2);
-         return ContractPart2(tnr2, truInx1, truInx2, struc3, conDim);
+      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
+         (int[] struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
+         return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
       }
 
       // TODO; Implement and test self-contract (applicable to rank 2 and above). Then finish ConjugateGrads.
