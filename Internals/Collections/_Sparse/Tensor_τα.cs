@@ -177,6 +177,11 @@ namespace Fluid.Internals.Collections {
          if((mcs & MetaSpecs.Sup) == MetaSpecs.Sup)
             tgt.Sup = src.Sup ?? null;
       }
+      /// <summary>Packs only the part of the Structure below this tensor into a new Structure.</summary>
+      protected int[] CopySubstructure() {
+         int structInx = Structure.Length - Rank;           // TopRank - Rank --> Index where substructure begins.
+         return Structure.Skip(structInx).ToArray();
+      }
       public static Tensor<τ,α> CreateFromArray(τ[][] arr) {
          int nRows = arr.Length;
          int nCols = arr[0].Length;
@@ -350,24 +355,46 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Copies recursively to the specified inclusive stop rank then executes the specified action on each tensor at that rank.</summary>
       /// <param name="src">Source.</param>
-      /// <param name="tgt">Target.</param>
+      /// <param name="tgt">Target. Prepare it with the desired structure and rank.</param>
       /// <param name="inclusiveStopRank">Copy subtensor recursively to and including this rank.</param>
       /// <param name="act">Action to apply to each copied subtensor at the specified stop rank.</param>
       protected static void RecursiveCopyThenAct(Tensor<τ,α> src, Tensor<τ,α> tgt,
       int inclusiveStopRank, Action<Tensor<τ,α>,Tensor<τ,α>> act) {
          TB.Assert.True(inclusiveStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
-         RecursiveCopyInternal(src, tgt);
+         CopyThenAct(src, tgt);
 
-         void RecursiveCopyInternal(Tensor<τ,α> srci, Tensor<τ,α> tgti) {
+         void CopyThenAct(Tensor<τ,α> srci, Tensor<τ,α> tgti) {
             if(srci.Rank > inclusiveStopRank) {
                foreach(var int_subSrci in srci) {                                                  // Copy recursively.
                   var tgtiSubT = new Tensor<τ,α>(
                      tgti.Structure, tgti.Rank - 1, tgti, srci.Count);
-                  RecursiveCopyInternal(int_subSrci.Value, tgtiSubT);
+                  CopyThenAct(int_subSrci.Value, tgtiSubT);
                   if(tgtiSubT.Count != 0)                                                          // Don't add if empty.
                      tgti.Add(tgtiSubT); } }
-            else                                                                                   // Execute delegate.
+            else                                                                                   // Execute delegate on each tensor of the inclusiveStopRank.
                act(srci, tgti);
+         }
+      }
+      /// <summary>Each subtensor of visitSrc is visited, then its existence is verified in tgt. If it does not exist in tgt then the whole subtensor is simply copied from visitSrc and added to tgt. Otherwise, the whole process repeats for the subtensor. When stopRank is reached the action is performed.</summary>
+      /// <param name="visitSrc"></param>
+      /// <param name="tgt"></param>
+      /// <param name="inclusiveStopRank"></param>
+      /// <param name="onStopRank"></param>
+      protected static void RecursiveVisitThenAct(Tensor<τ,α> visitSrc, Tensor<τ,α> tgt,
+      int inclusiveStopRank, Action<Tensor<τ,α>,Tensor<τ,α>> postVisit,
+      Action<Tensor<τ,α>,Tensor<τ,α>> onNonExistentEquivalent,
+      Action<Tensor<τ,α>,Tensor<τ,α>> onStopRank) {
+         TB.Assert.True(inclusiveStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
+
+         void VisitThenAct(Tensor<τ,α> aVisitSrc, Tensor<τ,α> aTgt) {
+            if(aVisitSrc.Rank > inclusiveStopRank) {
+               foreach(var int_aSubVisitSrc in aVisitSrc) {
+                  if(aTgt.TryGetValue(int_aSubVisitSrc.Key, out var aSubTgt)) {     // Subtensor exists in aTgt.
+                     VisitThenAct(int_aSubVisitSrc.Value, aSubTgt); }
+                  else                                                              // Subtensor does not exist 
+                     onNonExistentEquivalent?.Invoke(aVisitSrc, aTgt); } }
+            else                                                                    // inclusive StopRank reached.
+               onStopRank?.Invoke(aVisitSrc, aTgt);
          }
       }
 
@@ -388,31 +415,35 @@ namespace Fluid.Internals.Collections {
       /// <summary>Plus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
       public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         return Recursion(tnr1, tnr2);
+         int[] newStructure = tnr1.CopySubstructure();
 
-         Tensor<τ,α> Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
-            var res = new Tensor<τ,α>(t2, CopySpecs.AddSubtract);            // Deep copy with extra capacity, copy structure by value.
-            if(t1.Rank > 2) {
-               foreach(var int_tnr1 in t1) {
-                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {
-                     var subRes = Recursion(int_tnr1.Value, tnr2Val);
-                     res.Add(int_tnr1.Key, subRes); } } }
-            else {
-               foreach(var int_tnr1 in t1) {
-                  var vec1 = (Vector<τ,α>) int_tnr1.Value;
-                  if(t2.TryGetValue(int_tnr1.Key, out var tnr2Val)) {      // Entry exists in t2, we must sum.
-                     var vec2 = (Vector<τ,α>) tnr2Val;
-                     var resAsBase = (TensorBase<Tensor<τ,α>>)res;
-                     resAsBase[int_tnr1.Key] = vec1 + vec2; }
-                  else
-                     res.Add(int_tnr1.Key, int_tnr1.Value); } }          // Entry does not exist in t2, simply Add.
-            return res;
-         }
+         var res = new Tensor<τ,α>(tnr2, CopySpecs.S35200);          // Create a copy of second tensor.
+         res.Structure = newStructure;                               // Assign to it a new structure.
+         RecursiveCopyThenAct(tnr1, res, 2, (srcR2, tgtR2) => {
+            foreach(var int_srcR1 in srcR2) {
+               var srcVec = (Vector<τ,α>) int_srcR1.Value;
+               if(tgtR2.TryGetValue(int_srcR1.Key, out var tgtR1)) {      // Entry exists in t2, we must sum.
+                  var tgtVec = (Vector<τ,α>) tgtR1;
+                  var tgtR2AsBase = (TensorBase<Tensor<τ,α>>) tgtR2;
+                  tgtR2AsBase[int_srcR1.Key] = srcVec + tgtVec; }
+               else {                                                      // Entry does not exist in t2, simply Add.
+                  var tgtVec = new Vector<τ,α>(srcVec, CopySpecs.S35200);
+                  tgtVec.Structure = newStructure;                         // Assign new structure.
+                  res.Add(int_srcR1.Key, tgtVec); } }          
+         });
+         return res;
       }
       /// <summary>Minus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         //return Recursion2(tnr1, tnr2);
+         int[] newStructure = tnr1.CopySubstructure();
+         var res = new Tensor<τ,α>(tnr2, CopySpecs.S35200);          // Create a copy of first tensor.
+         res.Structure = newStructure;                               // Assign to it a new structure.
+         RecursiveCopyThenAct(tnr1)
+         
+         
+         
+         return Recursion(tnr1, tnr2);
 
          var res = new Tensor<τ,α>(tnr1, CopySpecs.AddSubtract);
 
@@ -430,8 +461,8 @@ namespace Fluid.Internals.Collections {
             Tensor<τ,α> res2 = new Tensor<τ,α>(t1, t1.Count + 4);        // Must be a deep copy with a bit of extra capacity.
             if(t1.Rank > 2) {
                foreach(var int_tnr2 in t2) {
-                  if(t1.TryGetValue(int_tnr2.Key, out var tnr2Val)) {
-                     var subRes = Recursion2(int_tnr2.Value, tnr2Val);
+                  if(t1.TryGetValue(int_tnr2.Key, out var tnr1Val)) {
+                     var subRes = Recursion2(int_tnr2.Value, tnr1Val);
                      if(subRes.Count != 0)
                         res2.Add(int_tnr2.Key, subRes); } } }
             else {
@@ -794,9 +825,9 @@ namespace Fluid.Internals.Collections {
          TB.Assert.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
          int topRank1 = tnr1.Structure.Length;                                      // We have to check that all dimensions below current ranks match.
          int topRank2 = tnr2.Structure.Length;
-         var strInx1 = tnr1.ToSlotNotation(tnr1.Rank - 1) - 1;                         // Index in structure array.
-         var strInx2 = tnr2.ToSlotNotation(tnr2.Rank - 1) - 1;
-         for(int i = strInx1, j = strInx2; i < topRank1; ++i, ++j) {
+         var structInx1 = topRank1 - tnr1.Rank;                         // Index in structure array.
+         var structInx2 = topRank2 - tnr2.Rank;
+         for(int i = structInx1, j = structInx2; i < topRank1; ++i, ++j) {
             if(tnr1.Structure[i] != tnr2.Structure[j])
                throw new InvalidOperationException("Tensor addition: structures do not match."); }
       }

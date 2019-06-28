@@ -133,14 +133,14 @@ namespace Fluid.Internals.Collections {
       /// <param name="lVec">Left operand.</param>
       /// <param name="rVec">Right operand.</param>
       /// <returns>A new R1 tensor.</returns>
-      public static Vector<τ,α> operator + (Vector<τ,α> lVec, Vector<τ,α> rVec) {
+      public static Vector<τ,α> operator + (Vector<τ,α> lVec, Vector<τ,α> rVec) {   // FIXME: lVec can have 0 entries where rVec doesn't. These values are then ignored by this implementation.
          var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);
          foreach(var kv in lVec.Vals)
             res[kv.Key] = O<τ,α>.A.Add(kv.Value, rVec[kv.Key]);
          return res;
       }
       public static Vector<τ,α> operator - (Vector<τ,α> lVec, Vector<τ,α> rVec) {
-         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);                     // Copy right operand. Result will appear here.
+         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);       // FIXME: lVec can have 0 entries where rVec doesn't. These values are then ignored by this implementation. You have to copy right operand. Result will appear here.
          foreach(var kv in rVec.Vals)
             res[kv.Key] = O<τ,α>.A.Sub(lVec[kv.Key], kv.Value);
          return res;
