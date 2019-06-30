@@ -13,7 +13,7 @@ namespace Fluid.Internals.Numerics {
       Tensor b { get; }
 
       /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
-      public ConjugateGrads(Tensor tnrA, Vector vecB) {
+      public ConjugateGrads(Tensor tnrA, Tensor vecB) {
          A = tnrA;
          b = vecB;
       }
