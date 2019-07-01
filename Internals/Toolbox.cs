@@ -13,6 +13,7 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals {
    public static class Toolbox {
+      public static string DebugTag = "";
       static bool _Initializing = false;
       public static Task _Initialization = new Task(() => {
          System.Console.OutputEncoding = Encoding.UTF8;

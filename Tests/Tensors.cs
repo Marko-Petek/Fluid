@@ -526,6 +526,7 @@ namespace Fluid.Tests {
          var F = Tensor.CreateFromFlatSpec(spanF, strucF);
          var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
          var solver = new ConjugateGrads(K, F);
+         TB.DebugTag = "x0Creation";
          var x0 = Tensor.CreateFromFlatSpec(spanX0, strucF);
          var solution = solver.Solve(x0, 0.001);                        // FIXME: StackOverflow somewhere in here.
          Assert.True(true);

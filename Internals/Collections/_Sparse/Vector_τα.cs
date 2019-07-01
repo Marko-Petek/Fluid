@@ -12,6 +12,8 @@ namespace Fluid.Internals.Collections {
    public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
+      public new int Count => CountInternal;
+      protected override int CountInternal => Vals.Count;
       public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.
       internal Vector() : base(0) {
          Vals = new Dictionary<int, τ>();
@@ -71,8 +73,9 @@ namespace Fluid.Internals.Collections {
       public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {
             var vec = new Vector<τ,α>(slc.Length, slc.Length);
             vec.Structure = new int[] { slc.Length };
-            for(int i = 0; i < slc.Length; ++i)
-               vec.Vals.Add(i, slc[i]);
+            for(int i = 0; i < slc.Length; ++i) {
+               if(!slc[i].Equals(default(τ)))
+                  vec.Vals.Add(i, slc[i]); }
             return vec;
       }
       /// <summary>Adds value without checking if it is equal to zero.</summary>

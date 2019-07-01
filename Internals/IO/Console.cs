@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write out nicely formatted values to console.</summary>
    public class Console {
-      public int BufferWidth => System.Console.IsOutputRedirected ? 75 : System.Console.BufferWidth;
+      public int BufferWidth => System.Console.IsOutputRedirected ? 125 : System.Console.BufferWidth;
       /// <summary>TextWriter belonging to System.Console.</summary>
       TextWriter TW { get; }
 

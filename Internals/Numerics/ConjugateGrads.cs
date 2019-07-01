@@ -1,5 +1,6 @@
 using System;
 using Fluid.Internals.Collections;
+using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Numerics {
    using Tensor = Tensor<double,DblArithmetic>;
@@ -62,7 +63,10 @@ namespace Fluid.Internals.Numerics {
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;
          var r = new Tensor[2];                                   // rank 2
-         var d0 = b - A.Contract(x0, 3, 1).SelfContract(3, 4);    // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
+         // TB.DebugTag = "BeforeNullContraction";
+         // var interRes = A.Contract(x0, 3, 1);
+         var Ax0 = A.Contract(x0, 3, 1).SelfContract(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
+         var d0 = b - Ax0;
          var d = new Tensor[2] { null, d0 };                      // rank 2
          var x = new Tensor[2] { x0, null };                      // rank 2
          var rr = new double[2];
@@ -80,6 +84,7 @@ namespace Fluid.Internals.Numerics {
                rr[i] = r[i].Contract(r[i], 1, 1).SelfContractR2();         // Scalar.
                if (rr[i] < maxResSqr)
                   return x[i];
+               var AdDebug = A.Contract(d[i], 3, 1);
                Ad = A.Contract(d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
                var dAd = d[i].Contract(Ad, 1, 1).SelfContractR2();         // Scalar.
                alfa = alfa = rr[i] / dAd;
@@ -90,6 +95,8 @@ namespace Fluid.Internals.Numerics {
                d[j] = r[j] + beta * d[i];
                i = (i + 1) % 2;
                j = (j + 1) % 2;
+
+               TB.Reporter.Write("here");
             }
          }
       }

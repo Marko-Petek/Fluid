@@ -61,6 +61,10 @@ namespace Fluid.Internals.Collections {
       /// <summary>Superior: a tensor directly above in the hierarchy. Null if this is the highest rank tensor.</summary>
       public Tensor<τ,α> Sup { get; protected set; }
 
+      public new int Count => CountInternal;
+
+      protected virtual int CountInternal => base.Count;
+
       public static class CopySpecs {
          public static readonly CopySpecStruct Default = new CopySpecStruct();
          public static readonly CopySpecStruct AddSubtract = new CopySpecStruct(
@@ -231,7 +235,8 @@ namespace Fluid.Internals.Collections {
                for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
                   var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
                   var newTnr = Recursion(newSlc, dim + 1);
-                  res.Add(i, newTnr); }
+                  if(newTnr.Count != 0)
+                     res.Add(i, newTnr); }
                return res; }
             else                                                  // We are at rank 1 = vector rank.
                return Vector<τ,α>.CreateFromSpan(slc);
@@ -686,13 +691,14 @@ namespace Fluid.Internals.Collections {
                for(int i = 0; i < conDim; ++i) {
                   elimTnr1 = ReduceRank(rankInx1, i);
                   elimTnr2 = tnr2.ReduceRank(rankInx2, i);
-                  if(elimTnr1 != null && elimTnr2 != null) {
+                  if(elimTnr1.Count != 0 && elimTnr2.Count != 0) {         // FIXME: ReduceRank must not return null.
                      sumand = elimTnr1.TnrProduct(elimTnr2);
                      sum.Add(sumand); } }
-               if(sum.Count != 0)
-                  return sum;
-               else
-                  return null; }
+               //if(sum.Count != 0)
+               return sum;
+               //else
+               //   return null;
+            }
             else {                                                // Second tensor is rank 1 (a vector).
                Vector<τ,α> vec = (Vector<τ,α>) tnr2;
                if(Rank == 2) {                                    // Result will be vector.
