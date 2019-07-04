@@ -43,40 +43,13 @@ namespace Fluid.Internals.Collections {
          else
             tgt.Vals = new Dictionary<int,τ>();
       }
-      /// <summary>Creates a vector with specified dimension from an array.</summary>
-      /// <param name="arr">Array to copy.</param>
-      /// <param name="srtArrInx">Index of array element at which copying begins.</param>
-      /// <param name="nArrEmts">How many consecutive array elements to copy.</param>
-      /// <param name="firstR1Inx">What index to assign to first element copied to vector.</param>
-      /// <param name="dim">Vector's R1 dimension.</param>
-      public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts,
-         int firstR1Inx, int dim) {
-            var tnr = new Vector<τ,α>(dim, arr.Length);
-            for(int i = srtArrInx, j = firstR1Inx; i < srtArrInx + nArrEmts; ++i, ++j)
-               tnr[j] = arr[i];
-            return tnr;
-      }
-      /// <summary>Factory method that creates a vector from an array. Vector's dimension equals number of copied elements.</summary>
-      /// <param name="arr">Array to copy.</param>
-      /// <param name="srtArrInx">Index of array element at which copying begins.</param>
-      /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of tensor.</param>
-      /// <param name="firstR1Inx">What index to assign to first element copied to vector.</param>
-      public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts,
-         int firstR1Inx) => CreateFromArray(arr, srtArrInx, nArrEmts,
-            firstR1Inx, nArrEmts);
-      /// <summary>Factory method that creates a vector from an array. Vector's dimension equals number of copied elements. Index of first copied element is set to 0.</summary>
-      /// <param name="arr">Array to copy.</param>
-      /// <param name="srtArrInx">Index of array element at which copying begins.</param>
-      /// <param name="nArrEmts">How many consecutive array elements to copy. Also the R1 dimension of vector.</param>
-      public static Vector<τ,α> CreateFromArray(τ[] arr, int srtArrInx, int nArrEmts) =>
-         CreateFromArray(arr, srtArrInx, nArrEmts, 0);
-      public static Vector<τ,α> CreateFromSpan(Span<τ> slc) {
-            var vec = new Vector<τ,α>(slc.Length, slc.Length);
-            vec.Structure = new int[] { slc.Length };
-            for(int i = 0; i < slc.Length; ++i) {
-               if(!slc[i].Equals(default(τ)))
-                  vec.Vals.Add(i, slc[i]); }
-            return vec;
+      public static Vector<τ,α> CreateFromFlatSpec(Span<τ> slc) {
+         var vec = new Vector<τ,α>(slc.Length, slc.Length);
+         vec.Structure = new int[] { slc.Length };
+         for(int i = 0; i < slc.Length; ++i) {
+            if(!slc[i].Equals(default(τ)))
+               vec.Vals.Add(i, slc[i]); }
+         return vec;
       }
       new public static Vector<τ,α> CreateEmpty(int cap, params int[] structure) =>
          new Vector<τ,α>(structure[0], cap);
@@ -91,7 +64,7 @@ namespace Fluid.Internals.Collections {
             Vals.TryGetValue(i, out τ val);
             return val; }
          set {
-            if(value != default) {
+            if(!value.Equals(default)) {
                Vals[i] = value; }
             else
                Vals.Remove(i); }
@@ -222,18 +195,22 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
-      public bool Equals(Vector<τ,α> vec) {
-         foreach(var kv in Vals)
-            if(!(vec.Vals.TryGetValue(kv.Key, out τ val) && kv.Value.Equals(val)))        // Fetch did not suceed or values are not equal.
-               return false;
+      public bool Equals(Vector<τ,α> vec2) {
+         if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
+            return false;
+         foreach(var int_val in Vals) {
+            τ val2 = vec2[int_val.Key];
+            if(!int_val.Value.Equals(val2))        // Fetch did not suceed or values are not equal.
+               return false; }
          return true;
       }
 
-      public bool Equals(Vector<τ,α> vec, τ eps) {
-         foreach(var kv in Vals) {
-            if(!(vec.Vals.TryGetValue(kv.Key, out τ val)))                      // Fetch did not suceed.
-               return false;
-            if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(kv.Value, val)).CompareTo(eps) > 0 ) // Fetch suceeded but values do not agree within tolerance.
+      public bool Equals(Vector<τ,α> vec2, τ eps) {
+         if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
+            return false;
+         foreach(var int_val1 in Vals) {
+            τ val2 = vec2[int_val1.Key];
+            if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(int_val1.Value, val2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
                return false; }
          return true;                                                              // All values agree within tolerance.
       }

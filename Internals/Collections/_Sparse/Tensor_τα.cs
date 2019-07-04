@@ -45,8 +45,6 @@ using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 
-// TODO: Create SubstructureCopy and use it in + and - operators. Put RecursiveCopyAndAct in - operator.
-
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
@@ -186,43 +184,13 @@ namespace Fluid.Internals.Collections {
          int structInx = Structure.Length - Rank;           // TopRank - Rank --> Index where substructure begins.
          return Structure.Skip(structInx).ToArray();
       }
-      public static Tensor<τ,α> CreateFromArray(τ[][] arr) {
-         int nRows = arr.Length;
-         int nCols = arr[0].Length;
-         var tnr = new Tensor<τ,α>(new int[2] {nRows, nCols});
-         for(int i = 0; i < nRows; ++i)
-            for(int j = 0; j < nCols; ++j)
-               tnr[i,j] = arr[i][j];
-         return tnr;
-      }
-      public static Tensor<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
-         int nRows, int startCol, int nCols, int width, int height, int startRowInx = 0, int startColInx = 0) {
-            int allCols = arr.Length/allRows;
-            var tnr = new Tensor<τ,α>(new int[2] {height, width});
-            for(int i = startRow, k = startRowInx; i < startRow + nRows; ++i, ++k)
-               for(int j = startCol, l = startColInx; j < startCol + nCols; ++j, ++l)
-                  tnr[k,l] = arr[i*allCols + j];
-            return tnr;
-      }
-      public static Tensor<τ,α> CreateFromArray(τ[] arr, int allRows, int startRow,
-         int nRows, int startCol, int nCols) =>
-            CreateFromArray(arr, allRows, startRow, nRows, startCol, nCols, nCols, nRows);
-
-      public static Tensor<τ,α> CreateFromSpan(Span<τ> slice, int nRows) {
-         int nCols = slice.Length / nRows;
-         var tnr = new Tensor<τ,α>(new int[2] {nRows, nCols});
-         for(int i = 0; i < nRows; ++i)
-            for(int j = 0; j < nCols; ++j)
-               tnr[i,j] = slice[i*nCols + j];
-         return tnr;
-      }
       /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
       /// <param name="slice">Span of values.</param>
       /// <param name="structure">Structure of new tensor.</param>
       public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
          int tnrRank = structure.Length;
          if(tnrRank == 1)
-            return Vector<τ,α>.CreateFromSpan(slice);
+            return Vector<τ,α>.CreateFromFlatSpec(slice);
          else
             return Recursion(slice, 0);
 
@@ -239,7 +207,7 @@ namespace Fluid.Internals.Collections {
                      res.Add(i, newTnr); }
                return res; }
             else                                                  // We are at rank 1 = vector rank.
-               return Vector<τ,α>.CreateFromSpan(slc);
+               return Vector<τ,α>.CreateFromFlatSpec(slc);
          }
       }
 
@@ -412,18 +380,17 @@ namespace Fluid.Internals.Collections {
          }
       }
 
-      public static Tensor<τ,α> operator -(Tensor<τ,α> tnr) {                 // TODO: Test operator negate tensor method.
+      public static Tensor<τ,α> operator -(Tensor<τ,α> tnr) {
          int[] newStructure = tnr.CopySubstructure();
          var res = new Tensor<τ,α>(newStructure, tnr.Rank, null, tnr.Count);
          RecursiveVisitEmptyTgt(tnr, res, 2,
-         onVisit: (subSrc, tgt, inx) => {
-            var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
-            tgt.Add(inx, subTgt);
-            return subTgt; },
-         onStopRank: (src, tgt) => {
-            var tgtVec = (Vector<τ,α>) tgt;
-            foreach(var int_srcR1 in src) {
-               tgtVec.Add(int_srcR1.Key, - ((Vector<τ,α>) int_srcR1.Value)); } });
+            onVisit: (subSrc, tgt, inx) => {
+               var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
+               tgt.Add(inx, subTgt);
+               return subTgt; },
+            onStopRank: (srcR2, tgtR2) => {
+               foreach(var int_srcR1 in srcR2) {
+                  tgtR2.Add(int_srcR1.Key, - ((Vector<τ,α>) int_srcR1.Value)); } });
          return res;
       }
       /// <summary>Plus operator for two tensors. Assigns proper substructure: If tnr1 or tnr2 are part of another tensor, result's structure will differ.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
@@ -535,9 +502,10 @@ namespace Fluid.Internals.Collections {
       /// <param name="scal">Scalar.</param>
       /// <param name="tnr">Tensor.</param>
       public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> tnr) {
+         int[] newStructure = tnr.CopySubstructure();
          return Recursion(tnr);
          Tensor<τ,α> Recursion(in Tensor<τ,α> src) {
-            var res = new Tensor<τ,α>(tnr.Structure, tnr.Rank, tnr.Sup, tnr.Count);            // We copy only meta fields (whereby we copy Structure by value).
+            var res = new Tensor<τ,α>(newStructure, tnr.Rank, tnr.Sup, tnr.Count);
             if(src.Rank > 2) {                                       // Subordinates are tensors.
                foreach (var kv in src)
                   res.Add(kv.Key, Recursion(kv.Value)); }
@@ -603,7 +571,7 @@ namespace Fluid.Internals.Collections {
          else if(elimRank == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
             var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
             if(Rank > 2) {                                                             // Result is tensor.
-               RecursiveCopyAndElim(this, res, emtInx, 1);                    // FIXME: ???? ElimRank == 1 so we always stop at 3. ????? 
+               RecursiveCopyAndElim(this, res, emtInx, 1);
                return res; }
             else
                throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
@@ -700,8 +668,8 @@ namespace Fluid.Internals.Collections {
                for(int i = 0; i < conDim; ++i) {
                   elimTnr1 = ReduceRank(rankInx1, i);
                   elimTnr2 = tnr2.ReduceRank(rankInx2, i);
-                  if(elimTnr1.Count != 0 && elimTnr2.Count != 0) {         // FIXME: ReduceRank must not return null.
-                     sumand = elimTnr1.TnrProduct(elimTnr2);               // FIXME: Error occurs here.
+                  if(elimTnr1.Count != 0 && elimTnr2.Count != 0) {
+                     sumand = elimTnr1.TnrProduct(elimTnr2);
                      sum.Add(sumand); } }
                //if(sum.Count != 0)
                return sum;
@@ -748,8 +716,6 @@ namespace Fluid.Internals.Collections {
          (int[] struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
          return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
       }
-
-      // TODO; Implement and test self-contract (applicable to rank 2 and above). Then finish ConjugateGrads.
       /// <summary>Use on rank 2 tensor.</summary>
       /// <param name="natInx1">First one-based natural index on this tensor over which to contract.</param>
       /// <param name="natInx2">Second one-based natural index on this tensor over which to contract.</param>
@@ -856,59 +822,56 @@ namespace Fluid.Internals.Collections {
 
       /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
       public bool Equals(Tensor<τ,α> tnr2) {
-         Structure.Equals<int, IntArithmetic>(tnr2.Structure);
+         ThrowOnSubstructureMismatch(this, tnr2);
          return TnrRecursion(this, tnr2);
 
          bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
-            if(sup1.Count != sup2.Count)
-               return false;
+            if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
+               return false;                                                                    // Keys have to match. This is crucial.
             if(sup1.Rank > 2) {
-               foreach(var inx_subTnr1 in sup1) {
-                  if(sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2))
-                     return TnrRecursion(inx_subTnr1.Value, subTnr2);
-                  else
-                     return false; }
-               return true; }
+               foreach(var inx_sub1 in sup1) {
+                  var sub2 = sup2[1u, inx_sub1.Key];
+                  return TnrRecursion(inx_sub1.Value, sub2); }
+               return true; }                                                                   // Both are empty.
             else
                return VecRecursion(sup1, sup2);
-            //throw new InvalidOperationException("We shouldn't be here.");
          }
 
-         bool VecRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
-            if(sup1.Count != sup2.Count)
-               return false;
-            foreach(var inx_subTnr1 in sup1) {
-               var vec = (Vector<τ,α>) inx_subTnr1.Value;
-               sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2);
-               var vec2 = (Vector<τ,α>) subTnr2;
-               if(!vec.Equals(vec2))
+         bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
+            if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
+               return false;                                                                    // Keys have to match. This is crucial.
+            foreach(var inx_sub1R1 in sup1R2) {
+               var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
+               var vec2 = sup2R2[1f, inx_sub1R1.Key];
+               if(!vec1.Equals(vec2))
                   return false; }
             return true;
          }
       }
 
-      public bool Equals(Tensor<τ,α> tnr2, τ eps) {
-         Structure.Equals<int, IntArithmetic>(tnr2.Structure);
+      public bool Equals(Tensor<τ,α> tnr2, τ eps) {                           // FIXME: This implementation works incorrectly when there are zeros in tnr1 where there are values in tnr2. We get false positive.
+         ThrowOnSubstructureMismatch(this, tnr2);
          return TnrRecursion(this, tnr2);
 
          bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+            if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
+               return false;                                                                    // Keys have to match. This is crucial.
             if(sup1.Rank > 2) {
-               foreach(var inx_subTnr1 in sup1) {
-                  if(sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2))
-                     return TnrRecursion(inx_subTnr1.Value, subTnr2);
-                  else
-                     return false; } }
+               foreach(var inx_sub1 in sup1) {
+                  var sub2 = sup2[1u, inx_sub1.Key];
+                  return TnrRecursion(inx_sub1.Value, sub2); }
+               return true; }                                                                   // Both are empty.
             else
                return VecRecursion(sup1, sup2);
-            throw new InvalidOperationException("We shouldn't be here.");
          }
 
-         bool VecRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
-            foreach(var inx_subTnr1 in sup1) {
-               var vec = (Vector<τ,α>) inx_subTnr1.Value;
-               sup2.TryGetValue(inx_subTnr1.Key, out var subTnr2);
-               var vec2 = (Vector<τ,α>) subTnr2;
-               if(!vec.Equals(vec2, eps))
+         bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
+            if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
+               return false;                                                                    // Keys have to match. This is crucial.
+            foreach(var inx_sub1R1 in sup1R2) {
+               var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
+               var vec2 = sup2R2[1f, inx_sub1R1.Key];
+               if(!vec1.Equals(vec2, eps))
                   return false; }
             return true;
          }                                                         // All values agree within tolerance.

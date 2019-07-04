@@ -8,6 +8,7 @@ using SCG = System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
+   using dbl = Double;
    using Tensor = Tensor<double,DblArithmetic>;
    using Vector = Vector<double,DblArithmetic>;
    using TensorInt = Tensor<int,IntArithmetic>;
@@ -42,31 +43,30 @@ namespace Fluid.Tests {
       [InlineData(
          5,3,2, 7,3,9, 12,6,11)]
       [Theory] public void AddVecToVec(params int[] data) {
-         var span1 = new Span<int>(data, 0, 3);
-         var span2 = new Span<int>(data, 3, 3);
-         var span3 = new Span<int>(data, 6, 3);
-         var vec1 = VectorInt.CreateFromSpan(span1);
-         var vec2 = Vector<int,IA>.CreateFromSpan(span2);
-         var vec3 = Vector<int,IA>.CreateFromSpan(span3);
+         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
+         var vec3 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
          vec1.Add(vec2);
          Assert.True(vec1.Equals(vec3));
       }
       /// <summary>Add two sparse vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
+      [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
+      [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
       [Theory] public void AddTwoVecs(params int[] data) {
-         var vec1 = VectorInt.CreateFromArray(data, 0, 3);
-         var vec2 = VectorInt.CreateFromArray(data, 3, 3);
+         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
          var res = vec1 + vec2;
-         var expRes = VectorInt.CreateFromArray(data, 6, 3);
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
          Assert.True(res.Equals(expRes));
       }
       /// <summary>Subtract two vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
       [Theory] public void SubTwoVecs(params int[] data) {
-         var vec1 = VectorInt.CreateFromArray(data, 0, 3);
-         var vec2 = VectorInt.CreateFromArray(data, 3, 3);
+         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
          var res = vec1 - vec2;
-         var expRes = VectorInt.CreateFromArray(data, 6, 3);
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
          Assert.True(res.Equals(expRes));
       }
       [InlineData(
@@ -82,6 +82,21 @@ namespace Fluid.Tests {
          var tnr3 = TensorInt.CreateFromFlatSpec(span3, new int[] {3,3});
          tnr1.Add(tnr2);
          Assert.True(tnr1.Equals(tnr3));
+      }
+      [InlineData(
+         3,0,7,
+         2,1,0,
+         0,4,8,
+
+         -3,0,-7,
+         -2,-1,0,
+         0,-4,-8
+      )]
+      [Theory] public void NegateTnrOperator(params int[] data) {
+         var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
+         var expRes = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(9,9), 3,3);
+         var res = -tnr;
+         Assert.True(res.Equals(expRes));
       }
 
       [InlineData(3,6, 2,5,  6,0, 4,7,
@@ -154,7 +169,7 @@ namespace Fluid.Tests {
          var tnr = Tensor<int, IA>.CreateFromFlatSpec(new Span<int>(data, rank + 1,
             structure[0] * structure[1]), structure);
          var tnr2 = tnr.ReduceRank(1, 1);
-         var expRes = Vector<int, IA>.CreateFromSpan(new Span<int>(data, rank + 1 + structure[1], structure[1]));
+         var expRes = VectorInt.CreateFromFlatSpec(new Span<int>(data, rank + 1 + structure[1], structure[1]));
          Assert.True(tnr2.Equals(expRes));
       }
 
@@ -317,8 +332,8 @@ namespace Fluid.Tests {
       [InlineData(9, 8, 1, 2, 6, 7, 73)]
       [Theory]
       public void DotTwoVecs(params int[] data) {
-        var vec1 = VectorInt.CreateFromArray(data, 0, 3);
-        var vec2 = VectorInt.CreateFromArray(data, 3, 3);
+        var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
+        var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
         var expRes = data[6];
         var res = vec1 * vec2;
         Assert.True(res == expRes);
@@ -339,10 +354,10 @@ namespace Fluid.Tests {
          5, 5, 1
       )]
       [Theory] public void AddTwoTnrs(params int[] data) {
-         var tnr1 = TensorInt.CreateFromArray(data, 9, 0, 3, 0, 3);
-         var tnr2 = TensorInt.CreateFromArray(data, 9, 3, 3, 0, 3);
+         var tnr1 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
+         var tnr2 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(9,9), 3,3);
          var tnr3 = tnr1 + tnr2;
-         var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
+         var expMat = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(18,9), 3,3);
          Assert.True(tnr3.Equals(expMat));
       }
       /// <summary>Subtract two 2nd rank tensors.</summary>
@@ -359,11 +374,11 @@ namespace Fluid.Tests {
          -3, -1, 1,
          1, 3, 1
       )]
-      [Theory] public void SubTwoTnrs(params int[] data) {              // FIXME: Something wrong with subtraction. See Test Debug.
-         var tnr1 = TensorInt.CreateFromArray(data, 9, 0, 3, 0, 3);
-         var tnr2 = TensorInt.CreateFromArray(data, 9, 3, 3, 0, 3);
+      [Theory] public void SubTwoTnrs(params int[] data) {
+         var tnr1 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
+         var tnr2 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(9,9), 3,3);
          var tnr3 = tnr1 - tnr2;
-         var expMat = TensorInt.CreateFromArray(data, 9, 6, 3, 0, 3);
+         var expMat = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(18,9), 3,3);
          Assert.True(tnr3.Equals(expMat));
       }
       ///// <summary>Dot a 2nd rank tensor with a vector.</summary>
@@ -381,9 +396,9 @@ namespace Fluid.Tests {
 
          5, 2, 3, 0, 38, 12)]
       [Theory] public void TnrDotVec(params int[] data) {
-         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-         var vec = VectorInt.CreateFromArray(data, 9, 3);
-         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
+         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(9,3));
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,3));
          var res = (VectorInt) tnr.Contract(vec, 2, 1);
          Assert.True(res.Equals(expRes));
       }
@@ -410,10 +425,9 @@ namespace Fluid.Tests {
          9, 7, 0, 1, 34, 74)]
       [Theory]
       public void TnrDotVecAsym(params int[] data) {
-         var span = new Span<int>(data, 0, 8);
-         var tnr = TensorInt.CreateFromSpan(span, 2);
-         var vec = VectorInt.CreateFromArray(data, 8, 4);
-         var expRes = VectorInt.CreateFromArray(data, 12, 2);
+         var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,8), 2,4);
+         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(8,4));
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,2));
          var res = tnr.Contract(vec,2,1);
          Assert.True(res.Equals(expRes));
       }
@@ -432,9 +446,9 @@ namespace Fluid.Tests {
          3, 1, 5, 44, 32, 37)]
       [Theory]
       public void VecDotTnr(params int[] data) {
-         var tnr = TensorInt.CreateFromArray(data, 5, 0, 3, 0, 3);
-         var vec = VectorInt.CreateFromArray(data, 9, 3);
-         var expRes = VectorInt.CreateFromArray(data, 12, 3);
+         var tnr = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
+         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(9,3));
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,3));
          var res = vec.Contract(tnr,1);
          Assert.True(res.Equals(expRes));
       }
@@ -445,9 +459,9 @@ namespace Fluid.Tests {
       [Theory]
       public void NumTimesVec(params int[] data) {
          var num = data[4];
-         var vec = VectorInt.CreateFromArray(data, 0, 4);
+         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,4));
          var res = num * vec;
-         var expRes = VectorInt.CreateFromArray(data, 5, 4);
+         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(5,4));
          Assert.True(res.Equals(expRes));
       }
 
@@ -619,11 +633,10 @@ namespace Fluid.Tests {
          1.02, 2.64, 3.21,
          5.55, 7.61, 5.44,
          6.51, 2.22, 7.65 )]
-      [Theory] public void TnrEquals(params double[] twoMats) {
-         var tnr1 = Tensor.CreateFromArray(twoMats, 6, 0, 3, 0, 3);
-         var tempMat2 = MatOps.CreateFromArray(twoMats, 6, 3, 3, 0, 3);
-         var mat2 = Tensor.CreateFromArray(tempMat2);
-         Assert.True(tnr1.Equals(mat2, 0.02));
+      [Theory] public void TnrEquals(params double[] data) {
+         var tnr1 = Tensor.CreateFromFlatSpec(data.AsSpan<dbl>(0,9), 3,3);
+         var tnr2 = Tensor.CreateFromFlatSpec(data.AsSpan<dbl>(9,9), 3,3);
+         Assert.True(tnr1.Equals(tnr2, 0.02));
       }
    }
 }
