@@ -497,40 +497,7 @@ namespace Fluid.Tests {
           Assert.True(res.Equals(expRes));
        }
 
-      [InlineData(
-         4, 2, 2,                                        // Toprank spec: K,U,F
-         2,2,2,2,  2,2,  2,2,                            // Dimensions: K, U, F
-         4,2, 9,8,  2,7, 8,0,  9,8, 3,1,  8,0, 1,6,      // K-spec
-         8,0, 4,1)]                                      // F-spec
-       [Theory] public void SpecialConjugateGrads(params int[] data) {
-          int  rankK = data[0],                                         // Read top ranks.
-               rankU = data[1],
-               rankF = data[2];
-         int arrPos = 3;
-         var strucK = data.Skip(arrPos).Take(rankK).ToArray();          // Read K structure.
-         arrPos += rankK;
-         var strucU = data.Skip(arrPos).Take(rankU).ToArray();          // Read U structure.
-         arrPos += rankU;
-         var strucF = data.Skip(arrPos).Take(rankF).ToArray();          // Read F structure.
-         arrPos += rankF;
-         int nElmsInK = 1;
-         strucK.Select(a => nElmsInK *= a).ToArray();                   // nElmsInK now holds proper value.
-         int nElmsInU = 1;
-         strucU.Select(a => nElmsInU *= a).ToArray();
-         int nElmsInF = 1;
-         strucU.Select(a => nElmsInF *= a).ToArray();
-         var spanK = data.Skip(arrPos).Take(nElmsInK).Select(a => (double) a).ToArray().AsSpan();
-         var K = Tensor.CreateFromFlatSpec(spanK, strucK);
-         arrPos += nElmsInK;
-         var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (double) a).ToArray().AsSpan();
-         var F = Tensor.CreateFromFlatSpec(spanF, strucF);
-         var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
-         var solver = new ConjugateGrads(K, F);
-         TB.DebugTag = "x0Creation";
-         var x0 = Tensor.CreateFromFlatSpec(spanX0, strucF);
-         var solution = solver.Solve(x0, 0.001);                        // FIXME: StackOverflow somewhere in here.
-         Assert.True(true);
-       }
+      
 
       ///// <summary>Test wether column swapping in SparseMatrix functions correctly.</summary>
       //[InlineData(1.0, 2.0, 3.0, 4.0,

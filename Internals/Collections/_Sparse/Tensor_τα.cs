@@ -242,6 +242,14 @@ namespace Fluid.Internals.Collections {
                return Vector<τ,α>.CreateFromSpan(slc);
          }
       }
+
+      public static Tensor<τ,α> CreateEmpty(int cap, params int[] structure) {
+         int tnrRank = structure.Length;
+         if(tnrRank == 1)
+            return Vector<τ,α>.CreateEmpty(cap, structure);
+         else
+            return new Tensor<τ,α>(structure, tnrRank, null, cap);
+      }
       /// <summary>Transforms from slot index (in the order as written by hand, e.g. A^ijk ==> i -> 0, k -> 2) to true rank index (as situated in the hierarchy, e.g., i from previous example has index 2, k has 0).</summary>
       /// <param name="rankNotation">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToSlotNotation(int rankNotation) =>
@@ -559,7 +567,7 @@ namespace Fluid.Internals.Collections {
             else {                              // We are now at tensor which contains vectors.
                foreach(var int_vec in src) {    // Substitute each vector wiht a new tensor.
                   var vec = (Vector<τ,α>) int_vec.Value;
-                  var subTnr = new Tensor<τ,α>(newStructure, resRank, null, src.Count);
+                  var subTnr = new Tensor<τ,α>(newStructure, resRank - 1, null, src.Count);
                   foreach(var int_val in vec.Vals)
                      subTnr.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, subTnr)); // ScalMul so that the correct superior propagares downwards.
                   res.Add(int_vec.Key, subTnr); } }
@@ -576,12 +584,13 @@ namespace Fluid.Internals.Collections {
          var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
 
          if(elimRank == Rank - 1) {                                                    // 1 rank exists above elimRank == Pick one from elimRank and return it.
-            if(Rank > 1) {                                                             // Result is Tensor, top tensor at least rank 3.
+            if(Rank > 1) {                                                             // Result is Tensor, top tensor at least rank 2.
                if(TryGetValue(emtInx, out var subTnr)) {                                   // Sought after subordinate exists.
                   var newTnr = subTnr.Copy(in CopySpecs.S35200);                          // Works properly even for Vector.
                   newTnr.Structure = newStructure;
                   return newTnr;}
-               return null; }
+               else
+                  return CreateEmpty(0, newStructure); }                                // Return empty tensor.
             else                                                                                      // Rank <= 1: impossible.
                throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
          else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
@@ -692,7 +701,7 @@ namespace Fluid.Internals.Collections {
                   elimTnr1 = ReduceRank(rankInx1, i);
                   elimTnr2 = tnr2.ReduceRank(rankInx2, i);
                   if(elimTnr1.Count != 0 && elimTnr2.Count != 0) {         // FIXME: ReduceRank must not return null.
-                     sumand = elimTnr1.TnrProduct(elimTnr2);
+                     sumand = elimTnr1.TnrProduct(elimTnr2);               // FIXME: Error occurs here.
                      sum.Add(sumand); } }
                //if(sum.Count != 0)
                return sum;
@@ -706,25 +715,25 @@ namespace Fluid.Internals.Collections {
                   sum = new Vector<τ,α>(struc3, null, 4);
                   for(int i = 0; i < conDim; ++i) {
                      elimVec = (Vector<τ,α>) ReduceRank(rankInx1, i);
-                     if(elimVec != null && vec.Vals.TryGetValue(i, out var val)) {
+                     if(elimVec.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimVec;
                         sum.Add(sumand); } }
                   if(sum.Vals.Count != 0)
                      return sum;
                   else
-                     return null; }
+                     return CreateEmpty(0, struc3); }
                else {                                             // Result will be tensor.
                   Tensor<τ,α> elimTnr1, sumand, sum;
                   sum = new Tensor<τ,α>(struc3);
                   for(int i = 0; i < conDim; ++i) {
                      elimTnr1 = ReduceRank(rankInx1, i);
-                     if(elimTnr1 != null && vec.Vals.TryGetValue(i, out var val)) {
+                     if(elimTnr1.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimTnr1;
                         sum.Add(sumand); } }
                   if(sum.Count != 0)
                      return sum;
                   else
-                     return null; } } }
+                     return CreateEmpty(0, struc3); } } }
          else {                                                   // First tensor is rank 1 (a vector).
             var vec1 = (Vector<τ,α>) this;
             return vec1.ContractPart2(tnr2, rankInx2, struc3, conDim);}

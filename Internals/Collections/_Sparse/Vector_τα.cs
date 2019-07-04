@@ -78,6 +78,8 @@ namespace Fluid.Internals.Collections {
                   vec.Vals.Add(i, slc[i]); }
             return vec;
       }
+      new public static Vector<τ,α> CreateEmpty(int cap, params int[] structure) =>
+         new Vector<τ,α>(structure[0], cap);
       /// <summary>Adds value without checking if it is equal to zero.</summary>
       /// <param name="key">Index.</param>
       /// <param name="val">Value.</param>

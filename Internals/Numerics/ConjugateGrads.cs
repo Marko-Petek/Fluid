@@ -84,7 +84,8 @@ namespace Fluid.Internals.Numerics {
                rr[i] = r[i].Contract(r[i], 1, 1).SelfContractR2();         // Scalar.
                if (rr[i] < maxResSqr)
                   return x[i];
-               var AdDebug = A.Contract(d[i], 3, 1);
+               // TB.DebugTag = "OverflowContraction";
+               // var AdDebug = A.Contract(d[i], 3, 1);
                Ad = A.Contract(d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
                var dAd = d[i].Contract(Ad, 1, 1).SelfContractR2();         // Scalar.
                alfa = alfa = rr[i] / dAd;
