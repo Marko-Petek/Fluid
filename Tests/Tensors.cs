@@ -40,8 +40,10 @@ namespace Fluid.Tests {
          var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.GeneralSpecs.Both, TensorInt.MetaSpecs.All, TensorInt.StructureSpecs.TrueCopy));
          Assert.True(tnr.Equals(tnrCpy));
       }
-      [InlineData(
-         5,3,2, 7,3,9, 12,6,11)]
+
+      [InlineData(5,3,2, 7,3,9, 12,6,11)]
+      [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
+      [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
       [Theory] public void AddVecToVec(params int[] data) {
          var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
          var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
@@ -62,6 +64,8 @@ namespace Fluid.Tests {
       }
       /// <summary>Subtract two vectors.</summary>
       [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
+      [InlineData(1, 0, 2,   2, 3, 1,  -1,-3, 1)]
+      [InlineData(1, 3, 2,   2, 0, 1,  -1, 3, 1)]
       [Theory] public void SubTwoVecs(params int[] data) {
          var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
          var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
@@ -353,6 +357,18 @@ namespace Fluid.Tests {
          7, 3, 7,
          5, 5, 1
       )]
+      [InlineData(
+         0, 0, 0,
+         5, 2, 3,
+         2, 1, 0,
+
+         1, 2, 3,
+         2, 1, 4,
+         3, 4, 1,
+
+         1, 2, 3,
+         7, 3, 7,
+         5, 5, 1 )]
       [Theory] public void AddTwoTnrs(params int[] data) {
          var tnr1 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
          var tnr2 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(9,9), 3,3);
@@ -370,10 +386,21 @@ namespace Fluid.Tests {
          5, 2, 3,
          2, 1, 0,
 
+          1, 2, 3,
+         -3,-1, 1,
+          1, 3, 1 )]
+      [InlineData(
+         0, 0, 0,
+         5, 2, 3,
+         2, 1, 0,
+         
          1, 2, 3,
-         -3, -1, 1,
-         1, 3, 1
-      )]
+         2, 1, 4,
+         3, 4, 1,
+
+         -1,-2,-3,
+          3, 1,-1,
+         -1,-3,-1 )]
       [Theory] public void SubTwoTnrs(params int[] data) {
          var tnr1 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(0,9), 3,3);
          var tnr2 = TensorInt.CreateFromFlatSpec(data.AsSpan<int>(9,9), 3,3);

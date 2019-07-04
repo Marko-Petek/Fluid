@@ -58,7 +58,7 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Special version with a rank 4 tensor as LH operand and a rank 2 tensor as RH operand.</summary>
       /// <param name="x0">Initial guess.</param>
       /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
-      public Tensor Solve(Tensor x0, double maxRes) {       // TODO: Test ConjugateGrads.
+      public Tensor Solve(Tensor x0, double maxRes) {
          //throw new NotImplementedException();
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;

@@ -471,7 +471,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Modifies this tensor. Tnr2 is still usable afterwards.</summary>
       /// <param name="tnr2">Tensor which will be subtracted from this one.</param>
-      public void Sub(Tensor<τ,α> tnr2) {
+      public void Sub(Tensor<τ,α> tnr2) { // TODO: Test Sub method and implement it for vector and test it.
          Tensor<τ,α> tnr1 = this;
          ThrowOnSubstructureMismatch(tnr1, tnr2);
 
@@ -798,15 +798,11 @@ namespace Fluid.Internals.Collections {
       public SCG.IEnumerable<Tensor<τ,α>> RankEnumerator(int rankInx) {
          TB.Assert.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
-            foreach(var subTnr in Recursion(this)) {
-               yield return subTnr;
-            }
-         }
+            foreach(var subTnr in Recursion(this))
+               yield return subTnr; }
          else {
-            foreach(var int_subTnr in this) {
-               yield return int_subTnr.Value;
-            }
-         }
+            foreach(var int_subTnr in this)
+               yield return int_subTnr.Value; }
 
          SCG.IEnumerable<Tensor<τ,α>> Recursion(Tensor<τ,α> src) {
             foreach(var int_tnr in src) {
@@ -815,8 +811,7 @@ namespace Fluid.Internals.Collections {
                      yield return subTnr; }
                else {
                   foreach(var int_subTnr in int_tnr.Value)
-                     yield return int_subTnr.Value; }
-            }
+                     yield return int_subTnr.Value; } }
          }
       }
 
