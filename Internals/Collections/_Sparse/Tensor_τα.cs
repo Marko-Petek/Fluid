@@ -398,6 +398,7 @@ namespace Fluid.Internals.Collections {
          return res;
       }
       /// <summary>Plus operator for two tensors. Assigns proper substructure: If tnr1 or tnr2 are part of another tensor, result's structure will differ.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
+      /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
       public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
          int[] newStructure = tnr1.CopySubstructure();
@@ -411,7 +412,7 @@ namespace Fluid.Internals.Collections {
             onStopRank: (stopTnr1R2, stopTnr2R2) => {                    // stopTnrs are rank 2.
                foreach(var int_tnr1R1 in stopTnr1R2) {
                   if(stopTnr2R2.TryGetValue(int_tnr1R1.Key, out var tnr2R1)) {         // Same subtensor exists in target. Sum them and overwrite the one on target.
-                     var sum = (Vector<τ,α>) int_tnr1R1.Value + (Vector<τ,α>) tnr2R1;
+                     var sum = (Vector<τ,α>) int_tnr1R1.Value + (Vector<τ,α>) tnr2R1;        // FIXME: Careful! Must use method that preserves structure, or reassign structure a line below.
                      stopTnr2R2[1f, int_tnr1R1.Key] = sum; }
                   else {                                                               // Same subtensor does not exist on target. Copy branch from source.
                      var srcCopy = new Vector<τ,α>((Vector<τ,α>) int_tnr1R1.Value,
@@ -419,7 +420,10 @@ namespace Fluid.Internals.Collections {
                      stopTnr2R2.Add(int_tnr1R1.Key, srcCopy); } } } );
          return res;
       }
-      /// <summary>Minus operator for two tensors.</summary><param name="tnr1">Left operand.</param><param name="tnr2">Right operand.</param>
+      /// <summary>Minus operator for two tensors.</summary>
+      /// <param name="tnr1">Left operand.</param>
+      /// <param name="tnr2">Right operand.</param>
+      /// <remarks> <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
          int[] newStructure = tnr1.CopySubstructure();
@@ -445,6 +449,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Modifies this tensor and destroys tnr2, don't use the tnr2 reference afterwards.</summary>
       /// <param name="tnr2">Disposable operand 2 whose elements will be absorbed into the caller.</param>
+      /// <remarks> <see cref="TestRefs.TensorAdd"/> </remarks>
       public void Add(Tensor<τ,α> tnr2) {
          Tensor<τ,α> tnr1 = this;
          ThrowOnSubstructureMismatch(tnr1, tnr2);
@@ -505,6 +510,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Multiply tensor with a scalar. Operator copies structure and superior by reference.</summary>
       /// <param name="scal">Scalar.</param>
       /// <param name="tnr">Tensor.</param>
+      /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
       public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> tnr) {
          int[] newStructure = tnr.CopySubstructure();
          return Recursion(tnr);
@@ -523,6 +529,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
       /// <param name="tnr2">Right-hand operand.</param>
+      /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
       public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {                     // TODO: Make sure this work for all combinations: (tnr,tnr), (tnr,vec), (vec,tnr), (vec,vec)
          // Overriden on vector when first operand is a vector.
          // 1) Descend to rank 1 through a recursion and then delete that vector.
@@ -549,6 +556,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
       /// <param name="elimRank"> True, zero-based rank index of rank to be eliminated.</param>
       /// <param name="emtInx">Zero-based element index in that rank in favor of which the elimination will take place.</param>
+      /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
       public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
          TB.Assert.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
@@ -720,9 +728,8 @@ namespace Fluid.Internals.Collections {
          (int[] struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
          return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
       }
-      /// <summary>Use on rank 2 tensor.</summary>
-      /// <param name="natInx1">First one-based natural index on this tensor over which to contract.</param>
-      /// <param name="natInx2">Second one-based natural index on this tensor over which to contract.</param>
+      /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
+      /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
       public τ SelfContractR2() {
          TB.Assert.True(Rank == 2, "Tensor rank has to be 2 for this method.");
          TB.Assert.True(Structure[0] == Structure[1], "Corresponding dimensions have to be equal.");
@@ -761,9 +768,11 @@ namespace Fluid.Internals.Collections {
                      res.Vals[int_tnr.Key] = O<τ,α>.A.Add(res[int_tnr.Key], val); } } }
          return res;
       }
-
+      /// <summary>Contracts across two slot indices on a single tensor of at least rank 3.</summary>
+      /// <param name="slotInx1">Slot index 1.</param>
+      /// <param name="slotInx2">Slot index 2.</param>
+      /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
       public Tensor<τ,α> SelfContract(int slotInx1, int slotInx2) {
-         //throw new NotImplementedException();
          TB.Assert.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
          TB.Assert.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1],
             "Dimensions of contracted slots have to be equal.");
@@ -799,7 +808,7 @@ namespace Fluid.Internals.Collections {
                throw new InvalidOperationException("Tensor addition: structures do not match."); }
       }
 
-      public SCG.IEnumerable<Tensor<τ,α>> RankEnumerator(int rankInx) {
+      public SCG.IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
          TB.Assert.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
             foreach(var subTnr in Recursion(this))

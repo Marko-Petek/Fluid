@@ -139,6 +139,7 @@ namespace Fluid.Internals.Collections {
             res.Vals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
          return res;
       }
+      /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
       public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
          var newStruc = vec.CopySubstructure();
          var res = new Vector<τ,α>(newStruc, null, vec.Count);
@@ -188,6 +189,7 @@ namespace Fluid.Internals.Collections {
          return res;
       }
       /// <summary>Dot (scalar) product.</summary>
+      /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
       public static τ operator *(Vector<τ,α> vec1, Vector<τ,α> vec2) =>
          vec1.Contract(vec2);
 
