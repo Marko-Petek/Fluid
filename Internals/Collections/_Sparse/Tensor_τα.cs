@@ -189,7 +189,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
       /// <param name="slice">Span of values.</param>
       /// <param name="structure">Structure of new tensor.</param>
-      public static Tensor<τ,α> CreateFromFlatSpec(Span<τ> slice, params int[] structure) {
+      public static Tensor<τ,α> FromFlatSpec(Span<τ> slice, params int[] structure) {
          int tnrRank = structure.Length;
          if(tnrRank == 1)
             return Vector<τ,α>.CreateFromFlatSpec(slice);
