@@ -1,20 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <LangVersion>7.3</LangVersion>
-    <IsPackable>false</IsPackable>
-    <DefineConstants>REPORT</DefineConstants>
+   <TargetFramework>netcoreapp2.2</TargetFramework>
+   <LangVersion>7.3</LangVersion>
+   <IsPackable>false</IsPackable>
+   <DefineConstants>REPORT</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+   <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+   <PackageReference Include="xunit" Version="2.4.1" />
+   <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChannelFlow\ChannelFlow.csproj" />
+   <ProjectReference Include="..\TestRef\TestRef.csproj" />
+   <ProjectReference Include="..\ChannelFlow\ChannelFlow.csproj" />
+   <ProjectReference Include="..\Internals\Internals.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
+using Fluid.TestRef;
 
 namespace Fluid.Internals.Collections {
    /// <summary>A vector with specified dimension which holds values of type τ. Those can use arithmetic defined inside type α.</summary>
@@ -43,6 +44,8 @@ namespace Fluid.Internals.Collections {
          else
             tgt.Vals = new Dictionary<int,τ>();
       }
+      /// <summary>Creates a new vector from an array slice.</summary>
+      /// <param name="slc">Array slice.</param>
       public static Vector<τ,α> CreateFromFlatSpec(Span<τ> slc) {
          var vec = new Vector<τ,α>(slc.Length, slc.Length);
          vec.Structure = new int[] { slc.Length };
@@ -53,7 +56,8 @@ namespace Fluid.Internals.Collections {
       }
       new public static Vector<τ,α> CreateEmpty(int cap, params int[] structure) =>
          new Vector<τ,α>(structure[0], cap);
-      /// <summary>Adds value without checking if it is equal to zero.</summary>
+
+      /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
       /// <param name="key">Index.</param>
       /// <param name="val">Value.</param>
       internal void Add(int key, τ val) =>
@@ -70,7 +74,7 @@ namespace Fluid.Internals.Collections {
                Vals.Remove(i); }
       }
 
-      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {              // TODO: Create a new instance of this method that accepts a vector and returns a tensor (rank 2).
          int newRank = Rank + tnr2.Rank;
          var newStructure = Structure.Concat(tnr2.Structure).ToArray();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
@@ -79,7 +83,8 @@ namespace Fluid.Internals.Collections {
             res.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
          return res;
       }
-
+      /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
+      /// <param name="vec2">Sumand 2. Is not destroyed.</param>
       public void Add(Vector<τ,α> vec2) {
          foreach(var int_val2 in vec2.Vals) {
             if(Vals.TryGetValue(int_val2.Key, out τ val1)) {                  // Value exists in Vec1.
@@ -89,38 +94,35 @@ namespace Fluid.Internals.Collections {
                else
                   Vals.Remove(int_val2.Key); }
             else
-               Vals.Add(int_val2.Key, int_val2.Value);
-         }
+               Vals.Add(int_val2.Key, int_val2.Value); }
       }
-
-      // #if false   // TODO: Implement Split on Vector.
-      // /// <summary>Splits a vector into two vectors. Caller (left remainder) is modified, while right remainder is returned as a separate vector re-indexed from 0.</summary>
-      // /// <param name="inx">Element at this index will end up as part of right remainder.</param>
-      // public Tensor<τ> SplitAt(int inx) {
-      //    var remTen1 = CreateNew(Dim - inx);
-      //    foreach(var kvPair in this.Where(pair => pair.Key >= inx))
-      //       remTen1.Add(kvPair.Key - inx, kvPair.Value);                         // Add to right remainder.
-      //    foreach(var key in remTen1.Keys)
-      //       Remove(key + inx);                                          // Must not modify collection during enumeration. Therefore entries have to be removed from left remainder afterwards.
-      //    Dim = inx;
-      //    return remTen1;
-      // }
-      // #endif
-      
-      /// <summary>Sum two R1 tensors.</summary>
-      /// <param name="lVec">Left operand.</param>
-      /// <param name="rVec">Right operand.</param>
-      /// <returns>A new R1 tensor.</returns>
-      public static Vector<τ,α> operator + (Vector<τ,α> lVec, Vector<τ,α> rVec) {   // FIXME: lVec can have 0 entries where rVec doesn't. These values are then ignored by this implementation.
-         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);
-         foreach(var kv in lVec.Vals)
-            res[kv.Key] = O<τ,α>.A.Add(kv.Value, rVec[kv.Key]);
+      /// <summary>Sum two vectors. Does not check substructure match.</summary>
+      /// <param name="vec1">Left operand.</param>
+      /// <param name="vec2">Right operand.</param>
+      /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
+      public static Vector<τ,α> operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) {
+         var newStruc = vec1.CopySubstructure();
+         var res = new Vector<τ,α>(vec1, in CopySpecs.S35200);
+         res.Structure = newStruc;
+         foreach(var int_val1 in vec1.Vals) {
+            if(vec2.Vals.TryGetValue(int_val1.Key, out var val2)) {
+               res[int_val1.Key] = O<τ,α>.A.Add(int_val1.Value, val2); }
+            else {
+               res.Add(int_val1.Key, int_val1.Value); } }
          return res;
       }
-      public static Vector<τ,α> operator - (Vector<τ,α> lVec, Vector<τ,α> rVec) {
-         var res = new Vector<τ,α>(lVec.Structure, lVec.Sup, lVec.Count + 4);       // FIXME: lVec can have 0 entries where rVec doesn't. These values are then ignored by this implementation. You have to copy right operand. Result will appear here.
-         foreach(var kv in rVec.Vals)
-            res[kv.Key] = O<τ,α>.A.Sub(lVec[kv.Key], kv.Value);
+      /// <summary>Subtract two vectors. Does not check substructure match.</summary>
+      /// <param name="vec1">Left operand.</param>
+      /// <param name="vec2">Right operand.</param>
+      /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
+      public static Vector<τ,α> operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) {
+         var newStruc = vec1.CopySubstructure();
+         var res = new Vector<τ,α>(vec1, in CopySpecs.S35200);
+         foreach(var int_val2 in vec2.Vals) {
+            if(vec1.Vals.TryGetValue(int_val2.Key, out var val1)) {
+               res[int_val2.Key] = O<τ,α>.A.Sub(val1, int_val2.Value); }
+            else {
+               res.Add(int_val2.Key, O<τ,α>.A.Neg(int_val2.Value)); } }
          return res;
       }
       /// <summary>Modifies this vector by negating each element.</summary>
@@ -128,18 +130,20 @@ namespace Fluid.Internals.Collections {
          foreach(var int_val in Vals)
             Vals[int_val.Key] = O<τ,α>.A.Neg(int_val.Value);
       }
-      /// <summary>Negate operator.</summary>
+      /// <summary>Negate operator. Creates a new vector with its own substructure.</summary>
       /// <param name="vec">Vector to negate.</param>
       public static Vector<τ,α> operator - (Vector<τ,α> vec) {
-         var res = new Vector<τ,α>(vec.Structure, vec.Sup, vec.Count);                     // Copy right operand. Result will appear here.
-         foreach(var kv in vec.Vals)
-            res[kv.Key] = O<τ,α>.A.Neg(vec[kv.Key]);
+         var newStruc = vec.CopySubstructure();
+         var res = new Vector<τ,α>(newStruc, null, vec.Count);
+         foreach(var int_val in vec.Vals)
+            res.Vals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
          return res;
       }
       public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
-         var res = new Vector<τ,α>(vec, CopySpecs.ScalarMultiply);
-         foreach(var kv in vec.Vals)
-            res[kv.Key] = O<τ,α>.A.Mul(scal, vec[kv.Key]);
+         var newStruc = vec.CopySubstructure();
+         var res = new Vector<τ,α>(newStruc, null, vec.Count);
+         foreach(var int_val in vec.Vals)
+            res.Vals.Add(int_val.Key, O<τ,α>.A.Mul(scal, vec[int_val.Key]));
          return res;
       }
 

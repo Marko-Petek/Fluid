@@ -44,6 +44,7 @@ using SCG = System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
+using Fluid.TestRef;
 
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
@@ -121,7 +122,8 @@ namespace Fluid.Internals.Collections {
          tnr.Structure = Structure;
          base.Add(key, tnr);
       }
-      /// <summary>Creates a tensor as a deep copy of this one: same Rank, Structure and Superior.</summary>
+      /// <summary>Creates tnr2 as a copy of tnr1. Specify what to copy with CopySpecs.</summary>
+      /// <remarks><see cref="TestRefs.TensorCopy"/></remarks>
       public virtual Tensor<τ,α> Copy(in CopySpecStruct cs) {
          if (Rank == 1) {
             var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
@@ -379,11 +381,13 @@ namespace Fluid.Internals.Collections {
                onStopRank?.Invoke(aVisitSrc, aTgt);
          }
       }
-
-      public static Tensor<τ,α> operator -(Tensor<τ,α> tnr) {
-         int[] newStructure = tnr.CopySubstructure();
-         var res = new Tensor<τ,α>(newStructure, tnr.Rank, null, tnr.Count);
-         RecursiveVisitEmptyTgt(tnr, res, 2,
+      /// <summary>Creates a new tensor with its own structure which is a negation of tnr1.</summary>
+      /// <param name="tnr1">Operand.</param>
+      /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
+      public static Tensor<τ,α> operator -(Tensor<τ,α> tnr1) {
+         int[] newStructure = tnr1.CopySubstructure();
+         var res = new Tensor<τ,α>(newStructure, tnr1.Rank, null, tnr1.Count);
+         RecursiveVisitEmptyTgt(tnr1, res, 2,
             onVisit: (subSrc, tgt, inx) => {
                var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
                tgt.Add(inx, subTgt);
@@ -519,7 +523,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
       /// <param name="tnr2">Right-hand operand.</param>
-      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {                     // TODO: Make sure this work for all combinations: (tnr,tnr), (tnr,vec), (vec,tnr), (vec,vec)
          // Overriden on vector when first operand is a vector.
          // 1) Descend to rank 1 through a recursion and then delete that vector.
          // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
