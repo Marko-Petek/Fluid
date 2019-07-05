@@ -857,7 +857,7 @@ namespace Fluid.Internals.Collections {
          }
       }
 
-      public bool Equals(Tensor<τ,α> tnr2, τ eps) {                           // FIXME: This implementation works incorrectly when there are zeros in tnr1 where there are values in tnr2. We get false positive.
+      public bool Equals(Tensor<τ,α> tnr2, τ eps) {
          ThrowOnSubstructureMismatch(this, tnr2);
          return TnrRecursion(this, tnr2);
 
