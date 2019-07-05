@@ -8,6 +8,7 @@ namespace Fluid.TestRef {
       public static Test VectorAdd;
       public static Test TensorAdd;
       public static Test Op_TensorNegation;
+      public static Test TensorReduceRank;
    }
    public struct Test { }
 }

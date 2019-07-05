@@ -206,6 +206,14 @@ namespace Fluid.Tests {
          16,   1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
          3,    2,2,2,
          8,    4,5,5,6, 2,4,0,3)]
+      [InlineData(
+         1,    2,
+         1,    1,
+         4,    2, 2, 2, 2,
+         16,   1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
+         3,    2, 2, 2,
+         8,    9,8,5,6, 8,9,0,3)]
+      /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
       [Theory] public void TensorReduceRank(params int[] data) {
          int read = 0, pos = 0;
          Read(data, ref pos, ref read);
@@ -224,42 +232,77 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
 
-      [InlineData(2, 2, 2, 2,
-      1,2,4,5,9,8,5,6, 3,7,2,4,8,9,0,3,
-      9,8,5,6, 8,9,0,3)]
-      [Theory] public void ElimRank4_2(params int[] data) {
-         var structure = data.Take(4).ToArray();
-         var tnr = Tensor<int,IA>.FromFlatSpec(new Span<int>(data, 4,
-            16), structure);
-         var tnr2 = tnr.ReduceRank(2, 1);
-         var span = data.Skip(4 + 16).Take(8).ToArray().AsSpan();
-         var expRes = Tensor<int,IA>.FromFlatSpec(span, new int[] {2,2,2});
-         Assert.True(tnr2.Equals(expRes));
-      }
-
-      [InlineData(3,6, 2,5,  6,0, 4,7,   7,13)]
-      [InlineData(4,2, 7,5,  6,2, 6,4,   10,6)]
-      [InlineData(24,51, 30,42, 18,39, 22,32,   46,83)]
-      [InlineData(24,42, 36,36, 30,63, 38,52,   62,94)]
-      [Theory] public void SelfContractR3_12(params int[] data) {
-         var span1 = new Span<int>(data, 0, 8);
-         var span2 = new Span<int>(data, 8, 2);
-         var tnr1 = TensorInt.FromFlatSpec(span1, 2,2,2);
-         var expRes = TensorInt.FromFlatSpec(span2, 2);
-         var res = tnr1.SelfContractR3(1,2);
-         Assert.True(res.Equals(expRes));
-      }
-
-      [InlineData(3,6, 2,5,  6,0, 4,7,   3,9)]
-      [InlineData(4,2, 7,5,  6,2, 6,4,   6,11)]
-      [InlineData(24,51, 30,42, 18,39, 22,32,   63,62)]
-      [InlineData(24,42, 36,36, 30,63, 38,52,   87,88)]
-      [Theory] public void SelfContractR3_13(params int[] data) {
-         var span1 = new Span<int>(data, 0, 8);
-         var span2 = new Span<int>(data, 8, 2);
-         var tnr1 = TensorInt.FromFlatSpec(span1, 2,2,2);
-         var expRes = TensorInt.FromFlatSpec(span2, 2);
-         var res = tnr1.SelfContractR3(1,3);
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    2,                                  // natInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    3,6, 2,5,  6,0, 4,7,                // tnr
+         1,    2,                                  // expResStruc 
+         2,    7, 13 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    2,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    4,2, 7,5,  6,2, 6,4,                // tnr
+         1,    2,                                  // expResStruc 
+         2,    10, 6 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    2,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    24,51, 30,42, 18,39, 22,32,         // tnr
+         1,    2,                                  // expResStruc
+         2,    46, 83 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    2,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    24,42, 36,36, 30,63, 38,52,         // tnr
+         1,    2,                                  // expResStruc
+         2,    62,94 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    3,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    3,6, 2,5,  6,0, 4,7,         // tnr
+         1,    2,                                  // expResStruc
+         2,    3,9 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    3,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    4,2, 7,5,  6,2, 6,4,         // tnr
+         1,    2,                                  // expResStruc
+         2,    6,11 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    3,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    24,51, 30,42, 18,39, 22,32,         // tnr
+         1,    2,                                  // expResStruc
+         2,    63,62 )]
+      [InlineData(
+         1,    1,                                  // slotInx1
+         1,    3,                                  // slotInx2
+         3,    2, 2, 2,                            // tnrStruc
+         8,    24,42, 36,36, 30,63, 38,52,         // tnr
+         1,    2,                                  // expResStruc
+         2,    87,88 )]
+      [Theory] public void TensorSelfContract(params int[] data) {
+         int read = 0, pos = 0;
+         Read(data, ref pos, ref read);
+         var slotInx1 = data[pos];
+         Read(data, ref pos, ref read);
+         var slotInx2 = data[pos];
+         Read(data, ref pos, ref read);
+         var tnrStruc = new Span<int>(data, pos, read).ToArray();
+         Read(data, ref pos, ref read);
+         var tnr = TensorInt.FromFlatSpec(new Span<int>(data, pos, read), tnrStruc);
+         Read(data, ref pos, ref read);
+         var expResStruc = new Span<int>(data, pos, read).ToArray();
+         Read(data, ref pos, ref read);
+         var expRes = TensorInt.FromFlatSpec(new Span<int>(data, pos, read), expResStruc);
+         var res = tnr.SelfContract(slotInx1, slotInx2);
          Assert.True(res.Equals(expRes));
       }
 
