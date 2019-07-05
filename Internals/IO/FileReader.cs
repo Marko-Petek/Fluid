@@ -11,6 +11,9 @@ using static Fluid.Internals.Development.AppReporter;
 
 namespace Fluid.Internals.IO {
    public class FileReader : FileRWBase, IDisposable {
+      public const string DefaultDirPath = "";
+      public const string DefaultFileName = "input";
+      public const string DefaultExt = ".txt";
       StreamReader Reader { get; set; }
 
       public FileReader(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName,

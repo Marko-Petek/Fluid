@@ -4,6 +4,12 @@
 **/obj
 **/obj/**
 
+**\bin
+**\bin\**
+
+**\obj
+**\obj\**
+
 *.vs
 *.dvi
 *.bbl

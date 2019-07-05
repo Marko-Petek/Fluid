@@ -31,8 +31,8 @@ namespace Fluid.Internals.Development {
       /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
       public ReportWriter(AppReporter appReporter) {
          int buffer;
-         if(System.Console.BufferWidth > NCols * 2 - 12 + 36 + 20)
-            buffer = System.Console.BufferWidth - NCols * 2 - 12;              // spaces, some slack
+         if(TB.Console.BufferWidth > 6 * 2 - 12 + 36 + 20)
+            buffer = TB.Console.BufferWidth - 6 * 2 - 12;              // spaces, some slack
          else
             buffer = 36 + 60;
          int remainder = buffer - 8 - 8 - 16 - 4;
@@ -58,7 +58,7 @@ namespace Fluid.Internals.Development {
          var wrappedText = message.Text.WrapToLines(_ColWidths[1]);
          System.TimeSpan dt = (message.Time - prevMessageTime);
          var wrappedDT = dt.TotalSeconds.ToString("G3").WrapToLines(_ColWidths[2]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
-         var relPath = Regex.Match(message.Path, @"/Fluid/.*").Value;
+         var relPath = Regex.Match(message.Path, @"/Fluid/.*").Value;                     // FIXME: Make this line platform independent.
          relPath = relPath.Remove(0, 7);
          var wrappedPath = relPath.WrapToLines(_ColWidths[3]);
          var wrappedCaller = message.Caller.WrapToLines(_ColWidths[4]);
@@ -90,8 +90,8 @@ namespace Fluid.Internals.Development {
             FileWriter.Flush(); }
       }
       public void Dispose() {
-         FileWriter.Dispose();
-         System.GC.SuppressFinalize(this);
+         GC.SuppressFinalize(this);
+         FileWriter?.Dispose();
       }
       ~ReportWriter() => Dispose();
    }

@@ -196,101 +196,260 @@ nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajsk
 
 Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev elementov Kartezična. Mreža je lahko pri \texttt{FEM} tudi nestrukturirana, kar je ena izmed prednosti metode.
 
-Potem omejimo Diskretizacija problema 
-
-Galerkin, Najmanših kvadratov \cite{JiangB-LSFEM}
-Basic lemma of variational principles: Temeljni lema variacijskih načel.
-
-
+Naj bodo:
 \begin{equation}
-   \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \phi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \phi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \phi^{d0} \frac{\pd}{\pd x_e}\right) \left(u^g_m \mkern1mu \phi^{g0}\right) - f^g_j \mkern1mu \phi^{g0}}
+   \mathbf{T_1} = (x_1,y_1), \quad \mathbf{T_2} = (x_2,y_2), \quad \mathbf{T_3} = (x_3,y_3), \quad \mathbf{T_4} = (x_4,y_4)
 \end{equation}
-
+oglišča pravega elementa. Imejmo preslikavo $\mathbf{r}(\bm{\chi})$, ki slika iz referenčnega kvadrata $\bm{\chi}$ v realni prostor $\mathbf{x}$:
 \begin{equation}
-   \sum_i \bra{A^{ab}_{jk} v^c_k \phi^{a0} \phi^{cb}}\ket{A^{de}_{jm} u^g_m \phi^{d0} \phi^{ge} - f^g_j \phi^{g0}}
+   \mathbf{r}(\bm{\chi})
+   =
+   \begin{pmatrix}
+      x(\bm{\chi}) \\
+      y(\bm{\chi})
+   \end{pmatrix}
+   =
+   \begin{pmatrix}
+      x_1 S_1(\bm{\chi}) + x_2 S_2(\bm{\chi}) + x_3 S_3(\bm{\chi}) + x_4 S_4(\bm{\chi}) \\
+      y_1 S_1(\bm{\chi}) + y_2 S_2(\bm{\chi}) + y_3 S_3(\bm{\chi}) + y_4 S_4(\bm{\chi})
+   \end{pmatrix} \ ,
 \end{equation}
-
+kjer so $S_i$ ogliščne funkcije:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{g0}} \mkern2mu \right) = 0
+   \mathbf{S}
+   =
+   \begin{pmatrix}
+      (1+\xi)(1+\eta) \\
+      (1+\xi)(1-\eta) \\
+      (1-\xi)(1+\eta) \\
+      (1-\xi)(1-\eta)
+   \end{pmatrix}
 \end{equation}
-
+ali kompaktneje:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{d0} \phi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} \phi^{cb} \mkern1mu}\ket{\mkern1mu \phi^{g0}} \mkern2mu \right) = 0
+   \begin{pmatrix}
+      x(\bm{\chi}) \\
+      y(\bm{\chi})
+   \end{pmatrix}
+   =
+   \begin{pmatrix}
+      x_1 & x_2 & x_3 & x_4 \\
+      y_1 & y_2 & y_3 & y_4
+   \end{pmatrix}
+   \begin{pmatrix}
+      S_1(\bm{\chi}) \\
+      S_2(\bm{\chi}) \\
+      S_3(\bm{\chi}) \\
+      S_4(\bm{\chi})
+   \end{pmatrix} \ .
 \end{equation}
-
+Jakobijevka preslikave $\mathbf{r}(\bm{\chi})$ je enaka:
 \begin{equation}
-   \mathbf{\nabla} \psi^{a}(\mathbf{x}) = \texttt{J} \mathbf{\nabla} \phi^{a}(\bm{\rho})
+   \mathbsf{J}
+   =
+   \begin{pmatrix}
+      \frac{\pd x}{\pd \xi} & \frac{\pd x}{\pd \eta} \\
+      \frac{\pd y}{\pd \xi} & \frac{\pd y}{\pd \eta}
+   \end{pmatrix} \ .
 \end{equation}
-
+$\psi$ in $\phi$ sta skalarni funkciji. $\bar{\texttt{J}}$ je inverz Jakobijevke:
 \begin{equation}
-   \psi^{a1} = \widetilde{J}^{a}_{11} \phi^{a1} + \widetilde{J}^{a}_{12} \phi^{a2}
+   \mathbf{\nabla_{\mkern-3mu x}} \psi(\mathbf{x}) = \bar{\mathbsf{J}} \mkern3mu \mathbf{\nabla_{\mkern-4mu \chi}} \phi(\bm{\chi}) \ .
 \end{equation}
-
+$\bar{\texttt{J}}$ je enak:
 \begin{equation}
-   \frac{\pd \psi^a}{\pd x} = \widetilde{J}^{a}_{11} \frac{\pd \phi^a}{\pd \xi} + \widetilde{J}^{a}_{12} \frac{\pd \phi^a}{\pd \eta}
+   \bar{\mathbsf{J}}
+   =
+   \frac{1}{\det \mathbsf{J}}
+   \begin{pmatrix}
+      +J_{22} & -J_{12} \\
+      -J_{21} & +J_{11}
+   \end{pmatrix}
+   \ .
 \end{equation}
-
+Odvod $\psi$ po $x_1$ označimo kot $\psi^1$:
 \begin{equation}
-   \widetilde{J}^{a}_{11} = \frac{\pd \xi}{\pd x} \quad \widetilde{J}^{a}_{12} = \frac{\pd \eta}{\pd x}
+   \psi^1 = \left(\bar{J}_{11} \phi^1 + \bar{J}_{12} \phi^2 \right) \ .
 \end{equation}
-
+Zapisano na konvencionalen način:
 \begin{equation}
-   \frac{\pd \psi^a}{\pd x} = \frac{\pd \xi}{\pd x} \frac{\pd \phi^a}{\pd \xi} + \frac{\pd \eta}{\pd x} \frac{\pd \phi^a}{\pd \eta}
+   \left(\frac{\pd \psi}{\pd x}\right)_{\mkern-4mu y}
+   =
+   \bar{J}_{11} \mkern-2mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
+   +
+   \bar{J}_{12} \mkern-2mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi} \ ,
 \end{equation}
-
+oziroma:
 \begin{equation}
-   \psi^{ab} = \widetilde{J}_{bc} \phi^{ac} \quad J_{0c} = 1
+   \left(\frac{\pd \psi}{\pd x} \right)_{\mkern-3mu y}
+   =
+   \left(\frac{\pd \xi}{\pd x} \right)_{\mkern-4mu y}
+      \mkern-4mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
+   +
+   \left(\frac{\pd \eta}{\pd x}\right)_{\mkern-4mu y}
+      \mkern-4mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi}
 \end{equation}
-
+Če definiramo:
 \begin{equation}
-   \sum_i \bra{\left(A^{ab}_{jk} \mkern1mu \psi^{a0} \frac{\pd}{\pd x_b}\right) \left(v^c_k \mkern1mu \psi^{c0}\right)}\ket{\left(A^{de}_{jm} \mkern1mu \psi^{d0} \frac{\pd}{\pd x_e}\right) \left(u^g_m \mkern1mu \psi^{g0}\right) - f^g_j \mkern1mu \psi^{g0}}
+   \mathbsf{\mathfrak{J}}
+   =
+   \frac{1}{\det \mathbsf{J}}
+   \begin{pmatrix}
+      \det \mathbsf{J} & 0 & 0 \\
+      0 & +J_{22} & -J_{12} \\
+      0 & -J_{21} & +J_{11}
+   \end{pmatrix} \ ,
 \end{equation}
-
+lahko zapišemo:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\psi^{a0} \psi^{cb} \mkern1mu}\ket{\mkern1mu \psi^{d0} \psi^{ge}} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\psi^{a0} \psi^{cb} \mkern1mu}\ket{\mkern1mu \psi^{g0}} \mkern2mu \right) = 0
+   \psi^p = \mathfrak{J}_{pq} \phi^{q} \ .
+   \label{eq:refToEmt}
 \end{equation}
-
+Po vozliščih $(\alpha, \beta, \gamma, \delta \in [1,N])$:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{d0} (\widetilde{J}_{eh}  \phi^{gh}) |\texttt{J}|} - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \bra{\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu}\ket{\mkern1mu \phi^{g0} |\texttt{J}|} \mkern2mu \right) = 0
+   \bra{
+      \left(A^{\beta p}_{\phantom{\beta p}jk} \mkern1mu \Psi_\beta \frac{\pd}{\pd x_p}\right)
+         \left(v^\alpha_{\triangleright k} \mkern1mu \Psi_\alpha\right)}
+   \ket{
+      \left(A^{\gamma qjl} \mkern1mu \Psi_\gamma \frac{\pd}{\pd x_q}\right)
+         \left(u^{\delta l}_\triangleright \mkern1mu \Psi_\delta + u^{\delta l}_\triangleleft \mkern1mu \Psi_\delta \right)
+      -
+      f^{\gamma j} \mkern1mu \Psi_\gamma }
 \end{equation}
-
+Po elementih $(a,b,c,d) \in [1,12]$, kjer je $n$ število elementov.
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle\phi^{a0} (J^{-1}_{bh}  \phi^{ch}) \mkern1mu\mkern1mu \phi^{d0} (J^{-1}_{eh}  \phi^{gh}) |\mathbsf{J}|\right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \left\langle\phi^{a0} (J^{-1}_{bh}  \phi^{ch}) \mkern1mu \mkern1mu \phi^{g0} |\mathbsf{J}|\right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+   \sum^n_{i} \bra{
+      \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
+         \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
+   \ket{
+      \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
+         \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
+      -
+      f^{cj} \mkern1mu \psi_c}
 \end{equation}
+Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
+\begin{equation*}
+   \sum^n_i \bra{
+      \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
+         v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
+   \ket{
+      \mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right)
+         \mkern-5mu \left(u^{dl}_\triangleright \mkern1mu \psi^{\triangleright q}_d
+         +
+         u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
+      -
+      f^{cj} \mkern1mu \psi_c}
+\end{equation*}
+Preuredimo:
+\begin{equation*}
+   \sum^n_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
+      \psi_{b0}
+         \psi_{ap} \mkern4mu}
+   \ket{
+      \mkern2mu
+         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleright \psi_{dq}
+         +
+         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleleft \psi_{dq}
+      -
+      f^{cj}_{\bowtie} \psi_{c0}}
+\end{equation*}
 
-$\widetilde{J}$ ima posebna ničta elementa: $|\mathbsf{J}|$.
+\begin{equation*}
+   \sum_i v^a_{\triangleright k} \left(
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+      +
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+      -
+      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   \right)
+\end{equation*}
+Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu\mkern1mu \phi^{d0} (\widetilde{J}_{eh}  \phi^{gh}) \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{jk} \mkern1mu f^g_j \left\langle\phi^{a0} (\widetilde{J}_{bh}  \phi^{ch}) \mkern1mu \mkern1mu \phi^{g0} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+   S_{bapcdq} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle
 \end{equation}
-
 \begin{equation}
-   \sum_i v^c_k \left( \mkern2mu A^{ab}_{jk} A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} \phi^{d0} \mkern2mu \widetilde{J}_{bh}  \phi^{ch} \mkern1mu \widetilde{J}_{el}  \phi^{gl} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu A^{ab}_{pk} \mkern1mu f^g_p \left\langle\phi^{a0} \phi^{g0} \widetilde{J}_{bh}  \phi^{ch} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+   T_{bapc} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle \ .
 \end{equation}
-
+Tako imamo:
 \begin{equation}
-   \sum_i v^c_k A^{ab}_{jk} \left(A^{de}_{jm} u^g_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{a0} \phi^{d0} \mkern2mu \widetilde{J}_{bh}  \phi^{ch} \mkern1mu \widetilde{J}_{el}  \phi^{gl} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^g_j \left\langle\phi^{a0} \phi^{g0} \widetilde{J}_{bh}  \phi^{ch} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+   \sum^n_i v^{ak}_{\triangleright} \left(
+      S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+      +
+      S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+      -
+      T_{bapc} A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   \right) = 0 \ .
 \end{equation}
-
+\begin{equation*}
+   \sum^n_i v^{(i,a)k}_{\triangleright} \left(
+      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleright
+      +
+      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleleft
+      -
+      T_{ibapc} A^{(i,b)p}_{\mkern42mu jk} f^{(i,c)j}_{\bowtie}
+   \right) = 0 \ .
+\end{equation*}
+Sestavitev globalnega tenzorja:
+\begin{equation*}
+   \sum^n_i v^{\alpha k}_{\triangleright} \left(
+      S_{ibapcdq} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleright \right)
+   =
+   \sum^n_i v^{\alpha k}_{\triangleright} \left(
+      T_{ibapc} A^{\beta p}_{\mkern18mu jk} f^{\gamma j}_{\bowtie}
+      -
+      S_{ibapcdq} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleleft \right) \ .
+\end{equation*}
+$A^{(i,b)p}_{\mkern42mu jk}$, ipd., dejansko ne obstajajo. Kjerkoli se pojavijo oklepaji, moraš uporabiti preslikavo iz elementarnih v gloablne indekse. Opomba: $S_{ibapcdq}$ seveda obstajajo.
+\begin{IEEEeqnarray*}{c}
+   (i,a) \rightarrow \alpha \\
+   (i,b) \rightarrow \beta \\
+   (i,c) \rightarrow \gamma \\
+   (i,d) \rightarrow \delta
+\end{IEEEeqnarray*}
+\begin{equation*}
+   v^{\alpha k}_{\triangleright} \left(
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      +
+      G_{\alpha k}
+      -
+      H_{\alpha k}
+   \right) = 0 \ .
+\end{equation*}
+\begin{equation*}
+   F_{\alpha k} = H_{\alpha k} - G_{\alpha k} \ .
+\end{equation*}
+\begin{equation*}
+   v^{\alpha k}_{\triangleright} \left(
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      -
+      F_{\alpha k}
+   \right) = 0 \quad \forall v \ .
+\end{equation*}
+Končno:
 \begin{equation}
-   \sum_i v^a_k A^{bp}_{jk} \left(A^{cq}_{jm} u^d_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^{b0} \phi^{c0} \mkern2mu \widetilde{J}_{pr}  \phi^{ar} \mkern1mu \widetilde{J}_{qs}  \phi^{ds} \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^d_j \left\langle\phi^{b0} \phi^{d0} \widetilde{J}_{pr}  \phi^{ar} \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
+      =
+      F_{\alpha k} \ .
 \end{equation}
-
+Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
-   \sum_i v^a_k A^{bp}_{jk} \left(A^{cq}_{jm} u^d_m \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{(\xi, \eta)} \mkern-4mu - \mkern1mu f^d_j \left\langle\phi^0_b \phi^0_d \widetilde{J}_{pr}  \phi^r_a \right\rangle_{(\xi, \eta)} \mkern2mu \right) = 0
+   S_{bapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{qs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}}
 \end{equation}
-
 \begin{equation}
-   \sum_i v^k_a A^{bp}_{jk} \left(A^{cq}_{jm} u^m_d \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-4mu(\xi, \eta)} \mkern-6mu - \mkern1mu f^j_d \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-2mu(\xi, \eta)} \mkern2mu \right) = 0
+   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
-
+Zapis, primeren za implementacijo:
 \begin{equation}
-   \sum_i v^a_k A^{bp}_{jk} \left( \left\langle \frac{1}{|\mathbsf{J}|} \phi^0_b \phi^0_c \mkern2mu \widetilde{J}_{pr}  \phi^r_a \mkern1mu \widetilde{J}_{qs}  \phi^s_d \right\rangle_{\mkern-5mu\bm{\chi}} \mkern-2mu A^{cq}_{jl} u^d_l \mkern1mu - \mkern1mu \left\langle\phi^0_b \phi^0_d \mkern2mu \widetilde{J}_{pr}  \phi^r_a \right\rangle_{\mkern-3mu\bm{\chi}} \mkern-1mu f^d_j \mkern2mu \right) = 0
+   S_{ibapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{iqs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}}
+\end{equation}
+\begin{equation}
+   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu | \mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
 
 Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
 
 Podobno stori za asociirane pare $(i, d)$. Vsota po $l$ bo ponovno imela $m$ seštevancev. Seštevanci iz različnih asociiranih parov z istimi $l$ prispevajo k istemu stolpcu globalne matrike.
 
-To pomeni $2 \times 2 = 4$ prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
+To pomeni \(2 \times 2 = 4\) prispevki za vsak element globalne matrike za točke na stranicah ali $4 \times 4 = 16$ za točke na ogliščih.
 
-Lahko pa sestavljaš po elementih.
+Lahko pa sestavljaš po elementih. $(i, a)$ določi pas vrstic, $k$ določi mesto znotraj pasu. $(i, d)$ določi pas stolpcev, $l$ pa mesto znotraj pasu.

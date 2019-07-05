@@ -1,16 +1,18 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Diagnostics;
 
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write out nicely formatted values to console.</summary>
    public class Console {
+      public int BufferWidth => System.Console.IsOutputRedirected ? 125 : System.Console.BufferWidth;
       /// <summary>TextWriter belonging to System.Console.</summary>
       TextWriter TW { get; }
 
       public Console() {
          System.Console.OutputEncoding = Encoding.UTF8;
-         TW = System.Console.Out;
+         TW = System.Console.IsOutputRedirected ? new DebugTextWriter() : System.Console.Out;
       }
 
       /// <summary>Write a 1D array to console.</summary><param name="array1d">1D array.</param>
@@ -37,7 +39,7 @@ namespace Fluid.Internals.IO {
       public void WriteLine<T>(T[][][][][] array5d) => IO.WriteLine(array5d, TW);
       /// <summary>Write a 6D array to console and append a NewLine.</summary><param name="array6d">6D array.</param>
       public void WriteLine<T>(T[][][][][][] array6d) => IO.WriteLine(array6d, TW);
-      public void Write<T>(T input) => System.Console.Write(input);
-      public void WriteLine<T>(T input) => System.Console.WriteLine(input);
+      public void Write<T>(T input) => TW.Write(input.ToString());
+      public void WriteLine<T>(T input) => TW.WriteLine(input);
    }
 }

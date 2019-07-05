@@ -8088,3 +8088,13 @@
 09:37     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
 09:37     Program started.                         0         Internals/Toolbox.cs   EntryPointSetup   36    
 09:42     Program started.                                  0         Internals/Toolbox.cs        EntryPointSetup   36    
+18:42     We made i  0         Tests/  SpecialConjugate  530   
+          t to here            Tensor  Grads                   
+          .                    s.cs                            
+18:43     We made i  0         Tests/  SpecialConjugate  530   
+          t to here            Tensor  Grads                   
+          .                    s.cs                            
+18:49     We made it to here.         0         Tests/Tensors.  SpecialConjugate  530   
+                                                cs              Grads                   
+18:50     We made it to here.                         0         Tests/Tensors.cs         SpecialConjugate  530   
+                                                                                         Grads                   

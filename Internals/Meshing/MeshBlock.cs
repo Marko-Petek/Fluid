@@ -6,10 +6,13 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Meshing {
-   using SparseMat = SparseMat<double,DblArithmetic>;
-   using SparseRow = SparseRow<double,DblArithmetic>;
+   using dbl = Double;
+   using Tensor = Tensor<double,DblArithmetic>;
+   using Vector = Vector<double,DblArithmetic>;
    /// <summary>Represents a method that takes three indices and returns a position by reference.</summary>
    //public delegate ref MeshNode NodeDelegate(int blockRow, int blockCol, int index);
+
+   // TODO: Implement abstract J(stdInx,p,q) and J(cmtInx,p,q) methods that return Jacobians for each element.
 
    // cmt = compact, std = standard, lcl = local, gbl = global; descriptors connected to position indices.
    /// <summary>A structured submesh that provides access to global node indices via element indices.</summary>
@@ -56,14 +59,14 @@ namespace Fluid.Internals.Meshing {
       /// <summary>We switch the NodeCmp delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowCmtInx">Row of element (in which sought after position is located) inside block.</param><param name="colCmtInx">Column of element (in which sought after position is located) inside block.</param><param name="inrCmtInx">Compact element node position index (0 - 4).</param>
       protected MeshNode NodeOnMainCmt(int rowCmtInx, int colCmtInx, int inrCmtInx) {
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
-         return MainMesh.Node(gblInx);
+         return MainMesh.G[gblInx];
       }
       /// <summary>We switch the GetNodeStd delegate to point here after all positions are created and nodes are transfered to main mesh.</summary><param name="rowStdInx">Row of element (in which sought after position is located) inside block.</param><param name="colStdInx">Column of element (in which sought after position is located) inside block.</param><param name="inrStdInx">Standard element position index (0 - 11).</param>
       protected MeshNode NodeOnMainStd(int rowStdInx, int colStdInx, int inrStdInx) {
          (int rowCmtInx,int colCmtInx,int inrCmtInx) =
             CmtInxFromStdInx(rowStdInx, colStdInx, inrStdInx);
          int gblInx = GblInxFromCmpInx(rowCmtInx, colCmtInx, inrCmtInx);
-         return MainMesh.Node(gblInx);
+         return MainMesh.G[gblInx];
       }
       /// <summary>Returns three actual indices (0 - 4) of node positions array when we specify them in conventional notation (0 -11).</summary><param name="rowStdInx">Row of element inside this block.</param><param name="colStdInx">Column of element inside this block.</param><param name="inrStdInx">Index of node inside element (1 - 11).</param>
       public (int rowCmtInx,int colCmtInx,int inrCmtInx) CmtInxFromStdInx(
@@ -102,90 +105,90 @@ namespace Fluid.Internals.Meshing {
       /// <summary>Set values of constrained nodes and set their Constrainedness property to true. Returns number of constrained nodes.</summary>
       protected abstract int ApplyConstraints();
       /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public abstract void AddContribsToSfsMatrix(SparseMat A, double dt, double ni);
-      public abstract void AddContribsToFcgVector(SparseRow b, double dt, double ni);
+      public abstract void AddContribsToSfsMatrix(Tensor A, dbl dt, dbl ni);
+      public abstract void AddContribsToFcgVector(Vector b, dbl dt, dbl ni);
       /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
-      protected double[][] NodeOperatorMat0(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 1.0/dt + node.Var(2).Val, node.Var(3).Val, node.Var(0).Val, node.Var(1).Val, 0, 0, 1, 0 },
-            new double[8] { node.Var(4).Val, 1.0/dt - node.Var(2).Val, -node.Var(1).Val, 0, node.Var(0).Val, 0, 0, 1 },
-            new double[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 1, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 1 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
+      protected dbl[][] NodeOperatorMat0(MeshNode node, dbl dt) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 1.0/dt + node.Vars[2].Val, node.Vars[3].Val, node.Vars[0].Val, node.Vars[1].Val, 0, 0, 1, 0 },
+            new dbl[8] { node.Vars[4].Val, 1.0/dt - node.Vars[2].Val, -node.Vars[1].Val, 0, node.Vars[0].Val, 0, 0, 1 },
+            new dbl[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 1 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
          return A;
       }
-      protected double[][] NodeOperatorMat1(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
-            new double[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, -1, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
+      protected dbl[][] NodeOperatorMat1(dbl ni) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
+            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, -1, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
          return A;
       }
-      protected double[][] NodeOperatorMat2(MeshNode node, double dt, double ni) {
-         double[][] A = new double[8][] {
-            new double[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
-            new double[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new double[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
+      protected dbl[][] NodeOperatorMat2(dbl ni) {
+         dbl[][] A = new dbl[8][] {
+            new dbl[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
+            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
          return A;
       }
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="x">X coordinate.</param><param name="y">Y coordinate.</param><param name="vars">Indices of variables we wish to retrieve.</param>
-      public virtual double[] Solution(in Pos pos, params int[] vars) {
+      public virtual dbl[] Solution(in Pos pos, params int[] vars) {
          int startRow = 0;                                                          // Where current frame begins.
          int endRow = NRows - 1;                                                 // Where current frame ends.
          int startCol = 0;
          int endCol = NCols - 1;
          int nRows = NRows;                                                      // Row count of current frame.
          int nCols = NCols;
-         var vertices = new Pos[4];
-         vertices[0] = NodeStd(startRow, startCol, 0)._Pos;
-         vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
-         vertices[2] = NodeStd(endRow, endCol, 6)._Pos;
-         vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
+         var verts = new Pos[4];                                  // Vertices.
+         verts[0] = NodeStd(startRow, startCol, 0).Pos;
+         verts[1] = NodeStd(startRow, endCol, 3).Pos;
+         verts[2] = NodeStd(endRow, endCol, 6).Pos;
+         verts[3] = NodeStd(endRow, startCol, 9).Pos;
          int newEndRow = 0;
          int newEndCol = 0;
          while(nRows > 1 || nCols > 1) {                                            // As long as we have not narrowed our frame down to a single element.
             if(nRows > 1) {
                newEndRow = startRow + nRows/2 - 1;                                  // Set row at half frame width as end. No problem if nRows is odd.
-               vertices[3] = NodeStd(newEndRow, startCol, 9)._Pos;                  // New upper left.
-               vertices[2] = NodeStd(newEndRow, endCol, 6)._Pos;                    // New upper right.
-               if(pos.IsInsidePolygon(vertices)) {
+               verts[3] = NodeStd(newEndRow, startCol, 9).Pos;                  // New upper left.
+               verts[2] = NodeStd(newEndRow, endCol, 6).Pos;                    // New upper right.
+               if(pos.IsInsidePolygon(verts)) {
                   endRow = newEndRow;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;                  // UL
-                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }                  // UR
+                  verts[3] = NodeStd(endRow, startCol, 9).Pos;                  // UL
+                  verts[2] = NodeStd(endRow, endCol, 6).Pos; }                  // UR
                else {
                   startRow = newEndRow + 1;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos;                // LL
-                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos; }                // LR
+                  verts[0] = NodeStd(startRow, startCol, 0).Pos;                // LL
+                  verts[1] = NodeStd(startRow, endCol, 3).Pos; }                // LR
                nRows = endRow - startRow + 1; }
             if(nCols > 1) {
                newEndCol = startCol + nCols/2 - 1;
-               vertices[1] = NodeStd(startRow, newEndCol, 3)._Pos;                  // new LR.
-               vertices[2] = NodeStd(endRow, newEndCol, 6)._Pos;
-               if(pos.IsInsidePolygon(vertices)) {
+               verts[1] = NodeStd(startRow, newEndCol, 3).Pos;                  // new LR.
+               verts[2] = NodeStd(endRow, newEndCol, 6).Pos;
+               if(pos.IsInsidePolygon(verts)) {
                   endCol = newEndCol;
-                  vertices[1] = NodeStd(startRow, endCol, 3)._Pos;
-                  vertices[2] = NodeStd(endRow, endCol, 6)._Pos; }
+                  verts[1] = NodeStd(startRow, endCol, 3).Pos;
+                  verts[2] = NodeStd(endRow, endCol, 6).Pos; }
                else {
                   startCol = newEndCol + 1;
-                  vertices[3] = NodeStd(endRow, startCol, 9)._Pos;
-                  vertices[0] = NodeStd(startRow, startCol, 0)._Pos; }
+                  verts[3] = NodeStd(endRow, startCol, 9).Pos;
+                  verts[0] = NodeStd(startRow, startCol, 0).Pos; }
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
          var squarePos = quadEmt.RefSquareCoords(in pos);
-         double[] funcValues = quadEmt.Values(in squarePos, vars);
+         dbl[] funcValues = quadEmt.Vals(in squarePos, vars);
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>

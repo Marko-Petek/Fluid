@@ -53,12 +53,12 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Adds an element to the end of the list.</summary>
       public override void Add(T emt) {
-         _E.EnsureCapacity(Count + 1);
+         _E = _E.EnsureCapacity(Count + 1);
          _E[Count] = emt;
          ++Count;
       }
       public override void AddRange(SCG.IList<T> elements) {
-         _E.EnsureCapacity(Count + elements.Count);
+         _E = _E.EnsureCapacity(Count + elements.Count);
          for (int i = 0; i < elements.Count; i++)
             _E[Count + i] = elements[i];
          Count += elements.Count;
@@ -68,7 +68,7 @@ namespace Fluid.Internals.Collections {
          if (index < 0)
             throw new IndexOutOfRangeException("Negative index.");
          else if (index < Count) {
-            _E.EnsureCapacity(Count + 1);
+            _E = _E.EnsureCapacity(Count + 1);
             for (int i = Count; i > index; i--)                // Shift all consequent members by one. Makes room for a member.
                _E[i] = _E[i - 1];
             _E[index] = element;
@@ -82,7 +82,7 @@ namespace Fluid.Internals.Collections {
             if (Comparer.Equals(_E[i], element)) {                   // If the element has been found.
                for (int j = i; j < Count - 1; j++)
                   _E[j] = _E[j + 1];          // Shift elements, writing over the removed element.
-               _E[Count - 1] = default(T);         // Reset the last Instruction.
+               _E[Count - 1] = default;         // Reset the last Instruction.
                Count--;                                // Adjust the Count.
                return true; }
          return false;
@@ -94,7 +94,7 @@ namespace Fluid.Internals.Collections {
          else if (index < Count) {
             for (int i = index; i < Count - 1; i++)
                _E[i] = _E[i + 1];
-            _E[Count - 1] = default(T);
+            _E[Count - 1] = default;
             Count--; }
          else
             throw new IndexOutOfRangeException("Index too large.");
@@ -102,7 +102,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Clears the internal array without changing its capacity.</summary>
       public override void Clear() {
          for (int i = 0; i < Count; i++)
-            _E[i] = default(T);
+            _E[i] = default;
          Count = 0;
       }
       /// <summary>If specified index is out of range of internal array, we put it inside range.</summary><param name="index">Index which we want to conform.</param>
@@ -120,7 +120,7 @@ namespace Fluid.Internals.Collections {
             removed[i] = _E[j + i];
          for(int i = k + 1; i < Count; ++i)               // Refill hole. Shift elements remaining on right side of hole (removed range) to right.
             _E[i - removedCount] = _E[i];
-         Count = Count - removedCount;                     // Changing count, no need to zero elements at end.
+         Count -= removedCount;                     // Changing count, no need to zero elements at end.
          return CreateFromArray(removed);
       }
       /// <summary>Trim any excess space left in internal array.</summary>

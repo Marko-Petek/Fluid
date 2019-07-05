@@ -6,6 +6,7 @@ using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Numerics {
    using dbl = Double;
+   using dA = DblArithmetic;
    /// <summary>A quadrilateral element.</summary>
    public struct Tetragon {
       /// <summary>Lower left vertex position in terms of x and y.</summary>
@@ -17,7 +18,7 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Upper left vertex position in terms of x and y..</summary>
       public Pos _UL;
       // Matrices to compute inverse transformation of specified element.
-      double[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
+      readonly double[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
 
       /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="ll">Lower left vertex position.</param><param name="lr">Lower right vertex position.</param><param name="ur">Upper right vertex position.</param><param name="ul">Upper left vertex position.</param>
       public Tetragon(in Pos ll, in Pos lr, in Pos ur, in Pos ul) {
@@ -75,13 +76,12 @@ namespace Fluid.Internals.Numerics {
 
       /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary><param name="pos">Position in terms of global x and y.</param>
       public Pos RefSquareCoords(in Pos pos) {
-         double a = FuncA(in pos);
-         double b = FuncB(in pos);
-         double c = FuncC(in pos);
-         double detMALessMB = MA.Sub(MB).Det();     //Sub(MA(), MB()).Det();
-         double detNALessNB = NA.Sub(NB).Det();     //Sub(NA(), NB()).Det();
-         double ksi = 0.0;
-         double eta = 0.0;
+         dbl a = FuncA(in pos);
+         dbl b = FuncB(in pos);
+         dbl c = FuncC(in pos);
+         dbl detMALessMB = MA.Sub<dbl,dA>(MB).Det<dbl,dA>();     //Sub(MA(), MB()).Det();
+         dbl detNALessNB = NA.Sub<dbl,dA>(NB).Det<dbl,dA>();     //Sub(NA(), NB()).Det();
+         dbl ksi, eta;
          if(pos.X*pos.Y >= 0) {                                          // Quadrants I and III.
             if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
                ksi = (-b + Sqrt(b*b + c)) / detMALessMB;
@@ -103,11 +103,11 @@ namespace Fluid.Internals.Numerics {
          return new Pos(ksi, eta);
       }
       double FuncA(in Pos pos) =>
-         pos.X * MG.Tr() - pos.Y * MF.Tr() + NA.Det() - NB.Det();
+         pos.X * MG.Tr<dbl,dA>() - pos.Y * MF.Tr<dbl,dA>() + NA.Det<dbl,dA>() - NB.Det<dbl,dA>();
       double FuncB(in Pos pos) =>
-         pos.X * MG.Tr() - pos.Y * MF.Tr() + MC.Det() + MD.Det();
+         pos.X * MG.Tr<dbl,dA>() - pos.Y * MF.Tr<dbl,dA>() + MC.Det<dbl,dA>() + MD.Det<dbl,dA>();
       double FuncC(in Pos pos) =>
-         MA.Sub(MB).Det()*(2*pos.X*MH.Tr() - 2*pos.Y*MJ.Tr() + MA.Add(MB).Det());
+         MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() - 2*pos.Y*MJ.Tr<dbl,dA>() + MA.Add<dbl,dA>(MB).Det<dbl,dA>());
       /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
       double DistanceToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in _LL, in _LR);    // Vector from lower left to lower right vertex.

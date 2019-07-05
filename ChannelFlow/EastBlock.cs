@@ -6,10 +6,11 @@ using Fluid.Internals.Meshing;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow {
+   using dbl = Double;
    /// <summary>Block on east side of obstruction.</summary><remarks>Sealed, because we call a virtual method in constructor.</remarks>
    public class EastBlock : ObstructionBlock {   
       /// <summary>Create a mesh block just east of circular obstruction.</summary><param name="channelMesh">Main mesh.</param>
-      public EastBlock(ChannelMesh channelMesh, ChannelFlow channelFlow, NorthBlock northBlock, SouthBlock southBlock)
+      public EastBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow, NorthBlock northBlock, SouthBlock southBlock)
       : base(channelMesh, channelFlow,
          channelMesh.ObstructionRect._UR.X, channelMesh.ObstructionRect._UR.Y,
          channelMesh.ObstructionRect._LR.X, channelMesh.ObstructionRect._LR.Y,
@@ -17,51 +18,51 @@ namespace Fluid.ChannelFlow {
          channelMesh.LeftSquare._UR.X, channelMesh.LeftSquare._UR.Y) {  
             CreateNodes();
             NConstraints = ApplyConstraints();
-            ChannelMesh.NConstraints = ChannelMesh.NConstraints + NConstraints;
+            Mesh.NConstraints = Mesh.NConstraints + NConstraints;
             MoveNodesToMainMesh(northBlock, southBlock);
       }
 
 
       /// <summary>Returns real-world position of upper boundary node located at a given arc length coordinate.</summary><param name="ksi">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcUpperBoundaryPos(double ksi) {
+      protected override Pos CalcUpperBoundaryPos(dbl ksi) {
          ref var upperLeft = ref _quadrilateral._UL;
-         double y = upperLeft.Y - ksi * ChannelMesh.Width;
-         double x = upperLeft.X;
+         dbl y = upperLeft.Y - ksi * Mesh.Width;
+         dbl x = upperLeft.X;
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of lower boundary node located at a given arc length coordinate.</summary>param name="ksi">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcLowerBoundaryPos(double ksi) {
+      protected override Pos CalcLowerBoundaryPos(dbl ksi) {
          ref var lowerLeft = ref _quadrilateral._LL;
          ref var lowerRight = ref _quadrilateral._LR;
-         double y = lowerLeft.Y - (lowerLeft.Y-lowerRight.Y) * (0.5 + Cos((PI/4)*(3-2*ksi)) / Sqrt(2));
-         double x = lowerLeft.X + QuarterMoonHeight * (Sin((PI/4)*(3-2*ksi)) - 1/Sqrt(2)) / (1 - 1/Sqrt(2));
+         dbl y = lowerLeft.Y - (lowerLeft.Y-lowerRight.Y) * (0.5 + Cos((PI/4)*(3-2*ksi)) / Sqrt(2));
+         dbl x = lowerLeft.X + QuarterMoonHeight * (Sin((PI/4)*(3-2*ksi)) - 1/Sqrt(2)) / (1 - 1/Sqrt(2));
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of left boundary node located at a given arc length coordinate.</summary><param name="eta">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcLeftBoundaryPos(double eta) {
+      protected override Pos CalcLeftBoundaryPos(dbl eta) {
          ref var lowerLeft = ref _quadrilateral._LL;
-         double y = lowerLeft.Y + eta * DiagonalProjection;
-         double x = lowerLeft.X + eta * DiagonalProjection;
+         dbl y = lowerLeft.Y + eta * DiagonalProjection;
+         dbl x = lowerLeft.X + eta * DiagonalProjection;
          return new Pos(x,y);
       }
       /// <summary>Returns real-world position of left boundary node located at a given arc length coordinate.</summary><param name="eta">Arc length coordinate from 0 to 1.</param>
-      protected override Pos CalcRightBoundaryPos(double eta) {
+      protected override Pos CalcRightBoundaryPos(dbl eta) {
          ref var lowerRight = ref _quadrilateral._LR;
-         double y = lowerRight.Y - eta * DiagonalProjection;
-         double x = lowerRight.X + eta * DiagonalProjection;
+         dbl y = lowerRight.Y - eta * DiagonalProjection;
+         dbl x = lowerRight.X + eta * DiagonalProjection;
          return new Pos(x,y);
       }
       protected override int ApplyConstraints() {        // We apply only to points on obstruction.
          int constraintCount = 0;
          for(int col = 0; col < 20; ++col)             // Row 0, Cols 0-19 (obstruction)
             for(int node = 2; node < 5; ++node) {
-               NodeCmt(0, col, node).Constrainedness(0) = true;
-               NodeCmt(0, col, node).Constrainedness(1) = true;
+               NodeCmt(0, col, node).Vars[0].Constrained = true;
+               NodeCmt(0, col, node).Vars[1].Constrained = true;
                constraintCount += 2; }
          return constraintCount;                                             // Must not count in points from col 20.
       }
       protected void MoveNodesToMainMesh(NorthBlock northBlock, SouthBlock southBlock) {
-         int posCount = ChannelMesh.PositionCount;
+         int posCount = Mesh.NPos;
          var blockToGlobal = new int[NRows + 1][][];
          int row = 0;
          int col = 0;
@@ -74,13 +75,13 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 3; ++node)                               // Col 0, take in nodes from Col 20 of NorthBlock.
                blockToGlobal[row][col][node] = northMap[row][20][node];
             for(int node = 3; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
+               Mesh.G[posCount] = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++; }
             col = 1;
             while(col < NCols) {                                            // Cols 1 - 19
                blockToGlobal[row][col] = new int[5];
                for(int node = 0; node < 5; ++node) {
-                  ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
+                  Mesh.G[posCount] = NodeCmt(row, col, node);
                   blockToGlobal[row][col][node] = posCount++; }
                ++col; }
             blockToGlobal[row][col] = new int[5];                       // Col 20, Take in nodes from Col 0 of SouthBlock.
@@ -96,7 +97,7 @@ namespace Fluid.ChannelFlow {
             blockToGlobal[row][col][node] = Int32.MinValue;
          blockToGlobal[row][col][2] = northMap[row][20][2];
          for(int node = 3; node < 5; ++node) {
-            ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
+            Mesh.G[posCount] = NodeCmt(row, col, node);
             blockToGlobal[row][col][node] = posCount++; }
          col = 1;
          while(col < NCols) {                                         // Cols 1 - 19
@@ -104,7 +105,7 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row, col, node);
+               Mesh.G[posCount] = NodeCmt(row, col, node);
                blockToGlobal[row][col][node] = posCount++; }
             ++col; }
          blockToGlobal[row][col] = new int[5];                           // Col 20, Take in nodes from Col 0 of SouthBlock.
@@ -114,7 +115,7 @@ namespace Fluid.ChannelFlow {
          for(int node = 3; node < 5; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
          _CmtInxToGblInxMap = blockToGlobal;
-         ChannelMesh.PositionCount = posCount;
+         Mesh.NPos = posCount;
          _Nodes = null;                                              // Free memory on block.
          NodeCmt = NodeOnMainCmt;                              // Rewire.
          NodeStd = NodeOnMainStd;

@@ -9,7 +9,7 @@ namespace Fluid.ChannelFlow {
    /// <summary>Block on south side of obstruction.</summary><remarks>Sealed, because we call a virtual method in constructor.</remarks>
    public sealed class SouthBlock : ObstructionBlock {   
       /// <summary>Create a mesh block just south of circular obstruction.</summary><param name="channelMesh">Main mesh.</param>
-      public SouthBlock(ChannelMesh channelMesh, ChannelFlow channelFlow)
+      public SouthBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow)
       : base(channelMesh, channelFlow,
          channelMesh.ObstructionRect._LR.X, channelMesh.ObstructionRect._LR.Y,
          channelMesh.ObstructionRect._LL.X, channelMesh.ObstructionRect._LL.Y,
@@ -17,7 +17,7 @@ namespace Fluid.ChannelFlow {
          channelMesh.LeftSquare._LR.X, channelMesh.LeftSquare._LR.Y) {
             CreateNodes();
             NConstraints = ApplyConstraints();
-            ChannelMesh.NConstraints += NConstraints;
+            Mesh.NConstraints += NConstraints;
             MoveNodesToMainMesh();
       }
 
@@ -25,7 +25,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Returns real-world position of upper boundary node located at a given arc length coordinate.</summary><param name="ksi">Arc length coordinate from 0 to 1.</param>
       protected override Pos CalcUpperBoundaryPos(double ksi) {
          ref var upperLeft = ref _quadrilateral._UL;
-         double x = upperLeft.X - ksi * ChannelMesh.Width;
+         double x = upperLeft.X - ksi * Mesh.Width;
          double y = upperLeft.Y;
          return new Pos(x,y);
       }
@@ -55,15 +55,15 @@ namespace Fluid.ChannelFlow {
          int col = 0;
          int constraintsCount = 0;
          while(col < NCols) {                                            // Col 0 - 22
-            for(int element = 2; element < 5; ++element) {                  // Obstruction boundary.
-               NodeCmt(0, col, element).Constrainedness(0) = true;      // u, 0 is set implicitly for both u and v due to them being value types.
-               NodeCmt(0, col, element).Constrainedness(1) = true;      // v
+            for(int p = 2; p < 5; ++p) {                  // Obstruction boundary.
+               NodeCmt(0, col, p).Vars[0].Constrained = true;      // u, 0 is set implicitly for both u and v due to them being value types.
+               NodeCmt(0, col, p).Vars[1].Constrained = true;      // v
                constraintsCount += 2; }
-            for(int element = 2; element < 5; ++element) {                  // Channel boundary.
-               NodeCmt(23, col, element).Constrainedness(0) = true;     // u
-               NodeCmt(23, col, element).Constrainedness(1) = true;     // v
-               NodeCmt(23, col, element).Constrainedness(2) = true;     // a
-               NodeCmt(23, col, element).Constrainedness(4) = true;     // c
+            for(int p = 2; p < 5; ++p) {                  // Channel boundary.
+               NodeCmt(23, col, p).Vars[0].Constrained = true;     // u
+               NodeCmt(23, col, p).Vars[1].Constrained = true;     // v
+               NodeCmt(23, col, p).Vars[2].Constrained = true;     // a
+               NodeCmt(23, col, p).Vars[4].Constrained = true;     // c
                constraintsCount += 4; }
             ++col; }
          // GetNodeCmp(0, col, 2).Constrainedness(0) = true;                     // Obstruction boundary, u, Col 23   !Already set.
@@ -75,7 +75,7 @@ namespace Fluid.ChannelFlow {
          return constraintsCount;
       }
       void MoveNodesToMainMesh() {
-         int posCount = ChannelMesh.PositionCount;                         // mapping
+         int nPos = Mesh.NPos;                         // mapping
          var blockToGlobal = new int[NRows + 1][][];
          int row = 0, col = 0;                             
          while(row < NRows) {                                                // Row 0 - 22.
@@ -83,14 +83,14 @@ namespace Fluid.ChannelFlow {
             col = 0;
             while(col < NCols) {                                            // Col 0 - 19.
                blockToGlobal[row][col] = new int[5];
-               for(int node = 0; node < 5; ++node) {
-                  ChannelMesh.Node(posCount) = NodeCmt(row,col,node);
-                  blockToGlobal[row][col][node] = posCount++; }
+               for(int p = 0; p < 5; ++p) {
+                  Mesh.G[nPos] = NodeCmt(row,col,p);
+                  blockToGlobal[row][col][p] = nPos++; }
                ++col; }
             blockToGlobal[row][col] = new int[5];
             for(int node = 0; node < 3; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row,col,node);
-               blockToGlobal[row][col][node] = posCount++; }
+               Mesh.G[nPos] = NodeCmt(row,col,node);
+               blockToGlobal[row][col][node] = nPos++; }
             for(int node = 3; node < 5; ++node)                           // Col 20.
                blockToGlobal[row][col][node] = Int32.MinValue;
             ++row; }
@@ -101,18 +101,18 @@ namespace Fluid.ChannelFlow {
             for(int node = 0; node < 2; ++node)
                blockToGlobal[row][col][node] = Int32.MinValue;
             for(int node = 2; node < 5; ++node) {
-               ChannelMesh.Node(posCount) = NodeCmt(row,col,node);
-               blockToGlobal[row][col][node] = posCount++; }
+               Mesh.G[nPos] = NodeCmt(row,col,node);
+               blockToGlobal[row][col][node] = nPos++; }
             ++col; }
          blockToGlobal[row][col] = new int[5];                           // Col 20.
          for(int node = 0; node < 2; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
-         ChannelMesh.Node(posCount) = NodeCmt(row,col,2);
-         blockToGlobal[row][col][2] = posCount++;
+         Mesh.G[nPos] = NodeCmt(row,col,2);
+         blockToGlobal[row][col][2] = nPos++;
          for(int node = 3; node < 5; ++node)
             blockToGlobal[row][col][node] = Int32.MinValue;
          _CmtInxToGblInxMap = blockToGlobal;        // Apply local to field.
-         ChannelMesh.PositionCount = posCount;                   // Last global index to pass to next block which will generate local to global mapping.
+         Mesh.NPos = nPos;                   // Last global index to pass to next block which will generate local to global mapping.
          _Nodes = null;                                              // Free memory on block.
          NodeCmt = NodeOnMainCmt;                              // Rewire.
          NodeStd = NodeOnMainStd;
