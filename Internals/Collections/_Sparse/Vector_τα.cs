@@ -38,8 +38,8 @@ namespace Fluid.Internals.Collections {
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
       public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
-         CopyMetaFields(src, tgt, cs.MetaFields, cs.Structure);
-         if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals)
+         CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);
+         if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);
          else
             tgt.Vals = new Dictionary<int,τ>();

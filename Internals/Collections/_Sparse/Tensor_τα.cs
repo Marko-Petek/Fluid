@@ -68,19 +68,27 @@ namespace Fluid.Internals.Collections {
 
       public static class CopySpecs {
          public static readonly CopySpecStruct Default = new CopySpecStruct();
-         public static readonly CopySpecStruct AddSubtract = new CopySpecStruct(
-            GeneralSpecs.Both, MetaSpecs.All, StructureSpecs.TrueCopy, 0, 4);
+         public static readonly CopySpecStruct S342_04 = new CopySpecStruct(
+            WhichFields.ValuesAndNonValueFields,
+            WhichNonValueFields.All,
+            HowToCopyStructure.CreateNewStructure,
+            endRank: 0,
+            extraCapacity: 4);
          //public static readonly CopySpecStruct ScalarMultiply = new CopySpecStruct(
          //   GeneralSpecs.Meta, MetaSpecs.All, StructureSpecs.TrueCopy);
          public static readonly CopySpecStruct ScalarMultiply = new CopySpecStruct(
-            GeneralSpecs.Meta, MetaSpecs.All, StructureSpecs.RefCopy);
+            WhichFields.OnlyNonValueFields, WhichNonValueFields.All, HowToCopyStructure.ReferToOriginalStructure);
          public static readonly CopySpecStruct ElimRank3 = new CopySpecStruct(          // Used on ElimRank method.
-            GeneralSpecs.Both, MetaSpecs.Rank);
+            WhichFields.ValuesAndNonValueFields, WhichNonValueFields.Rank);
          public static readonly CopySpecStruct ElimRank2 = new CopySpecStruct(          // Used on ElimRank method.
-            GeneralSpecs.Both, MetaSpecs.Rank | MetaSpecs.Sup);
+            WhichFields.ValuesAndNonValueFields, WhichNonValueFields.Rank | WhichNonValueFields.Superior);
          /// <summary>Copy values and rank. Does not copy or assign Structure</summary>
          public static readonly CopySpecStruct S35200 = new CopySpecStruct(
-            GeneralSpecs.Both, MetaSpecs.Rank);
+            WhichFields.ValuesAndNonValueFields,
+            WhichNonValueFields.Rank,
+            HowToCopyStructure.CreateNewStructure,
+            endRank: 0,
+            extraCapacity: 4);
       }
       protected Tensor(int cap) : base(cap) { }
       /// <summary>Assigns rank and capacity only.</summary>
@@ -144,8 +152,8 @@ namespace Fluid.Internals.Collections {
       public static void Copy(in Tensor<τ,α> src, Tensor<τ,α> tgt, in CopySpecStruct cs) {
          TB.Assert.True(src.Rank > 1,
             "Tensors's rank has to be at least 2 to be copied via this method.");
-         CopyMetaFields(src, tgt, in cs.MetaFields, in cs.Structure);
-         if((cs.General & GeneralSpecs.Vals) == GeneralSpecs.Vals) {
+         CopyMetaFields(src, tgt, in cs.NonValueFieldsSpec, in cs.StructureSpec);
+         if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues) {
             int endRank = cs.EndRank;
             Recursion(src, tgt);
 
@@ -170,17 +178,17 @@ namespace Fluid.Internals.Collections {
             }
          }
       }
-      public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in MetaSpecs mcs,
-      in StructureSpecs scs) {
-         if((mcs & MetaSpecs.Structure) == MetaSpecs.Structure) {
-            if((scs & StructureSpecs.RefCopy) == StructureSpecs.RefCopy)
+      public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in WhichNonValueFields mcs,
+      in HowToCopyStructure scs) {
+         if((mcs & WhichNonValueFields.Structure) == WhichNonValueFields.Structure) {
+            if((scs & HowToCopyStructure.ReferToOriginalStructure) == HowToCopyStructure.ReferToOriginalStructure)
                tgt.Structure = src.Structure;
             else {
                tgt.Structure = new int[src.Structure.Length];
                Array.Copy(src.Structure, tgt.Structure, src.Structure.Length); } }
-         if((mcs & MetaSpecs.Rank) == MetaSpecs.Rank)
+         if((mcs & WhichNonValueFields.Rank) == WhichNonValueFields.Rank)
             tgt.Rank = src.Rank;
-         if((mcs & MetaSpecs.Sup) == MetaSpecs.Sup)
+         if((mcs & WhichNonValueFields.Superior) == WhichNonValueFields.Superior)
             tgt.Sup = src.Sup ?? null;
       }
       /// <summary>Packs only the part of the Structure below this tensor into a new Structure.</summary>
@@ -931,47 +939,63 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Structure that tells Tensor's Copy method how to copy a tensor.</summary>
       public readonly struct CopySpecStruct {
-         /// <summary>General CopySpec specifies whether to copy only values, only meta fields or both. Contains flags: Meta (copy meta fields, specify which in MetaFields), Vals (copy values, either shallowly or deeply, specify with EndRank).</summary>
-         public readonly GeneralSpecs General;
-         /// <summary>MetaFields CopySpec specifies which meta fields to copy. Contains flags: Structure, Rank, Superior.</summary>
-         /// <remarks>Effective only if General.Meta flag is active.</remarks>
-         public readonly MetaSpecs MetaFields;
+         /// <summary>Specify which types of fields to copy: value, non-value or both.</summary>
+         public readonly WhichFields FieldsSpec;
+         /// <summary>Specify which non-value fields to copy (and conversely, which to omit). Effective only if General.Meta flag is active.</summary>
+         public readonly WhichNonValueFields NonValueFieldsSpec;
          /// <summary>Structure CopySpec specifies whether  to genuinely copy the Structure int[] array or only copy the reference.  Contains flags: TrueCopy (creates a new Structure array on the heap), RefCopy (copies only a reference to the Structure array on source).</summary>
          /// <remarks>Effective only if MetaFields.Structure flag is active.</remarks>
-         public readonly StructureSpecs Structure;
+         public readonly HowToCopyStructure StructureSpec;
          /// <summary>Lowest rank at which copying of values stops.</summary>
          /// <remarks>Effective only if General.Vals flag is active. EndRank is an inclusive lower bound.</remarks>
          public readonly int EndRank;
          public readonly int ExtraCapacity;
          
-         public CopySpecStruct(GeneralSpecs gs = GeneralSpecs.Both, MetaSpecs ms = MetaSpecs.All,
-         StructureSpecs ss = StructureSpecs.TrueCopy, int endRank = 0, int extraCapacity = 0) {
-            General = gs;
-            MetaFields = ms;
-            Structure = ss;
+         public CopySpecStruct(
+            WhichFields whichFields = WhichFields.ValuesAndNonValueFields,
+            WhichNonValueFields whichNonValueFields = WhichNonValueFields.All,
+            HowToCopyStructure howToCopyStructure = HowToCopyStructure.CreateNewStructure,
+            int endRank = 0,
+            int extraCapacity = 0)
+         {
+            FieldsSpec = whichFields;
+            NonValueFieldsSpec = whichNonValueFields;
+            StructureSpec = howToCopyStructure;
             EndRank = endRank;
             ExtraCapacity = extraCapacity;
          }
       }
-      /// <summary>Possible CopySpec settings.</summary>
-      [Flags] public enum GeneralSpecs {
-         Meta  = 1,
-         Vals  = 1 << 1,
-         Both = Meta | Vals
+      /// <summary>Specify which types of fields to copy: value, non-value or both.</summary>
+      [Flags] public enum WhichFields {
+         /// <summary>1 - Copy only the value field (direct subtensors).</summary>
+         OnlyValues  = 1,                                               // 1
+         /// <summary>1 - Copy only the non-value fields (Structure, Rank, Superior).</summary>
+         OnlyNonValueFields  = 1 << 1,                                  // 2
+         /// <summary>1 - Copy both the value field (direct subtensors) and non-value fields (Structure, Rank, Superior).</summary>
+         ValuesAndNonValueFields = OnlyNonValueFields | OnlyValues      // 3
       }
-      /// <summary>Possible StructureCopySpec settings.</summary>
-      [Flags] public enum StructureSpecs {
-         TrueCopy = 1,
-         RefCopy  = 1 << 1
+      /// <summary>Specify which non-value fields to copy (and conversely, which to omit).</summary>
+      [Flags] public enum WhichNonValueFields {
+         /// <summary>0 - Copy no non-value fields.</summary>
+         None               = 0,                               // 0
+         /// <summary>1 - Copy only the Struture field, leaving Rank and Superior uninitialized.</summary>
+         Structure          = 1,                               // 1
+         /// <summary>2 - Copy only the Rank field, leaving Structure and Superior uninitialized..</summary>
+         Rank               = 1 << 1,                          // 2
+         /// <summary>3 - Copy only the Superior field, levaing Rank and Structure uninitialized.</summary>
+         Superior           = 1 << 2,                          // 3
+         /// <summary>4 - Copy all non-value fields: Structure, Rank and Superior.</summary>
+         All                = Structure | Rank | Superior,     // 4
+         /// <summary>5 - Copy the Rank and Structure fields, but leave Superior uninitialized.</summary>
+         AllExceptSuperior  = All & ~Superior                  // 5
       }
-      /// <summary>Possible MetaCopySpec settings.</summary>
-      [Flags] public enum MetaSpecs {
-         None        = 0,
-         Structure   = 1,
-         Rank        = 1 << 1,
-         Sup         = 1 << 2,
-         All = Structure | Rank | Sup,
-         AllExceptSup = All & ~Sup
+      /// <summary>Specifies whether to make.</summary>
+      [Flags] public enum HowToCopyStructure {
+         /// <summary>1 - Copy only the reference to the existing structure on the original tensor.</summary>
+         ReferToOriginalStructure  = 1,            // 1
+         /// <summary>2 - Create a fresh copy of the structure on the original tensor and assign its reference to the field.</summary>
+         CreateNewStructure = 1 << 1,              // 2
+         
       }
    }
 }

@@ -38,7 +38,7 @@ namespace Fluid.Tests {
             count *= emt;
          var slc = new Span<int>(data, 1 + topRank, count);
          var tnr = Tensor<int,IA>.FromFlatSpec(slc, struc);
-         var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.GeneralSpecs.Both, TensorInt.MetaSpecs.All, TensorInt.StructureSpecs.TrueCopy));
+         var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.WhichFields.ValuesAndNonValueFields, TensorInt.WhichNonValueFields.All, TensorInt.HowToCopyStructure.CreateNewStructure));
          Assert.True(tnr.Equals(tnrCpy));
       }
 
