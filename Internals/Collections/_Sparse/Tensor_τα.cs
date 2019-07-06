@@ -46,6 +46,8 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
 
+//FIXME: Check what scalar multiplication has broken.
+
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
