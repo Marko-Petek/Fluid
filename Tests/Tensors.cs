@@ -50,7 +50,7 @@ namespace Fluid.Tests {
          var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
          var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
          var vec3 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
-         vec1.Add(vec2);
+         vec1.Sum(vec2);
          Assert.True(vec1.Equals(vec3));
       }
 
@@ -98,7 +98,7 @@ namespace Fluid.Tests {
          var tnr1 = TensorInt.FromFlatSpec(span1, new int[] {3,3});
          var tnr2 = TensorInt.FromFlatSpec(span2, new int[] {3,3});
          var tnr3 = TensorInt.FromFlatSpec(span3, new int[] {3,3});
-         tnr1.Add(tnr2);
+         tnr1.Sum(tnr2);
          Assert.True(tnr1.Equals(tnr3));
       }
 

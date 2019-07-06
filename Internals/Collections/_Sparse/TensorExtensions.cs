@@ -9,21 +9,23 @@ namespace Fluid.Internals.Collections {
       /// <param name="scal">Scalar.</param>
       /// <param name="tnr">Tensor.</param>
       /// <param name="resSup">Superior tensor the result will be added to.</param>
-      public static Tensor<τ,α> ScalMul1(τ scal, Tensor<τ,α> tnr, in Tensor<τ,α> resSup) {
+      public static Tensor<τ,α> Mul(τ scal, Tensor<τ,α> tnr, in Tensor<τ,α> resSup) {
          return Recursion(in tnr, in resSup);
 
          Tensor<τ,α> Recursion(in Tensor<τ,α> src, in Tensor<τ,α> sup) {
             var res = new Tensor<τ,α>(sup.Structure, src.Rank, sup, src.Count);            // We copy only meta fields (whereby we copy Structure by value).
             if(src.Rank > 2) {                                       // Subordinates are tensors.
-               foreach (var int_tnr in src)
-                  res.Add(int_tnr.Key, Recursion(int_tnr.Value, res)); }
+               foreach (var int_tnr in src) {
+                  var subTnr = Recursion(int_tnr.Value, res);
+                  res.Add(int_tnr.Key, subTnr); } }
             else if(src.Rank == 2) {                                 // Subordinates are vectors.
-               foreach (var int_tnr2 in src)
-                  res.Add(int_tnr2.Key, VectorExtensions<τ,α>.ScalMul1(
-                     scal, (Vector<τ,α>) int_tnr2.Value, sup)); }
-            else
-               return VectorExtensions<τ,α>.ScalMul1(
-                     scal, (Vector<τ,α>) src, sup);
+               foreach (var int_tnr2 in src) {
+                  var vec2 = (Vector<τ,α>) int_tnr2.Value;
+                  var newVec2 = VectorExtensions<τ,α>.Mul(scal, vec2, sup);
+                  res.Add(int_tnr2.Key, newVec2); } }
+            else {
+               var srcVec = (Vector<τ,α>) src;
+               return VectorExtensions<τ,α>.Mul(scal, srcVec, sup); }
             return res;
          }
       }

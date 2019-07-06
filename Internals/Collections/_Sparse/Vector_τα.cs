@@ -33,7 +33,7 @@ namespace Fluid.Internals.Collections {
       public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
          Copy(src, this, cs);
       }
-      public Vector(Vector<τ,α> src) : this(src, CopySpecs.Default) { }
+      public Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
       /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
@@ -80,17 +80,17 @@ namespace Fluid.Internals.Collections {
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
          var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
          foreach(var int_val in Vals)
-            res.Add(int_val.Key, TensorExtensions<τ,α>.ScalMul1(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
+            res.Add(int_val.Key, TensorExtensions<τ,α>.Mul(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
          return res;
       }
       /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
       /// <param name="vec2">Sumand 2. Is not destroyed.</param>
-      public void Add(Vector<τ,α> vec2) {
+      public void Sum(Vector<τ,α> vec2) {
          foreach(var int_val2 in vec2.Vals) {
             if(Vals.TryGetValue(int_val2.Key, out τ val1)) {                  // Value exists in Vec1.
-               τ sum = O<τ,α>.A.Add(val1, int_val2.Value);
+               τ sum = O<τ,α>.A.Sum(val1, int_val2.Value);
                if(sum != default)                                             // Sum is not zero.
-                  Vals[int_val2.Key] = O<τ,α>.A.Add(val1, int_val2.Value);
+                  Vals[int_val2.Key] = O<τ,α>.A.Sum(val1, int_val2.Value);
                else
                   Vals.Remove(int_val2.Key); }
             else
@@ -102,11 +102,11 @@ namespace Fluid.Internals.Collections {
       /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
       public static Vector<τ,α> operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) {
          var newStruc = vec1.CopySubstructure();
-         var res = new Vector<τ,α>(vec1, in CopySpecs.S35200);
+         var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
          res.Structure = newStruc;
          foreach(var int_val1 in vec1.Vals) {
             if(vec2.Vals.TryGetValue(int_val1.Key, out var val2)) {
-               res[int_val1.Key] = O<τ,α>.A.Add(int_val1.Value, val2); }
+               res[int_val1.Key] = O<τ,α>.A.Sum(int_val1.Value, val2); }
             else {
                res.Add(int_val1.Key, int_val1.Value); } }
          return res;
@@ -117,7 +117,7 @@ namespace Fluid.Internals.Collections {
       /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
       public static Vector<τ,α> operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) {
          var newStruc = vec1.CopySubstructure();
-         var res = new Vector<τ,α>(vec1, in CopySpecs.S35200);
+         var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
          foreach(var int_val2 in vec2.Vals) {
             if(vec1.Vals.TryGetValue(int_val2.Key, out var val1)) {
                res[int_val2.Key] = O<τ,α>.A.Sub(val1, int_val2.Value); }
@@ -156,7 +156,7 @@ namespace Fluid.Internals.Collections {
                elimTnr2 = tnr2.ReduceRank(truInx2, i);
                if(Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
                   sumand = val*elimTnr2;
-                  sum.Add(sumand); } }
+                  sum.Sum(sumand); } }
             if(sum.Count != 0)
                return sum;
             else
@@ -168,7 +168,7 @@ namespace Fluid.Internals.Collections {
                elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
                if(Vals.TryGetValue(i, out var val) && elimVec2 != null) {
                   sumand = val*elimVec2;
-                  sum.Add(sumand); } }
+                  sum.Sum(sumand); } }
             if(sum.Vals.Count != 0)
                return sum;
             else
@@ -185,7 +185,7 @@ namespace Fluid.Internals.Collections {
          τ res = default;
          foreach(var int_val1 in Vals) {
             if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
-               res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
+               res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
          return res;
       }
       /// <summary>Dot (scalar) product.</summary>
@@ -197,7 +197,7 @@ namespace Fluid.Internals.Collections {
       public τ NormSqr() {
          τ res = default;
          foreach(var kv in Vals)
-            res = O<τ,α>.A.Add(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
+            res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
          return res;
       }
 

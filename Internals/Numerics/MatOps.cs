@@ -90,17 +90,17 @@ namespace Fluid.Internals.Numerics {
          for(int i = 0; i < lgh; ++i) {
             result[i] = new τ[lgh];
             for(int j = 0; j < lgh; ++j)
-               result[i][j] = O<τ,α>.A.Add(mat1[i][j], mat2[i][j]); }
+               result[i][j] = O<τ,α>.A.Sum(mat1[i][j], mat2[i][j]); }
          return result;
       }
       /// <summary>Take a matrix and add to it another matrix.</summary><param name="mat1">Matrix to be added to.</param><param name="mat2">Matrix that will be added to addee.</param>
-      public static void AddTo<τ,α>(this τ[][] mat1, τ[][] mat2)
+      public static void Sum<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;
          for(int i = 0; i < lgh; ++i)
             for(int j = 0; j < lgh; ++j)
-               mat1[i][j] = O<τ,α>.A.Add(mat1[i][j], mat2[i][j]);
+               mat1[i][j] = O<τ,α>.A.Sum(mat1[i][j], mat2[i][j]);
       }
       /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
       public static τ[][] Sub<τ,α>(this τ[][] mat1, τ[][] mat2)
@@ -123,7 +123,7 @@ namespace Fluid.Internals.Numerics {
       public static τ Tr<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         O<τ,α>.A.Add(mat[0][0], mat[1][1]);
+         O<τ,α>.A.Sum(mat[0][0], mat[1][1]);
       /// <summary>Extends the capacity of an array if it does not satisfy the specified capacity.</summary>
       public static τ[] EnsureCapacity<τ>(this τ[] mat, int capacity) {
          if(mat.Length < capacity) {
