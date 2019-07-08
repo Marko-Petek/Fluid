@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using static System.Math;
 
@@ -85,7 +86,7 @@ namespace Fluid.ChannelFlow {
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
       public Tensor AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
-         var sfsMatrix = new Tensor(new int[] {15_620 * 8, 15_620 * 8});
+         var sfsMatrix = new Tensor(new List<int> {15_620 * 8, 15_620 * 8});
          dbl dt = channelFlow.Dt;
          dbl viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
          SouthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");

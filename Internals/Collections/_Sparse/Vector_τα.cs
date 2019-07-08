@@ -19,7 +19,7 @@ namespace Fluid.Internals.Collections {
       internal Vector() : base(0) {
          Vals = new Dictionary<int, τ>();
          Rank = 1; }
-      internal Vector(int[] structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
+      internal Vector(List<int> structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
          Vals = new Dictionary<int, τ>(cap);
       }
 
@@ -27,7 +27,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int cap) : this(null, null, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      public Vector(int dim, int cap) : this(new int[1] {dim}, null, cap) { }
+      public Vector(int dim, int cap) : this(new List<int> {dim}, null, cap) { }
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
       /// <param name="src"></param>
       public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
@@ -48,14 +48,16 @@ namespace Fluid.Internals.Collections {
       /// <param name="slc">Array slice.</param>
       public static Vector<τ,α> CreateFromFlatSpec(Span<τ> slc) {
          var vec = new Vector<τ,α>(slc.Length, slc.Length);
-         vec.Structure = new int[] { slc.Length };
+         vec.Structure = new List<int>(slc.Length) { slc.Length };
          for(int i = 0; i < slc.Length; ++i) {
             if(!slc[i].Equals(default(τ)))
                vec.Vals.Add(i, slc[i]); }
          return vec;
       }
-      new public static Vector<τ,α> CreateEmpty(int cap, params int[] structure) =>
-         new Vector<τ,α>(structure[0], cap);
+      public static Vector<τ,α> CreateEmpty(int cap, List<int> structure = null, Tensor<τ,α> sup = null) {
+         var vec = new Vector<τ,α>(structure, sup, cap);
+         return vec;
+      }
 
       /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
       /// <param name="key">Index.</param>
@@ -76,7 +78,7 @@ namespace Fluid.Internals.Collections {
 
       public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {              // TODO: Create a new instance of this method that accepts a vector and returns a tensor (rank 2).
          int newRank = Rank + tnr2.Rank;
-         var newStructure = Structure.Concat(tnr2.Structure).ToArray();
+         var newStructure = Structure.Concat(tnr2.Structure).ToList();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
          var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
          foreach(var int_val in Vals)
@@ -153,7 +155,7 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
-      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx2, int[] struc3, int conDim) {
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx2, List<int> struc3, int conDim) {
          if(tnr2.Rank > 2) {                                                  // Result is tensor.
             Tensor<τ,α> elimTnr2, sumand, sum;
             sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
@@ -183,7 +185,7 @@ namespace Fluid.Internals.Collections {
       }
 
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx2) {
-         (int[] struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
+         (List<int> struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
          return ContractPart2(tnr2, truInx2, struc3, conDim);
       }
       public τ Contract(Vector<τ,α> vec2) {

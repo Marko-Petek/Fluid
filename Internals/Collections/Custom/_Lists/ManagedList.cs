@@ -3,7 +3,7 @@ using SCG = System.Collections.Generic;
 
 using static Fluid.Internals.Numerics.MatOps;
 
-namespace Fluid.Internals.Collections {
+namespace Fluid.Internals.Collections.Custom {
    public abstract class ManagedList<T> : List<T> {
       /// <summary>Create ManagedList with default initial capacity of internal array.</summary>
       public ManagedList() : base() { }

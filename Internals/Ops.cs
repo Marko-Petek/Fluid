@@ -1,9 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Math;
-
-using Fluid.Internals.Collections;
 
 namespace Fluid.Internals {
    public static class Ops {

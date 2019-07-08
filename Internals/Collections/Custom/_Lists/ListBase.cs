@@ -2,7 +2,7 @@
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
-namespace Fluid.Internals.Collections {
+namespace Fluid.Internals.Collections.Custom {
    public abstract class ListBase<T> : SCG.IList<T> {
       /// <summary>Comparer used by IndexOf(), Contains(), Remove() methods.</summary>
       public static SCG.EqualityComparer<T> Comparer { get; protected set; }

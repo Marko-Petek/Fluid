@@ -1,6 +1,6 @@
 using System;
 
-namespace Fluid.Internals.Collections {
+namespace Fluid.Internals.Collections.Custom {
    public class EquatableList<T> : List<T>, IEquatable<EquatableList<T>>
       where T : IEquatable<T> {
          /// <summary>Create list with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array</param>

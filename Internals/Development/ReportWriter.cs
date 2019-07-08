@@ -5,9 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using SCG = System.Collections.Generic;
+using System.Collections.Generic;
 
-using Fluid.Internals.Collections;
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.AppReporter;
 using static Fluid.Internals.Ops;

@@ -52,7 +52,7 @@
 using System;
 using System.Text;
 using System.Linq;
-using SCG = System.Collections.Generic;
+using System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
@@ -67,14 +67,9 @@ namespace Fluid.Internals.Collections {
    public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      protected int[] _Structure;
+      //protected int[] _Structure;
       /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
-      public int[] Structure {
-         get => _Structure;
-         protected set {
-            ref var structure = ref _Structure;
-            structure = value;
-         } }
+      public List<int> Structure { get; protected set; }
       /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
       public int Rank { get; protected set; }
       /// <summary>Superior: a tensor directly above in the hierarchy. Null if this is the highest rank tensor.</summary>
@@ -96,7 +91,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="rank">Rank.</param>
       /// <param name="sup">Superior.</param>
       /// <param name="cap">Capacity.</param>
-      internal Tensor(int[] structure, int rank, Tensor<τ,α> sup, int cap) : base(cap) {
+      internal Tensor(List<int> structure, int rank, Tensor<τ,α> sup, int cap) : base(cap) {
          Structure = structure ?? null;
          Rank = rank;
          Superior = sup ?? null;
@@ -104,7 +99,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
       /// <param name="structure">Specifies dimension of each rank.</param>
       /// <param name="cap">Initially assigned memory.</param>
-      public Tensor(int[] structure, int cap = 6) : this(structure, structure.Length, null, cap) { }
+      public Tensor(List<int> structure, int cap = 6) : this(structure, structure.Count, null, cap) { }
       /// <summary>Creates a non-top tensor with specified superior and initial capacity. Rank is assigned as one less that superior.</summary>
       /// <param name="sup">Tensor directly above in hierarchy.</param>
       /// <param name="cap">Initially assigned memory.</param>
@@ -174,7 +169,7 @@ namespace Fluid.Internals.Collections {
                   var subVec = (Vector<τ,α>) int_subSrc.Value;
                   var subTgt = new Vector<τ,α>(newStruc, tgt, subVec.Count);
                   tgt.AddOnly(subKey, subTgt);
-                  subTgt.Vals = new SCG.Dictionary<int,τ>(subVec.Vals);
+                  subTgt.Vals = new Dictionary<int,τ>(subVec.Vals);
                } }
             else
                throw new InvalidOperationException(
@@ -186,31 +181,27 @@ namespace Fluid.Internals.Collections {
          if((mcs & WhichNonValueFields.Structure) == WhichNonValueFields.Structure) {
             if((scs & HowToCopyStructure.ReferToOriginalStructure) == HowToCopyStructure.ReferToOriginalStructure)
                tgt.Structure = src.Structure;
-            else {
-               tgt.Structure = new int[src.Structure.Length];
-               Array.Copy(src.Structure, tgt.Structure, src.Structure.Length); } }
-         else {                                                                        // Create empty Structure. This way we can change it by ref and impact all subtensors.
-            tgt.Structure = new int[] {}; }
+            else
+               tgt.Structure = new List<int>(src.Structure); }
+         else {                                                                        // Create empty Structure, don't just assign null. This way we can change it and impact all subtensors.
+            tgt.Structure = new List<int>(4); }
          if((mcs & WhichNonValueFields.Rank) == WhichNonValueFields.Rank)
             tgt.Rank = src.Rank;
          if((mcs & WhichNonValueFields.Superior) == WhichNonValueFields.Superior)
             tgt.Superior = src.Superior ?? null;
       }
       /// <summary>Packs only the part of the Structure below this tensor into a new Structure.</summary>
-      protected int[] CopySubstructure() {
-         int structInx = Structure.Length - Rank;           // TopRank - Rank --> Index where substructure begins.
-         return Structure.Skip(structInx).ToArray();
+      protected List<int> CopySubstructure() {
+         int structInx = Structure.Count - Rank;           // TopRank - Rank --> Index where substructure begins.
+         return Structure.Skip(structInx).ToList();
       }
 
       protected void AssignStructFromSubStruct(Tensor<τ,α> tnr) {
-         int structInx = tnr.Structure.Length - tnr.Rank;
+         int structInx = tnr.Structure.Count - tnr.Rank;
          var subStruct = tnr.Structure.Skip(structInx);
-         Array.Clear(Structure, 0, Structure.Length);
-         Array.Resize(ref _Structure, tnr.Structure.Length);
-         int i = 0;
+         Structure.Clear();
          foreach(var emt in subStruct) {
-            Structure[i] = emt; 
-            ++i; }
+            Structure.Add(emt); }
       }
       /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
       /// <param name="slice">Span of values.</param>
@@ -227,7 +218,7 @@ namespace Fluid.Internals.Collections {
             int nIter = structure[dim];                              // As many iterations as it is the size of the dimension.
             int nEmtsInSlice = slc.Length / nIter;
             if(trueRank > 1) {
-               var res = new Tensor<τ,α>(structure, trueRank, null, structure[dim]);
+               var res = new Tensor<τ,α>(structure.ToList(), trueRank, null, structure[dim]);
                for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
                   var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
                   var newTnr = Recursion(newSlc, dim + 1);
@@ -238,25 +229,26 @@ namespace Fluid.Internals.Collections {
                return Vector<τ,α>.CreateFromFlatSpec(slc);
          }
       }
-      /// <summary>Create an empty top rank (unassigned superior) tensor with specified structure.</summary>
+      /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
       /// <param name="cap">Capacity.</param>
       /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
-      public static Tensor<τ,α> CreateEmpty(int cap, params int[] structure) {
-         int tnrRank = structure.Length;
-         if(tnrRank == 1)
-            return Vector<τ,α>.CreateEmpty(cap, structure);
+      public static Tensor<τ,α> CreateEmpty(int cap, int rank,
+         List<int> structure = null, Tensor<τ,α> sup = null)
+      {
+         if(rank == 1)
+            return Vector<τ,α>.CreateEmpty(cap, structure, sup);
          else
-            return new Tensor<τ,α>(structure, tnrRank, null, cap);
+            return new Tensor<τ,α>(structure, rank, sup, cap);
       }
       /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
       /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
       int ToSlotInx(int rankInx) =>
-         ChangeRankNotation(Structure.Length, rankInx);
+         ChangeRankNotation(Structure.Count, rankInx);
       /// <summary>Transforms from rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0) to slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3).</summary>
       /// <param name="slotInx">Slot index.</param>
       /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
       int ToRankInx(int slotInx) =>
-         ChangeRankNotation(Structure.Length, slotInx);
+         ChangeRankNotation(Structure.Count, slotInx);
       
       /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
       /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
@@ -266,7 +258,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Tensor getting/setting indexer.</summary>
       /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
       /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
-      public Tensor<τ,α> this[uint overloadDummy, params int[] inxs] {
+      public Tensor<τ,α> this[uint overloadDummy, params int[] inxs] {           // TODO: Urgently needs a test written.
          get {
             Tensor<τ,α> tnr = this;
             for(int i = 0; i < inxs.Length; ++i) {
@@ -277,7 +269,7 @@ namespace Fluid.Internals.Collections {
             Tensor<τ,α> tnr = this;
             if(value != null) {
                int n = inxs.Length - 1;
-               for(int i = 0; i < n; ++i) {
+               for(int i = 0; i < n; ++i) {                                   // FIXME: What?
                   if(!tnr.TryGetValue(inxs[i], out tnr))
                      tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
                      tnr.Superior.Add(inxs[i], tnr); }
@@ -437,7 +429,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr1">Operand.</param>
       /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
       public static Tensor<τ,α> operator -(Tensor<τ,α> tnr1) {
-         int[] newStructure = tnr1.CopySubstructure();
+         var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(newStructure, tnr1.Rank, null, tnr1.Count);
          SimultRecurseEmptyTgt(tnr1, res, 2,
             createSubTgt: (inx, subSrc, tgt) => {
@@ -455,7 +447,7 @@ namespace Fluid.Internals.Collections {
       /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
       public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         int[] newStructure = tnr1.CopySubstructure();
+         var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(tnr2, CopySpecs.S322_04);          // Create a copy of second tensor.
          res.Structure = newStructure;                               // Assign to it a new structure.
          SimultaneousRecurse(tnr1, res, 2,
@@ -481,7 +473,7 @@ namespace Fluid.Internals.Collections {
       /// <remarks> <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         int[] newStructure = tnr1.CopySubstructure();
+         var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);          // Create a copy of first tensor.
          res.AssignStructFromSubStruct(tnr1);
          SimultaneousRecurse(tnr2, res, 2,                     // Source now is tnr2, opposed to + operator where it was tnr1.
@@ -568,7 +560,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="aTnr">Tensor.</param>
       /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
       public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> aTnr) {                             // FIXME: Check all references
-         int[] newStructure = aTnr.CopySubstructure();                                              // New substructure.
+         var newStructure = aTnr.CopySubstructure();                                              // New substructure.
          return Recursion(aTnr);
 
          Tensor<τ,α> Recursion(in Tensor<τ,α> tnr) {
@@ -597,7 +589,7 @@ namespace Fluid.Internals.Collections {
          // 1) Descend to rank 1 through a recursion and then delete that vector.
          // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
          int newRank = Rank + tnr2.Rank;
-         var newStructure = Structure.Concat(tnr2.Structure).ToArray();
+         var newStructure = Structure.Concat(tnr2.Structure).ToList();
          return Recursion(this, newRank);
 
          Tensor<τ,α> Recursion(Tensor<τ,α> src, int resRank) {
@@ -623,7 +615,7 @@ namespace Fluid.Internals.Collections {
          TB.Assert.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
-         var newStructure = newStructureL.Concat(newStructureR).ToArray();    // Created a new structure. Assign it to new host tensor.
+         var newStructure = newStructureL.Concat(newStructureR).ToList();    // Created a new structure. Assign it to new host tensor.
 
          if(elimRank == Rank - 1) {                                                    // 1 rank exists above elimRank == Pick one from elimRank and return it.
             if(Rank > 1) {                                                             // Result is Tensor, top tensor at least rank 2.
@@ -632,7 +624,7 @@ namespace Fluid.Internals.Collections {
                   newTnr.Structure = newStructure;
                   return newTnr;}
                else
-                  return CreateEmpty(0, newStructure); }                                // Return empty tensor.
+                  return CreateEmpty(0, newStructure.Count, newStructure); }                                // Return empty tensor.
             else                                                                                      // Rank <= 1: impossible.
                throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
          else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
@@ -713,13 +705,13 @@ namespace Fluid.Internals.Collections {
                ElimR0_R2(int_tnr.Value, newVec, emtInx);
                tgt.Add(int_tnr.Key, newVec); } } }
 
-      protected (int[] struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
+      protected (List<int> struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
       Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
-         int[] struc1 = Structure, 
-               struc2 = tnr2.Structure;
-         int rank1 = struc1.Length,
-             rank2 = struc2.Length;
+         List<int>   struc1 = Structure, 
+                     struc2 = tnr2.Structure;
+         int rank1 = struc1.Count,
+             rank2 = struc2.Count;
          TB.Assert.True(rank1 == Rank && rank2 == tnr2.Rank,
             "One of the tensors is not top rank.");
          TB.Assert.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
@@ -729,11 +721,11 @@ namespace Fluid.Internals.Collections {
                rankInx2 = tnr2.ToRankInx(slotInx2);
          var struc3_1 = struc1.Where((emt, i) => i != (slotInx1 - 1));
          var struc3_2 = struc2.Where((emt, i) => i != (slotInx2 - 1));
-         var struc3 = struc3_1.Concat(struc3_2).ToArray();                 // New structure.
+         var struc3 = struc3_1.Concat(struc3_2).ToList();                 // New structure.
          return (struc3, rankInx1, rankInx2, conDim);
       }
       
-      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int rankInx1, int rankInx2, int[] struc3, int conDim) {
+      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int rankInx1, int rankInx2, List<int> struc3, int conDim) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
          if(Rank > 1) {
             if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.
@@ -763,7 +755,7 @@ namespace Fluid.Internals.Collections {
                   if(sum.Vals.Count != 0)
                      return sum;
                   else
-                     return CreateEmpty(0, struc3); }
+                     return CreateEmpty(0, 1, struc3); }
                else {                                             // Result will be tensor.
                   Tensor<τ,α> elimTnr1, sumand, sum;
                   sum = new Tensor<τ,α>(struc3);
@@ -775,7 +767,7 @@ namespace Fluid.Internals.Collections {
                   if(sum.Count != 0)
                      return sum;
                   else
-                     return CreateEmpty(0, struc3); } } }
+                     return CreateEmpty(0, struc3.Count, struc3); } } }
          else {                                                   // First tensor is rank 1 (a vector).
             var vec1 = (Vector<τ,α>) this;
             return vec1.ContractPart2(tnr2, rankInx2, struc3, conDim);}
@@ -787,7 +779,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
-         (int[] struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
+         (List<int> struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
          return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
       }
       /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
@@ -807,7 +799,7 @@ namespace Fluid.Internals.Collections {
          TB.Assert.True(Rank == 3, "Tensor rank has to be 3 for this method.");
          TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
             "Corresponding dimensions have to be equal.");
-         Vector<τ,α> res = new Vector<τ,α>(new int[] {Structure[2]}, null, 4);
+         Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, null, 4);
          int truInx1 = ToRankInx(natInx1);
          int truInx2 = ToRankInx(natInx2);
          if(natInx1 == 1) {
@@ -842,7 +834,7 @@ namespace Fluid.Internals.Collections {
             var newStruct1 = Structure.Take(slotInx1 - 1);
             var newStruct2 = Structure.Take(slotInx2 - 1).Skip(slotInx1);
             var newStruct3 = Structure.Skip(slotInx2);
-            var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToArray();
+            var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToList();
             var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
             var rankInx1 = ToRankInx(slotInx1);
             var rankInx2 = ToRankInx(slotInx2);
@@ -861,8 +853,8 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr2">Second tensor.</param>
       public static void ThrowOnSubstructureMismatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          TB.Assert.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
-         int topRank1 = tnr1.Structure.Length;                                      // We have to check that all dimensions below current ranks match.
-         int topRank2 = tnr2.Structure.Length;
+         int topRank1 = tnr1.Structure.Count;                                      // We have to check that all dimensions below current ranks match.
+         int topRank2 = tnr2.Structure.Count;
          var structInx1 = topRank1 - tnr1.Rank;                         // Index in structure array.
          var structInx2 = topRank2 - tnr2.Rank;
          for(int i = structInx1, j = structInx2; i < topRank1; ++i, ++j) {
@@ -870,7 +862,7 @@ namespace Fluid.Internals.Collections {
                throw new InvalidOperationException("Tensor addition: structures do not match."); }
       }
 
-      public SCG.IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
+      public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
          TB.Assert.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
             foreach(var subTnr in Recursion(this))
@@ -879,7 +871,7 @@ namespace Fluid.Internals.Collections {
             foreach(var int_subTnr in this)
                yield return int_subTnr.Value; }
 
-         SCG.IEnumerable<Tensor<τ,α>> Recursion(Tensor<τ,α> src) {
+         IEnumerable<Tensor<τ,α>> Recursion(Tensor<τ,α> src) {
             foreach(var int_tnr in src) {
                if(int_tnr.Value.Rank > rankInx + 1) {
                   foreach(var subTnr in Recursion(int_tnr.Value))

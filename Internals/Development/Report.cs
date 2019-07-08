@@ -1,6 +1,5 @@
 using System;
-
-using Fluid.Internals.Collections;
+using System.Collections.Generic;
 
 namespace Fluid.Internals.Development {
    /// <summary>Stores report messages for a single application run. Receives orders from AppReporter. Is not responsible for producing output, see ReportWriter for that.</summary>

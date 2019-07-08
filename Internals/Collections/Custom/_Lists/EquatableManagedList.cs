@@ -1,6 +1,6 @@
 using System;
 
-namespace Fluid.Internals.Collections {
+namespace Fluid.Internals.Collections.Custom {
    public abstract class EquatableManagedList<T>
       : ManagedList<T>, IEquatable<EquatableManagedList<T>> where T : IEquatable<T> {
          /// <summary>Create ManagedList with default initial capacity of internal array.</summary>

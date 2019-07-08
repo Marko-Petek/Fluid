@@ -4,7 +4,7 @@ using System.Threading;
 using Xunit;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using SCG = System.Collections.Generic;
+using System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using Fluid.TestRef;
 
@@ -594,9 +594,10 @@ namespace Fluid.Tests {
          Read(data, ref pos, ref read);
          var tnr = TensorInt.FromFlatSpec(data.AsSpan(pos, read), tnrStruc);
          Read(data, ref pos, ref read);
-         var expResStruc = new Span<int>(data, pos, read).ToArray();
+         var expResStrucArr = new Span<int>(data, pos, read).ToArray();
+         var expResStruc = expResStrucArr.ToList();
          Read(data, ref pos, ref read);
-         var expRes = TensorInt.FromFlatSpec(data.AsSpan(pos, read), expResStruc);
+         var expRes = TensorInt.FromFlatSpec(data.AsSpan(pos, read), expResStrucArr);
          var res = new TensorInt(expResStruc);
          var rankCollection = tnr.EnumerateRank(enumRank);
          foreach(var tnr2 in rankCollection)
@@ -612,7 +613,7 @@ namespace Fluid.Tests {
          6,    11,10,3, 2,14,6)]                      // expRes
       [Theory] public void RankEnumerator1(params int[] data) {
          var tnr = TensorInt.FromFlatSpec(data.AsSpan(0,12), 2,2,3);
-         var res = new TensorInt(new int[] {2,3});
+         var res = new TensorInt(new List<int> {2,3});
          var rankCollection = tnr.EnumerateRank(2);
          foreach(var tnr2 in rankCollection)
             res = res + tnr2;
@@ -625,7 +626,7 @@ namespace Fluid.Tests {
          16,8, 24,21)]                                         // R2: 2,2
        [Theory] public void RankEnumerator2(params int[] data) {
           var tnr = TensorInt.FromFlatSpec(data.AsSpan(0,16), 2,2,2,2);
-          var res = new TensorInt(new int[] {2,2});
+          var res = new TensorInt(new List<int> {2,2});
           var rankCollection = tnr.EnumerateRank(2);
           foreach(var tnr2 in rankCollection)
              res = res + tnr2;
