@@ -38,7 +38,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
       public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
-         CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);
+         CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);               // Structure created here.
          if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues)
             tgt.Vals = new Dictionary<int,τ>(src.Vals);
          else
@@ -105,10 +105,12 @@ namespace Fluid.Internals.Collections {
          var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
          res.Structure = newStruc;
          foreach(var int_val1 in vec1.Vals) {
-            if(vec2.Vals.TryGetValue(int_val1.Key, out var val2)) {
-               res[int_val1.Key] = O<τ,α>.A.Sum(int_val1.Value, val2); }
+            int key = int_val1.Key;
+            var val1 = int_val1.Value;
+            if(vec2.Vals.TryGetValue(key, out var val2)) {
+               res[key] = O<τ,α>.A.Sum(val1, val2); }
             else {
-               res.Add(int_val1.Key, int_val1.Value); } }
+               res.Add(key, val1); } }
          return res;
       }
       /// <summary>Subtract two vectors. Does not check substructure match.</summary>
@@ -119,16 +121,19 @@ namespace Fluid.Internals.Collections {
          var newStruc = vec1.CopySubstructure();
          var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
          foreach(var int_val2 in vec2.Vals) {
-            if(vec1.Vals.TryGetValue(int_val2.Key, out var val1)) {
-               res[int_val2.Key] = O<τ,α>.A.Sub(val1, int_val2.Value); }
+            int key = int_val2.Key;
+            var val2 = int_val2.Value;
+            if(vec1.Vals.TryGetValue(key, out var val1)) {
+               res[key] = O<τ,α>.A.Sub(val1, val2); }
             else {
-               res.Add(int_val2.Key, O<τ,α>.A.Neg(int_val2.Value)); } }
+               res.Add(key, O<τ,α>.A.Neg(val2)); } }
          return res;
       }
       /// <summary>Modifies this vector by negating each element.</summary>
       public override void Negate() {
-         foreach(var int_val in Vals)
-            Vals[int_val.Key] = O<τ,α>.A.Neg(int_val.Value);
+         var keys = Vals.Keys.ToArray();                    // We have to do this (access via indexer), because we can't change collection during enumeration.
+         for(int i = 0; i < keys.Length; ++i)
+            Vals[keys[i]] = O<τ,α>.A.Neg(Vals[keys[i]]);
       }
       /// <summary>Negate operator. Creates a new vector with its own substructure.</summary>
       /// <param name="vec">Vector to negate.</param>
