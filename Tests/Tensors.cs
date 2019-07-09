@@ -27,8 +27,8 @@ namespace Fluid.Tests {
          6,5,3,8,0,1,4,3,1)]
       [InlineData(3,3,2,3,                // Rank 3 tensor.
          6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7)]
-      [InlineData(4,2,2,3,3,                // Rank 3 tensor.
-         6,5,3,8,0,1,4,3,1,6,0,9,1,3,7,2,7,7,1,1,3,6,5,4,0,0,4,2,8,5,3,3,5,7,5,3)]
+      [InlineData(4,2,2,3,3,                // Rank 4 tensor.
+         6,5,3,  8,0,1,  4,3,1,   6,0,9,  1,3,7,  2,7,7,      1,1,3,  6,5,4,  0,0,4,   2,8,5,  3,3,5,  7,5,3)]
       /// <remarks><see cref="TestRefs.TensorCopy"/></remarks>
       [Theory] public void TensorCopy(params int[] data) {
          int topRank = data[0];
@@ -37,8 +37,8 @@ namespace Fluid.Tests {
          foreach(int emt in struc)
             count *= emt;
          var slc = new Span<int>(data, 1 + topRank, count);
-         var tnr = Tensor<int,IA>.FromFlatSpec(slc, struc);
-         var tnrCpy = tnr.Copy(new TensorInt.CopySpecStruct(TensorInt.WhichFields.ValuesAndNonValueFields, TensorInt.WhichNonValueFields.All, TensorInt.HowToCopyStructure.CreateNewStructure));
+         var tnr = TensorInt.FromFlatSpec(slc, struc);
+         var tnrCpy = tnr.Copy(TensorInt.CopySpecs.S342_00);
          Assert.True(tnr.Equals(tnrCpy));
       }
 
@@ -601,23 +601,7 @@ namespace Fluid.Tests {
          var res = new TensorInt(expResStruc);
          var rankCollection = tnr.EnumerateRank(enumRank);
          foreach(var tnr2 in rankCollection)
-            res = res + tnr2;                                        // FIXME: Error occurs here.
-         Assert.True(res.Equals(expRes));
-      }
-
-      [InlineData(
-         1,    2,                                     // enumRank
-         3,    2,2,3,                                 // tnrStruc
-         12,   5,5,3, 2,7,1,  6,5,0, 0,7,5,           // tnr
-         2,    2,3,                                   // expResStruc
-         6,    11,10,3, 2,14,6)]                      // expRes
-      [Theory] public void RankEnumerator1(params int[] data) {
-         var tnr = TensorInt.FromFlatSpec(data.AsSpan(0,12), 2,2,3);
-         var res = new TensorInt(new List<int> {2,3});
-         var rankCollection = tnr.EnumerateRank(2);
-         foreach(var tnr2 in rankCollection)
             res = res + tnr2;
-         var expRes = TensorInt.FromFlatSpec(data.AsSpan(12,6), 2,3);
          Assert.True(res.Equals(expRes));
       }
 

@@ -3,8 +3,7 @@ using Fluid.Tests.Mocks;
 using TB = Fluid.Internals.Toolbox;
 using System.Threading;
 
-namespace Fluid.Tests
-{
+namespace Fluid.Tests {
    public partial class Thread1 {
       static Thread1() {
          TB.EntryPointSetup("Starting Thread1 tests.");
