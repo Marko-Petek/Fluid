@@ -329,7 +329,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Scalar getting/setting indexer.</summary>
       /// <param name="inxs">A set of indices specifiying which scalar we want to set/get. The set length must reach exactly to scalar rank.</param>
-      public virtual τ this[params int[] inx] {
+      public virtual τ this[params int[] inx] {             // TODO: Create test!
          get {
             Tensor<τ,α> tnr = this;
             int n = inx.Length - 2;
@@ -784,11 +784,11 @@ namespace Fluid.Internals.Collections {
             return vec1.ContractPart2(tnr2, rankInx2, struc3, conDim);}
       }
 
-      /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction.</summary>
+      /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction. Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</summary>
       /// <param name="tnr2">Tensor 2.</param>
       /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
       /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
-      /// <remarks>Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</remarks>
+      /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
       public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
          (List<int> struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
          return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
@@ -873,6 +873,7 @@ namespace Fluid.Internals.Collections {
                throw new InvalidOperationException("Tensor addition: structures do not match."); }
       }
 
+      /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
       public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
          TB.Assert.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
@@ -922,6 +923,7 @@ namespace Fluid.Internals.Collections {
          }
       }
 
+      /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
       public bool Equals(Tensor<τ,α> tnr2, τ eps) {
          ThrowOnSubstructureMismatch(this, tnr2);
          return TnrRecursion(this, tnr2);

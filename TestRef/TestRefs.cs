@@ -12,11 +12,14 @@ namespace Fluid.TestRef {
       public static Test TensorSelfContract;
       public static Test TensorProduct;
       public static Test TensorSelfContractR2;
+      public static Test TensorContract;
       public static Test Op_VectorDotVector;
       public static Test Op_TensorAddition;
       public static Test Op_TensorSubtraction;
       public static Test Op_ScalarVectorMultiplication;
       public static Test Op_ScalarTensorMultiplication;
+      public static Test TensorEnumerateRank;
+      public static Test TensorEquals;
    }
    public struct Test { }
 }
