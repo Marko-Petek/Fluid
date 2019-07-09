@@ -26,11 +26,11 @@ namespace Fluid.Tests {
       [Theory] public void ConjGrads3by3(params double[] input) {
         var A = Tensor.FromFlatSpec(input.AsSpan<double>(0,9), 3,3);
         //.CreateFromArray(input, 6, 0, 3, 0, 3);
-        var b = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(9,3));
+        var b = Vector.FromFlatSpec(input.AsSpan<dbl>(9,3));
         //CreateFromArray(input, 9, 3);
-        var expSol = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(15,3));
+        var expSol = Vector.FromFlatSpec(input.AsSpan<dbl>(15,3));
         //CreateFromArray(input, 15, 3);
-        var initPoint = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(12,3));
+        var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(12,3));
         //Vector.CreateFromArray(input, 12, 3);
         var solver = new ConjugateGrads(A, b);
         var sol = solver.Solve(initPoint, 0.001);
@@ -48,9 +48,9 @@ namespace Fluid.Tests {
          1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
       [Theory] public void ConjGrads4by4(params double[] input) {
         var A = Tensor.FromFlatSpec(input.AsSpan<dbl>(0,16), 4,4);
-        var b = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(16,4));
-        var initPoint = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(20,4));
-        var expSol = Vector.CreateFromFlatSpec(input.AsSpan<dbl>(24,4));
+        var b = Vector.FromFlatSpec(input.AsSpan<dbl>(16,4));
+        var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(20,4));
+        var expSol = Vector.FromFlatSpec(input.AsSpan<dbl>(24,4));
         var solver = new ConjugateGrads(A, b);
         var sol = solver.Solve(initPoint, 0.001);
         Assert.True(sol.Equals(expSol, 0.01));

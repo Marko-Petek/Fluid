@@ -47,14 +47,16 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Creates a new vector from an array slice.</summary>
       /// <param name="slc">Array slice.</param>
-      public static Vector<τ,α> CreateFromFlatSpec(Span<τ> slc) {
-         var vec = new Vector<τ,α>(slc.Length, slc.Length);
-         vec.Structure = new List<int>(slc.Length) { slc.Length };
+      public static Vector<τ,α> FromFlatSpec(Span<τ> slc , List<int> structure, Tensor<τ,α> sup) {
+         var vec = new Vector<τ,α>(structure, sup, slc.Length);
          for(int i = 0; i < slc.Length; ++i) {
             if(!slc[i].Equals(default(τ)))
                vec.Vals.Add(i, slc[i]); }
          return vec;
       }
+      public static Vector<τ,α> FromFlatSpec(Span<τ> slc) =>
+         FromFlatSpec(slc, new List<int>(1) { slc.Length }, null);
+
       public static Vector<τ,α> CreateEmpty(int cap, List<int> structure = null, Tensor<τ,α> sup = null) {
          var vec = new Vector<τ,α>(structure, sup, cap);
          return vec;
@@ -104,9 +106,9 @@ namespace Fluid.Internals.Collections {
       /// <param name="vec2">Right operand.</param>
       /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
       public static Vector<τ,α> operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) {
-         var newStruc = vec2.CopySubstructure();
+         //var newStruc = vec2.CopySubstructure();
          var res = new Vector<τ,α>(vec2, in CopySpecs.S322_04);
-         res.Structure = newStruc;
+         res.AssignStructFromSubStruct(vec2);
          foreach(var int_val1 in vec1.Vals) {
             int key = int_val1.Key;
             var val1 = int_val1.Value;
@@ -121,8 +123,9 @@ namespace Fluid.Internals.Collections {
       /// <param name="vec2">Right operand.</param>
       /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
       public static Vector<τ,α> operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) {
-         var newStruc = vec1.CopySubstructure();
+         //var newStruc = vec1.CopySubstructure();
          var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
+         res.AssignStructFromSubStruct(vec1);
          foreach(var int_val2 in vec2.Vals) {
             int key = int_val2.Key;
             var val2 = int_val2.Value;

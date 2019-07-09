@@ -47,9 +47,9 @@ namespace Fluid.Tests {
       [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
       /// <remarks><see cref="TestRefs.VectorAdd"/></remarks>
       [Theory] public void VectorAdd(params int[] data) {
-         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
-         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
-         var vec3 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
+         var vec3 = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
          vec1.Sum(vec2);
          Assert.True(vec1.Equals(vec3));
       }
@@ -59,10 +59,10 @@ namespace Fluid.Tests {
       [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
       /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
       [Theory] public void Op_VectorAddition(params int[] data) {
-         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
-         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
          var res = vec1 + vec2;
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
          Assert.True(res.Equals(expRes));
       }
       
@@ -71,10 +71,10 @@ namespace Fluid.Tests {
       [InlineData(1, 3, 2,   2, 0, 1,  -1, 3, 1)]
       /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
       [Theory] public void Op_VectorSubtraction(params int[] data) {
-         var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
-         var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
          var res = vec1 - vec2;
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(6,3));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
          Assert.True(res.Equals(expRes));
       }
       
@@ -404,8 +404,8 @@ namespace Fluid.Tests {
       [InlineData(2, 1, 3, 0, 2, 3, 11)]
       [InlineData(9, 8, 1, 2, 6, 7, 73)]
       [Theory] public void Op_VectorDotVector(params int[] data) {
-        var vec1 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,3));
-        var vec2 = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(3,3));
+        var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+        var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
         var expRes = data[6];
         var res = vec1 * vec2;
         Assert.True(res == expRes);
@@ -493,8 +493,8 @@ namespace Fluid.Tests {
          5, 2, 3, 0, 38, 12)]
       [Theory] public void TnrDotVec(params int[] data) {                  // TODO: Move to Contract tests.
          var tnr = TensorInt.FromFlatSpec(data.AsSpan<int>(0,9), 3,3);
-         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(9,3));
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,3));
+         var vec = VectorInt.FromFlatSpec(data.AsSpan<int>(9,3));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(12,3));
          var res = (VectorInt) tnr.Contract(vec, 2, 1);
          Assert.True(res.Equals(expRes));
       }
@@ -521,8 +521,8 @@ namespace Fluid.Tests {
          9, 7, 0, 1, 34, 74)]
       [Theory] public void TnrDotVecAsym(params int[] data) {                          // TODO: Move to Contract tests.
          var tnr = TensorInt.FromFlatSpec(data.AsSpan<int>(0,8), 2,4);
-         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(8,4));
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,2));
+         var vec = VectorInt.FromFlatSpec(data.AsSpan<int>(8,4));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(12,2));
          var res = tnr.Contract(vec,2,1);
          Assert.True(res.Equals(expRes));
       }
@@ -541,8 +541,8 @@ namespace Fluid.Tests {
          3, 1, 5, 44, 32, 37)]
       [Theory] public void VecDotTnr(params int[] data) {                                    // TODO: Move to Contract tests.
          var tnr = TensorInt.FromFlatSpec(data.AsSpan<int>(0,9), 3,3);
-         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(9,3));
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(12,3));
+         var vec = VectorInt.FromFlatSpec(data.AsSpan<int>(9,3));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(12,3));
          var res = vec.Contract(tnr,1);
          Assert.True(res.Equals(expRes));
       }
@@ -553,9 +553,9 @@ namespace Fluid.Tests {
       /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
       [Theory] public void Op_ScalarVectorMultiplication(params int[] data) {
          var num = data[4];
-         var vec = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(0,4));
+         var vec = VectorInt.FromFlatSpec(data.AsSpan<int>(0,4));
          var res = num * vec;
-         var expRes = VectorInt.CreateFromFlatSpec(data.AsSpan<int>(5,4));
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(5,4));
          Assert.True(res.Equals(expRes));
       }
 

@@ -210,24 +210,31 @@ namespace Fluid.Internals.Collections {
       public static Tensor<τ,α> FromFlatSpec(Span<τ> slice, params int[] structure) {
          int tnrRank = structure.Length;
          if(tnrRank == 1)
-            return Vector<τ,α>.CreateFromFlatSpec(slice);
-         else
-            return Recursion(slice, 0);
+            return Vector<τ,α>.FromFlatSpec(slice);
+         else {
+            var res = new Tensor<τ,α>(structure.ToList(), tnrRank, null, structure[0]);
+            Recursion(slice, 0, res);
+            return res;
+         }
 
-         Tensor<τ,α> Recursion(Span<τ> slc, int dim) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
-            int trueRank = ChangeRankNotation(structure.Length, dim);
-            int nIter = structure[dim];                              // As many iterations as it is the size of the dimension.
+         void Recursion(Span<τ> slc, int slot, Tensor<τ,α> tgt) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
+            //int tgtRank = //ChangeRankNotation(structure.Length, dim);
+            int nIter = structure[slot];                              // As many iterations as it is the size of the dimension.
             int nEmtsInSlice = slc.Length / nIter;
-            if(trueRank > 1) {
-               var res = new Tensor<τ,α>(structure.ToList(), trueRank, null, structure[dim]);
+            if(tgt.Rank > 2) {
+               //var res = new Tensor<τ,α>(structure.ToList(), trueRank, null, structure[dim]);
                for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
                   var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-                  var newTnr = Recursion(newSlc, dim + 1);
-                  if(newTnr.Count != 0)
-                     res.Add(i, newTnr); }
-               return res; }
-            else                                                  // We are at rank 1 = vector rank.
-               return Vector<τ,α>.CreateFromFlatSpec(slc);
+                  var subTnr = new Tensor<τ,α>(tgt.Structure, tgt.Rank - 1, tgt, structure[slot]);
+                  Recursion(newSlc, slot + 1, subTnr);
+                  if(subTnr.Count != 0)
+                     tgt.AddOnly(i, subTnr); } }
+            else {                                                 // We are at rank 2, subrank = vector rank.
+               for(int i = 0; i < nIter; ++i) {
+                  var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
+                  var subVec = Vector<τ,α>.FromFlatSpec(newSlc, tgt.Structure, tgt);
+                  if(subVec.Count != 0)
+                     tgt.AddOnly(i, subVec); } }
          }
       }
       /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
@@ -449,9 +456,9 @@ namespace Fluid.Internals.Collections {
       /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
       public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         var newStructure = tnr1.CopySubstructure();
+         //var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(tnr2, CopySpecs.S322_04);          // Create a copy of second tensor.
-         res.Structure = newStructure;                               // Assign to it a new structure.
+         res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
          SimultaneousRecurse(tnr1, res, 2,
             onNoEquivalent: (key, subTnr1, supTnr2) => {    // Simply copy and add.
                var subTnr2 = new Tensor<τ,α>(subTnr1, in CopySpecs.S322_04);
@@ -475,7 +482,7 @@ namespace Fluid.Internals.Collections {
       /// <remarks> <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         var newStructure = tnr1.CopySubstructure();
+         //var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);          // Create a copy of first tensor.
          res.AssignStructFromSubStruct(tnr1);
          SimultaneousRecurse(tnr2, res, 2,                     // Source now is tnr2, opposed to + operator where it was tnr1.
