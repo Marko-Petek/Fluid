@@ -58,8 +58,6 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
 
-//FIXME: Check what scalar multiplication has broken.
-
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
@@ -268,7 +266,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
       /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
       /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
-      public Tensor<τ,α> this[Tensor<τ,α> overloadDummy, params int[] inxs] {           // TODO: Urgently needs a test written.
+      public Tensor<τ,α> this[Tensor<τ,α> overloadDummy, params int[] inxs] {
          get {
             Tensor<τ,α> tnr = this;
             for(int i = 0; i < inxs.Length; ++i) {
