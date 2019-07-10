@@ -58,6 +58,7 @@ namespace Fluid.Tests {
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
       [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
       [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
+      [InlineData(1, 3, 2,  -1,-3,-2,  0, 0, 0)]
       /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
       [Theory] public void Op_VectorAddition(params int[] data) {
          var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
@@ -69,7 +70,7 @@ namespace Fluid.Tests {
       
       [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
       [InlineData(1, 0, 2,   2, 3, 1,  -1,-3, 1)]
-      [InlineData(1, 3, 2,   2, 0, 1,  -1, 3, 1)]
+      [InlineData(1, 3, 2,   1, 3, 2,   0, 0, 0)]
       /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
       [Theory] public void Op_VectorSubtraction(params int[] data) {
          var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
@@ -88,11 +89,47 @@ namespace Fluid.Tests {
          4,2,8,
          7,2,3,
 
-           8 , 4,  2,
-          11,  8, 17,
-           7,  6,  5)]
-      /// <remarks><see cref="TestRefs.TensorAdd"/></remarks>
-      [Theory] public void TensorAdd(params int[] data) {
+          8, 4, 2,
+         11, 8, 17,
+          7, 6, 5)]
+      [InlineData(
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         7,2,3,
+
+          3, 1, 0,
+         11, 8, 17,
+          7, 6, 5)]
+      [InlineData(
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         0,0,0,
+
+          3, 1, 0,
+         11, 8, 17,
+          0, 4, 2)]
+      [InlineData(
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3, 1, 0,
+         4, 2, 8,
+         0,-4,-2,
+
+          3, 1, 0,
+         11, 8, 17,
+          0, 0, 0)]
+      /// <remarks><see cref="TestRefs.TensorSum"/></remarks>
+      [Theory] public void TensorSum(params int[] data) {
          var span1 = new Span<int>(data, 0, 9);
          var span2 = new Span<int>(data, 9, 9);
          var span3 = new Span<int>(data, 18, 9);
@@ -101,6 +138,92 @@ namespace Fluid.Tests {
          var tnr3 = TensorInt.FromFlatSpec(span3, new int[] {3,3});
          tnr1.Sum(tnr2);
          Assert.True(tnr1.Equals(tnr3));
+      }
+
+      [InlineData(
+         5,3,2,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         7,2,3,
+
+          2, 2, 2,
+          3, 4, 1,
+         -7, 2,-1)]
+      [InlineData(
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         7,2,3,
+
+         -3,-1, 0,
+          3, 4, 1,
+         -7, 2,-1)]
+      [InlineData(
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         0,0,0,
+
+         -3,-1, 0,
+          3, 4, 1,
+          0, 4, 2)]
+      [InlineData(
+         0,0,0,
+         4,2,8,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         0,0,0,
+
+         -3,-1, 0,
+          0, 0, 0,
+          0, 4, 2)]
+      /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
+      [Theory] public void TensorSub(params int[] data) {      // TODO: Test zero result when non-zero operands. Also for operators.
+         var span1 = new Span<int>(data, 0, 9);
+         var span2 = new Span<int>(data, 9, 9);
+         var span3 = new Span<int>(data, 18, 9);
+         var tnr1 = TensorInt.FromFlatSpec(span1, new int[] {3,3});
+         var tnr2 = TensorInt.FromFlatSpec(span2, new int[] {3,3});
+         var tnr3 = TensorInt.FromFlatSpec(span3, new int[] {3,3});
+         tnr1.Sub(tnr2);
+         Assert.True(tnr1.Equals(tnr3));
+      }
+
+      [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
+      [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
+      [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
+      [InlineData(1, 3, 2,   -1,-3,-2,  0, 0, 0)]
+      /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
+      [Theory] public void VectorSum(params int[] data) {
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
+         vec1.Sum(vec2);
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
+         Assert.True(vec1.Equals(expRes));
+      }
+      
+      [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
+      [InlineData(1, 0, 2,   2, 3, 1,  -1,-3, 1)]
+      [InlineData(1, 3, 2,   2, 0, 1,  -1, 3, 1)]
+      [InlineData(1, 3, 2,   1, 3, 2,  0, 0, 0)]
+      /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
+      [Theory] public void VectorSub(params int[] data) {
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
+         vec1.Sub(vec2);
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
+         Assert.True(vec1.Equals(expRes));
       }
 
       [InlineData(

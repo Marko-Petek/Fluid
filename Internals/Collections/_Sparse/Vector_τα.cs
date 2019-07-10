@@ -91,16 +91,32 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
       /// <param name="vec2">Sumand 2. Is not destroyed.</param>
-      public void Sum(Vector<τ,α> vec2) {
-         foreach(var int_val2 in vec2.Vals) {
-            if(Vals.TryGetValue(int_val2.Key, out τ val1)) {                  // Value exists in Vec1.
-               τ sum = O<τ,α>.A.Sum(val1, int_val2.Value);
-               if(sum != default)                                             // Sum is not zero.
-                  Vals[int_val2.Key] = O<τ,α>.A.Sum(val1, int_val2.Value);
+      public void Sum(Vector<τ,α> vec2) {                            // TODO: Test.
+         foreach(var int_subVal2 in vec2.Vals) {
+            int subKey = int_subVal2.Key;
+            var subVal2 = int_subVal2.Value;
+            if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
+               τ sum = O<τ,α>.A.Sum(subVal1, subVal2);
+               if(!sum.Equals(default))                                             // Sum is not zero.
+                  Vals[subKey] = sum;
                else
-                  Vals.Remove(int_val2.Key); }
+                  Vals.Remove(subKey); }
             else
-               Vals.Add(int_val2.Key, int_val2.Value); }
+               Vals.Add(subKey, subVal2); }
+      }
+
+      public void Sub(Vector<τ,α> vec2) {                            // TODO: Test
+         foreach(var int_subVal2 in vec2.Vals) {
+            int subKey = int_subVal2.Key;
+            var subVal2 = int_subVal2.Value;
+            if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
+               τ dif = O<τ,α>.A.Sub(subVal1, subVal2);
+               if(!dif.Equals(default))                                             // Sum is not zero.
+                  Vals[subKey] = dif;
+               else
+                  Vals.Remove(subKey); }
+            else
+               Vals.Add(subKey, O<τ,α>.A.Neg(subVal2)); }
       }
       /// <summary>Sum two vectors. Does not check substructure match.</summary>
       /// <param name="vec1">Left operand.</param>

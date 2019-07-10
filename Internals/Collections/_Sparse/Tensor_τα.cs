@@ -508,7 +508,7 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Sums tnr2 into the caller. Don't use the tnr2 reference afterwards.</summary>
       /// <param name="tnr2">Sumand whose elements will be absorbed into the caller and shouldn't be used afterwards.</param>
-      /// <remarks> <see cref="TestRefs.TensorAdd"/> </remarks>
+      /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
       public void Sum(Tensor<τ,α> tnr2) {
          Tensor<τ,α> tnr1 = this;
          ThrowOnSubstructureMismatch(tnr1, tnr2);
@@ -517,19 +517,25 @@ namespace Fluid.Internals.Collections {
          void Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
             if(t2.Rank > 2) {
                foreach(var int_subTnr2 in t2) {
-                  if(t1.TryGetValue(int_subTnr2.Key, out var subTnr1))            // Equivalent subtensor exists in T1.
-                     Recursion(subTnr1, int_subTnr2.Value);
+                  int subKey = int_subTnr2.Key;
+                  var subTnr2 = int_subTnr2.Value;
+                  if(t1.TryGetValue(subKey, out var subTnr1))            // Equivalent subtensor exists in T1.
+                     Recursion(subTnr1, subTnr2);
                   else                                                      // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
-                     t1.Add(int_subTnr2.Key, int_subTnr2.Value); } }
+                     t1.Add(subKey, subTnr2); } }
             else if(t2.Rank == 2) {
                foreach(var int_subTnr2 in t2) {
                   //var vec2 = (Vector<τ,α>) int_subTnr2.Value;
-                  if(t1.TryGetValue(int_subTnr2.Key, out var subTnr1)) {      // Entry exists in t1, we must sum.
-                     var vec1 = (Vector<τ,α>) subTnr1;
-                     var vec2 = (Vector<τ,α>) int_subTnr2.Value;
-                     vec1.Sum(vec2); }
+                  int subKey = int_subTnr2.Key;
+                  var subTnr2 = int_subTnr2.Value;
+                  if(t1.TryGetValue(subKey, out var subTnr1)) {      // Entry exists in t1, we must sum.
+                     var subVec1 = (Vector<τ,α>) subTnr1;
+                     var subVec2 = (Vector<τ,α>) subTnr2;
+                     subVec1.Sum(subVec2);
+                     if(subVec1.Count == 0)
+                        t1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
                   else {
-                     t1.Add(int_subTnr2.Key, int_subTnr2.Value); } } }          // Entry does not exist in t2, simply Add.
+                     t1.Add(subKey, subTnr2); } } }          // Entry does not exist in t2, simply Add.
             else {                                                            // We have a vector.
                var vec1 = (Vector<τ,α>) t1;
                var vec2 = (Vector<τ,α>) t2;
@@ -539,9 +545,11 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
       /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
-      public void Sub(Tensor<τ,α> aTnr2) { // TODO: Test Sub method and implement it for vector and test it.
+      /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
+      public void Sub(Tensor<τ,α> aTnr2) {
          Tensor<τ,α> aTnr1 = this;
          ThrowOnSubstructureMismatch(aTnr1, aTnr2);
+         Recursion(aTnr1, aTnr2);
 
          void Recursion(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
             if(tnr2.Rank > 2) {
@@ -558,13 +566,15 @@ namespace Fluid.Internals.Collections {
                   var subVec2 = (Vector<τ,α>) int_subTnr2.Value;
                   if(tnr1.TryGetValue(subKey, out var subTnr1)) {      // Entry exists in t1, we must sum.
                      var subVec1 = (Vector<τ,α>) subTnr1;
-                     subVec1.Sum(subVec2); }
+                     subVec1.Sub(subVec2);
+                     if(subVec1.Count == 0)
+                        tnr1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
                   else {
-                     tnr1.Add(subKey, subVec2); } } }          // Entry does not exist in t2, simply Add.
+                     tnr1.Add(subKey, -subVec2); } } }          // Entry does not exist in t2, simply Add.
             else {                                                            // We have a vector.
                var vec1 = (Vector<τ,α>) tnr1;
                var vec2 = (Vector<τ,α>) tnr2;
-               tnr1.Sum(tnr2);
+               vec1.Sum(vec2);
             }
          }
       }
@@ -572,7 +582,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="scal">Scalar.</param>
       /// <param name="aTnr">Tensor.</param>
       /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
-      public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> aTnr) {                             // FIXME: Check all references
+      public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> aTnr) {
          var newStructure = aTnr.CopySubstructure();                                              // New substructure.
          return Recursion(aTnr);
 
@@ -597,7 +607,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
       /// <param name="tnr2">Right-hand operand.</param>
       /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {                     // TODO: Make sure this work for all combinations: (tnr,tnr), (tnr,vec), (vec,tnr), (vec,vec)
+      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
          // Overriden on vector when first operand is a vector.
          // 1) Descend to rank 1 through a recursion and then delete that vector.
          // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
