@@ -29,6 +29,9 @@ namespace Fluid.TestRef {
       public static Test ConjGradsSpecial;
       public static Test GaussQuadrature;
       public static Test MatrixInvert;
+      public static Test HierarchyOutput;
+      public static Test HierarchyInput;
+      public static Test PointInsidePolygon;
    }
    public struct Test { }
 }

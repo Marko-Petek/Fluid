@@ -24,7 +24,9 @@ namespace Fluid.Internals.Numerics
          else
             return false;
       }
-      /// <summary>Check's whether this Position is inside a simple polygon defined by vertices specified in CCW direction.</summary><param name="ll">Position of lower left vertex.</param>
+      /// <summary>Check's whether this Position is inside a simple polygon defined by vertices specified in CCW direction.</summary>
+      /// <param name="vertices">Positions of vertices in CCW direction.</param>
+      /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       public bool IsInsidePolygon(Pos[] vertices) {
          int oddIfTrue = 0;
          var x = X;

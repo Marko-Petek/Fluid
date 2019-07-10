@@ -8,6 +8,7 @@ using Fluid.Internals;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Meshing;
+using Fluid.TestRef;
 using Fluid.Tests.Mocks;
 using TB = Fluid.Internals.Toolbox;
 
@@ -21,6 +22,7 @@ namespace Fluid.Tests {
       [InlineData(0.5, 0.5)]
       [InlineData(0.0, 0.5)]
       [InlineData(0.0, -0.5)]
+      /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void PointInsideQuadrilateral(double x, double y) {
          var point = new Pos(x,y);
          var vertices = new Pos[4] {                 // Define vertices of  quadrilateral.
@@ -32,6 +34,7 @@ namespace Fluid.Tests {
       }
 
       [InlineData(-2.0, 0.0)] [InlineData(2.0, 0.0)] [InlineData(0.0, 1.5)] [InlineData(0.0, -1.5)]
+      /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void PointOutsideQuadrilateral(double x, double y) {
          var point = new Pos(x,y);
          var vertices = new Pos[4] {                 // Define vertices of  quadrilateral.
@@ -44,6 +47,7 @@ namespace Fluid.Tests {
 
       [InlineData(1, 0)] [InlineData(1.1, 0.2)] [InlineData(3.9, 0.99)] [InlineData(1.01, 0.99)]
       [InlineData(2.5, 0.5)] [InlineData(3.1, 0.66)] [InlineData(1.00000001, 0.9999999)] [InlineData(2, 0.1)]
+      /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void TestPointInsidePolygon1(double x, double y) {
          var point = new Pos(x,y);
          var vertices = new Pos[4] {
@@ -55,6 +59,7 @@ namespace Fluid.Tests {
       }
       // TODO: Test IsInsidePolygon method more.
       [InlineData(0.35, 0.0)]
+      /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void TestPointOutsidePolygon1(double x, double y) {
          var point = new Pos(x,y);
          var vertices = new Pos[4] {

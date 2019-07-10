@@ -8,6 +8,7 @@ using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
+using Fluid.TestRef;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 
@@ -22,6 +23,8 @@ namespace Fluid.Tests {
           var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
           Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
       }
+
+      /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
       [Fact] public void HierarchyOutput() {
          var node4 = new RankedNode();
          var node5 = new RankedNode(node4);
@@ -45,6 +48,8 @@ namespace Fluid.Tests {
          IO.Write(hier, strw);
          Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
       }
+
+      /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
       [Fact] public void HierarchyInput() {
          TB.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
          var hierWriteBack = TB.FileReader.ReadHierarchy<double>();
@@ -64,6 +69,8 @@ namespace Fluid.Tests {
                new double[] {5,2} };
             Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
       }
+
+      /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
       [Fact] public void HierarchyInput2() {
          TB.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
          var hierWriteBack = TB.FileReader.ReadHierarchy<double>();

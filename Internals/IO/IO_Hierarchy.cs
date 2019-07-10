@@ -14,6 +14,7 @@ using static Fluid.Internals.Ops;
 
 namespace Fluid.Internals.IO {
    public static partial class IO {
+      /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
       public static void Write<T>(Hierarchy<T> hier, TextWriter tw) {
          if(hier.TopNode is ValueNode<T> valueNode)           // top node is already a value.
             tw.Write(valueNode.Value.ToString());
@@ -37,6 +38,8 @@ namespace Fluid.Internals.IO {
          Write(hier, tw);
          tw.WriteLine();
       }
+      
+      /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
       public static Hierarchy<T> ReadHierarchy<T>(TextReader tr) {
          var nFI = new NumberFormatInfo();
          nFI.NumberDecimalSeparator = ".";
