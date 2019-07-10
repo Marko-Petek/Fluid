@@ -80,18 +80,37 @@ namespace Fluid.Internals.Collections {
                Vals.Remove(i); }
       }
 
-      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {              // TODO: Create a new instance of this method that accepts a vector and returns a tensor (rank 2).
-         int newRank = Rank + tnr2.Rank;
-         var newStructure = Structure.Concat(tnr2.Structure).ToList();
-         // We must substitute this vector with a tensor whose elements are multiples of tnr2.
-         var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
-         foreach(var int_val in Vals)
-            res.Add(int_val.Key, TensorExtensions<τ,α>.Mul(int_val.Value, tnr2, res)); // int_val.Value*tnr2);
+      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {          // TODO: Test TnrProduct with operands which are not top tensors.    
+         if(tnr2.Rank > 1) {
+            int newRank = Rank + tnr2.Rank;
+            var newStructure = Structure.Concat(tnr2.Structure).ToList();
+            // We must substitute this vector with a tensor whose elements are multiples of tnr2.
+            var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
+            foreach(var int_subVal in Vals) {
+               int subKey = int_subVal.Key;
+               var subVal = int_subVal.Value;
+               res.Add(subKey, subVal*tnr2); }
+            return res; }
+         else {
+            var vec2 = (Vector<τ,α>) tnr2;
+            return TnrProduct(vec2); }
+      }
+      public Tensor<τ,α> TnrProduct(Vector<τ,α> vec2) {
+         int dim1 = Structure.Last();                                            // TODO: Test.
+         int dim2 = vec2.Structure.Last();
+         var newStructure = new List<int> {dim1, dim2};
+         var res = new Tensor<τ,α>(newStructure, rank: 2, sup: null, Vals.Count);
+         foreach(var int_subVal1 in Vals) {
+            int subKey = int_subVal1.Key;
+            var subVal1 = int_subVal1.Value;
+            var newVec = subVal1*vec2;
+            res.Add(subKey, newVec); }
          return res;
       }
       /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
       /// <param name="vec2">Sumand 2. Is not destroyed.</param>
-      public void Sum(Vector<τ,α> vec2) {                            // TODO: Test.
+      /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
+      public void Sum(Vector<τ,α> vec2) {
          foreach(var int_subVal2 in vec2.Vals) {
             int subKey = int_subVal2.Key;
             var subVal2 = int_subVal2.Value;
@@ -104,8 +123,8 @@ namespace Fluid.Internals.Collections {
             else
                Vals.Add(subKey, subVal2); }
       }
-
-      public void Sub(Vector<τ,α> vec2) {                            // TODO: Test
+      /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
+      public void Sub(Vector<τ,α> vec2) {
          foreach(var int_subVal2 in vec2.Vals) {
             int subKey = int_subVal2.Key;
             var subVal2 = int_subVal2.Value;
@@ -117,6 +136,14 @@ namespace Fluid.Internals.Collections {
                   Vals.Remove(subKey); }
             else
                Vals.Add(subKey, O<τ,α>.A.Neg(subVal2)); }
+      }
+      /// <summary>Multiplies caller with a scalar.</summary>
+      /// <param name="scal">Scalar.</param>
+      /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
+      public override void Mul(τ scal) {
+         var keys = Vals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
+         foreach(var subKey in keys)
+            Vals[subKey] = O<τ,α>.A.Mul(scal, Vals[subKey]);
       }
       /// <summary>Sum two vectors. Does not check substructure match.</summary>
       /// <param name="vec1">Left operand.</param>

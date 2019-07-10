@@ -5,7 +5,8 @@ namespace Fluid.TestRef {
       public static Test Op_VectorAddition;
       public static Test Op_VectorSubtraction;
       public static Test TensorCopy;
-      public static Test VectorAdd;
+      public static Test VectorSum;
+      public static Test VectorSub;
       public static Test TensorSum;
       public static Test TensorSub;
       public static Test Op_TensorNegation;
@@ -19,6 +20,8 @@ namespace Fluid.TestRef {
       public static Test Op_TensorSubtraction;
       public static Test Op_ScalarVectorMultiplication;
       public static Test Op_ScalarTensorMultiplication;
+      public static Test VectorMul;
+      public static Test TensorMul;
       public static Test TensorEnumerateRank;
       public static Test TensorEquals;
       public static Test TensorTauIndexer;

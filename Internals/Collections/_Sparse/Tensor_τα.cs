@@ -578,6 +578,27 @@ namespace Fluid.Internals.Collections {
             }
          }
       }
+
+      /// <summary>Multiplies caller with a scalar.</summary>
+      /// <param name="scal">Scalar.</param>
+      /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
+      public virtual void Mul(τ scal) {
+         Recursion(this);
+
+         void Recursion(Tensor<τ,α> tnr) {
+            if(tnr.Rank > 2) {                                       // Subordinates are tensors.
+               foreach (var int_subTnr in tnr) {
+                  var subTnr = int_subTnr.Value;
+                  Recursion(subTnr); } }
+            else if(tnr.Rank == 2) {                                 // Subordinates are vectors.
+               foreach (var int_subTnrR1 in tnr) {
+                  var subVec = (Vector<τ,α>) int_subTnrR1.Value;
+                  subVec.Mul(scal); } }
+            else {
+               var vec = (Vector<τ,α>) tnr;
+               vec.Mul(scal); }
+         }
+      }
       /// <summary>Creates a new tensor which is a product of a scalar and a tensor. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
       /// <param name="scal">Scalar.</param>
       /// <param name="aTnr">Tensor.</param>
@@ -605,28 +626,33 @@ namespace Fluid.Internals.Collections {
          }
       }
       /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
-      /// <param name="tnr2">Right-hand operand.</param>
+      /// <param name="aTnr2">Right-hand operand.</param>
       /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+      public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> aTnr2) {
          // Overriden on vector when first operand is a vector.
          // 1) Descend to rank 1 through a recursion and then delete that vector.
          // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
-         int newRank = Rank + tnr2.Rank;
-         var newStructure = Structure.Concat(tnr2.Structure).ToList();
+         int newRank = Rank + aTnr2.Rank;
+         var newStructure = Structure.Concat(aTnr2.Structure).ToList();
          return Recursion(this, newRank);
 
-         Tensor<τ,α> Recursion(Tensor<τ,α> src, int resRank) {
-            var res = new Tensor<τ,α>(newStructure, resRank, null, src.Count);
-            if(src.Rank > 2) {                                                    // Only copy. Adjust ranks.
-               foreach(var int_tnr in src)
-                  res.Add(int_tnr.Key, Recursion(int_tnr.Value, resRank - 1)); }
+         Tensor<τ,α> Recursion(Tensor<τ,α> tnr1, int resRank) {
+            var res = new Tensor<τ,α>(newStructure, resRank, null, tnr1.Count);
+            if(tnr1.Rank > 2) {                                                    // Only copy. Adjust ranks.
+               foreach(var int_subTnr1 in tnr1) {
+                  int subKey = int_subTnr1.Key;
+                  var subTnr1 = int_subTnr1.Value;
+                  res.Add(subKey, Recursion(subTnr1, resRank - 1)); } }
             else {                              // We are now at tensor which contains vectors.
-               foreach(var int_vec in src) {    // Substitute each vector wiht a new tensor.
-                  var vec = (Vector<τ,α>) int_vec.Value;
-                  var subTnr = new Tensor<τ,α>(newStructure, resRank - 1, null, src.Count);
-                  foreach(var int_val in vec.Vals)
-                     subTnr.Add(int_val.Key, TensorExtensions<τ,α>.Mul(int_val.Value, tnr2, subTnr)); // ScalMul so that the correct superior propagares downwards.
-                  res.Add(int_vec.Key, subTnr); } }
+               foreach(var int_subTnr1R1 in tnr1) {    // Substitute each vector wiht a new tensor.
+                  int subKeyR1 = int_subTnr1R1.Key;
+                  var subVec1 = (Vector<τ,α>) int_subTnr1R1.Value;
+                  var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, null, tnr1.Count);
+                  foreach(var int_subVal1 in subVec1.Vals) {
+                     int subKeyR0 = int_subVal1.Key;
+                     var subVal1 = int_subVal1.Value;
+                     newSubTnr.Add(subKeyR0, subVal1*aTnr2); }
+                  res.Add(subKeyR1, newSubTnr); } }
             return res;
          }
       }

@@ -43,18 +43,6 @@ namespace Fluid.Tests {
          Assert.True(tnr.Equals(tnrCpy));
       }
 
-      [InlineData(5,3,2, 7,3,9, 12,6,11)]
-      [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
-      [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
-      /// <remarks><see cref="TestRefs.VectorAdd"/></remarks>
-      [Theory] public void VectorAdd(params int[] data) {
-         var vec1 = VectorInt.FromFlatSpec(data.AsSpan<int>(0,3));
-         var vec2 = VectorInt.FromFlatSpec(data.AsSpan<int>(3,3));
-         var vec3 = VectorInt.FromFlatSpec(data.AsSpan<int>(6,3));
-         vec1.Sum(vec2);
-         Assert.True(vec1.Equals(vec3));
-      }
-
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
       [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
       [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
@@ -200,6 +188,7 @@ namespace Fluid.Tests {
          Assert.True(tnr1.Equals(tnr3));
       }
 
+      [InlineData(5, 3, 2,   7, 3, 9,  12,6,11)]
       [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
       [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
       [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
@@ -657,6 +646,18 @@ namespace Fluid.Tests {
       }
 
       [InlineData(
+         5, 3, 0, 2, 6,
+         30, 18, 0, 12)]
+      /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
+      [Theory] public void VectorMul(params int[] data) {
+         var num = data[4];
+         var vec = VectorInt.FromFlatSpec(data.AsSpan<int>(0,4));
+         vec.Mul(num);
+         var expRes = VectorInt.FromFlatSpec(data.AsSpan<int>(5,4));
+         Assert.True(vec.Equals(expRes));
+      }
+
+      [InlineData(
          2, 6, 0,
          3, 7, 1,
          6, 0, 4,
@@ -674,6 +675,26 @@ namespace Fluid.Tests {
          var res = num * mat;
          var expRes = TensorInt.FromFlatSpec(slc2,3,3);
          Assert.True(res.Equals(expRes));
+      }
+
+      [InlineData(
+         2, 6, 0,
+         3, 7, 1,
+         6, 0, 4,
+         3,
+         6, 18, 0,
+         9, 21, 3,
+         18, 0, 12
+      )]
+      /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
+      [Theory] public void TensorMul(params int[] data) {
+         var slc1 = new Span<int>(data, 0, 9);
+         var slc2 = new Span<int>(data, 10, 9);
+         var tnr = TensorInt.FromFlatSpec(slc1, 3,3);
+         var num = data[9];
+         tnr.Mul(num);
+         var expRes = TensorInt.FromFlatSpec(slc2,3,3);
+         Assert.True(tnr.Equals(expRes));
       }
 
       [InlineData(
@@ -885,6 +906,19 @@ namespace Fluid.Tests {
          var wrtTnr2 = TensorInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
          tnr[TensorInt.Ex, wrtInxs2] = wrtTnr2;
          Assert.True(tnr[TensorInt.Ex, wrtInxs2].Equals(wrtTnr2));
+      }
+
+      [InlineData(
+         3,    5,0,4,                        // vec1
+         3,    0,9,8,                        // vec2
+         2,    3,3,                          // expStruc
+         9,    0,45,40, 0,0,0, 0,36,32       // expRes
+      )]
+      [Theory] public void VectorTnrProductVector(params int[] data) {
+         int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
+                                 Read(data, ref pos, ref read);
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan(pos,read))
+         var expStruc = new Span<int>(data, pos, read).ToArray();
       }
    }
 }
