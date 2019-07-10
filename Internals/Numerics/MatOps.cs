@@ -3,8 +3,9 @@ using static System.Math;
 
 namespace Fluid.Internals.Numerics {
    public static class MatOps {
-      //public static α A<α> { get; } = new α();
-      /// <summary>Invert a square matrix. Matrix M itself is transformed in its own inverse in process.</summary><param name="mat">Square matrix to invert.</param>
+      /// <summary>Invert a square matrix. Matrix M itself is transformed in its own inverse in process.</summary>
+      /// <param name="mat">Square matrix to invert.</param>
+      /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
       public static void Invert<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {

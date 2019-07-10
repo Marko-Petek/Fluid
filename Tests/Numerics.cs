@@ -5,6 +5,7 @@ using System.Threading;
 using Fluid.Internals;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
+using Fluid.TestRef;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
@@ -23,7 +24,8 @@ namespace Fluid.Tests {
          5.0,  1.0, -10.0,   // Right hand side.
          0.0,  0.0, 0.0,     // Init vector.
          8.0, 12.0, 9.0 )]   // Solution vector.
-      [Theory] public void ConjGrads3by3(params double[] input) {
+      /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
+      [Theory] public void ConjGrads3By3(params double[] input) {
         var A = Tensor.FromFlatSpec(input.AsSpan<double>(0,9), 3,3);
         //.CreateFromArray(input, 6, 0, 3, 0, 3);
         var b = Vector.FromFlatSpec(input.AsSpan<dbl>(9,3));
@@ -46,7 +48,8 @@ namespace Fluid.Tests {
          9.0, 5.0, 7.0, 3.0,              // Right hand side.
          1.0, 1.0, 1.0, 1.0,              // Init vector.
          1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
-      [Theory] public void ConjGrads4by4(params double[] input) {
+      /// <remarks><see cref="TestRefs.ConjGrads4By4"/></remarks>
+      [Theory] public void ConjGrads4By4(params double[] input) {
         var A = Tensor.FromFlatSpec(input.AsSpan<dbl>(0,16), 4,4);
         var b = Vector.FromFlatSpec(input.AsSpan<dbl>(16,4));
         var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(20,4));
@@ -66,7 +69,8 @@ namespace Fluid.Tests {
          2,2,2,2,  2,2,  2,2,                            // Dimensions: K, U, F
          4,2, 2,2,  2,8, 4,7,  2,4, 8,7,  2,7,7,4,      // K-spec
          9,7,5,3)]                                      // F-spec
-      [Theory] public void SpecialConjugateGrads(params int[] data) {
+      /// <remarks><see cref="TestRefs.ConjGradsSpecial"/></remarks>
+      [Theory] public void ConjGradsSpecial(params int[] data) {
          int   rankK = data[0],                                         // Read top ranks.
                rankU = data[1],
                rankF = data[2];
@@ -93,18 +97,21 @@ namespace Fluid.Tests {
          Assert.True(true);
       }
 
+      /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature1() {
          var integrator = new GaussQuadrature(2, 1, x => x[0]*x[0]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(2.0/3, 0.001));
       }
 
+      /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature2() {
          var integrator = new GaussQuadrature(2, 2,  x => x[0]*x[0]*x[1]*x[1]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/9, 0.001));
       }
 
+      /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature3() {
          var integrator = new GaussQuadrature(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
          var result = integrator.Integrate();

@@ -68,6 +68,7 @@ namespace Fluid.Internals.Collections {
       internal void Add(int key, τ val) =>
          Vals.Add(key, val);
 
+      /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
       new public τ this[int i] {
          get {
             Vals.TryGetValue(i, out τ val);

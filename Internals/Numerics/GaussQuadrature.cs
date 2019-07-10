@@ -58,7 +58,7 @@ namespace Fluid.Internals.Numerics {
          
       }
 
-
+      /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       public double Integrate() {
          double result = 0.0;
          //int depth = -1;

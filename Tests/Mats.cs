@@ -3,15 +3,17 @@ using System;
 using System.Threading;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
+using Fluid.TestRef;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    using dbl = Double;
    using DA = DblArithmetic;
-   //using IA = IntArithmetic;
+   using IA = IntArithmetic;
    public partial class Thread2 {
 
-      [Fact] public void InvertMatrix1() {
+      /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
+      [Fact] public void MatrixInvert1() {
          double[][] matrix = new double[3][] {
             new dbl[3] {6, 0, 0},
             new dbl[3] {0, 2, 0},
@@ -24,7 +26,9 @@ namespace Fluid.Tests {
             new dbl[3] {    0.0, 0.0, 0.125 } };
          Assert.True(matrix.Equals<dbl,DA>(expectedResult, epsilon));
       }
-      [Fact] public void InvertMatrix2() {
+
+      /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
+      [Fact] public void MatrixInvert2() {
          double[][] matrix2 = new double[3][] {
             new dbl[3] {1, 2, 3},
             new dbl[3] {4, 2, 2},

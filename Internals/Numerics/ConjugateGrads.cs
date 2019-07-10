@@ -21,6 +21,7 @@ namespace Fluid.Internals.Numerics {
       /// <summary>The classic implementation, expecting a rank 2 tensor as left operand and a vector as right operand.</summary>
       /// <param name="x0">Initial guess vector.</param>
       /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
+      /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
       public Vector Solve(Vector x0, double maxRes) {
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;

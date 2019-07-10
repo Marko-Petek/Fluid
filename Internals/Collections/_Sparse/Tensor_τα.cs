@@ -267,11 +267,12 @@ namespace Fluid.Internals.Collections {
       /// <summary>Tensor getting/setting indexer.</summary>
       /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
       /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
+      /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
       public Tensor<τ,α> this[Tensor<τ,α> overloadDummy, params int[] inxs] {           // TODO: Urgently needs a test written.
          get {
             Tensor<τ,α> tnr = this;
             for(int i = 0; i < inxs.Length; ++i) {
-               if(!TryGetValue(inxs[i], out tnr))
+               if(!tnr.TryGetValue(inxs[i], out tnr))
                   return null; }
             return tnr; }                                // No problem with tnr being null. We return above.
          set {
@@ -295,6 +296,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Vector getting/setting indexer. Use tnr[1f, 3] = null to remove an entry, should it exist.</summary>
       /// <param name="overloadDummy">Type float of first dummy argument specifies that we know we will be getting/setting a Vector.</param>
       /// <param name="inxs">A set of indices specifiying which Vector we want to set/get. The set length must reach exactly to Vector rank.</param>
+      /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
       public Vector<τ,α> this[Vector<τ,α> overloadDummy, params int[] inx] {
          get {
             Tensor<τ,α> tnr = this;
@@ -329,7 +331,8 @@ namespace Fluid.Internals.Collections {
       }
       /// <summary>Scalar getting/setting indexer.</summary>
       /// <param name="inxs">A set of indices specifiying which scalar we want to set/get. The set length must reach exactly to scalar rank.</param>
-      public virtual τ this[params int[] inx] {             // TODO: Create test!
+      /// <remarks> <see cref="TestRefs.TensorTauIndexer"/> </remarks>
+      public virtual τ this[params int[] inx] {
          get {
             Tensor<τ,α> tnr = this;
             int n = inx.Length - 2;
@@ -366,7 +369,8 @@ namespace Fluid.Internals.Collections {
                for(int i = 0; i < n; ++i) {
                   if(!tnr.TryGetValue(inx[i], out tnr))
                      return; }
-               tnr.Remove(inx[n]); } }
+               vec = (Vector<τ,α>) tnr;
+               vec.Vals.Remove(inx[n]); } }
       }
       /// <summary>Modifies this tensor by negating each element.</summary>
       public virtual void Negate() {

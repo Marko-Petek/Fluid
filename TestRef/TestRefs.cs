@@ -20,6 +20,15 @@ namespace Fluid.TestRef {
       public static Test Op_ScalarTensorMultiplication;
       public static Test TensorEnumerateRank;
       public static Test TensorEquals;
+      public static Test TensorTauIndexer;
+      public static Test TensorVectorIndexer;
+      public static Test TensorTensorIndexer;
+      public static Test VectorIndexer;
+      public static Test ConjGrads3By3;
+      public static Test ConjGrads4By4;
+      public static Test ConjGradsSpecial;
+      public static Test GaussQuadrature;
+      public static Test MatrixInvert;
    }
    public struct Test { }
 }
