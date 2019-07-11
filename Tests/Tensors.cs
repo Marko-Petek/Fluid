@@ -832,8 +832,7 @@ namespace Fluid.Tests {
          3,    0,1,1,                                                // wrtInxs1
          2,    0,0,                                                  // wrtVec1
          3,    1,1,1,                                                // wrtInxs2
-         2,    0,5                                                   // wrtVec2
-      )]
+         2,    0,5     )]                                              // wrtVec2
       /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
       [Theory] public void TensorVectorIndexer(params int[] data) {
          int read = 0, pos = 0;                                               Read(data, ref pos, ref read);
@@ -877,8 +876,7 @@ namespace Fluid.Tests {
          2,    1,0,                                                  // wrtInxs1
          4,    0,0, 0,0,                                             // wrtTnr1
          2,    1,1,                                                  // wrtInxs2
-         4,    8,3, 0,4                                              // wrtTnr2
-      )]
+         4,    8,3, 0,4 )]                                           // wrtTnr2
       /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
       [Theory] public void TensorTensorIndexer(params int[] data) {
          int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
@@ -912,13 +910,26 @@ namespace Fluid.Tests {
          3,    5,0,4,                        // vec1
          3,    0,9,8,                        // vec2
          2,    3,3,                          // expStruc
-         9,    0,45,40, 0,0,0, 0,36,32       // expRes
-      )]
+         9,    0,45,40, 0,0,0, 0,36,32 )]    // expRes
+      [InlineData(
+         3,    0,0,0,                        // vec1
+         3,    0,9,8,                        // vec2
+         2,    3,3,                          // expStruc
+         9,    0,0,0, 0,0,0, 0,0,0  )]       // expRes
+      [InlineData(
+         3,    5,0,4,                        // vec1
+         3,    0,0,0,                        // vec2
+         2,    3,3,                          // expStruc
+         9,    0,0,0, 0,0,0, 0,0,0  )]       // expRes
+      /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
       [Theory] public void VectorTnrProductVector(params int[] data) {
          int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
-                                 Read(data, ref pos, ref read);
-         var vec1 = VectorInt.FromFlatSpec(data.AsSpan(pos,read))
-         var expStruc = new Span<int>(data, pos, read).ToArray();
+         var vec1 = VectorInt.FromFlatSpec(data.AsSpan(pos,read));                     Read(data, ref pos, ref read);
+         var vec2 = VectorInt.FromFlatSpec(data.AsSpan(pos,read));                     Read(data, ref pos, ref read);
+         var expStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+         var expRes = TensorInt.FromFlatSpec(data.AsSpan(pos, read), expStruc);
+         var res = vec1.TnrProduct(vec2);
+         Assert.True(res.Equals(expRes));
       }
    }
 }

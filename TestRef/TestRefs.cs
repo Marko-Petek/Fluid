@@ -36,6 +36,7 @@ namespace Fluid.TestRef {
       public static Test HierarchyOutput;
       public static Test HierarchyInput;
       public static Test PointInsidePolygon;
+      public static Test VectorTnrProductVector;
    }
    public struct Test { }
 }

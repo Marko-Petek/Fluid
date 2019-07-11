@@ -57,8 +57,8 @@ namespace Fluid.Internals.Development {
          var wrappedText = message.Text.WrapToLines(_ColWidths[1]);
          System.TimeSpan dt = (message.Time - prevMessageTime);
          var wrappedDT = dt.TotalSeconds.ToString("G3").WrapToLines(_ColWidths[2]);      // Wrap one-line strings. Format TimeSpan then wrap resulting string.
-         var relPath = Regex.Match(message.Path, @"/Fluid/.*").Value;                     // FIXME: Make this line platform independent.
-         relPath = relPath.Remove(0, 7);
+         var relPath = Regex.Match(message.Path, @"Fluid.*").Value;
+         relPath = relPath.Remove(0, 5);
          var wrappedPath = relPath.WrapToLines(_ColWidths[3]);
          var wrappedCaller = message.Caller.WrapToLines(_ColWidths[4]);
          var wrappedLine = message.Line.ToString().WrapToLines(_ColWidths[5]);

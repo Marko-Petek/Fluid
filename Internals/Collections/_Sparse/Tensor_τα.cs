@@ -58,6 +58,8 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
 
+// TODO: Maybe. Create derived EmptyTensor and override its methods properly. This is to avoid reliance on null.
+
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
@@ -113,20 +115,27 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
       /// <param name="src">Tensor to copy.</param>
       public Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S322_00) { }
-      /// <summary>Adds tnr to caller and assigns to it the caller's superstructure.</summary>
+      /// <summary>Adds tnr to caller and assigns the caller's superstructure to tnr.</summary>
       /// <param name="key">Index.</param>
-      /// <param name="tnr">Tensor to add.</param>
-      new public void Add(int key, Tensor<τ,α> tnr) {
+      /// <param name="tnr">Tensor.</param>
+      new internal void Add(int key, Tensor<τ,α> tnr) {
          tnr.Superior = this;
          tnr.Structure = Structure;
          base.Add(key, tnr);
       }
-      /// <summary>Adds tnr to caller, but leaves its superstructure untouched.</summary>
+      /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr.</summary>
       /// <param name="key">Index.</param>
-      /// <param name="tnr">Tensor to add.</param>
+      /// <param name="tnr">Tensor.</param>
       protected void AddOnly(int key, Tensor<τ,α> tnr) =>
          base.Add(key, tnr);
 
+      /// <summary>Adds tnr to caller only if it is not empty. Assigns the caller's superstructure to tnr.</summary>
+      /// <param name="key">Index.</param>
+      /// <param name="tnr">Tensor.</param>
+      internal void AddOnlyNonEmpty(int key, Tensor<τ,α> tnr) {
+         if(tnr.Count != 0)
+            Add(key, tnr);
+      }
       /// <summary>Creates tnr2 as a copy of tnr1. Specify what to copy with CopySpecs.</summary>
       /// <remarks><see cref="TestRefs.TensorCopy"/></remarks>
       public virtual Tensor<τ,α> Copy(in CopySpecStruct cs) {
@@ -190,7 +199,7 @@ namespace Fluid.Internals.Collections {
             tgt.Superior = src.Superior ?? null;
       }
       /// <summary>Packs only the part of the Structure below this tensor into a new Structure.</summary>
-      protected List<int> CopySubstructure() {
+      internal List<int> CopySubstructure() {
          int structInx = Structure.Count - Rank;           // TopRank - Rank --> Index where substructure begins.
          return Structure.Skip(structInx).ToList();
       }
@@ -633,7 +642,9 @@ namespace Fluid.Internals.Collections {
          // 1) Descend to rank 1 through a recursion and then delete that vector.
          // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
          int newRank = Rank + aTnr2.Rank;
-         var newStructure = Structure.Concat(aTnr2.Structure).ToList();
+         var struct1 = CopySubstructure();
+         var struct2 = aTnr2.CopySubstructure();
+         var newStructure = struct1.Concat(struct2).ToList();
          return Recursion(this, newRank);
 
          Tensor<τ,α> Recursion(Tensor<τ,α> tnr1, int resRank) {
@@ -892,8 +903,7 @@ namespace Fluid.Internals.Collections {
                var step1Tnr = ReduceRank(rankInx2, i);
                var sumand = step1Tnr.ReduceRank(rankInx1 - 1, i);
                res.Sum(sumand); }
-            return res;
-         }
+            return res; }
          else
             return SelfContractR3(slotInx1, slotInx2);
       }
