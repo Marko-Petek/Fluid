@@ -2,7 +2,7 @@ using System;
 
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    using dbl = Double;
    public class MeshNode : IEquatable<MeshNode> {
       /// <summary>Node's position (x,y).</summary>

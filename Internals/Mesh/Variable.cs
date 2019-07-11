@@ -1,4 +1,4 @@
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    /// <summary>Contains value and a flag indicating whether a NodeValue is free or constrained.</summary><remarks>This is a value type. When assigning, always create a new one.</remarks>
    public struct Variable {   
       /// <summary>Value at node.</summary>

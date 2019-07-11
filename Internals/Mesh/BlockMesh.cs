@@ -3,12 +3,12 @@ using System;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    using dbl = Double;
    using dA = DblArithmetic;
    using Vector = Vector<double,DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
-   public abstract class BlockStructuredMesh {
+   public abstract class BlockMesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int NVars { get; protected set; }
       /// <summary>Number of constrained variables.</summary>
@@ -18,7 +18,7 @@ namespace Fluid.Internals.Meshing {
 
 
       // /// <summary>Create a block-structured mesh.</summary>
-      public BlockStructuredMesh(int nVars) {
+      public BlockMesh(int nVars) {
          NVars = nVars;
       }
 

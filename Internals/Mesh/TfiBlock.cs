@@ -2,9 +2,9 @@ using System;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    /// <summary>Custom boundary trans-finite interpolated (TFI) submesh block. Boundaries appear as virtual functions of a single arc lenght parameter.</summary>
-   public abstract class TfiBlock : MeshBlock {
+   public abstract class TfiBlock : Block {
       /// <summary>Positions of block's corners.</summary>
       protected Tetragon _quadrilateral;
 
@@ -13,7 +13,7 @@ namespace Fluid.Internals.Meshing {
       }
 
       /// <summary>Create a custom boundary trans-finite interpolated (TFI) submesh block.</summary><param name="mainMesh">Owner of this block.</param><param name="ulx">North-west corner X.</param><param name="uly">North-west corner Y.</param><param name="llx">South-west corner X.</param><param name="lly">South-west corner Y.</param><param name="lrx">South-east corner X.</param><param name="lry">South-east corner Y.</param><param name="urx">North-east corner X.</param><param name="ury">North-east corner Y.</param>
-      public TfiBlock(BlockStructuredMesh mainMesh,
+      public TfiBlock(BlockMesh mainMesh,
          double llx, double lly,
          double lrx, double lry,
          double urx, double ury,

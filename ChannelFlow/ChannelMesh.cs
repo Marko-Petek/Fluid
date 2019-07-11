@@ -4,7 +4,7 @@ using System.IO;
 using static System.Math;
 
 using Fluid.Internals.Collections;
-using Fluid.Internals.Meshing;
+using Fluid.Internals.Mesh;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
@@ -14,7 +14,7 @@ namespace Fluid.ChannelFlow {
    using Tensor = Tensor<double,DblArithmetic>;
    using Vector = Vector<double,DblArithmetic>;
    /// <summary>Block structured mesh covering whole channel. Channel length is 4 times its width.</summary>
-   public class ChannelMesh : BlockStructuredMesh {
+   public class ChannelMesh : BlockMesh {
       /// <summary>SubMesh right of square submesh.</summary>
       protected RightBlock RightBlock { get; }
       /// <summary>North quarter of square submesh.</summary>

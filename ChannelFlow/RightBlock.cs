@@ -3,7 +3,7 @@ using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Meshing;
+using Fluid.Internals.Mesh;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Ops;
 using static Fluid.Internals.Numerics.MatOps;

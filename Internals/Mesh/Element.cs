@@ -3,18 +3,17 @@ using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Meshing;
 using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    using dbl = Double;
    using dA = DblArithmetic;
    using Tensor = Tensor<double,DblArithmetic>;
    //using FuncMat = Tensor<Func<double,double,double>, NoArithmetic>;
    // TODO: Add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
    /// <summary>A quadrilateral element.</summary>
-   public class MeshElement {
+   public class Element {
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds in CCW direction.</summary>
       public MeshNode[] P { get; }
       //public double
@@ -23,7 +22,7 @@ namespace Fluid.Internals.Meshing {
 
 
       /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="nodes">12 mesh nodes that define an element.</param>
-      public MeshElement(params MeshNode[] nodes) {
+      public Element(params MeshNode[] nodes) {
          P = nodes;
          MA = new dbl[2][] {  new dbl[2] {P[9].Pos.X, P[3].Pos.X},
                               new dbl[2] {P[9].Pos.Y, P[3].Pos.Y}  };

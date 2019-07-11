@@ -7,14 +7,14 @@ namespace Fluid.Internals.Numerics {
    using Vector = Vector<double,DblArithmetic>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
-   public class ConjugateGrads {
+   public class ConjGradsSolver {
       /// <summary>Left-hand side matrix of A x = b.</summary>
       Tensor A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
       Tensor b { get; }
 
       /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
-      public ConjugateGrads(Tensor tnrA, Tensor vecB) {
+      public ConjGradsSolver(Tensor tnrA, Tensor vecB) {
          A = tnrA;
          b = vecB;
       }

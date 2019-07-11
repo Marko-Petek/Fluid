@@ -4,11 +4,11 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    using dbl = Double;
    using MN = MeshNode;
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>
-   public abstract class RectBlock : MeshBlock {
+   public abstract class RectBlock : Block {
       /// <summary>Lower left corner coordinates.</summary>
       Pos _LL;
       /// <summary>Upper right corner coordinates.</summary>
@@ -26,7 +26,7 @@ namespace Fluid.Internals.Meshing {
 
 
       /// <summary>Create a Cartesian mesh block.</summary><param name="mainMesh">Mesh block's owner.</param><param name="llx">Lower left corner x coordinate.</param><param name="lly">Lower left corner y coordinate.</param><param name="urx">Upper right corner x coordinate.</param><param name="ury">Upper right corner y coordinate.</param><param name="nRows">Number of elements in y direction.</param><param name="nCols">Number of elements in x direction.</param>
-      public RectBlock(BlockStructuredMesh mainMesh,
+      public RectBlock(BlockMesh mainMesh,
          dbl llx, dbl lly, dbl urx, dbl ury, int nRows, int nCols)
          : base(mainMesh) {
             _LL = new Pos(llx, lly);

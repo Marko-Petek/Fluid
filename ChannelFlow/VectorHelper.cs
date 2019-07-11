@@ -1,5 +1,5 @@
 using Fluid.Internals.Collections;
-using Fluid.Internals.Meshing;
+using Fluid.Internals.Mesh;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow {

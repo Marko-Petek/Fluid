@@ -5,7 +5,7 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.MatOps;
 
-namespace Fluid.Internals.Meshing {
+namespace Fluid.Internals.Mesh {
    using dbl = Double;
    using Tensor = Tensor<double,DblArithmetic>;
    using Vector = Vector<double,DblArithmetic>;
@@ -16,9 +16,9 @@ namespace Fluid.Internals.Meshing {
 
    // cmt = compact, std = standard, lcl = local, gbl = global; descriptors connected to position indices.
    /// <summary>A structured submesh that provides access to global node indices via element indices.</summary>
-   public abstract class MeshBlock {   
+   public abstract class Block {   
       /// <summary>Owner mesh. Access to global nodes list.</summary>
-      public BlockStructuredMesh MainMesh { get; protected set; }
+      public BlockMesh MainMesh { get; protected set; }
       /// <summary>Number of rows of elements.</summary>
       public int NRows { get; protected set; }
       /// <summary>Number of columns of elements.</summary>
@@ -39,9 +39,9 @@ namespace Fluid.Internals.Meshing {
       public Func<int,int,int,MeshNode> NodeStd;
 
       /// <summary>Intended for testing.</summary>
-      public MeshBlock() { }
+      public Block() { }
       /// <summary>Create a SubMesh and assign reference to main mesh.</summary><param name="mainMesh">Owner of this submesh who will use it fill _indexMap, mapping positions to _globalNodes list.</param>
-      public MeshBlock(BlockStructuredMesh mainMesh) {
+      public Block(BlockMesh mainMesh) {
          MainMesh = mainMesh;
          NodeCmt = NodeOnBlockCmt;
          NodeStd = NodeOnBlockStd;
@@ -192,8 +192,8 @@ namespace Fluid.Internals.Meshing {
          return funcValues;
       }
       /// <summary>Creates a data structure which holds all four corner nodes of an element.</summary><param name="stdRow">Element's row inside mesh block.</param><param name="stdCol">Element's col inside mesh block.</param>
-      MeshElement CreateQuadEmt(int stdRow, int stdCol) {
-         var quadElm = new MeshElement(NodeStd(stdRow, stdCol, 0), NodeStd(stdRow, stdCol, 1),
+      Element CreateQuadEmt(int stdRow, int stdCol) {
+         var quadElm = new Element(NodeStd(stdRow, stdCol, 0), NodeStd(stdRow, stdCol, 1),
             NodeStd(stdRow, stdCol, 2), NodeStd(stdRow, stdCol, 3), NodeStd(stdRow, stdCol, 4),
             NodeStd(stdRow, stdCol, 5), NodeStd(stdRow, stdCol, 6), NodeStd(stdRow, stdCol, 7),
             NodeStd(stdRow, stdCol, 8), NodeStd(stdRow, stdCol, 9), NodeStd(stdRow, stdCol, 10),

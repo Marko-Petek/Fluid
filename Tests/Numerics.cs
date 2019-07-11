@@ -34,7 +34,7 @@ namespace Fluid.Tests {
         //CreateFromArray(input, 15, 3);
         var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(12,3));
         //Vector.CreateFromArray(input, 12, 3);
-        var solver = new ConjugateGrads(A, b);
+        var solver = new ConjGradsSolver(A, b);
         var sol = solver.Solve(initPoint, 0.001);
         Assert.True(sol.Equals(expSol, 0.01));
       }
@@ -54,7 +54,7 @@ namespace Fluid.Tests {
         var b = Vector.FromFlatSpec(input.AsSpan<dbl>(16,4));
         var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(20,4));
         var expSol = Vector.FromFlatSpec(input.AsSpan<dbl>(24,4));
-        var solver = new ConjugateGrads(A, b);
+        var solver = new ConjGradsSolver(A, b);
         var sol = solver.Solve(initPoint, 0.001);
         Assert.True(sol.Equals(expSol, 0.01));
       }
@@ -90,7 +90,7 @@ namespace Fluid.Tests {
          var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (double) a).ToArray().AsSpan();
          var F = Tensor.FromFlatSpec(spanF, strucF);
          var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
-         var solver = new ConjugateGrads(K, F);
+         var solver = new ConjGradsSolver(K, F);
          TB.DebugTag = "x0Creation";
          var x0 = Tensor.FromFlatSpec(spanX0, strucF);
          var solution = solver.Solve(x0, 0.001);
@@ -99,21 +99,21 @@ namespace Fluid.Tests {
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature1() {
-         var integrator = new GaussQuadrature(2, 1, x => x[0]*x[0]);    // 1D case.
+         var integrator = new QuadratureIntegrator(2, 1, x => x[0]*x[0]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(2.0/3, 0.001));
       }
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature2() {
-         var integrator = new GaussQuadrature(2, 2,  x => x[0]*x[0]*x[1]*x[1]);    // 1D case.
+         var integrator = new QuadratureIntegrator(2, 2,  x => x[0]*x[0]*x[1]*x[1]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/9, 0.001));
       }
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature3() {
-         var integrator = new GaussQuadrature(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
+         var integrator = new QuadratureIntegrator(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/117, 0.001));
       }
