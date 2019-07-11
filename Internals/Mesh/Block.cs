@@ -3,7 +3,6 @@ using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Mesh {
    using dbl = Double;
@@ -144,8 +143,11 @@ namespace Fluid.Internals.Mesh {
             new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
          return A;
       }
-      /// <summary>Find solution value of specified variables at specified point.</summary><param name="x">X coordinate.</param><param name="y">Y coordinate.</param><param name="vars">Indices of variables we wish to retrieve.</param>
-      public virtual dbl[] Solution(in Pos pos, params int[] vars) {
+      /// <summary>Find solution value of specified variables at specified point.</summary>
+      /// <param name="x">X coordinate.</param>
+      /// <param name="y">Y coordinate.</param>
+      /// <param name="vars">Indices of variables we wish to retrieve.</param>
+      public virtual dbl[] Solution(in Pos posX, params int[] vars) {
          int startRow = 0;                                                          // Where current frame begins.
          int endRow = NRows - 1;                                                 // Where current frame ends.
          int startCol = 0;
@@ -164,7 +166,7 @@ namespace Fluid.Internals.Mesh {
                newEndRow = startRow + nRows/2 - 1;                                  // Set row at half frame width as end. No problem if nRows is odd.
                verts[3] = NodeStd(newEndRow, startCol, 9).Pos;                  // New upper left.
                verts[2] = NodeStd(newEndRow, endCol, 6).Pos;                    // New upper right.
-               if(pos.IsInsidePolygon(verts)) {
+               if(posX.IsInsidePolygon(verts)) {
                   endRow = newEndRow;
                   verts[3] = NodeStd(endRow, startCol, 9).Pos;                  // UL
                   verts[2] = NodeStd(endRow, endCol, 6).Pos; }                  // UR
@@ -177,7 +179,7 @@ namespace Fluid.Internals.Mesh {
                newEndCol = startCol + nCols/2 - 1;
                verts[1] = NodeStd(startRow, newEndCol, 3).Pos;                  // new LR.
                verts[2] = NodeStd(endRow, newEndCol, 6).Pos;
-               if(pos.IsInsidePolygon(verts)) {
+               if(posX.IsInsidePolygon(verts)) {
                   endCol = newEndCol;
                   verts[1] = NodeStd(startRow, endCol, 3).Pos;
                   verts[2] = NodeStd(endRow, endCol, 6).Pos; }
@@ -187,7 +189,7 @@ namespace Fluid.Internals.Mesh {
                   verts[0] = NodeStd(startRow, startCol, 0).Pos; }
                nCols = endCol - startCol + 1; }  }                               // At this point startCol and endCol have to be the same.
          var quadEmt = CreateQuadEmt(startRow, startCol);                        // Quadrilateral that contains sought after point.
-         var squarePos = quadEmt.RefSquareCoords(in pos);
+         var squarePos = quadEmt.Posχ(in posX);
          dbl[] funcValues = quadEmt.Vals(in squarePos, vars);
          return funcValues;
       }

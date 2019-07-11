@@ -255,7 +255,7 @@ namespace Fluid.ChannelFlow {
          A[1][2] = NodeOperatorMat2(ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               subMatrix.Sum<dbl,DA>(GetSfsIntegral(row, col, j, k, n, m).Mul<dbl,DA>(
+               subMatrix.SumInto<dbl,DA>(GetSfsIntegral(row, col, j, k, n, m).Mul<dbl,DA>(
                   A[0][NewN(n)].Dot<dbl,DA>(A[1][NewN(m)])));
          return subMatrix;
 

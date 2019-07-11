@@ -83,7 +83,7 @@ namespace Fluid.Internals.Numerics {
                mat[i][j] = temp; }
       }
       /// <summary>Add two square matrices.</summary><param name="mat1">Left matrix.</param><param name="mat2">Right matrix.</param>
-      public static τ[][] Add<τ,α>(this τ[][] mat1, τ[][] mat2)
+      public static τ[][] Sum<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;
@@ -95,7 +95,7 @@ namespace Fluid.Internals.Numerics {
          return result;
       }
       /// <summary>Take a matrix and add to it another matrix.</summary><param name="mat1">Matrix to be added to.</param><param name="mat2">Matrix that will be added to addee.</param>
-      public static void Sum<τ,α>(this τ[][] mat1, τ[][] mat2)
+      public static void SumInto<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
          int lgh = mat1.Length;

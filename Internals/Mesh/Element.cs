@@ -10,18 +10,19 @@ namespace Fluid.Internals.Mesh {
    using dbl = Double;
    using dA = DblArithmetic;
    using Tensor = Tensor<double,DblArithmetic>;
-   //using FuncMat = Tensor<Func<double,double,double>, NoArithmetic>;
    // TODO: Add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
+
    /// <summary>A quadrilateral element.</summary>
    public class Element {
-      /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds in CCW direction.</summary>
+      /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public MeshNode[] P { get; }
       //public double
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
 
 
-      /// <summary>Create an instance which holds Element's vertex positions.</summary><param name="nodes">12 mesh nodes that define an element.</param>
+      /// <summary>Create an instance which holds Element's vertex positions.</summary>
+      /// <param name="nodes">12 mesh nodes that define an element.</param>
       public Element(params MeshNode[] nodes) {
          P = nodes;
          MA = new dbl[2][] {  new dbl[2] {P[9].Pos.X, P[3].Pos.X},
@@ -47,33 +48,34 @@ namespace Fluid.Internals.Mesh {
       }
       
 
-      /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary><param name="pos">Position in terms of global x and y.</param>
-      public Pos RefSquareCoords(in Pos pos) {
-         dbl a = FuncA(in pos);
-         dbl b = FuncB(in pos);
-         dbl c = FuncC(in pos);
+      /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary>
+      /// <param name="posX">Position in terms of global x and y.</param>
+      public Pos Posχ(in Pos posX) {
+         dbl a = FuncA(in posX);
+         dbl b = FuncB(in posX);
+         dbl c = FuncC(in posX);
          dbl detMALessMB = MA.Sub<dbl,dA>(MB).Det<dbl,dA>();
-         dbl detNALessNB = NA.Sub<dbl,dA>(NB).Det<dbl,dA>();
+         dbl detNALessNB = NA.Sub<dbl,dA>(NB).Det<dbl,dA>();  // χ
          dbl ξ;
          dbl η;
-         if(pos.X*pos.Y >= 0) {                                          // Quadrants I and III.
+         if(posX.X*posX.Y >= 0) {                                          // Quadrants I and III.
             if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
                ξ = (-b + Sqrt(b*b + c))/detMALessMB;
             else                                                            // Opposing sides are virtually parallel. Use simplified model to preserve precision.
-               ξ = SimpleXi(in pos);
+               ξ = Simp_ξ(in posX);
             if(Abs(detNALessNB) > 10E-7)                                    // Opposing sides are not too parallel.
                η = (-a - Sqrt(b*b + c))/detNALessNB;
             else                                                            // Opposing sides are virtually parallel.
-               η = SimpleEta(in pos); }
+               η = Simp_η(in posX); }
          else {                                                              // Quadrants II and IV.
                if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
                   ξ = (-b - Sqrt(b*b + c))/detMALessMB;
                else                                                            // Opposing sides are virtually parallel. Use simplified model to preserve precision.
-                  ξ = SimpleXi(in pos);
+                  ξ = Simp_ξ(in posX);
                if(Abs(detNALessNB) > 10E-7)                                    // Opposing sides are not too parallel.
                   η = (-a + Sqrt(b*b + c))/detNALessNB;
                else                                                            // Opposing sides are virtually parallel.
-                  η = SimpleEta(in pos); }
+                  η = Simp_η(in posX); }
          return new Pos(ξ, η);
       }
       dbl FuncA(in Pos pos) =>
@@ -84,34 +86,40 @@ namespace Fluid.Internals.Mesh {
 
       dbl FuncC(in Pos pos) =>
          MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() -
-            2*pos.Y*MJ.Tr<dbl,dA>() + MA.Add<dbl,dA>(MB).Det<dbl,dA>());      //Sub(MA(), MB()).Det() * (2*pos.X*MH().Tr() - 2*pos.Y*MJ().Tr() + Sum(MA(), MB()).Det());
-      /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
+            2*pos.Y*MJ.Tr<dbl,dA>() + MA.Sum<dbl,dA>(MB).Det<dbl,dA>());
+      /// <summary>Distance of specified point P to a line going through lower edge.</summary>
+      /// <param name="P">Specified point.</param>
       dbl DistToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in this.P[0].Pos, in this.P[3].Pos);    // Vector from lower left to lower right vertex.
          lowerEdgeVector.Normalize();
          var posVec = new Vec2(in this.P[0].Pos, in P);            // Choose a point Q on lower edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
          return Abs(lowerEdgeVector.Cross(in posVec));       // Take cross product of the two which will give you desired distance.
       }
-      /// <summary>Distance of specified point P to a line going thorugh left edge.</summary><param name="P">Specified point.</param>
+      /// <summary>Distance of specified point P to a line going through left edge.</summary>
+      /// <param name="P">Specified point.</param>
       dbl DistToLeftEdge(in Pos P) {
          var leftEdgeVec = new Vec2(in this.P[0].Pos, in this.P[9].Pos);     // Vector from lower left to lower right vertex.
          leftEdgeVec.Normalize();
          var posVec = new Vec2(in this.P[0].Pos, in P);            // Choose a point Q on left edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
          return Abs(leftEdgeVec.Cross(in posVec));       // Take cross product of the two which will give you desired distance.
       }
-      /// <summary>Used when horizontal edges are virtually parallel.</summary><param name="pos">Position in terms of x and y.</param>
-      dbl SimpleXi(in Pos pos) {
+      /// <summary>Used when horizontal edges are virtually parallel.</summary>
+      /// <param name="pos">Position in terms of x and y.</param>
+      dbl Simp_ξ(in Pos pos) {
          dbl wholeStretchDist = DistToLeftEdge(in P[3].Pos);       // Distance between parallel edges.
          dbl posDist = DistToLeftEdge(in pos);                       // Distance of pos from left edge.
          return 2.0*(posDist/wholeStretchDist) - 1.0;                      // Transform to [-1,+1] interval.
       }
-      /// <summary>Used when vertical edges are virtually parallel.</summary><param name="pos">Position in terms of x and y.</param>
-      dbl SimpleEta(in Pos pos) {
+      /// <summary>Used when vertical edges are virtually parallel.</summary>
+      /// <param name="pos">Position in terms of x and y.</param>
+      dbl Simp_η(in Pos pos) {
          dbl wholeStretchDist = DistToLowerEdge(in P[9].Pos);
          dbl posDist = DistToLowerEdge(in pos);
          return 2.0*(posDist/wholeStretchDist) - 1.0;
       }
-      /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary><param name="pos">Position on reference square in terms of (ksi, eta).</param><param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
+      /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary>
+      /// <param name="pos">Position on reference square in terms of (ksi, eta).</param>
+      /// <param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
       public dbl[] Vals(in Pos pos, params int[] varInxs) {
          var vals = new dbl[varInxs.Length];
          for(int varInx = 0; varInx < varInxs.Length; ++varInx)

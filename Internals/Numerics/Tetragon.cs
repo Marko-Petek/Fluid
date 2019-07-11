@@ -107,7 +107,7 @@ namespace Fluid.Internals.Numerics {
       double FuncB(in Pos pos) =>
          pos.X * MG.Tr<dbl,dA>() - pos.Y * MF.Tr<dbl,dA>() + MC.Det<dbl,dA>() + MD.Det<dbl,dA>();
       double FuncC(in Pos pos) =>
-         MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() - 2*pos.Y*MJ.Tr<dbl,dA>() + MA.Add<dbl,dA>(MB).Det<dbl,dA>());
+         MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() - 2*pos.Y*MJ.Tr<dbl,dA>() + MA.Sum<dbl,dA>(MB).Det<dbl,dA>());
       /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
       double DistanceToLowerEdge(in Pos P) {
          var lowerEdgeVector = new Vec2(in _LL, in _LR);    // Vector from lower left to lower right vertex.
