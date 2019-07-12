@@ -112,6 +112,9 @@
 		},
 		"[latex]": {
 			"editor.lineNumbers": "off"
+      },
+      "[markdown]": {
+         
       }
 	}
 }
