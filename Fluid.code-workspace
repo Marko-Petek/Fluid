@@ -113,8 +113,8 @@
 		"[latex]": {
 			"editor.lineNumbers": "off"
       },
-      "[markdown]": {
-         
+      "markdownlint.config": {
+         "default": false
       }
 	}
 }

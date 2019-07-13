@@ -1,0 +1,72 @@
+\documentclass[11pt,a5paper,notitlepage]{article}
+\usepackage{amsmath}							            % American Mathematical Society package.
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[english]{babel}
+\usepackage{bm}									         % Bold math.
+\usepackage[utf8]{inputenc}
+\usepackage[style=german]{csquotes}
+\usepackage{graphicx}							         % Define font colors, page colors, boxes with background color, rotate text in a box, scale text vertically and horizontally, put graphics in a box.
+\usepackage{verbatim}							         % Multiline comments.
+\usepackage{setspace}							         % Adjust line spacing.
+\usepackage{parskip}
+\setlength{\parindent}{0pt}
+\usepackage{fancyhdr}							         % Fancy headers.
+\linespread{1}
+\usepackage[font=normalsize]{caption}  		 	   % Captions for figures inside minipages. Allows setting alignment inside captions.
+\usepackage{subcaption}
+\usepackage[retainorgcmds]{IEEEtrantools}  		   % Best tool for multiline equations or equation arrays.
+\usepackage[unicode]{hyperref} 					      % Hyperlinks ToC entries to their respective pages.
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black }
+\usepackage{url} 								            % Allows long URLs.
+\usepackage{placeins} 							         % FloatBarrier.
+\usepackage{booktabs}							         % TabItem (manually insert list item dot).
+\usepackage{xcolor}								         % Required by tabu.
+\usepackage{colortbl}							         % Required by tabu.
+\usepackage{tabu}								            % Width-adjustable tabular.
+\usepackage{multirow}							         % Columns spanning multiple rows.
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}	   % TabItem command.
+\usepackage{wrapfig}							            % Figures which text can flow around.
+\usepackage{physics}                               % For braket notation.
+\usepackage{icomma}                                % Intelligent comma for decimal separators.
+
+% Math Symbol Abbreviations
+\def\rcurs{{\mbox{$\resizebox{.09in}{.08in}{\includegraphics[trim= 1em 0 14em 0,clip]{TeX/ScriptR}}$}}}		% Cursive r.
+\def\brcurs{{\mbox{$\resizebox{.09in}{.08in}{\includegraphics[trim= 1em 0 14em 0,clip]{TeX/BoldR}}$}}}		% Bold cursive r.
+\renewcommand{\arraystretch}{1.3} 				                        % List line spacing.
+\newcommand{\ud}{\mathrm{d}} 					                           % Differential operator.
+\newcommand{\uD}{\mathrm{D}}					                           % Capital D differential operator.
+\newcommand{\pd}{\partial}						                           % Partial differential operator.
+\newcommand{\del}{\bm{\nabla}}					                        % Bold nabla.
+\newcommand{\mathbsf}[1] {\bm{\mathsf{#1}}}
+\renewcommand{\Re}{\operatorname{Re}}		  	                        % Real-part-of-complex-number operator.
+\renewcommand{\Im}{\operatorname{Im}} 			                        % Imaginary-part-of-complex-number operator.
+
+
+% Paragraph-to-Equation Spacing
+\setlength{\belowdisplayskip}{0pt} 			% Razmik pod enačbo, ko je vrstica polna.
+\setlength{\abovedisplayskip}{0pt} 			% Razmik nad enačbo, ko je vrstica polna.
+\setlength{\belowdisplayshortskip}{0pt}  		% Razmik pod enačbo, ko vrstica ni polna.
+\setlength{\abovedisplayshortskip}{0pt}   		% Razmik nad enačbo, ko vrstica ni polna.
+
+\pagestyle{fancy}	% Setting for FancyHdr package. Must occur before length adjustments.
+
+% FIRST PAGE LAYOUT / VERTICAL LENGTHS
+\setlength{\voffset}{-1.0in}					% Top to Header Top Margin = 1 inch+\voffset
+\setlength{\topmargin}{8mm}					% Header Top Margin Height
+\setlength{\headheight}{1.75cm}
+\setlength{\headsep}{0.35cm}					% Header Lower Margin Height
+\setlength{\textheight}{200mm}					% Header Lower Margin to Footer height
+\setlength{\footskip}{1.0cm}
+% FIRST PAGE LAYOUT / HORIZONTAL LENGTHS
+\setlength{\headwidth}{132mm}
+\setlength{\hoffset}{-1.0in}					% Left page padding = 1 inch + \hoffset
+\setlength{\oddsidemargin}{8mm}
+\setlength{\textwidth}{132mm}
+\setlength{\marginparsep}{0.0cm}
+\setlength{\marginparwidth}{0.0cm}				% Width of "side notes margin."
