@@ -60,7 +60,7 @@ namespace Fluid.Internals.Mesh {
                   (1 - eta)*lowerBoundaryPos.Y  +  eta*upperBoundaryPos.Y  -  
                   (1 - ksi)*(1 - eta)*_quadrilateral._LL.Y - (1 - ksi)*eta*_quadrilateral._UL.Y -
                   (1 - eta)*ksi*_quadrilateral._LR.Y - ksi*eta*_quadrilateral._UR.Y;
-         return new MeshNode(x, y, MainMesh.NVars);
+         return new MeshNode(x, y, MainMesh.M);
       }
    }
 }

@@ -76,7 +76,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Creates a dictionary whose entries indicate which solution vector rows should be swapped with one another.</summary>
       SCG.Dictionary<int,int> CreateSwapDict() {
          int posCount = Mesh.NPos;
-         int nVars = Mesh.NVars;
+         int nVars = Mesh.M;
          int width = posCount * nVars;
          var swapDict = new SCG.Dictionary<int,int>(2000);
          for(int topGInx = 0, lowGInx = width - 1; topGInx <= lowGInx; ++topGInx) {
