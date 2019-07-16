@@ -25,13 +25,13 @@
          &
          \texttt{constrained node vars} \ .
       \end{IEEEeqnarray*}
-      For both tensors the first slot is of dimension $N$ while the second slot is of dimension $m$. Components $u^{\delta l}$ are mutually exclusive across the two tensors - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. The sum of the two tensors thus produces a tensor which holds all node vars:
+      For both tensors the first slot's dimension is $N$ while the second slot's dimension is $m$. Components $u^{\delta l}$ are mutually exclusive across the two tensors - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. The sum of the two tensors thus produces a tensor which holds all node vars:
       \begin{IEEEeqnarray*}{lc}
-         \mathbsf{u}_{\bowtie}
+         \hspace{15mm} \mathbsf{u}_{\bowtie}
          =
          \mathbsf{u}_\triangleright + \mathbsf{u}_\triangleleft \hspace{10mm}
          &
-         \hspace{15mm} \texttt{node vars} \ .
+         \hspace{10mm} \texttt{all = free + constrained} \ .
       \end{IEEEeqnarray*}
       A third 2nd rank tensor stores all forcing vector values: 
       \begin{IEEEeqnarray*}{lc}

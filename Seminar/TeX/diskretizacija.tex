@@ -6,26 +6,26 @@ V znanem 3D vektorskem prostoru so osnovni gradniki trije bazni vektorji. S tak�
 
 \begin{figure}[ht]
    \centering
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/discreteExample}
-        \vspace{0mm}
-        \caption{}
-    \end{subfigure}
-    \hspace{0mm}
-    \begin{subfigure}[b]{0.32\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/discreteExample2}
-        \caption{}
-    \end{subfigure}
-    \hspace{0mm}
-    \begin{subfigure}[b]{0.32\textwidth}
+   \begin{subfigure}[b]{0.32\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/discreteExample}
+      \vspace{0mm}
+      \caption{}
+   \end{subfigure}
+   \hspace{0mm}
+   \begin{subfigure}[b]{0.32\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/discreteExample2}
+      \caption{}
+   \end{subfigure}
+   \hspace{0mm}
+   \begin{subfigure}[b]{0.32\textwidth}
       \centering
       \includegraphics[width=0.94\textwidth]{Slike/discreteExample3}
       \caption{}
-  \end{subfigure}
-    \caption{Funkcije, ki živijo v (a) 3D, (b) 13D in (c) $\infty$-D funkcijskem (vektorskem) prostoru.}
-    \label{fig:discreteExample}
+   \end{subfigure}
+   \caption{Funkcije, ki živijo v (a) 3D, (b) 13D in (c) $\infty$-D funkcijskem (vektorskem) prostoru.}
+   \label{fig:discreteExample}
 \end{figure}
 
 Na dimenzije vektorja gledamo kot na \textbf{prostostne stopnje}, katerih vrednosti lahko poljubno nastavljamo. Funkcijo $f$ (slika \ref{fig:discreteExample}a) zapišemo s komponentami in baznimi vektorji kot:
@@ -36,7 +36,7 @@ Na dimenzije vektorja gledamo kot na \textbf{prostostne stopnje}, katerih vredno
    \end{pmatrix}
    \begin{pmatrix}
       \mkern1mu \delta(x) \\
-      \delta(x-6) \\
+      \delta(x-6)         \\
       \delta(x-12) \mkern1mu
    \end{pmatrix}
    =
@@ -51,9 +51,9 @@ Funkcijo $g$ (slika \ref{fig:discreteExample}b) zapišemo s komponentami in bazn
       \mkern1mu 0,68 & 0,76 & \cdots & 0,68 \mkern1mu
    \end{pmatrix}
    \begin{pmatrix}
-      \delta(x) \\
+      \delta(x)   \\
       \delta(x-1) \\
-      \vdots \\
+      \vdots      \\
       \delta(x-12)
    \end{pmatrix}
    =
@@ -86,112 +86,112 @@ Skalarni produkt dveh zveznih funkcij je po analogiji enak:
 \end{equation}
 Če skalarne funkcije predstavimo kot funkcijske vektorje, kako potem na isti način predstavimo vektorske funkcije (ki slikajo v več skalarnih spremenljivk)? Tako, da vsako komponento (skalarno funkcijo) posebej zapišemo kot funkcijski vektor. Tako dobimo vektor vektorjev, oz. matriko. Zdaj vidimo, zakaj smo temelje \texttt{FEM} opisali brez uporabe omenjenih konceptov. Zahtevnost zapisov enačb se zmanjša na račun povečane zahteve po predstavljivosti zapisov. Kot primer v novem jeziku zapišimo variacijsko izjavo \eqref{eq:LsfemVariationalStatement}:
 \begin{equation}
-		\bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern2mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}\mkern1mu} \ = \,
-		0 \ , \hspace{5mm} \forall \mathbf{v} \ .
-	\label{eq:LsfemVariationalStatementNew}
+   \bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern2mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f}\mkern1mu} \ = \,
+   0 \ , \hspace{5mm} \forall \mathbf{v} \ .
+   \label{eq:LsfemVariationalStatementNew}
 \end{equation}
 To izgleda veliko bolje, kajne?
 
 Za numerično reševanje problema moramo abs\-trakt\-no zastavitev \eqref{eq:LsfemVariationalStatement} z neskončno prostostnimi stop\-nja\-mi diskretizirati. Iskanje želimo omejiti na $N$ čim enakomerneje razporejenih točk, ki jih imenujemo \textbf{vozlišča}. V vsako vozlišče postavimo \textbf{vozliščno bazno funkcijo}, ki pokrije le okolico vozlišča:
 \begin{IEEEeqnarray*}{rc}
-    \hspace{16mm} \ket{\Phi_i} \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
+   \hspace{16mm} \ket{\Phi_i} \, , \hspace{5mm} i = 1, ..., N \hspace{16mm} & \texttt{vozliščne funkcije .}
 \end{IEEEeqnarray*}
 Neskončno število neskončno ozkih stolpičev smo zamenjali s končnim številom ($N$) končno ozkih grbin. Problemu omejimo število prostostnih stopenj tako, da dopustimo le obstoj tistih funkcij $v(\mathbf{x})$, ki so superpozicija vozliščnih funkcij. To so funkcije, ki jih lahko zapišemo kot vrsto vozliščnih funkcij $\Phi_i(\mathbf{x})$ s koeficienti $v_i$:
 \vspace{-3mm}
 \begin{equation}
-    \ket{v} = \sum_{i = 1}^N v_i \ket{\Phi_i} \ .
-    \label{eq:nodalSeries}
+   \ket{v} = \sum_{i = 1}^N v_i \ket{\Phi_i} \ .
+   \label{eq:nodalSeries}
 \end{equation}
 S tem problem prevedemo na iskanje $N$ \textbf{vozliščnih vrednosti} $v_i$. Naslikajmo idejo na skrajno preprosti kvadratni domeni $[-3,\mkern2mu 3\mkern1mu] \mkern-1mu \times \mkern-1mu [-3,\mkern2mu 3\mkern1mu]$ s krajevnim vektorjem $\bm{\chi} = \{\xi,\eta\}$. Nanjo postavimo pravokotno mrežo s šestnajstimi vozlišči (slika \ref{fig:regionAndNodeFunctions}a) in nad njimi napnemo prav toliko vozliščnih funkcij z nastavljivimi višinami $v_i\mkern1mu$ (slika \ref{fig:regionAndNodeFunctions}b).
 
 \begin{figure}[ht]
    \centering
-    \begin{subfigure}[b]{0.42\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/layout2d}
-        \vspace{0mm}
-        \caption{}
-    \end{subfigure}
-    \hspace{5mm}
-    \begin{subfigure}[b]{0.42\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/layout2dTrans}
-        \caption{}
-    \end{subfigure}
-    \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le štiri osrednje vozliščne funkcije.}
-    \label{fig:regionAndNodeFunctions}
+   \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/layout2d}
+      \vspace{0mm}
+      \caption{}
+   \end{subfigure}
+   \hspace{5mm}
+   \begin{subfigure}[b]{0.42\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/layout2dTrans}
+      \caption{}
+   \end{subfigure}
+   \caption{(a) Pravokotna domena z devetimi elementi (modre številke) in šestnajstimi vozlišči (rdeče številke) ter (b) nad vozlišči napete vozliščne funkcije. V prid nazornosti rišemo le štiri osrednje vozliščne funkcije.}
+   \label{fig:regionAndNodeFunctions}
 \end{figure}
 
 \begin{figure}[ht]
    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3d}
-        \vspace{0mm}
-        \caption{}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.46\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3dSparse}
-        \caption{}
-    \end{subfigure}
-    \caption{}
-    \label{fig:nodalFs}
+   \begin{subfigure}[b]{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3d}
+      \vspace{0mm}
+      \caption{}
+   \end{subfigure}
+   \begin{subfigure}[b]{0.46\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/nodalFuncs3dSparse}
+      \caption{}
+   \end{subfigure}
+   \caption{}
+   \label{fig:nodalFs}
 \end{figure}
 
 Štirikotne ploskvice, ki nastanejo s postavitvijo vozlišč, imenujemo \textbf{elementi}. Nobena vozliščna funkcija $\Phi_i$ ne sme pokrivati elementov, ki niso v stiku z njenim vozliščem. S tem dosežemo, da je $v(\bm\chi)$ nad nekim elementom sestavljena le iz funkcij v neposredni bližini tega elementa. Tako je $\mathbf{v}(\bm\chi)$ na sliki \ref{fig:sumAndShapeFunctions}a nad osrednjim elementom popolnoma določena z vrednostmi $v_6, v_7, v_{10}$ in $v_{11}$.
 
 Ozrimo se na variacijsko izjavo \eqref{eq:LsfemVariationalStatement} ter si predstavljajmo funkcije $\mathbsf{A}(\mathbf{x}), \mathbf{u(x)}, \mathbf{v(x)}$ in $\mathbf{f(x)}$ zapisane v smislu razvoja po vozliščnih funkcijah \eqref{eq:nodalSeries}. Zaslutimo, da bomo računali prekrivne integrale vozliščnih funkcij:
 \begin{equation}
-    \bra{\Phi_i}\ket{\Phi_j} \ .
+   \bra{\Phi_i}\ket{\Phi_j} \ .
 \end{equation}
 To je enostavno dokler so vsi elementi iste oblike in velikosti, kot na sliki \ref{fig:regionAndNodeFunctions}. Takrat je dovolj, da izračunamo prekrivne integrale za vozlišča enega elementa. Kaj pa, če želimo uporabljati elemente poljubne oblike? Kako naj čim učinkoviteje, če so elementi poljubne oblike
 
- Segmente vozliščnih funkcij $\Phi_6, \, \Phi_7, \, \Phi_{10}$ in $\Phi_{11}$, ki se nahajajo neposredno nad elementom 5, proglasimo za \textbf{elementarne funkcije} $\phi_{5 j}(\bm\chi)$ tega elementa (slika \ref{fig:sumAndShapeFunctions}b). Tako lahko funkcijo $\mathbf{v}$ na
+Segmente vozliščnih funkcij $\Phi_6, \, \Phi_7, \, \Phi_{10}$ in $\Phi_{11}$, ki se nahajajo neposredno nad elementom 5, proglasimo za \textbf{elementarne funkcije} $\phi_{5 j}(\bm\chi)$ tega elementa (slika \ref{fig:sumAndShapeFunctions}b). Tako lahko funkcijo $\mathbf{v}$ na
 
 \begin{figure}[ht]
    \centering
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElm}
-        \vspace{0mm}
-        \caption{}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.48\textwidth}
-        \centering
-        \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElmMod}
-        \caption{}
-    \end{subfigure}
-    \caption{(a) vsota vozliščnih funkcij s slike \ref{fig:regionAndNodeFunctions}b in (b) elementarne funkcije, ki pripadajo elementu 5.}
-    \label{fig:sumAndShapeFunctions}
+   \begin{subfigure}[b]{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElm}
+      \vspace{0mm}
+      \caption{}
+   \end{subfigure}
+   \begin{subfigure}[b]{0.48\textwidth}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/nodalFuncsSumOverElmMod}
+      \caption{}
+   \end{subfigure}
+   \caption{(a) vsota vozliščnih funkcij s slike \ref{fig:regionAndNodeFunctions}b in (b) elementarne funkcije, ki pripadajo elementu 5.}
+   \label{fig:sumAndShapeFunctions}
 \end{figure}
 
 \begin{figure}[ht]
    \centering
    \begin{subfigure}[b]{0.44\textwidth}
-       \centering
-       \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3d}
-       \vspace{0mm}
-       \caption{}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3d}
+      \vspace{0mm}
+      \caption{}
    \end{subfigure}
    \hspace{3mm}
    \begin{subfigure}[b]{0.45\textwidth}
-       \centering
-       \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3dTrans}
-       \caption{}
+      \centering
+      \includegraphics[width=0.94\textwidth]{Slike/elmFuncs3dTrans}
+      \caption{}
    \end{subfigure}
    \caption{}
    \label{fig:shapeFs}
 \end{figure}
 
-še vedno  Z natančno analitično izpeljavo se prebijemo do izjave \eqref{eq:LsfemVariationalStatement}, od tod dalje pa moramo iskanje funkcije $\mathbf{u(x)}$ z neskončno prostostnimi stopnjami poenostaviti v iskanje funkcije s končnim številom prostostnih stopenj $N$. 
+še vedno  Z natančno analitično izpeljavo se prebijemo do izjave \eqref{eq:LsfemVariationalStatement}, od tod dalje pa moramo iskanje funkcije $\mathbf{u(x)}$ z neskončno prostostnimi stopnjami poenostaviti v iskanje funkcije s končnim številom prostostnih stopenj $N$.
 
 Skozi oči \texttt{FI} je $\ket{\Phi_i}$ eden izmed baznih vektorjev v razvoju vektorja $\ket{v}$, $v_i$ pa pripadajoča komponenta.
 V jeziku funkcionalne analize (\texttt{FI}) pravimo, da smo omejili funkcijski prostor.
 
-nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajskih enačb. Ta korak je enak pri vseh različicah \texttt{FEM}. Funkcije na domeni $\Omega$ imajo neskončno štveilo prostostnih stopenj. 
+nadaljujemo z diskretizacijo problema, to je, pretvorbo na sistem $N$ algebrajskih enačb. Ta korak je enak pri vseh različicah \texttt{FEM}. Funkcije na domeni $\Omega$ imajo neskončno štveilo prostostnih stopenj.
 \begin{equation}
-    u_i(\mathbf{x}) = \sum_{a = 1}^N \Phi^{a0} u^{a0}_i
+   u_i(\mathbf{x}) = \sum_{a = 1}^N \Phi^{a0} u^{a0}_i
 \end{equation}
 
 Mreža je v tem šolskem primeru strukturirana, kar pomeni, da je razporeditev elementov Kartezična. Mreža je lahko pri \texttt{FEM} tudi nestrukturirana, kar je ena izmed prednosti metode.
@@ -284,10 +284,10 @@ oziroma:
    \left(\frac{\pd \psi}{\pd x} \right)_{\mkern-3mu y}
    =
    \left(\frac{\pd \xi}{\pd x} \right)_{\mkern-4mu y}
-      \mkern-4mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
+   \mkern-4mu \left(\frac{\pd \phi}{\pd \xi}\right)_{\mkern-3mu \eta}
    +
    \left(\frac{\pd \eta}{\pd x}\right)_{\mkern-4mu y}
-      \mkern-4mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi}
+   \mkern-4mu \left(\frac{\pd \phi}{\pd \eta}\right)_{\mkern-3mu \xi}
 \end{equation}
 Če definiramo:
 \begin{equation}
@@ -295,9 +295,9 @@ oziroma:
    =
    \frac{1}{\det \mathbsf{J}}
    \begin{pmatrix}
-      \det \mathbsf{J} & 0 & 0 \\
-      0 & +J_{22} & -J_{12} \\
-      0 & -J_{21} & +J_{11}
+      \det \mathbsf{J} & 0       & 0       \\
+      0                & +J_{22} & -J_{12} \\
+      0                & -J_{21} & +J_{11}
    \end{pmatrix} \ ,
 \end{equation}
 lahko zapišemo:
@@ -309,10 +309,10 @@ Po vozliščih $(\alpha, \beta, \gamma, \delta \in [1,N])$:
 \begin{equation}
    \bra{
       \left(A^{\beta p}_{\phantom{\beta p}jk} \mkern1mu \Psi_\beta \frac{\pd}{\pd x_p}\right)
-         \left(v^\alpha_{\triangleright k} \mkern1mu \Psi_\alpha\right)}
+      \left(v^\alpha_{\triangleright k} \mkern1mu \Psi_\alpha\right)}
    \ket{
       \left(A^{\gamma qjl} \mkern1mu \Psi_\gamma \frac{\pd}{\pd x_q}\right)
-         \left(u^{\delta l}_\triangleright \mkern1mu \Psi_\delta + u^{\delta l}_\triangleleft \mkern1mu \Psi_\delta \right)
+      \left(u^{\delta l}_\triangleright \mkern1mu \Psi_\delta + u^{\delta l}_\triangleleft \mkern1mu \Psi_\delta \right)
       -
       f^{\gamma j} \mkern1mu \Psi_\gamma }
 \end{equation}
@@ -320,23 +320,23 @@ Po elementih $(a,b,c,d) \in [1,12]$, kjer je $n$ število elementov.
 \begin{equation}
    \sum^n_{i} \bra{
       \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
-         \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
+      \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
    \ket{
       \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
-         \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
+      \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
       -
       f^{cj} \mkern1mu \psi_c}
 \end{equation}
 Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
 \begin{equation*}
    \sum^n_i \bra{
-      \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
-         v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
+   \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
+   v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
    \ket{
       \mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right)
-         \mkern-5mu \left(u^{dl}_\triangleright \mkern1mu \psi^{\triangleright q}_d
-         +
-         u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
+      \mkern-5mu \left(u^{dl}_\triangleright \mkern1mu \psi^{\triangleright q}_d
+      +
+      u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
       -
       f^{cj} \mkern1mu \psi_c}
 \end{equation*}
@@ -344,23 +344,23 @@ Preuredimo:
 \begin{equation*}
    \sum^n_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
       \psi_{b0}
-         \psi_{ap} \mkern4mu}
+      \psi_{ap} \mkern4mu}
    \ket{
       \mkern2mu
-         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleright \psi_{dq}
-         +
-         A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleleft \psi_{dq}
+      A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleright \psi_{dq}
+      +
+      A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleleft \psi_{dq}
       -
       f^{cj}_{\bowtie} \psi_{c0}}
 \end{equation*}
 
 \begin{equation*}
    \sum_i v^a_{\triangleright k} \left(
-      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
-      +
-      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
-      -
-      \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+   +
+   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+   -
+   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
    \right)
 \end{equation*}
 Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
@@ -373,78 +373,125 @@ Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 Tako imamo:
 \begin{equation}
    \sum^n_i v^{ak}_{\triangleright} \left(
-      S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
-      +
-      S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
-      -
-      T_{bapc} A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+   +
+   S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+   -
+   T_{bapc} A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
    \right) = 0 \ .
 \end{equation}
 \begin{equation*}
    \sum^n_i v^{(i,a)k}_{\triangleright} \left(
-      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleright
-      +
-      S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleleft
-      -
-      T_{ibapc} A^{(i,b)p}_{\mkern42mu jk} f^{(i,c)j}_{\bowtie}
+   S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleright
+   +
+   S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleleft
+   -
+   T_{ibapc} A^{(i,b)p}_{\mkern42mu jk} f^{(i,c)j}_{\bowtie}
    \right) = 0 \ .
 \end{equation*}
 Sestavitev globalnega tenzorja:
 \begin{equation*}
+   \mkern-80mu
+   \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
+   \sum^n_\varepsilon
+   \mkern-7mu
+   \sum_{\substack{\alpha, \delta \, \ni: \\ (\varepsilon,\alpha) = i \\ (\varepsilon,\delta) = j}}^{12}
+   \mkern-10mu
+   \left(
+   S_{\varepsilon \beta \alpha p \gamma \delta q}
+   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+   A^{(\varepsilon,\gamma) qhl}
+   \mkern1mu
+   u^{(\varepsilon,\delta) l}_\triangleright \right)
+   =
+   \sum^N_i v^{i k}_{\triangleright}
+   \sum^n_\varepsilon
+   \mkern-7mu
+   \sum_{\substack{\alpha \, \ni: \\ (\varepsilon,\alpha) = i}}^{12}
+   \mkern-10mu
+   \left(
+   T_{\varepsilon \beta \alpha p \delta}
+   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+   f^{(\varepsilon,\delta) h}_{\bowtie}
+   -
+   S_{\varepsilon \beta \alpha p \gamma \delta q}
+   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+   A^{(\varepsilon,\gamma) qhl}
+   \mkern1mu
+   u^{(\varepsilon,\delta) l}_\triangleleft \right) \ .
+\end{equation*}
+\begin{equation*}
    \sum^n_i v^{\alpha k}_{\triangleright} \left(
-      S_{ibapcdq} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleright \right)
+   S_{\beta \alpha p \gamma \delta q} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleright \right)
    =
    \sum^n_i v^{\alpha k}_{\triangleright} \left(
-      T_{ibapc} A^{\beta p}_{\mkern18mu jk} f^{\gamma j}_{\bowtie}
-      -
-      S_{ibapcdq} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleleft \right) \ .
+   T_{\beta \alpha p \gamma} A^{\beta p}_{\mkern18mu jk} f^{\gamma j}_{\bowtie}
+   -
+   S_{\beta \alpha p \gamma \delta q} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleleft \right) \ .
 \end{equation*}
-$A^{(i,b)p}_{\mkern42mu jk}$, ipd., dejansko ne obstajajo. Kjerkoli se pojavijo oklepaji, moraš uporabiti preslikavo iz elementarnih v gloablne indekse. Opomba: $S_{ibapcdq}$ seveda obstajajo.
-\begin{IEEEeqnarray*}{c}
-   (i,a) \rightarrow \alpha \\
-   (i,b) \rightarrow \beta \\
-   (i,c) \rightarrow \gamma \\
-   (i,d) \rightarrow \delta
-\end{IEEEeqnarray*}
 \begin{equation*}
-   v^{\alpha k}_{\triangleright} \left(
-      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
-      +
-      G_{\alpha k}
-      -
-      H_{\alpha k}
+   v^{i k}_{\triangleright} \left(
+   K_{i k j l} \mkern1mu u^{j l}_\triangleright
+   +
+   G_{i k}
+   -
+   H_{i k}
    \right) = 0 \ .
 \end{equation*}
 \begin{equation*}
-   F_{\alpha k} = H_{\alpha k} - G_{\alpha k} \ .
+   F_{i k} = H_{i k} - G_{i k} \ .
 \end{equation*}
 \begin{equation*}
-   v^{\alpha k}_{\triangleright} \left(
-      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
-      -
-      F_{\alpha k}
+   v^{i k}_{\triangleright} \left(
+   K_{i k j l} \mkern1mu u^{j l}_\triangleright
+   -
+   F_{i k}
    \right) = 0 \quad \forall v \ .
 \end{equation*}
 Končno:
 \begin{equation}
-      K_{\alpha k \delta l} \mkern1mu u^{\delta l}_\triangleright
-      =
-      F_{\alpha k} \ .
+   K_{i k j l} \mkern1mu u^{j l}_\triangleright
+   =
+   F_{i k} \ .
 \end{equation}
 Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
-   S_{bapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{qs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}}
+   S_{\beta \alpha p \gamma \delta q} = \left\langle \phi^{\phantom{\beta}0}_\beta \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{\alpha}r}_\alpha ) \mkern1mu \phi^{\phantom{\gamma}0}_\gamma ( \mathfrak{J}_{qs}  \phi^{\phantom{\delta}s}_\delta ) \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}}
 \end{equation}
 \begin{equation}
-   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}} \ .
+   T_{\beta \alpha p \delta} = \left\langle \phi^{\phantom{\beta}0}_\beta\mkern1mu ( \mathfrak{J}_{pr} \phi^{\phantom{\alpha}r}_\alpha ) \phi^{\phantom{\delta}0}_\delta \mkern2mu |\mkern-2mu \det \mathbsf{J}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
 Zapis, primeren za implementacijo:
 \begin{equation}
-   S_{ibapcdq} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \mkern1mu \phi^{\phantom{c}0}_c ( \mathfrak{J}_{iqs}  \phi^{\phantom{d}s}_d ) \mkern2mu |\mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}}
+   S_{\varepsilon \beta \alpha p \gamma \delta q}
+   =
+   \left\langle \phi^{\phantom{\beta}0}_\beta
+   \mkern1mu
+   ( \mathfrak{J}_{\varepsilon  pr}
+   \phi^{\phantom{\alpha}r}_\alpha )
+   \mkern1mu
+   \phi^{\phantom{\gamma}0}_\gamma
+   ( \mathfrak{J}_{\varepsilon qs}
+   \phi^{\phantom{\delta}s}_\delta )
+   \mkern2mu
+   |\mathfrak{J}_{\varepsilon 00}| \right\rangle_{\bm{\chi}}
 \end{equation}
 \begin{equation}
-   T_{bapd} = \left\langle \phi^{\phantom{b}0}_b \mkern1mu ( \mathfrak{J}_{ipr} \phi^{\phantom{a}r}_a ) \phi^{\phantom{d}0}_d \mkern2mu | \mathfrak{J}_{i00}| \right\rangle_{\bm{\chi}} \ .
+   T_{\varepsilon \beta \alpha p \delta}
+   =
+   \left\langle \phi^{\phantom{\beta}0}_\beta
+   \mkern1mu
+   ( \mathfrak{J}_{\varepsilon pr}
+   \phi^{\phantom{\alpha}r}_\alpha )
+   \phi^{\phantom{\delta}0}_\delta
+   \mkern2mu
+   | \mathfrak{J}_{\varepsilon 00}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
+\begin{IEEEeqnarray*}{ccc}
+   \alpha, \beta, \gamma, \delta & \ \rightarrow \ & \text{vozlišča znotraj elementa od 1 do 12}, \\
+   \varepsilon & \ \rightarrow \ & \text{indeks elementa od 1 do } n, \\
+   p, q, r, s & \ \rightarrow \ & \text{indeks parcialnega odvoda od 0 do 2}
+\end{IEEEeqnarray*}
 
 Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.
 
