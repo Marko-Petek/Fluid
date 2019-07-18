@@ -8,7 +8,7 @@ using static System.Char;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using static Fluid.ChannelFlow.Program;
 using static Fluid.Internals.Ops;
 using static Fluid.Internals.Numerics.MatOps;

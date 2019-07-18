@@ -1,7 +1,7 @@
 using System;
 using static System.Math;
 
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Numerics {

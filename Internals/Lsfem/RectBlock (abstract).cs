@@ -4,7 +4,7 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
-namespace Fluid.Internals.Mesh {
+namespace Fluid.Internals.Lsfem {
    using dbl = Double;
    using MN = MeshNode;
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>

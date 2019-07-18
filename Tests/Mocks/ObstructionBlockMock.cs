@@ -1,6 +1,6 @@
 using System;
 using Fluid.ChannelFlow;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.Tests.Mocks {

@@ -3,18 +3,27 @@ using System;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Mesh {
+namespace Fluid.Internals.Lsfem {
    using dbl = Double;
    using dA = DblArithmetic;
    using Vector = Vector<double,DblArithmetic>;
+   using Tensor = Tensor<double, DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
    public abstract class BlockMesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
-      public int M { get; protected set; }
-      /// <summary>Number of constrained variables.</summary>
-      public int NConstraints { get; set; }
-      /// <summary>Global vector of node values. Each Node[] array represents variable values at a single position.</summary>
-      public MeshNode[] G;
+      public int M { get; internal set; }
+      /// <summary>Free node values tensor.</summary>
+      public Tensor Uf { get; internal set; }
+      /// <summary>Constrained node values tensor.</summary>
+      public Tensor Uc { get; internal set; }
+      /// <summary>Returns value at desired index regardless of which tensor it resides in.</summary>
+      /// <param name="inxs"></param>
+      public dbl U(params int[] inxs) {
+         dbl u = Uf[inxs];
+         if(u != 0.0)
+            return u;
+         else return Uc[inxs];
+      }
 
 
       // /// <summary>Create a block-structured mesh.</summary>

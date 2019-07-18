@@ -6,7 +6,7 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
-namespace Fluid.Internals.Mesh {
+namespace Fluid.Internals.Lsfem {
    using dbl = Double;
    using dA = DblArithmetic;
    using Tensor = Tensor<double,DblArithmetic>;

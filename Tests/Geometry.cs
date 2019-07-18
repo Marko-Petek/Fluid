@@ -7,7 +7,7 @@ using Fluid.ChannelFlow;
 using Fluid.Internals;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using Fluid.TestRef;
 using Fluid.Tests.Mocks;
 using TB = Fluid.Internals.Toolbox;

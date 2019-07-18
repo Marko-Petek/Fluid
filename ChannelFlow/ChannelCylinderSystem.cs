@@ -3,7 +3,7 @@ using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 

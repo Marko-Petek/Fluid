@@ -488,9 +488,10 @@ Zapis, primeren za implementacijo:
    | \mathfrak{J}_{\varepsilon 00}| \right\rangle_{\bm{\chi}} \ .
 \end{equation}
 \begin{IEEEeqnarray*}{ccc}
-   \alpha, \beta, \gamma, \delta & \ \rightarrow \ & \text{vozlišča znotraj elementa od 1 do 12}, \\
-   \varepsilon & \ \rightarrow \ & \text{indeks elementa od 1 do } n, \\
-   p, q, r, s & \ \rightarrow \ & \text{indeks parcialnega odvoda od 0 do 2}
+   i, j & \ \rightarrow \ & \text{vozlišča od 1 do } N \\
+   \varepsilon & \ \rightarrow \ & \text{elementi od 1 do } n, \\
+   \alpha, \beta, \gamma, \delta & \ \rightarrow \ & \text{vozlišča v elementu od 1 do 12}, \\
+   p, q, r, s & \ \rightarrow \ & \text{odvodi: 0 (id)}, 1 \ (\pd_x), \ 2 \ (\pd_y)
 \end{IEEEeqnarray*}
 
 Sprehodi se preko vseh točk in za vsako poišči vse asociirane pare $(i, a)$. Dva para za točke na stranici elementa, štirje pari za točke na ogliščih elementa. Vsota po $k$ v faktorju $v^a_k$ ima $m$ (število spremenljivk) seštevancev. Vsak seštevanec prispeva k vrstici globalne matrike. Seštevanci iz različnih asociiranih parov $(i, a)$ z istimi $k$ prispevajo k isti vrstici globalne matrike.

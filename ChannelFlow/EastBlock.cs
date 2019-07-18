@@ -2,7 +2,7 @@ using System;
 using static System.Math;
 
 using Fluid.Internals.Collections;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
 
 namespace Fluid.ChannelFlow {

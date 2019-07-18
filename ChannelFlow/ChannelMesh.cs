@@ -4,7 +4,7 @@ using System.IO;
 using static System.Math;
 
 using Fluid.Internals.Collections;
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;

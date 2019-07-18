@@ -2,7 +2,7 @@ using System;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Mesh {
+namespace Fluid.Internals.Lsfem {
    /// <summary>Custom boundary trans-finite interpolated (TFI) submesh block. Boundaries appear as virtual functions of a single arc lenght parameter.</summary>
    public abstract class TfiBlock : Block {
       /// <summary>Positions of block's corners.</summary>

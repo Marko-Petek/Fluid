@@ -4,7 +4,7 @@ using static System.Math;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Mesh {
+namespace Fluid.Internals.Lsfem {
    using dbl = Double;
    using Tensor = Tensor<double,DblArithmetic>;
    using Vector = Vector<double,DblArithmetic>;

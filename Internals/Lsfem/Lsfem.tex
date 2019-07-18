@@ -1,0 +1,44 @@
+% !TeX root = ./Lsfem.tex
+\input{../../DocsPreamble.tex}
+
+\fancyhead[L]{Marko Petek \\[0.3cm] }
+\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
+\fancyhead[R]{Maribor,\\ 13.\ VII.\ 2019 \\[0.15cm] }
+\cfoot{\thepage}								      % Footer center = page number.			
+\renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
+\renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in footer
+
+\begin{document}
+   \begin{center}
+      \textbf{\LARGE{Block Structured Mesh}}\\[0.25cm]
+   \end{center}
+
+   \section*{BlockMesh.cs}
+      Two 2nd rank tensors serve as storage for node variable values (node vars):
+      \begin{IEEEeqnarray*}{lcc}
+         \mathbsf{u}_\triangleright \text{ with components } u_\triangleright^{j l} &
+         \textsf{Tensor Uf} &
+         \texttt{free node vars} \ ,
+         \\
+         \mathbsf{u}_\triangleleft \text{ with components } u_\triangleleft^{j l} &
+         \hspace{10mm} \textsf{Tensor Uc} \hspace{10mm} &
+         \texttt{constrained node vars} \ .
+      \end{IEEEeqnarray*}
+      First slot $(j)$ signifies node position, while the second $(l)$ marks a dependent variable. For both tensors the first slot's dimension is $N$ (nodes) while the second slot's dimension is $m$ (vars). The two tensors hold mutually exclusive information - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. 
+      
+      The sum of them thus produces a tensor which holds all values:
+      \begin{IEEEeqnarray*}{lcc}
+         \mathbsf{u}_{\bowtie}
+         =
+         \mathbsf{u}_\triangleright + \mathbsf{u}_\triangleleft &
+         \hspace{10mm} \textsf{Tensor U}\hspace{10mm} &
+          \texttt{all = free + constrained} \ .
+      \end{IEEEeqnarray*}
+      Here \textsf{U} is a method that can access values from both \textsf{Uf} and \textsf{Uc} - it retrieves the value from the correct source. A third 2nd rank tensor stores all forcing vars (right-hand side od \texttt{PDE}): 
+      \begin{IEEEeqnarray*}{lcc}
+         \mathbsf{f}_{\bowtie} &
+         \hspace{10mm} \textsf{Tensor F} \hspace{10mm} &
+         \texttt{forcing vars .}
+      \end{IEEEeqnarray*}.
+
+\end{document}

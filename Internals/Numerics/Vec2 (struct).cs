@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using static System.Math;
 
-using Fluid.Internals.Mesh;
+using Fluid.Internals.Lsfem;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>A 2D vector in Cartesian coordinates.</summary>
