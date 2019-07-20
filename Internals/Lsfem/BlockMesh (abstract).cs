@@ -12,37 +12,37 @@ namespace Fluid.Internals.Lsfem {
    public abstract class BlockMesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int M { get; internal set; }
-      /// <summary>Free node values tensor.</summary>
+      /// <summary>Free node values tensor, 2nd rank.</summary>
       public Tensor Uf { get; internal set; }
-      /// <summary>Constrained node values tensor.</summary>
+      /// <summary>Constrained node values tensor, 2nd rank.</summary>
       public Tensor Uc { get; internal set; }
-      /// <summary>Returns value at desired index regardless of which tensor it resides in.</summary>
-      /// <param name="inxs"></param>
-      public dbl U(params int[] inxs) {
+      /// <summary>Nodes values tensor, 2nd rank. Returns value at desired index regardless of which tensor it resides in.</summary>
+      /// <param name="inxs">A set of indices that extends all the way down to value rank.</param>
+      public double U(params int[] inxs) {
          dbl u = Uf[inxs];
          if(u != 0.0)
             return u;
          else return Uc[inxs];
       }
+      /// <summary>Forcing vars tensor, 2nd rank.</summary>
+      public Tensor F { get; internal set; }
+      /// <summary>Stiffness tensor, 4th rank.  
+      /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
+      public Tensor A { get; internal set; }
+      /// <summary>Tripple overlap integrals.
+      /// ε, φ1, φD1, J1, φ2, φD2, J2.</summary>
+      public Tensor S { get; internal set; }
+      /// <summary>Double overlap integrals.
+      /// ε, φ1, φD1, J1, φ2.</summary>
+      public Tensor T { get; internal set; }
 
+      
 
       // /// <summary>Create a block-structured mesh.</summary>
       public BlockMesh(int nVars) {
          M = nVars;
       }
 
-
-      /// <summary>Create a SparseRow out of Nodes array. Simply flatten list and copy it to SparseRow.</summary>
-      public Vector NodesArrayToSparseRow() {
-         int rowWidth = G.Length * M;
-         var sparseRow = new Vector(rowWidth, rowWidth);
-         int index;
-         for(int i = 0; i < G.Length; ++i) {
-            for(int j = 0; j < M; ++j) {
-               index = 8*i + j;
-               sparseRow[index] = G[i].Vars[j].Val; }}
-         return sparseRow;
-      }
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Pos pos, params int[] vars);
    }

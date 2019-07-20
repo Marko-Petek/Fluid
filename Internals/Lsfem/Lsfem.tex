@@ -13,32 +13,96 @@
       \textbf{\LARGE{Block Structured Mesh}}\\[0.25cm]
    \end{center}
 
-   \section*{BlockMesh.cs}
-      Two 2nd rank tensors serve as storage for node variable values (node vars):
-      \begin{IEEEeqnarray*}{lcc}
-         \mathbsf{u}_\triangleright \text{ with components } u_\triangleright^{j l} &
-         \textsf{Tensor Uf} &
-         \texttt{free node vars} \ ,
-         \\
-         \mathbsf{u}_\triangleleft \text{ with components } u_\triangleleft^{j l} &
-         \hspace{10mm} \textsf{Tensor Uc} \hspace{10mm} &
-         \texttt{constrained node vars} \ .
-      \end{IEEEeqnarray*}
-      First slot $(j)$ signifies node position, while the second $(l)$ marks a dependent variable. For both tensors the first slot's dimension is $N$ (nodes) while the second slot's dimension is $m$ (vars). The two tensors hold mutually exclusive information - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. 
-      
-      The sum of them thus produces a tensor which holds all values:
-      \begin{IEEEeqnarray*}{lcc}
-         \mathbsf{u}_{\bowtie}
-         =
-         \mathbsf{u}_\triangleright + \mathbsf{u}_\triangleleft &
-         \hspace{10mm} \textsf{Tensor U}\hspace{10mm} &
-          \texttt{all = free + constrained} \ .
-      \end{IEEEeqnarray*}
-      Here \textsf{U} is a method that can access values from both \textsf{Uf} and \textsf{Uc} - it retrieves the value from the correct source. A third 2nd rank tensor stores all forcing vars (right-hand side od \texttt{PDE}): 
-      \begin{IEEEeqnarray*}{lcc}
-         \mathbsf{f}_{\bowtie} &
-         \hspace{10mm} \textsf{Tensor F} \hspace{10mm} &
-         \texttt{forcing vars .}
-      \end{IEEEeqnarray*}.
+\section*{BlockMesh.cs}
+   Two 2nd rank tensors serve as storage for node variable values (node vars):
+   \vspace{-5mm}
+   \begin{IEEEeqnarray*}{llll}
+      \hspace{13mm} & \hspace{15mm} & \hspace{30mm} &
+      \\
+      \mathbsf{u}_\triangleright &
+      u_\triangleright^{j l} &
+      \textsf{Tensor Uf} &
+      \texttt{free node vars} \ ,
+      \\
+      \mathbsf{u}_\triangleleft &
+      u_\triangleleft^{j l} &
+      \textsf{Tensor Uc} &
+      \texttt{constrained node vars} \ .
+   \end{IEEEeqnarray*}
+   First slot $(j)$ signifies node position, while the second $(l)$ marks a dependent variable. For both tensors the first slot's dimension is $N$ (nodes) while the second slot's dimension is $m$ (vars). The two tensors hold mutually exclusive information - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. 
+   
+   The sum of them thus produces a tensor which holds all values:
+   \begin{IEEEeqnarray*}{lcc}
+      \mathbsf{u}_{\bowtie}
+      =
+      \mathbsf{u}_\triangleright + \mathbsf{u}_\triangleleft &
+      \hspace{10mm} \textsf{double U}\hspace{10mm} &
+         \texttt{all = free + constrained} \ .
+   \end{IEEEeqnarray*}
+   Here \textsf{U} is a method that can access values from both \textsf{Uf} and \textsf{Uc} - it retrieves the value from the correct source. A third 2nd rank tensor stores all forcing vars (right-hand side od \texttt{PDE}):
+   \vspace{-5mm}
+   \begin{IEEEeqnarray*}{llll}
+      \hspace{20mm} & \hspace{20mm} & \hspace{30mm} &
+      \\
+      \mathbsf{f}_{\bowtie} & f_{\bowtie}^{jl} &
+      \textsf{Tensor F} &
+      \texttt{forcing vars .}
+   \end{IEEEeqnarray*}.
+   The dynamic parameters at a point in time are stored ina rank 4 tensor $\mathbsf{A}$ also known as the stiffness matrix:
+   \vspace{-5mm}
+   \begin{IEEEeqnarray*}{llll}
+      \hspace{20mm} & \hspace{20mm} & \hspace{30mm} &
+      \\
+      \mathbsf{A} &
+      A^{iphl} &
+      \textsf{Tensor A} &
+      \texttt{stiffness matrix .}
+   \end{IEEEeqnarray*}
+   Triple overlap integrals reside in a rank 7 tensor $\mathbsf{S}$, while double overlap integrals reside in a rank 5 tensor $\mathbsf{T}$:
+   \vspace{-5mm}
+   \begin{IEEEeqnarray*}{llll}
+      \hspace{15mm} & \hspace{25mm} & \hspace{25mm} &
+      \\
+      \mathbsf{S} &
+      S_{\varepsilon \beta \alpha p \gamma \delta q} &
+      \textsf{Tensor S} &
+      \texttt{tripple overlap integrals ,}
+      \\
+      \mathbsf{T} &
+      T_{\varepsilon \beta \alpha p \delta} &
+      \textsf{Tensor T} &
+      \texttt{double overlap integrals ,}
+   \end{IEEEeqnarray*}
+   Assembly process:
+   \begin{IEEEeqnarray*}{c}
+      \mkern-80mu
+      \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
+      \sum^n_\varepsilon
+      \mkern-7mu
+      \sum_{\substack{\alpha, \delta \, \ni: \\ (\varepsilon,\alpha) = i \\ (\varepsilon,\delta) = j}}^{12}
+      \mkern-10mu
+      \left(
+      S_{\varepsilon \beta \alpha p \gamma \delta q}
+      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+      A^{(\varepsilon,\gamma) qhl}
+      \mkern1mu
+      u^{(\varepsilon,\delta) l}_\triangleright \right)
+      = \\
+      \sum^N_i v^{i k}_{\triangleright}
+      \sum^n_\varepsilon
+      \mkern-7mu
+      \sum_{\substack{\alpha \, \ni: \\ (\varepsilon,\alpha) = i}}^{12}
+      \mkern-10mu
+      \left(
+      T_{\varepsilon \beta \alpha p \delta}
+      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+      f^{(\varepsilon,\delta) h}_{\bowtie}
+      -
+      S_{\varepsilon \beta \alpha p \gamma \delta q}
+      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
+      A^{(\varepsilon,\gamma) qhl}
+      \mkern1mu
+      u^{(\varepsilon,\delta) l}_\triangleleft \right) \ .
+   \end{IEEEeqnarray*}
 
 \end{document}
