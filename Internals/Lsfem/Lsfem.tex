@@ -15,7 +15,7 @@
 
 \section*{BlockMesh.cs}
    Two 2nd rank tensors serve as storage for node variable values (node vars):
-   \vspace{-5mm}
+   \vspace{-7mm}
    \begin{IEEEeqnarray*}{llll}
       \hspace{13mm} & \hspace{15mm} & \hspace{30mm} &
       \\
@@ -28,10 +28,17 @@
       u_\triangleleft^{j l} &
       \textsf{Tensor Uc} &
       \texttt{constrained node vars} \ .
+      \vspace{-1mm}
    \end{IEEEeqnarray*}
-   First slot $(j)$ signifies node position, while the second $(l)$ marks a dependent variable. For both tensors the first slot's dimension is $N$ (nodes) while the second slot's dimension is $m$ (vars). The two tensors hold mutually exclusive information - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. 
-   
-   The sum of them thus produces a tensor which holds all values:
+   where the slots represent:
+   \vspace{-8mm}
+   \begin{IEEEeqnarray*}{ccl}
+       & \hspace{10mm} &  \\
+      j & \rightarrow & N \texttt{ nodes, } \\
+      l & \rightarrow & m \texttt{ variables. }
+      \vspace{-1mm}
+   \end{IEEEeqnarray*}
+   The two tensors hold mutually exclusive information - if the component $u^{5, 4}$ appears in $\mathbsf{u}_\triangleright$, it cannot appear in $\mathbsf{u}_\triangleleft$ because a variable is either constrained or it isn't. The sum of them thus produces a tensor which holds all values:
    \begin{IEEEeqnarray*}{lcc}
       \mathbsf{u}_{\bowtie}
       =
@@ -39,26 +46,46 @@
       \hspace{10mm} \textsf{double U}\hspace{10mm} &
          \texttt{all = free + constrained} \ .
    \end{IEEEeqnarray*}
-   Here \textsf{U} is a method that can access values from both \textsf{Uf} and \textsf{Uc} - it retrieves the value from the correct source. A third 2nd rank tensor stores all forcing vars (right-hand side od \texttt{PDE}):
-   \vspace{-5mm}
+   Here \textsf{U} is a method that can access values from both \textsf{Uf} and \textsf{Uc} - given an index, it retrieves the value from the correct source. A third 2nd rank tensor stores all forcing vars (right-hand side od \texttt{PDE}):
+   \vspace{-6mm}
    \begin{IEEEeqnarray*}{llll}
       \hspace{20mm} & \hspace{20mm} & \hspace{30mm} &
       \\
       \mathbsf{f}_{\bowtie} & f_{\bowtie}^{jl} &
       \textsf{Tensor F} &
       \texttt{forcing vars .}
-   \end{IEEEeqnarray*}.
-   The dynamic parameters at a point in time are stored ina rank 4 tensor $\mathbsf{A}$ also known as the stiffness matrix:
-   \vspace{-5mm}
+   \end{IEEEeqnarray*}
+   The dynamic parameters (determining the system's evolution in the next step) are stored in a 4th rank tensor $\mathbsf{A}$, also known as the stiffness matrix:
+   \vspace{-6mm}
    \begin{IEEEeqnarray*}{llll}
       \hspace{20mm} & \hspace{20mm} & \hspace{30mm} &
       \\
       \mathbsf{A} &
       A^{iphl} &
       \textsf{Tensor A} &
-      \texttt{stiffness matrix .}
+      \texttt{stiffness matrix ,}
+      \vspace{-1mm}
    \end{IEEEeqnarray*}
-   Triple overlap integrals reside in a rank 7 tensor $\mathbsf{S}$, while double overlap integrals reside in a rank 5 tensor $\mathbsf{T}$:
+   where the slots represent:
+   \vspace{-7mm}
+   \begin{IEEEeqnarray*}{ccl}
+       & \hspace{10mm} &  \\
+      i & \rightarrow & N \texttt{ nodes, } \\
+      p & \rightarrow & 3 \texttt{ partials, } \\
+      h & \rightarrow & m \texttt{ equations, } \\
+      l & \rightarrow & m \texttt{ variables .}
+   \end{IEEEeqnarray*}
+   Dynamics must not depend on element shapes. This is properly accounted for
+   
+   \setlength{\textheight}{193mm}
+   \pagebreak
+   \setlength{\topmargin}{5mm}			% Header Top Margin Height
+   \setlength{\headheight}{0.0cm}
+   \setlength{\headsep}{5mm}			% Header Lower Margin Height	 Footer height
+   \fancyhf{}
+   \fancyfoot[C]{\thepage}
+   
+   with node-to-node influence weights in the form of overlap integrals. Triple overlap integrals reside in a 7th rank tensor $\mathbsf{S}$, while double overlap integrals reside in a 5th rank tensor $\mathbsf{T}$:
    \vspace{-5mm}
    \begin{IEEEeqnarray*}{llll}
       \hspace{15mm} & \hspace{25mm} & \hspace{25mm} &
@@ -69,13 +96,25 @@
       \texttt{tripple overlap integrals ,}
       \\
       \mathbsf{T} &
-      T_{\varepsilon \beta \alpha p \delta} &
+      T_{\varepsilon \beta \alpha p \gamma} &
       \textsf{Tensor T} &
       \texttt{double overlap integrals ,}
    \end{IEEEeqnarray*}
-   Assembly process:
-   \begin{IEEEeqnarray*}{c}
-      \mkern-80mu
+   where the slots represent:
+   \vspace{-7mm}
+   \begin{IEEEeqnarray*}{ccl}
+       & \hspace{10mm} &  \\
+      \varepsilon & \rightarrow & n \texttt{ elements, } \\
+      \beta & \rightarrow & 12 \texttt{ basis funcs of 1st } \mathbsf{A} \, , \\
+      \alpha & \rightarrow & 12 \texttt{ basis funcs of } \mathbsf{v} \, , \\
+      p & \rightarrow & 3 \texttt{ partials of } \mathbsf{v} \, , \\
+      \gamma & \rightarrow & 12 \texttt{ basis funcs of } \mathbsf{u}_{\triangleleft} \texttt{ or } \mathbsf{f} \, , \\
+      \delta & \rightarrow & 12 \texttt{ basis funcs of } \mathbsf{u}_{\triangleright} \, , \\
+      q & \rightarrow & 3 \texttt{ partials of } \mathbsf{u}_{\triangleright} \, .
+   \end{IEEEeqnarray*}
+   In the assembly process we go over each element $\varepsilon$:
+   \begin{IEEEeqnarray}{c}
+      \forall \, v^{ik}_{\triangleright}: \quad
       \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
       \sum^n_\varepsilon
       \mkern-7mu
@@ -94,15 +133,41 @@
       \sum_{\substack{\alpha \, \ni: \\ (\varepsilon,\alpha) = i}}^{12}
       \mkern-10mu
       \left(
-      T_{\varepsilon \beta \alpha p \delta}
+      T_{\varepsilon \beta \alpha p \gamma}
       A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-      f^{(\varepsilon,\delta) h}_{\bowtie}
+      f^{(\varepsilon,\gamma) h}_{\bowtie}
       -
       S_{\varepsilon \beta \alpha p \gamma \delta q}
       A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
       A^{(\varepsilon,\gamma) qhl}
       \mkern1mu
-      u^{(\varepsilon,\delta) l}_\triangleleft \right) \ .
-   \end{IEEEeqnarray*}
+      u^{(\varepsilon,\delta) l}_\triangleleft \right) \IEEEnonumber
+   \end{IEEEeqnarray}
+   into this:
+   \begin{equation*}
+      K_{i k j l} \mkern1mu u^{j l}_\triangleright
+      =
+      F_{i k} \ .
+   \end{equation*}
+
+   The tensor $K_{ikjl}$ is symmetric over indices $i$ and $j$ because the integral between nodes $(i,j)$ must be identical to the integral between nodes $(j,i)$. Therefore, to avoid redundant work, we iterate on each element over node indices $\alpha$ and $\delta$ in the following way:
+
+   \begin{tabular}{c|ccccccccccc}
+      i & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & j & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} \\
+      \hline
+      1  &    &   &   &   &   &   &   &   &   &   & 0 \\
+      \hline
+      2  &    &   &   &   &   &   &   &   &   & 1 & 0 \\
+      \hline
+      3  &    &   &   &   &   &   &   &   & 2 & 1 & 0 \\
+      \hline
+      \vdots&&  &   &   &   &\vdots&   &   &   &   &  \\
+      \hline
+      10 &    & 9 & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
+      \hline
+      11 & 10 & 9 & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0
+   \end{tabular}
+   
+   and add the same value to the pair (i,j) and its symmetric pair (j,i). Then iterate over all repeated indices: (0,0), (1,1), ..., (10,10), (11,11) and add each value only once.
 
 \end{document}
