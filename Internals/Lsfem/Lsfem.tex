@@ -112,7 +112,7 @@
       \delta & \rightarrow & 12 \texttt{ basis funcs of } \mathbsf{u}_{\triangleright} \, , \\
       q & \rightarrow & 3 \texttt{ partials of } \mathbsf{u}_{\triangleright} \, .
    \end{IEEEeqnarray*}
-   In the assembly process we go over each element $\varepsilon$:
+   In the assembly process we go over each element $\varepsilon$. Inside the element :
    \begin{IEEEeqnarray}{c}
       \forall \, v^{ik}_{\triangleright}: \quad
       \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
@@ -150,24 +150,19 @@
       F_{i k} \ .
    \end{equation*}
 
-   The tensor $K_{ikjl}$ is symmetric over indices $i$ and $j$ because the integral between nodes $(i,j)$ must be identical to the integral between nodes $(j,i)$. Therefore, to avoid redundant work, we iterate on each element over node indices $\alpha$ and $\delta$ in the following way:
+   The tensor $K_{ikjl}$ is symmetric over pairs of indices $(i,k)$ and $(j,l)$ because the integral between nodes $(i,j)$, for corresponding partials $(k,l)$, must be identical to the integral between nodes $(j,i)$, for corresponding partials $(l,k)$. Therefore, to avoid redundant work, we iterate on each element over node indices $\alpha$ and $\delta$ in the following way:
 
-   \begin{tabular}{c|ccccccccccc}
-      i & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & j & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} \\
+   \begin{longtable}{c|ccccccccccc}
+      $\alpha$ & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{1.3mm} $\delta$ \hspace{1.3mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} & \hspace{6mm} \\
       \hline
       1  &    &   &   &   &   &   &   &   &   &   & 0 \\
-      \hline
       2  &    &   &   &   &   &   &   &   &   & 1 & 0 \\
-      \hline
       3  &    &   &   &   &   &   &   &   & 2 & 1 & 0 \\
-      \hline
       \vdots&&  &   &   &   &\vdots&   &   &   &   &  \\
-      \hline
       10 &    & 9 & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0 \\
-      \hline
       11 & 10 & 9 & 8 & 7 & 6 & 5 & 4 & 3 & 2 & 1 & 0
-   \end{tabular}
+   \end{longtable}
    
-   and add the same value to the pair (i,j) and its symmetric pair (j,i). Then iterate over all repeated indices: (0,0), (1,1), ..., (10,10), (11,11) and add each value only once.
+   while going through all $3 \times 3$ combinations of derivatives. We add the same value to the pair (i,j) and its symmetric pair (j,i). Then iterate over all repeated indices: (0,0), (1,1), ..., (10,10), (11,11) on the diagonal and add each value for all $3 \times 3$ combinations only once.
 
 \end{document}

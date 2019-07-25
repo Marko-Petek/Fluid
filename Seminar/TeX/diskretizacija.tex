@@ -305,51 +305,52 @@ lahko zapišemo:
    \psi^p = \mathfrak{J}_{pq} \phi^{q} \ .
    \label{eq:refToEmt}
 \end{equation}
-Po vozliščih $(\alpha, \beta, \gamma, \delta \in [1,N])$:
+Po vozliščih $(a, b, c, d \in [1,N])$:
 \begin{equation}
-   \bra{
-      \left(A^{\beta p}_{\phantom{\beta p}jk} \mkern1mu \Psi_\beta \frac{\pd}{\pd x_p}\right)
-      \left(v^\alpha_{\triangleright k} \mkern1mu \Psi_\alpha\right)}
-   \ket{
-      \left(A^{\gamma qjl} \mkern1mu \Psi_\gamma \frac{\pd}{\pd x_q}\right)
-      \left(u^{\delta l}_\triangleright \mkern1mu \Psi_\delta + u^{\delta l}_\triangleleft \mkern1mu \Psi_\delta \right)
+   \braket{
+      \left(A^{b p}_{\mkern14mu hk} \mkern1mu \Psi_b \frac{\pd}{\pd x_p}\right)
+      \left(v^{\mkern1mu i}_{\triangleright \mkern1mu k} \mkern1mu \Psi_i \right)}
+   {
+      \left(A^{c q h l} \mkern1mu \Psi_c \frac{\pd}{\pd x_q}\right)
+      \left(u^{j l}_\triangleright \mkern1mu \Psi_j + u^{j l}_\triangleleft \mkern1mu \Psi_j \right)
       -
-      f^{\gamma j} \mkern1mu \Psi_\gamma }
+      f^{c h} \mkern1mu \Psi_c }
 \end{equation}
-Po elementih $(a,b,c,d) \in [1,12]$, kjer je $n$ število elementov.
+Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število elementov.
 \begin{equation}
-   \sum^n_{i} \bra{
-      \left(A^{bp}_{\phantom{bp}jk} \mkern1mu \psi_b \frac{\pd}{\pd x_p}\right)
-      \left(v^a_{\triangleright k} \mkern1mu \psi_a\right)}
-   \ket{
-      \left(A^{cqjl} \mkern1mu \psi_c \frac{\pd}{\pd x_q}\right)
-      \left(u^{dl}_\triangleright \mkern1mu \psi_d + u^{dl}_\triangleleft \mkern1mu \psi_d \right)
+   \sum^n_{\varepsilon}
+   \braket{
+      \left(A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk} \mkern2mu \psi_{ \varepsilon \beta} \frac{\pd}{\pd x_p}\right) \mkern-5mu
+      \left(v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \mkern2mu \psi_{\varepsilon \alpha}\right)}
+   {
+      \left(A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern2mu \psi_{\varepsilon \gamma} \frac{\pd}{\pd x_q}\right) \mkern-5mu
+      \left(u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta} + u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta} \right)
       -
-      f^{cj} \mkern1mu \psi_c}
+      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h} \mkern1mu \psi_{\varepsilon \gamma}}
 \end{equation}
 Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
 \begin{equation*}
-   \sum^n_i \bra{
-   \left( A^{bp}_{\mkern14mu jk} \psi_b \right)
-   v^a_{\triangleright k} \psi^{\triangleright p}_a \mkern4mu}
-   \ket{
-      \mkern2mu \left(A^{cqjl} \mkern1mu \psi_c \right)
-      \mkern-5mu \left(u^{dl}_\triangleright \mkern1mu \psi^{\triangleright q}_d
-      +
-      u^{dl}_\triangleleft \mkern1mu \psi^{\triangleleft q}_d \right)
+   \sum^n_\varepsilon
+   \braket{
+      \left( A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk} \mkern2mu \psi_{ \varepsilon \beta 0} \right) \mkern-2mu
+      v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \mkern2mu \psi_{\varepsilon \alpha p} \mkern4mu}
+   {
+      \mkern2mu \left( A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern2mu \psi_{\varepsilon \gamma 0} \right) \mkern-5mu 
+      \left( u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta q} + u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta q} \right)
       -
-      f^{cj} \mkern1mu \psi_c}
+      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h} \mkern1mu \psi_\gamma }
 \end{equation*}
 Preuredimo:
 \begin{equation*}
-   \sum^n_i v^a_{\triangleright k} A^{bp}_{\mkern14mu jk} \bra{
-      \psi_{b0}
-      \psi_{ap} \mkern4mu}
-   \ket{
-      \mkern2mu
-      A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleright \psi_{dq}
+   \sum^n_\varepsilon
+   v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \mkern2mu A^{bp}_{\mkern14mu jk}
+   \braket{
+      \psi_{ \varepsilon \beta 0}
+      \psi_{\varepsilon \alpha p} }
+   {
+      \mkern2mu A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \psi_{\varepsilon \gamma 0} \mkern4mu u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta q}
       +
-      A^{cqjl} \psi_{c0} \mkern4mu u^{dl}_\triangleleft \psi_{dq}
+      A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \psi_{\varepsilon \gamma 0} \mkern4mu u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta q}
       -
       f^{cj}_{\bowtie} \psi_{c0}}
 \end{equation*}
