@@ -314,7 +314,7 @@ Po vozliščih $(a, b, c, d \in [1,N])$:
       \left(A^{c q h l} \mkern1mu \Psi_c \frac{\pd}{\pd x_q}\right)
       \left(u^{j l}_\triangleright \mkern1mu \Psi_j + u^{j l}_\triangleleft \mkern1mu \Psi_j \right)
       -
-      f^{c h} \mkern1mu \Psi_c }
+      f^{c h}_{\bowtie} \mkern1mu \Psi_c }
 \end{equation}
 Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število elementov.
 \begin{equation}
@@ -326,7 +326,7 @@ Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število 
       \left(A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern2mu \psi_{\varepsilon \gamma} \frac{\pd}{\pd x_q}\right) \mkern-5mu
       \left(u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta} + u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta} \right)
       -
-      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h} \mkern1mu \psi_{\varepsilon \gamma}}
+      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie} \mkern1mu \psi_{\varepsilon \gamma}}
 \end{equation}
 Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
 \begin{equation*}
@@ -338,38 +338,39 @@ Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklep
       \mkern2mu \left( A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern2mu \psi_{\varepsilon \gamma 0} \right) \mkern-5mu 
       \left( u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta q} + u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta q} \right)
       -
-      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h} \mkern1mu \psi_\gamma }
+      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie} \mkern1mu \psi_\gamma }
 \end{equation*}
 Preuredimo:
 \begin{equation*}
    \sum^n_\varepsilon
-   v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \mkern2mu A^{bp}_{\mkern14mu jk}
+   v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \mkern2mu A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}
    \braket{
-      \psi_{ \varepsilon \beta 0}
-      \psi_{\varepsilon \alpha p} }
+      \psi_{ \varepsilon \beta 0} \psi_{\varepsilon \alpha p} }
    {
-      \mkern2mu A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \psi_{\varepsilon \gamma 0} \mkern4mu u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \psi_{\varepsilon \delta q}
+      \mkern2mu A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}     \psi_{\varepsilon \gamma 0} \mkern2mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright     \psi_{\varepsilon \delta q}
       +
-      A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \psi_{\varepsilon \gamma 0} \mkern4mu u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta q}
+      A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}    \psi_{\varepsilon \gamma 0} \mkern2mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft \psi_{\varepsilon \delta q}
       -
-      f^{cj}_{\bowtie} \psi_{c0}}
+      f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie} \mkern1mu    \psi_{\varepsilon \gamma 0} }
 \end{equation*}
-
+Kar lahko, postavimo izven integrala:
 \begin{equation*}
-   \sum_i v^a_{\triangleright k} \left(
-   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+   \sum^n_\varepsilon   v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \left(
+   \left\langle   \psi_{ \varepsilon \beta 0} \mkern1mu    \psi_{\varepsilon \alpha p} \mkern1mu    \psi_{\varepsilon \gamma 0} \mkern1mu    \psi_{\varepsilon \delta q}   \right\rangle
+   A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern1mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright
    +
-   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+   \left\langle    \psi_{ \varepsilon \beta 0} \mkern1mu    \psi_{\varepsilon \alpha p} \mkern1mu    \psi_{\varepsilon \gamma 0} \mkern1mu    \psi_{\varepsilon \delta q}    \right\rangle
+   A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}    u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft
    -
-   \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   \left\langle \psi_{ \varepsilon \beta 0} \mkern1mu    \psi_{\varepsilon \alpha p} \mkern1mu    \psi_{\varepsilon \gamma 0}    \right\rangle    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie}
    \right)
 \end{equation*}
 Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 \begin{equation}
-   S_{bapcdq} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \psi_{dq} \right\rangle
+   S_{\varepsilon \beta \alpha p \gamma \delta q} = \left\langle   \psi_{ \varepsilon \beta 0} \mkern1mu    \psi_{\varepsilon \alpha p} \mkern1mu    \psi_{\varepsilon \gamma 0} \mkern1mu    \psi_{\varepsilon \delta q}   \right\rangle
 \end{equation}
 \begin{equation}
-   T_{bapc} = \left\langle \psi_{b0} \psi_{ap} \psi_{c0} \right\rangle \ .
+   T_{\varepsilon \beta \alpha p \gamma} = \left\langle \psi_{ \varepsilon \beta 0} \mkern1mu    \psi_{\varepsilon \alpha p} \mkern1mu    \psi_{\varepsilon \gamma 0}    \right\rangle \ .
 \end{equation}
 Tako imamo:
 \begin{equation}
