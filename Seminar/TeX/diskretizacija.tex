@@ -374,37 +374,26 @@ Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 \end{equation}
 Tako imamo:
 \begin{equation}
-   \sum^n_i v^{ak}_{\triangleright} \left(
-   S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleright
+   \sum^n_\varepsilon v^{\mkern 2mu \substack{\varepsilon \\[-0.5mm] \alpha \\[-0.2mm]}}_{\triangleright \mkern5mu k} \left(
+   S_{\varepsilon \beta \alpha p \gamma \delta q}    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern1mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright
    +
-   S_{bapcdq} A^{bp}_{\mkern14mu jk} A^{cqjl} \mkern1mu u^{dl}_\triangleleft
+   S_{\varepsilon \beta \alpha p \gamma \delta q}    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}    u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft
    -
-   T_{bapc} A^{bp}_{\mkern14mu jk} f^{cj}_{\bowtie}
+   T_{\varepsilon \beta \alpha p \gamma}    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie}
    \right) = 0 \ .
 \end{equation}
-\begin{equation*}
-   \sum^n_i v^{(i,a)k}_{\triangleright} \left(
-   S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleright
-   +
-   S_{ibapcdq} A^{(i,b)p}_{\mkern42mu jk} A^{(i,c)qjl} \mkern1mu u^{(i,d)l}_\triangleleft
-   -
-   T_{ibapc} A^{(i,b)p}_{\mkern42mu jk} f^{(i,c)j}_{\bowtie}
-   \right) = 0 \ .
-\end{equation*}
 Sestavitev globalnega tenzorja:
-\begin{equation*}
-   \mkern-80mu
+\begin{equation}
+   \hspace{-10mm}
+   \forall \, v^{ik}_{\triangleright}: \quad
    \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
    \sum^n_\varepsilon
    \mkern-7mu
    \sum_{\substack{\alpha, \delta \, \ni: \\ (\varepsilon,\alpha) = i \\ (\varepsilon,\delta) = j}}^{12}
    \mkern-10mu
    \left(
-   S_{\varepsilon \beta \alpha p \gamma \delta q}
-   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-   A^{(\varepsilon,\gamma) qhl}
-   \mkern1mu
-   u^{(\varepsilon,\delta) l}_\triangleright \right)
+   S_{\varepsilon \beta \alpha p \gamma \delta q} \mkern2mu
+   A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern1mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \right)
    =
    \sum^N_i v^{i k}_{\triangleright}
    \sum^n_\varepsilon
@@ -412,25 +401,12 @@ Sestavitev globalnega tenzorja:
    \sum_{\substack{\alpha \, \ni: \\ (\varepsilon,\alpha) = i}}^{12}
    \mkern-10mu
    \left(
-   T_{\varepsilon \beta \alpha p \delta}
-   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-   f^{(\varepsilon,\delta) h}_{\bowtie}
+   T_{\varepsilon \beta \alpha p \gamma}
+   A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie}
    -
-   S_{\varepsilon \beta \alpha p \gamma \delta q}
-   A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-   A^{(\varepsilon,\gamma) qhl}
-   \mkern1mu
-   u^{(\varepsilon,\delta) l}_\triangleleft \right) \ .
-\end{equation*}
-\begin{equation*}
-   \sum^n_i v^{\alpha k}_{\triangleright} \left(
-   S_{\beta \alpha p \gamma \delta q} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleright \right)
-   =
-   \sum^n_i v^{\alpha k}_{\triangleright} \left(
-   T_{\beta \alpha p \gamma} A^{\beta p}_{\mkern18mu jk} f^{\gamma j}_{\bowtie}
-   -
-   S_{\beta \alpha p \gamma \delta q} A^{\beta p}_{\mkern18mu jk} A^{\gamma qjl} \mkern1mu u^{\delta l}_\triangleleft \right) \ .
-\end{equation*}
+   S_{\varepsilon \beta \alpha p \gamma \delta q}    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}    u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft
+   \right)
+\end{equation}
 \begin{equation*}
    v^{i k}_{\triangleright} \left(
    K_{i k j l} \mkern1mu u^{j l}_\triangleright

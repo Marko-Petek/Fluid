@@ -112,7 +112,7 @@
       \delta & \rightarrow & 12 \texttt{ basis funcs of } \mathbsf{u}_{\triangleright} \, , \\
       q & \rightarrow & 3 \texttt{ partials of } \mathbsf{u}_{\triangleright} \, .
    \end{IEEEeqnarray*}
-   In the assembly process we go over each element $\varepsilon$. Inside the element :
+   In the assembly process we go over each element $\varepsilon$ and inside the element over all free nodes $i$ and $j$. Inside the element:
    \begin{IEEEeqnarray}{c}
       \forall \, v^{ik}_{\triangleright}: \quad
       \sum^N_{i,j} \mkern-2mu v^{i k}_{\triangleright}
@@ -121,11 +121,8 @@
       \sum_{\substack{\alpha, \delta \, \ni: \\ (\varepsilon,\alpha) = i \\ (\varepsilon,\delta) = j}}^{12}
       \mkern-10mu
       \left(
-      S_{\varepsilon \beta \alpha p \gamma \delta q}
-      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-      A^{(\varepsilon,\gamma) qhl}
-      \mkern1mu
-      u^{(\varepsilon,\delta) l}_\triangleright \right)
+      S_{\varepsilon \beta \alpha p \gamma \delta q} \mkern2mu
+      A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl} \mkern1mu     u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleright \right)
       = \\
       \sum^N_i v^{i k}_{\triangleright}
       \sum^n_\varepsilon
@@ -134,14 +131,10 @@
       \mkern-10mu
       \left(
       T_{\varepsilon \beta \alpha p \gamma}
-      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-      f^{(\varepsilon,\gamma) h}_{\bowtie}
+      A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    f^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu h}_{\bowtie}
       -
-      S_{\varepsilon \beta \alpha p \gamma \delta q}
-      A^{(\varepsilon,\beta) p}_{\mkern46mu hk}
-      A^{(\varepsilon,\gamma) qhl}
-      \mkern1mu
-      u^{(\varepsilon,\delta) l}_\triangleleft \right) \IEEEnonumber
+      S_{\varepsilon \beta \alpha p \gamma \delta q}    A^{\substack{\mkern2mu \varepsilon \\[0.15mm] \beta} \mkern2mu p}_{\mkern19mu hk}    A^{\substack{\mkern2mu \varepsilon \\[-0.4mm] \gamma} \mkern2mu qhl}    u^{\substack{\mkern2mu \varepsilon \\[0.2mm] \delta} \mkern2mu l}_\triangleleft
+      \right) \IEEEnonumber
    \end{IEEEeqnarray}
    into this:
    \begin{equation*}
