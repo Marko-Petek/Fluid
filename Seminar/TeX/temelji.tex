@@ -5,9 +5,9 @@ Vse različice \texttt{FEM} vsaj okvirno temeljijo na variacijskem pristopu, kje
 \begin{equation}
 	\hspace{17mm}
 	\boxed{
-		\vphantom{\bigg(} \ I\big[\mathbf{w(x)}\big]\mkern2mu
+		\vphantom{\bigg(} \ I\qty[\mathbf{w(x)}]\mkern2mu
 		=
-		\int_{\Omega} \mkern-4mu F\big(\mathbf{w(x)}\big) \mkern5mu \ud \Omega \ 
+		\int_{\Omega} \mkern-4mu F\qty(\mathbf{w(x)}) \mkern5mu \ud \Omega \ 
 	}
 	\hspace{13mm} \texttt{funkcional poskusne funkcije} \ .
 	\label{eq:GeneralFunctional}
@@ -177,7 +177,8 @@ Celoten izraz transponiramo (zamenjamo vrstni red členov v zunanjem skalarnem p
 \end{equation}
 \begin{equation}
 	\boxed{\
-		\bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern1mu}\ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f} \mkern2mu} \, = \,
+      \bra{\mkern1mu \mathbsf{A} \! \cdot \! \mathbf{v} \mkern1mu}
+      \ket{\mkern2mu \mathbsf{A} \! \cdot \! \mathbf{u} - \mathbf{f} \mkern2mu} \, = \,
 		0 \ , \hspace{5mm} \forall \ket{\mathbf{v}} \vphantom{\bigg{)}} \
 	}
 	\hspace{10mm} \texttt{variacijska izjava LSFEM .}
