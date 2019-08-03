@@ -24,7 +24,10 @@ namespace Fluid.Internals.Lsfem {
             return u;
          else return Uc[inxs];
       }
-      /// <summary>Forcing vars tensor, 2nd rank.</summary>
+
+      /// <summary>Dynamics tensor (stiffness matrix), 4th rank.</summary>
+      public Tensor K { get; internal set; }
+      /// <summary>Forcing tensor, 2nd rank.</summary>
       public Tensor F { get; internal set; }
       /// <summary>Stiffness tensor, 4th rank.  
       /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
@@ -35,7 +38,6 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Double overlap integrals.
       /// ε, φ1, φD1, J1, φ2.</summary>
       public Tensor T { get; internal set; }
-
       
 
       // /// <summary>Create a block-structured mesh.</summary>
