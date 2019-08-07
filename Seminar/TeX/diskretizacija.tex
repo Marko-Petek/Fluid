@@ -409,9 +409,9 @@ Kar lahko, postavimo izven integrala:
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie} )
 \end{equation*}
-Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
+Definiramo tenzorja $\mathbsf{Q}$ (četverni prekrivni integrali) in $\mathbsf{T}$ (trojni prekrivni integrali):
 \begin{equation}
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
    =
    \expval{
       \psi_{ \varepsilon   \alpha p} \mkern1mu
@@ -430,12 +430,12 @@ Definiramo tenzorja $\mathbsf{S}$ in $\mathbsf{T}$:
 Tako imamo:
 \begin{equation}
    \sum^n_\varepsilon v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j}
-   \qty( S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   \qty( Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
    +
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
@@ -456,7 +456,7 @@ Sestavitev globalnega tenzorja:
       (\varepsilon,\gamma) = c \\ (\varepsilon,\delta) = d}}^{12}
    \mkern-10mu
    \qty(
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright )
@@ -471,7 +471,7 @@ Sestavitev globalnega tenzorja:
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft )
@@ -485,7 +485,7 @@ Sestavitev globalnega tenzorja:
       (\varepsilon,\gamma) = c \\ (\varepsilon,\delta) = d}}^{12}
    \mkern-10mu
    \qty(
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} p \mkern2mu r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu  q s i k} ) \mkern3mu }
 \end{equation}
@@ -503,7 +503,7 @@ Sestavitev globalnega tenzorja:
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   S_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft ) \mkern3mu }
@@ -536,7 +536,7 @@ Končno:
 \end{equation}
 Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
-   S_{\varepsilon  \alpha p \beta q \gamma r \delta s}
+   Q_{\varepsilon  \alpha p \beta q \gamma r \delta s}
    =
    \expval{
       ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\alpha i}) \mkern1mu
@@ -556,7 +556,7 @@ Prekrivne integrale integriramo na referenčnem kvadratu:
 \end{equation}
 Zapis, primeren za implementacijo:
 \begin{equation}
-   S_{\varepsilon  \alpha p \beta q \gamma r \delta s}
+   Q_{\varepsilon  \alpha p \beta q \gamma r \delta s}
    =
    \expval{
       ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\alpha i} ) \mkern1mu
