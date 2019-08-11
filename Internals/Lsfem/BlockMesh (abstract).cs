@@ -20,16 +20,22 @@ namespace Fluid.Internals.Lsfem {
       public Tnr Uf { get; internal set; }
       /// <summary>Constrained node values tensor, 2nd rank.</summary>
       public Tnr Uc { get; internal set; }
+      public Vec U(Vec dummy, int inx) {
+         Vec u = Uf[dummy, inx];
+         if(u != null)
+            return u;
+         else return Uc[dummy, inx];
+      }
       /// <summary>Nodes values tensor, 2nd rank. Returns value at desired index regardless of which tensor it resides in.</summary>
       /// <param name="inxs">A set of indices that extends all the way down to value rank.</param>
-      public double U(params int[] inxs) {
+      public dbl U(params int[] inxs) {
          dbl u = Uf[inxs];
          if(u != 0.0)
             return u;
          else return Uc[inxs];
       }
       /// <summary>A list of positions.   (global index) => (x,y)</summary>
-      public My.List<Pos> X { get; internal set; }
+      public My.List<Vec2> X { get; internal set; }
       /// <summary>A mapping from element nodes to global nodes.
       /// (element index, local node index) => global index.</summary>
       public double [][] G { get; internal set; }
@@ -56,7 +62,7 @@ namespace Fluid.Internals.Lsfem {
       public BlockMesh(int nVars) {
          N_m = nVars;
          // TODO: Set up the mesh and boundary conditions.
-         Solver = new ConjGradsSolver();
+         //Solver = new ConjGradsSolver();
       }
       /// <summary>Add nodes from each block to the mesh.</summary>
       protected void AddNodesFromBlocks() {
@@ -64,6 +70,6 @@ namespace Fluid.Internals.Lsfem {
       }
 
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
-      public abstract double[] Solution(in Pos pos, params int[] vars);
+      public abstract double[] Solution(in Vec2 pos, params int[] vars);
    }
 }

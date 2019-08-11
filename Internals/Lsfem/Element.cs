@@ -16,26 +16,27 @@ namespace Fluid.Internals.Lsfem {
    // TODO: Add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
 
    /// <summary>A quadrilateral element.</summary>
-   public class Element {
-      internal static My.List<Pos> Positions;            // TODO: Set this in MeshBlock.
-      internal static Tnr Values;
+   public class Element {        
+      internal static BlockMesh Mesh;              // TODO: Set this in MeshBlock.
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public int[] N { get; }
       /// <summary>Center of mass.</summary>
-      public Pos COM { get; protected set; }
+      public Vec2 COM { get; protected set; }
       //public double
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
-      public ref Pos P(int inx) => ref Positions.E(N[inx]);
+      public ref Vec2 P(int inx) => ref Mesh.X.E(N[inx]);
       /// <summary>A vector of values at specified local node index.</summary>
       /// <param name="inx">Local node index.</param>
-      public Vec V(int inx) => Values[Vec.Ex, N[inx]];
+      public Vec V(int inx) => Mesh.U(Vec.Ex, N[inx]);
 
 
       /// <summary>Create an instance which holds Element's vertex positions.</summary>
       /// <param name="nodes">12 node indices that define an element.</param>
       public Element(params int[] nodes) {
          N = nodes;
+         Vec2 com = Vec2.Sum(P(0), P(3), P(6), P(9));
+         COM = com / 4;                                           // Set center of mass.
          MA = new dbl[2][] {  new dbl[2] {P(9).X, P(3).X},
                               new dbl[2] {P(9).Y, P(3).Y}  };
          MB = new dbl[2][] {  new dbl[2] {P(6).X, P(0).X},
@@ -61,7 +62,7 @@ namespace Fluid.Internals.Lsfem {
 
       /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary>
       /// <param name="posX">Position in terms of global x and y.</param>
-      public Pos Posχ(in Pos posX) {
+      public Vec2 Posχ(in Vec2 posX) {
          dbl a = FuncA(in posX);
          dbl b = FuncB(in posX);
          dbl c = FuncC(in posX);
@@ -87,20 +88,20 @@ namespace Fluid.Internals.Lsfem {
                   η = (-a + Sqrt(b*b + c))/detNALessNB;
                else                                                            // Opposing sides are virtually parallel.
                   η = Simp_η(in posX); }
-         return new Pos(ξ, η);
+         return new Vec2(ξ, η);
       }
-      dbl FuncA(in Pos pos) =>
+      dbl FuncA(in Vec2 pos) =>
          pos.X*MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + NA.Det<dbl,dA>() - NB.Det<dbl,dA>();
 
-      dbl FuncB(in Pos pos) =>
+      dbl FuncB(in Vec2 pos) =>
          pos.X * MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + MC.Det<dbl,dA>() + MD.Det<dbl,dA>();
 
-      dbl FuncC(in Pos pos) =>
+      dbl FuncC(in Vec2 pos) =>
          MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() -
             2*pos.Y*MJ.Tr<dbl,dA>() + MA.Sum<dbl,dA>(MB).Det<dbl,dA>());
       /// <summary>Distance of specified point P to a line going through lower edge.</summary>
       /// <param name="pos">Specified point.</param>
-      dbl DistToLowerEdge(in Pos pos) {
+      dbl DistToLowerEdge(in Vec2 pos) {
          var lowerEdgeVector = new Vec2(in P(0), in P(3));    // Vector from lower left to lower right vertex.
          lowerEdgeVector.Normalize();
          var posVec = new Vec2(in P(0), in pos);            // Choose a point Q on lower edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
@@ -108,7 +109,7 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Distance of specified point P to a line going through left edge.</summary>
       /// <param name="pos">Specified point.</param>
-      dbl DistToLeftEdge(in Pos pos) {
+      dbl DistToLeftEdge(in Vec2 pos) {
          var leftEdgeVec = new Vec2(in P(0), in P(9));     // Vector from lower left to lower right vertex.
          leftEdgeVec.Normalize();
          var posVec = new Vec2(in P(0), in pos);            // Choose a point Q on left edge: we choose LowerLeft vertex. Then take our specified point P and create a vector.
@@ -116,14 +117,14 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Used when horizontal edges are virtually parallel.</summary>
       /// <param name="pos">Position in terms of x and y.</param>
-      dbl Simp_ξ(in Pos pos) {
+      dbl Simp_ξ(in Vec2 pos) {
          dbl wholeStretchDist = DistToLeftEdge(in P(3));       // Distance between parallel edges.
          dbl posDist = DistToLeftEdge(in pos);                       // Distance of pos from left edge.
          return 2.0*(posDist/wholeStretchDist) - 1.0;                      // Transform to [-1,+1] interval.
       }
       /// <summary>Used when vertical edges are virtually parallel.</summary>
       /// <param name="pos">Position in terms of x and y.</param>
-      dbl Simp_η(in Pos pos) {
+      dbl Simp_η(in Vec2 pos) {
          dbl wholeStretchDist = DistToLowerEdge(in P(9));
          dbl posDist = DistToLowerEdge(in pos);
          return 2.0*(posDist/wholeStretchDist) - 1.0;
@@ -131,11 +132,13 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary>
       /// <param name="pos">Position on reference square in terms of (ksi, eta).</param>
       /// <param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
-      public dbl[] Vals(in Pos pos, params int[] varInxs) {
+      internal dbl[] Vals(in Vec2 pos, params int[] varInxs) {
          var vals = new dbl[varInxs.Length];
-         for(int var = 0; var < varInxs.Length; ++var)
+         int varInx;
+         for(int i = 0; i < varInxs.Length; ++i) {
+            varInx = varInxs[i];
             for(int node = 0; node < 12; ++node)
-               vals[var] += V(node)[var] * ϕ[0][node](pos.X, pos.Y);
+               vals[i] += V(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
          return vals;
       }
 

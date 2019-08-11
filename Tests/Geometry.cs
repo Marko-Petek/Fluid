@@ -24,24 +24,24 @@ namespace Fluid.Tests {
       [InlineData(0.0, -0.5)]
       /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void PointInsideQuadrilateral(double x, double y) {
-         var point = new Pos(x,y);
-         var vertices = new Pos[4] {                 // Define vertices of  quadrilateral.
-            new Pos(-1.0, -1.0),
-            new Pos(1.0, -1.0),
-            new Pos(2.0, 1.0),
-            new Pos(-2.0, 1.0) };                             
+         var point = new Vec2(x,y);
+         var vertices = new Vec2[4] {                 // Define vertices of  quadrilateral.
+            new Vec2(-1.0, -1.0),
+            new Vec2(1.0, -1.0),
+            new Vec2(2.0, 1.0),
+            new Vec2(-2.0, 1.0) };                             
          Assert.True(point.IsInsidePolygon(vertices));
       }
 
       [InlineData(-2.0, 0.0)] [InlineData(2.0, 0.0)] [InlineData(0.0, 1.5)] [InlineData(0.0, -1.5)]
       /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void PointOutsideQuadrilateral(double x, double y) {
-         var point = new Pos(x,y);
-         var vertices = new Pos[4] {                 // Define vertices of  quadrilateral.
-            new Pos(-1.0, -1.0),
-            new Pos(1.0, -1.0),
-            new Pos(2.0, 1.0),
-            new Pos(-2.0, 1.0) };     
+         var point = new Vec2(x,y);
+         var vertices = new Vec2[4] {                 // Define vertices of  quadrilateral.
+            new Vec2(-1.0, -1.0),
+            new Vec2(1.0, -1.0),
+            new Vec2(2.0, 1.0),
+            new Vec2(-2.0, 1.0) };     
          Assert.True(!point.IsInsidePolygon(vertices));
       }
 
@@ -49,24 +49,24 @@ namespace Fluid.Tests {
       [InlineData(2.5, 0.5)] [InlineData(3.1, 0.66)] [InlineData(1.00000001, 0.9999999)] [InlineData(2, 0.1)]
       /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void TestPointInsidePolygon1(double x, double y) {
-         var point = new Pos(x,y);
-         var vertices = new Pos[4] {
-            new Pos(1,0),
-            new Pos(4,0),
-            new Pos(4,1),
-            new Pos(1,1) };
+         var point = new Vec2(x,y);
+         var vertices = new Vec2[4] {
+            new Vec2(1,0),
+            new Vec2(4,0),
+            new Vec2(4,1),
+            new Vec2(1,1) };
          Assert.True(point.IsInsidePolygon(vertices));
       }
       // TODO: Test IsInsidePolygon method more.
       [InlineData(0.35, 0.0)]
       /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
       [Theory] public void TestPointOutsidePolygon1(double x, double y) {
-         var point = new Pos(x,y);
-         var vertices = new Pos[4] {
-            new Pos(1,0),
-            new Pos(4,0),
-            new Pos(4,1),
-            new Pos(1,1) };
+         var point = new Vec2(x,y);
+         var vertices = new Vec2[4] {
+            new Vec2(1,0),
+            new Vec2(4,0),
+            new Vec2(4,1),
+            new Vec2(1,1) };
          Assert.False(point.IsInsidePolygon(vertices));
       }
 
