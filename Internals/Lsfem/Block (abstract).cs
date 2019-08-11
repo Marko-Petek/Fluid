@@ -103,46 +103,6 @@ namespace Fluid.Internals.Lsfem {
       protected abstract void CreateNodes();
       /// <summary>Set values of constrained nodes and set their Constrainedness property to true. Returns number of constrained nodes.</summary>
       protected abstract int ApplyConstraints();
-      /// <summary>Add whole block's contribution to global stiffness matrix.</summary><param name="A">Gloabal stiffness matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
-      public abstract void AddContribsToSfsMatrix(Tensor A, dbl dt, dbl ni);
-      public abstract void AddContribsToFcgVector(Vector b, dbl dt, dbl ni);
-      /// <summary>Creates an 8 x 8 matrix belonging to to a single Node vector.</summary><param name="node">Node whose values of which will be used inside operator matrix.</param><param name="dt">Time step.</param><param name="ni">Viscosity coefficient.</param>
-      protected dbl[][] NodeOperatorMat0(MeshNode node, dbl dt) {
-         dbl[][] A = new dbl[8][] {
-            new dbl[8] { 1.0/dt + node.Vars[2].Val, node.Vars[3].Val, node.Vars[0].Val, node.Vars[1].Val, 0, 0, 1, 0 },
-            new dbl[8] { node.Vars[4].Val, 1.0/dt - node.Vars[2].Val, -node.Vars[1].Val, 0, node.Vars[0].Val, 0, 0, 1 },
-            new dbl[8] { 0, 0, 1, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 1, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 1, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 1 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 } };
-         return A;
-      }
-      protected dbl[][] NodeOperatorMat1(dbl ni) {
-         dbl[][] A = new dbl[8][] {
-            new dbl[8] { 0, 0, -ni, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, -ni, 0, 0, 0 },
-            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, -1, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, -1 } };
-         return A;
-      }
-      protected dbl[][] NodeOperatorMat2(dbl ni) {
-         dbl[][] A = new dbl[8][] {
-            new dbl[8] { 0, 0, 0, -ni, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, ni, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { -1, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, -1, 0, 0 },
-            new dbl[8] { 0, 0, 0, 0, 0, 0, 1, 0 } };
-         return A;
-      }
       /// <summary>Find solution value of specified variables at specified point.</summary>
       /// <param name="x">X coordinate.</param>
       /// <param name="y">Y coordinate.</param>

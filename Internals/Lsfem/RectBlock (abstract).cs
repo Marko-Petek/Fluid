@@ -6,7 +6,6 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
    using dbl = Double;
-   using MN = MeshNode;
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>
    public abstract class RectBlock : Block {
       /// <summary>Lower left corner coordinates.</summary>
@@ -47,7 +46,7 @@ namespace Fluid.Internals.Lsfem {
       protected override void CreateNodes() {
          dbl yTwoThirdsAbove, yThirdAbove, y, x, xThirdRight, xTwoThirdsRight;
          _Nodes = new MN[NRows + 1][][];                                                  // 60 node rows +1 for top row of nodes
-         int nVars = MainMesh.M;
+         int nVars = MainMesh.N_m;
          for(int row = 0; row < NRows; ++row) {                                                 // Move vertically.
             _Nodes[row] = new MN[NCols + 1][];
             y = _LL.Y + row * RowHeight;

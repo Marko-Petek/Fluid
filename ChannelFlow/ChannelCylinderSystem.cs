@@ -9,8 +9,8 @@ using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
    using dbl = Double;
-   using Tensor = Tensor<double,DblArithmetic>;
-   using Vector = Vector<double,DblArithmetic>;
+   using Tnr = Tensor<double,DblArithmetic>;
+   using Vec = Vector<double,DblArithmetic>;
    using TensorInt = Tensor<int,IntArithmetic>;
    /// <summary>Sets up a linear system based on our input data and solves it.</summary>
    public class ChannelCylinderSystem {
@@ -21,7 +21,7 @@ namespace Fluid.ChannelFlow {
       /// <summary>Peak velocity at inlet (mid point across). Velocity profile at inlet is parabolic.</summary>
       public dbl PeakInletVelocity { get; protected set; }
       /// <summary>Solution represents a change of values from prvious time to new time.</summary>
-      public Vector SolVec { get; protected set; }
+      public Vec SolVec { get; protected set; }
       /// <summary>Holds positions of nodes.</summary>
       ChannelMesh Mesh { get; }
       /// <summary>Channel width.</summary>
