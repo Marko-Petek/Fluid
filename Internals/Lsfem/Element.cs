@@ -19,24 +19,19 @@ namespace Fluid.Internals.Lsfem {
    public class Element {        
       internal static BlockMesh Mesh;              // TODO: Set this in MeshBlock.
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
-      public int[] N { get; }
-      /// <summary>Center of mass.</summary>
-      public Vec2 COM { get; protected set; }
-      //public double
+      public int[] T { get; }
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
-      public ref Vec2 P(int inx) => ref Mesh.X.E(N[inx]);
+      public ref Vec2 P(int inx) => ref Mesh.P.E(T[inx]);
       /// <summary>A vector of values at specified local node index.</summary>
       /// <param name="inx">Local node index.</param>
-      public Vec V(int inx) => Mesh.U(Vec.Ex, N[inx]);
+      public Vec V(int inx) => Mesh.U(Vec.Ex, T[inx]);
 
 
       /// <summary>Create an instance which holds Element's vertex positions.</summary>
       /// <param name="nodes">12 node indices that define an element.</param>
       public Element(params int[] nodes) {
-         N = nodes;
-         Vec2 com = Vec2.Sum(P(0), P(3), P(6), P(9));
-         COM = com / 4;                                           // Set center of mass.
+         T = nodes;
          MA = new dbl[2][] {  new dbl[2] {P(9).X, P(3).X},
                               new dbl[2] {P(9).Y, P(3).Y}  };
          MB = new dbl[2][] {  new dbl[2] {P(6).X, P(0).X},
@@ -59,6 +54,9 @@ namespace Fluid.Internals.Lsfem {
                               new dbl[2] {P(0).Y, P(3).Y}  };
       }
       
+      /// <summary>Calculate the center of element's mass.</summary>
+      public Vec2 CenterOfMass() =>
+         Vec2.Sum(P(0), P(3), P(6), P(9)) / 4;
 
       /// <summary>Calculate ksi and eta coordinates inside element using inverse transformations R and T.</summary>
       /// <param name="posX">Position in terms of global x and y.</param>

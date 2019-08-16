@@ -9,11 +9,11 @@ namespace Fluid.Internals.Lsfem {
    /// <summary>Able to create a rectangular submesh from provided border Nodes.</summary>
    public abstract class RectBlock : Block {
       /// <summary>Lower left corner coordinates.</summary>
-      Pos _LL;
+      Vec2 _LL;
       /// <summary>Upper right corner coordinates.</summary>
-      Pos _UR;
+      Vec2 _UR;
       /// <summary>MeshBlock corner positions.</summary>
-      Pos[] _Verts;
+      Vec2[] _Verts;
       /// <summary>Rectangle's width.</summary>
       dbl Width { get; }
       /// <summary>Rectangle's height.</summary>
@@ -28,13 +28,13 @@ namespace Fluid.Internals.Lsfem {
       public RectBlock(BlockMesh mainMesh,
          dbl llx, dbl lly, dbl urx, dbl ury, int nRows, int nCols)
          : base(mainMesh) {
-            _LL = new Pos(llx, lly);
-            _UR = new Pos(urx, ury);
-            _Verts = new Pos[4] {
+            _LL = new Vec2(llx, lly);
+            _UR = new Vec2(urx, ury);
+            _Verts = new Vec2[4] {
                _LL,
-               new Pos(_UR.X, _LL.Y),
+               new Vec2(_UR.X, _LL.Y),
                _UR,
-               new Pos(_LL.X, _UR.Y) };
+               new Vec2(_LL.X, _UR.Y) };
             Height = ury - lly;
             Width = urx - llx;
             NRows = nRows;
@@ -43,7 +43,7 @@ namespace Fluid.Internals.Lsfem {
             ColWidth = Width / NCols;
       }
 
-      protected override void CreateNodes() {
+      protected override void CreateNodesAndElements() {
          dbl yTwoThirdsAbove, yThirdAbove, y, x, xThirdRight, xTwoThirdsRight;
          _Nodes = new MN[NRows + 1][][];                                                  // 60 node rows +1 for top row of nodes
          int nVars = MainMesh.N_m;
@@ -98,6 +98,6 @@ namespace Fluid.Internals.Lsfem {
          return result;
       }
       /// <summary>Determine whether a point is inside this Rectangle.</summary><param name="pos">Point's position.</param>
-      public override bool IsPointInside(in Pos pos) => pos.IsInsidePolygon(_Verts);
+      public override bool IsPointInside(in Vec2 pos) => pos.IsInsidePolygon(_Verts);
    }
 }

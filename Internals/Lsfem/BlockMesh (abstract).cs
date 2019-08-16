@@ -5,6 +5,8 @@ using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using Fluid.Internals.Numerics;
 
+using Supercluster.KDTree;
+
 namespace Fluid.Internals.Lsfem {
    using dbl = Double;
    using dA = DblArithmetic;
@@ -12,6 +14,8 @@ namespace Fluid.Internals.Lsfem {
    using Tnr = Tensor<double, DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
    public abstract class BlockMesh {
+      /// <summary>Access to global nodes list.</summary>
+      public static BlockMesh MainMesh { get; protected set; }
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int N_m { get; internal set; }
       /// <summary>Dynamics tensor (stiffness matrix), 4th rank.</summary>
@@ -35,7 +39,7 @@ namespace Fluid.Internals.Lsfem {
          else return Uc[inxs];
       }
       /// <summary>A list of positions.   (global index) => (x,y)</summary>
-      public My.List<Vec2> X { get; internal set; }
+      public My.List<Vec2> P { get; internal set; }
       /// <summary>A mapping from element nodes to global nodes.
       /// (element index, local node index) => global index.</summary>
       public double [][] G { get; internal set; }
@@ -54,13 +58,15 @@ namespace Fluid.Internals.Lsfem {
       protected ConjGradsSolver Solver { get; }
 
       protected List<Block> Blocks { get; set; }
+      protected My.List<Element> Elements { get; set; }
       /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
-      protected List<int[]> Elements { get; }
+      protected KDTree<double,Element> ElementTree { get; }
       
 
       // /// <summary>Create a block-structured mesh.</summary>
       public BlockMesh(int nVars) {
          N_m = nVars;
+         ElementTree = new KDTree<dbl,Element>(2,)
          // TODO: Set up the mesh and boundary conditions.
          //Solver = new ConjGradsSolver();
       }
@@ -68,6 +74,8 @@ namespace Fluid.Internals.Lsfem {
       protected void AddNodesFromBlocks() {
 
       }
+
+
 
       /// <summary>Find solution value of specified variables at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Vec2 pos, params int[] vars);
