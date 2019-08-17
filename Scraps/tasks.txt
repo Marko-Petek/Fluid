@@ -1,1 +1,0 @@
-"${workspaceFolder}/ChannelFlow/ChannelFlow.csproj",

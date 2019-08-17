@@ -5,7 +5,6 @@ using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
-// TODO: Write tests for constructors.
 namespace Fluid.Internals.Collections {
    /// <summary>Rank 2 tensor holding rank 1 tensors sparsly. Does not posess arithmetic operations.</summary>
    /// <typeparam name="τ">Type of values inside rank 1 tensor.</typeparam>

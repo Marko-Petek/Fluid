@@ -58,7 +58,7 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
 
-// TODO: Maybe. Create derived EmptyTensor and override its methods properly. This is to avoid reliance on null.
+
 
 namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;

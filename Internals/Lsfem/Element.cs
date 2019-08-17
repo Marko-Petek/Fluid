@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using static System.Math;
-
 using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using Fluid.Internals.Numerics;

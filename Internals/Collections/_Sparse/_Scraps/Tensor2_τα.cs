@@ -5,7 +5,6 @@ using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
-// TODO: Write tests for constructors.
 namespace Fluid.Internals.Collections {
    public class Tensor2<τ,α> : Tensor2<τ>,
       IEquatable<Tensor2<τ,α>>                                                        // So we can compare two SparseMats via Equals method.

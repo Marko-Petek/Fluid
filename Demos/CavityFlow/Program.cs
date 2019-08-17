@@ -12,7 +12,7 @@ namespace CavityFlow {
          system.SolveNextAndAddToNodeArray();
          TB.Reporter.Write("Writing solution to file.");
          TB.FileWriter.SetDirAndFile("ChannelFlow/Results", "solution", ".txt");
-         //TB.FileWriter.Write<SCG.IEnumerable<SCG.KeyValuePair<int,double>>>(system.SolVec); // TODO Write IO for vectors.
+         //TB.FileWriter.Write<SCG.IEnumerable<SCG.KeyValuePair<int,double>>>(system.SolVec);
       }
    }
 }
