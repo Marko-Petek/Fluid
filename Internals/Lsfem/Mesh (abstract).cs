@@ -13,9 +13,9 @@ namespace Fluid.Internals.Lsfem {
    using Vec = Vector<double,DblArithmetic>;
    using Tnr = Tensor<double, DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
-   public abstract class BlockMesh {
+   public abstract class Mesh {
       /// <summary>Access to global nodes list.</summary>
-      public static BlockMesh MainMesh { get; protected set; }
+      public static Mesh MainMesh { get; protected set; }
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int N_m { get; internal set; }
       /// <summary>Dynamics tensor (stiffness matrix), 4th rank.</summary>
@@ -40,9 +40,13 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>A list of positions.   (global index) => (x,y)</summary>
       public My.List<Vec2> P { get; internal set; }
-      /// <summary>A mapping from element nodes to global nodes.
-      /// (element index, local node index) => global index.</summary>
-      public double [][] G { get; internal set; }
+
+
+      // /// <summary>A mapping from element nodes to global nodes.
+      // /// (element index, local node index) => global index.</summary>
+      // public double [][] G { get; internal set; }
+
+
       /// <summary>Forcing tensor, 2nd rank.</summary>
       public Tnr F { get; internal set; }
       /// <summary>Stiffness tensor, 4th rank.
@@ -57,14 +61,15 @@ namespace Fluid.Internals.Lsfem {
 
       protected ConjGradsSolver Solver { get; }
 
-      protected List<Block> Blocks { get; set; }
+      
+      /// <summary>A list of elements whose internal array (after trimming excess) will be used to populate the ElementTree.</summary>
       protected My.List<Element> Elements { get; set; }
       /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
       protected KDTree<double,Element> ElementTree { get; }
       
 
       // /// <summary>Create a block-structured mesh.</summary>
-      public BlockMesh(int nVars) {
+      public Mesh(int nVars) {
          N_m = nVars;
          ElementTree = new KDTree<dbl,Element>(2,)
          // TODO: Set up the mesh and boundary conditions.

@@ -14,10 +14,11 @@ namespace Fluid.Internals.Lsfem {
    using Tnr = Tensor<double,DblArithmetic>;
    using Vec = Vector<double,DblArithmetic>;
    // TODO: Add Jacobians storage. Add ab array of elements to each mesh block and also to main mesh.
+   // TODO: Implement abstract J(stdInx,p,q) and J(cmtInx,p,q) methods that return Jacobians for each element.
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {        
-      internal static BlockMesh Mesh;              // TODO: Set this in MeshBlock.
+      internal static Mesh Mesh;              // TODO: Set this in Simulation.
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public int[] T { get; }
       // Matrices to compute inverse transformation of specified element.
@@ -140,10 +141,8 @@ namespace Fluid.Internals.Lsfem {
          return vals;
       }
 
-      //public static 
-
-      /// <summary>
-      /// Integrand belonging to integral in first part of final variational statement.</summary><param name="ξ">Horizontal coordinate on reference square (from -1 to 1).</param><param name="η">Vertical coordinate on reference square (from -1 to 1).</param><param name="b">Index of first basis function.</param><param name="c">Index of second basis function.</param><param name="p">First index of first Jacobian.</param><param name="a">Index of third basis function.</param><param name="q">First index of second Jacobian.</param><param name="d">Index of fourth basis function.</param>
+      // /// <summary>
+      // /// Integrand belonging to integral in first part of final variational statement.</summary><param name="ξ">Horizontal coordinate on reference square (from -1 to 1).</param><param name="η">Vertical coordinate on reference square (from -1 to 1).</param><param name="b">Index of first basis function.</param><param name="c">Index of second basis function.</param><param name="p">First index of first Jacobian.</param><param name="a">Index of third basis function.</param><param name="q">First index of second Jacobian.</param><param name="d">Index of fourth basis function.</param>
       // public static double I1(double ξ, double η, int b, int c, int p, int a, int q, int d) {
             
       // }  // TODO: Implement I1.
