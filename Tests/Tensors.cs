@@ -17,7 +17,7 @@ namespace Fluid.Tests {
    using VectorInt = Vector<int,IntArithmetic>;
    using IA = IntArithmetic;
    
-   public partial class Thread3 {      //TODO: Log timing of methods for a large number of operations and save results.
+   public partial class Thread3 {
       static Thread3() {
          TB.EntryPointSetup("Starting Thread3 tests.");
       }

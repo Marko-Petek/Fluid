@@ -2,7 +2,7 @@ using System;
 
 namespace Fluid.Internals.Numerics 
 {
-    // TODO: Build an adaptive evaluator that samples functions based on local slope.
+    
     /// <summary>Evaluates (multivariate) scalar functions with adaptive sampling density (based on local slope).</summary>
    //  public class FunctionEvaluator
    //  {

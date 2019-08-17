@@ -1,2 +1,4 @@
 Less important TODOs:
 1)  Tensor: Create derived EmptyTensor and override its methods properly. This is to avoid reliance on null.
+2)  Numerics.FuncEvaluator: Build an adaptive evaluator that samples functions based on local slope.
+3)  Tensor tests: Log timing of methods for a large number of operations and save results.

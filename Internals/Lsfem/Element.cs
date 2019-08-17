@@ -17,7 +17,7 @@ namespace Fluid.Internals.Lsfem {
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {        
-      internal static Mesh Mesh;              // TODO: Set this in Simulation.
+      internal static Mesh Mesh;              // TODO: Set static Mesh field on Element in Simulation class.
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public int[] T { get; }
       // Matrices to compute inverse transformation of specified element.

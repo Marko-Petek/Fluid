@@ -21,6 +21,10 @@ namespace Fluid.Internals.Lsfem {
       public int NRows { get; protected set; }
       /// <summary>Number of columns of elements.</summary>
       public int NCols { get; protected set; }
+      /// <summary>Create a position inside the block that corresponds to an intersection of two (curvilinear) coordinate lines: a "vertical" one going through the bottom edge at width-wise parameter value tW and a "horizontal" one going through the left edge at height-wise parameter value tH</summary>
+      /// <param name="tW">Width-wise parameter value.</param>
+      /// <param name="tH">Height-wise parameter value.</param>
+      public abstract Vec2 CreatePos(double tW, double tH);
       
 
       /// <summary>Create a block.</summary>
