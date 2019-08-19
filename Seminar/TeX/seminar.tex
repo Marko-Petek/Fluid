@@ -1,0 +1,28 @@
+% !TeX root = ./seminar.tex
+\input{../../Tex/SeminarPreamble.tex}
+
+\usepackage[									% BibLaTex/Biber bibliography.
+	backend=biber,
+	style=ieee]{biblatex}
+\addbibresource{../../Tex/bibliography.bib}
+
+\fancyhead[L]{
+	\large{Marko Petek} \\[0.3cm]
+}
+\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
+\fancyhead[R]{									% Right header = Place and date.
+	\large{Maribor, 19.\ I.\ 2019} \\[0.3cm]
+}
+\cfoot{\thepage}								% Footer center = page number.			
+\renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
+\renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in footer
+
+\begin{document}
+	\input{uvod.tex}
+	\input{podlaga.tex}
+	\input{temelji.tex}
+	\input{diskretizacija.tex}
+	\appendix
+	\printbibliography
+\end{document}
+%     

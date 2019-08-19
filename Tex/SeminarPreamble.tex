@@ -1,4 +1,3 @@
-% !TeX root = ./preamble.tex
 \documentclass[11pt,a4paper,notitlepage]{article}
 
 \usepackage{amsmath}							% American Mathematical Society package.
@@ -8,10 +7,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[slovene]{babel}
 \usepackage[style=german]{csquotes}
-\usepackage[									% BibLaTex/Biber bibliography.
-	backend=biber,
-	style=ieee]{biblatex}
-\addbibresource{preamble.bib}
 \usepackage{graphicx}							% Define font colors, page colors, boxes with background color, rotate text in a box, scale text vertically and horizontally, put graphics in a box.
 \usepackage{verbatim}							% Multiline comments.
 \usepackage{setspace}							% Adjust line spacing.
@@ -78,23 +73,3 @@
 \setlength{\textwidth}{17.0cm}
 \setlength{\marginparsep}{0.0cm}
 \setlength{\marginparwidth}{0.0cm}				% Width of "side notes margin."
-
-\fancyhead[L]{
-	\large{Marko Petek} \\[0.3cm]
-}
-\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
-\fancyhead[R]{									% Right header = Place and date.
-	\large{Maribor, 19.\ I.\ 2019} \\[0.3cm]
-}
-\cfoot{\thepage}								% Footer center = page number.			
-\renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
-\renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in footer
-
-\begin{document}
-	\input{uvod.tex}
-	\input{podlaga.tex}
-	\input{temelji.tex}
-	\input{diskretizacija.tex}
-	\appendix
-	\printbibliography
-\end{document}
