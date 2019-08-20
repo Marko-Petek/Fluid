@@ -3,23 +3,74 @@
 
 \fancyhead[L]{Marko Petek \\[0.3cm] }
 \fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
-\fancyhead[R]{Maribor,\\ 13.\ VII.\ 2019 \\[0.15cm] }
+\fancyhead[R]{Maribor,\\ 20$^\text{th}$\ August\ 2019 \\[0.15cm] }
 \cfoot{\thepage}								      % Footer center = page number.			
 \renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
 \renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in footer
 
 \begin{document}
+   \lstset{language=[Sharp]C}
    \begin{center}
-      \textbf{\LARGE{Block Structured Mesh}}\\[0.25cm]
+      \textbf{\LARGE{\textbsf{Fluid.Internals.Lsfem}}}\\[0.25cm]
    \end{center}
 
-\section*{Simulation.cs}
+\section*{\textbsf{Block.cs}}
+The whole purpose of a \textbsf{Block} is to provide a means to create nodes inside it by specifying two parameters on its edges: \textsf{tW} and \textsf{tH}.
 
-\begin{IEEEeqnarray*}{lll}
-   \textsf{UsageExample}  \hspace{13mm}&  \textsf{InCodeDefinition}   \hspace{13mm}&  \texttt{Description}
-\end{IEEEeqnarray*}
+\begin{center}
+   \begin{tabular}{ll}
+      \textbsf{Vec2} \textsf{CreatePos}(\textsf{tW, tH})  &  \hspace{4mm} \texttt{position vector} \\
 
-\section*{BlockMesh.cs}
+      \textbsf{double} \textsf{tW}  &  \hspace{4mm} \texttt{parameter along lower edge} \\
+
+      \textbsf{double} \textsf{tH}  &  \hspace{4mm} \texttt{parameter along left edge}
+   \end{tabular}
+\end{center}
+
+\section*{\textbsf{PseudoElement.cs}}
+A grid and a sequence of \textbsf{PseudoElements}, a 2D array and a 1D array respectively, called \textsf{Patches} and \textsf{Joints}, are created for the purpose of transfering nodes to \textbsf{Mesh} and later creating \textbsf{Elements} on it. When the nodes are transfered to \textbsf{Mesh}, each node inside the \textbsf{PseudoElement} is mapped via index to a node on the \textbsf{Mesh}. Later, when \textbsf{Elements} are created on the \textbsf{Mesh}, \textsf{Patches} and \textsf{Joints} are used to ease the process of mapping nodes on \textbsf{Elements} to nodes on \textbsf{Mesh}.
+
+\begin{center}
+   \begin{tabular}{lll}
+      \textbsf{int[]}   &   \textsf{LInx}   &    \texttt{local indices}\\
+
+      \textbsf{int[]}   &   \textsf{GInx}\hspace{4mm}   &   \texttt{global indices} \\
+
+      \textbsf{Vec2}\hspace{4mm}   &   \textsf{Pos}   &   \texttt{positions}
+   \end{tabular}
+\end{center}
+
+\section*{\textbsf{Simulation.cs}}
+In \textbsf{Simulation} the manual work of stitching together different blocks is delegated to the user. First, the user must create \textsf{Patches} and \textsf{Joints} which are disjoint sets of positions. In the \textsf{Patches} property the first key specifies a \textsf{Patch} which is a grid of pseudo-elements. Therefore, the next two indices specify the row and column inside this grid where the pseudo-element lies.
+
+\begin{center}
+   \begin{tabular}{lll}
+      \textbsf{Dict<str,PseudoEmt[][]>}   &   \textsf{Patches}   &   \hspace{4mm} \texttt{non-shared nodes} \\
+
+      \textbsf{Dict<str,PseudoEmt[]>}   &   \textsf{Joints}   &   \hspace{4mm} \texttt{shared nodes}
+   \end{tabular}
+\end{center}
+
+Examples:
+
+\setlength{\textheight}{193mm}
+   \pagebreak
+   \setlength{\topmargin}{5mm}			% Header Top Margin Height
+   \setlength{\headheight}{0.0cm}
+   \setlength{\headsep}{5mm}			% Header Lower Margin Height	 Footer height
+   \fancyhf{}
+   \fancyfoot[C]{\thepage}
+
+\begin{center}
+   \begin{tabular}{ll}
+      \textsf{Patches["North"][3][2].Pos.X}   &\hspace{3mm} 
+      \textsf{Joints["NorthToEast"][22][2].GInx}
+   \end{tabular}
+\end{center}
+
+The user must first simultaneously create each \textbsf{PseudoElement} and put node positions in it, using the \textbsf{Block}'s node positioning method, and at the same time assign local indices. Then, he must create nodes on \textbsf{Mesh}, assigning global indices on \textbsf{PseudoElements}. Finally, he creates \textbsf{Elements} by mapping local indices to global indices.
+
+\section*{\textbsf{Mesh.cs}}
    Two 2nd rank tensors serve as storage for node variable values (node vars):
    \vspace{-7mm}
    \begin{IEEEeqnarray*}{llll}
@@ -82,15 +133,6 @@
       l & \rightarrow & m \texttt{ variables .}
    \end{IEEEeqnarray*}
    Dynamics must not depend on element shapes. This is properly accounted for
-   
-   \setlength{\textheight}{193mm}
-   \pagebreak
-   \setlength{\topmargin}{5mm}			% Header Top Margin Height
-   \setlength{\headheight}{0.0cm}
-   \setlength{\headsep}{5mm}			% Header Lower Margin Height	 Footer height
-   \fancyhf{}
-   \fancyfoot[C]{\thepage}
-   
    with node-to-node influence weights in the form of overlap integrals. Triple overlap integrals reside in a 7th rank tensor $\mathbsf{S}$, while double overlap integrals reside in a 5th rank tensor $\mathbsf{T}$:
    \vspace{-5mm}
    \begin{IEEEeqnarray*}{llll}
