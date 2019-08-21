@@ -13,7 +13,7 @@ namespace Fluid.Internals.Lsfem {
    using Vec = Vector<double,DblArithmetic>;
    using Tnr = Tensor<double, DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
-   public abstract class Mesh {
+   public class Mesh {
       /// <summary>Number of independent variables (= number of equations).</summary>
       public int N_m { get; internal set; }
       /// <summary>Dynamics tensor (stiffness matrix), 4th rank.</summary>
@@ -61,7 +61,7 @@ namespace Fluid.Internals.Lsfem {
 
       
       /// <summary>A list of elements whose internal array (after trimming excess) will be used to populate the ElementTree.</summary>
-      protected My.List<Element> Elements { get; set; }
+      internal My.List<Element> Elements { get; set; }
       /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
       protected KDTree<double,Element> ElementTree { get; }
       
@@ -69,14 +69,10 @@ namespace Fluid.Internals.Lsfem {
       // /// <summary>Create a block-structured mesh.</summary>
       public Mesh(int nVars) {
          N_m = nVars;
-         ElementTree = new KDTree<dbl,Element>(2,);
+         //ElementTree = new KDTree<dbl,Element>(2,);
          // TODO: Set up the mesh and boundary conditions.
          //Solver = new ConjGradsSolver();
          ElementTree.
-      }
-      /// <summary>Add nodes from each block to the mesh.</summary>
-      protected void AddNodesFromBlocks() {
-
       }
 
 
