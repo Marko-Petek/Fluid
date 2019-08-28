@@ -98,7 +98,7 @@ namespace Fluid.Internals.Numerics {
                i = (i + 1) % 2;
                j = (j + 1) % 2;
 
-               TB.Reporter.Write("here");
+               TB.R.R("here");
             }
          }
       }

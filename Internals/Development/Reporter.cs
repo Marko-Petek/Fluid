@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Math;
 
-using static Fluid.Internals.Development.AppReporter.VerbositySettings;
+using static Fluid.Internals.Development.Reporter.VerbositySettings;
 using static Fluid.Internals.Ops;
 
 namespace Fluid.Internals.Development {
     /// <summary>Writes program's progression either to a file, to console or both.</summary>
-   public class AppReporter {
+   public class Reporter {
       /// <summary>Stores report messages for a single application run.</summary>
       Report _Report;
 
@@ -29,7 +29,7 @@ namespace Fluid.Internals.Development {
 
 
       /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-      public AppReporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = null,
+      public Reporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = null,
          [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
             Output = new OutputSettings();
             Output |= (OutputSettings.Console | OutputSettings.File);
@@ -46,7 +46,7 @@ namespace Fluid.Internals.Development {
 
       /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="text">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
       [Conditional("REPORT")]
-      public void Write(string text, VerbositySettings verbosity = Moderate,
+      public void R(string text, VerbositySettings verbosity = Moderate,
          [CallerFilePath] string path = null, [CallerMemberName] string caller = null,
          [CallerLineNumber] int line = 0) {
             if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.

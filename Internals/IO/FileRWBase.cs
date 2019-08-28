@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 
 namespace Fluid.Internals.IO {
    /// <summary>dot dot dot</summary>

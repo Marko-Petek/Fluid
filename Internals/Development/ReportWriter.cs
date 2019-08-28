@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 
 using Fluid.Internals.IO;
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 using static Fluid.Internals.Ops;
 using TB = Fluid.Internals.Toolbox;
 
@@ -25,10 +25,10 @@ namespace Fluid.Internals.Development {
       StringBuilder StrBuilder { get; } = new StringBuilder(500);
       /// <summary>Writes messages to file.</summary><param name="FileInfo("log.txt"">Log file.</param>
       FileWriter FileWriter { get; }
-      AppReporter AppReporter { get; }
+      Reporter AppReporter { get; }
 
       /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
-      public ReportWriter(AppReporter appReporter) {
+      public ReportWriter(Reporter appReporter) {
          int buffer;
          if(TB.Console.BufferWidth > 6 * 2 - 12 + 36 + 20)
             buffer = TB.Console.BufferWidth - 6 * 2 - 12;              // spaces, some slack

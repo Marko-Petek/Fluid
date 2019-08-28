@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 

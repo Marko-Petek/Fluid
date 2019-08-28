@@ -99,21 +99,21 @@ namespace Fluid.Tests {
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature1() {
-         var integrator = new QuadratureIntegrator(2, 1, x => x[0]*x[0]);    // 1D case.
+         var integrator = new Quadrature(2, 1, x => x[0]*x[0]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(2.0/3, 0.001));
       }
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature2() {
-         var integrator = new QuadratureIntegrator(2, 2,  x => x[0]*x[0]*x[1]*x[1]);    // 1D case.
+         var integrator = new Quadrature(2, 2,  x => x[0]*x[0]*x[1]*x[1]);    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/9, 0.001));
       }
 
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       [Fact] public void GaussQuadrature3() {
-         var integrator = new QuadratureIntegrator(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
+         var integrator = new Quadrature(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/117, 0.001));
       }

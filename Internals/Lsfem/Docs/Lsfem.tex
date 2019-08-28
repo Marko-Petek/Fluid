@@ -3,7 +3,7 @@
 
 \fancyhead[L]{Marko Petek \\[0.3cm] }
 \fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
-\fancyhead[R]{Maribor,\\ 20$^\text{th}$\ August\ 2019 \\[0.15cm] }
+\fancyhead[R]{Maribor,\\ 24$^\text{th}$\ August\ 2019 \\[0.15cm] }
 \cfoot{\thepage}								      % Footer center = page number.			
 \renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
 \renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in footer
@@ -15,7 +15,7 @@
    \end{center}
 
 \section*{\textbsf{Block.cs}}
-The whole purpose of a \textbsf{Block} is to provide a means to create nodes inside it by specifying two parameters on its edges: \textsf{tW} and \textsf{tH}.
+The whole purpose of a \textbsf{Block} is to provide a means of creating nodes by specifying parameters \textsf{tW} and \textsf{tH} on the block's edges.
 
 \begin{center}
    \begin{tabular}{ll}
@@ -203,5 +203,36 @@ The user must first simultaneously create each \textbsf{PseudoElement} and put n
    \end{longtable}
    
    while going through all $3 \times 3$ combinations of derivatives. We add the same value to the pair (i,j) and its symmetric pair (j,i). Then iterate over all repeated indices: (0,0), (1,1), ..., (10,10), (11,11) on the diagonal and add each value for all $3 \times 3$ combinations only once.
+
+   % \begin{IEEEeqnarray*}{c}
+   %    J_{11} = \frac{1}{4} \qty((x_3-x_0)(1-\eta) + (x_6-x_9)(1+\eta)) \\
+   %    J_{12} = \frac{1}{4} \qty((x_9-x_0)(1-\xi) + (x_6-x_3)(1+\xi)) \\
+   %    J_{21} = \frac{1}{4} \qty((y_3-y_0)(1-\eta) + (y_6-y_9)(1+\eta)) \\
+   %    J_{22} = \frac{1}{4} \qty((y_9-y_0)(1-\xi) + (y_6-y_3)(1+\xi))
+   % \end{IEEEeqnarray*}
+   % ali:
+   \begin{IEEEeqnarray*}{c}
+      \Delta x_\text{D} = x_3 - x_0 \\
+      \Delta x_\text{U} = x_6 - x_9 \\
+      \Delta x_\text{L} = x_9 - x_0 \\
+      \Delta x_\text{R} = x_6 - x_3 \\
+      \Delta y_\text{D} = y_3 - y_0 \\
+      \Delta y_\text{U} = y_6 - y_9 \\
+      \Delta y_\text{L} = y_9 - y_0 \\
+      \Delta y_\text{R} = y_6 - y_3
+   \end{IEEEeqnarray*}
+   \begin{IEEEeqnarray*}{c}
+      J_{11} = \frac{1}{4} \qty(\Delta x_\text{D}(1-\eta) + \Delta x_\text{U}(1+\eta)) \\
+      J_{12} = \frac{1}{4} \qty(\Delta x_\text{L}(1-\xi) + \Delta x_\text{R}(1+\xi)) \\
+      J_{21} = \frac{1}{4} \qty(\Delta y_\text{D}(1-\eta) + \Delta y_\text{U}(1+\eta)) \\
+      J_{22} = \frac{1}{4} \qty(\Delta y_\text{L}(1-\xi) + \Delta y_\text{R}(1+\xi))
+   \end{IEEEeqnarray*}
+in:
+\begin{IEEEeqnarray*}{c}
+   S_1 = \frac{1}{4} (1-\xi)(1-\eta) \\
+   S_2 = \frac{1}{4} (1+\xi)(1-\eta) \\
+   S_3 = \frac{1}{4} (1+\xi)(1+\eta) \\
+   S_4 = \frac{1}{4} (1-\xi)(1+\eta)
+\end{IEEEeqnarray*}
 
 \end{document}

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write nicely formatted values to hard drive. You have to call Flush() manually if you want to immediatelly 

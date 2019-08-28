@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 
 namespace Fluid.Internals.IO {
    public class FileReader : FileRWBase, IDisposable {

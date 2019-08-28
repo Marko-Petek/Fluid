@@ -7,7 +7,7 @@ namespace Fluid.Internals.Collections.Custom {
       /// <summary>Comparer used by IndexOf(), Contains(), Remove() methods.</summary>
       public static SCG.EqualityComparer<T> Comparer { get; protected set; }
       /// <summary>Internal storage array.</summary>
-      protected T[] _E;
+      public T[] _E;
       /// <summary>Number of elements inside internal storage array.</summary>
       public int Count { get; protected set; }
       /// <summary>Length of internal array.</summary>

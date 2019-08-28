@@ -9,7 +9,7 @@ using Fluid.Internals.Development;
 using IO = Fluid.Internals.IO;
 using Fluid.Internals.Numerics;
 
-using static Fluid.Internals.Development.AppReporter;
+using static Fluid.Internals.Development.Reporter;
 
 namespace Fluid.Internals {
    public static class Toolbox {
@@ -20,7 +20,7 @@ namespace Fluid.Internals {
          _Console = new IO.Console();
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
-         _Reporter = new AppReporter();
+         _Reporter = new Reporter();
          _Rng = new Rng();
       });
       static IO.FileReader _FileReader;
@@ -29,8 +29,9 @@ namespace Fluid.Internals {
       public static IO.FileWriter FileWriter => _FileWriter;
       static IO.Console _Console;
       public static IO.Console Console => _Console;
-      static AppReporter _Reporter;
-      public static AppReporter Reporter {                     // Reported.Write can only be called from one thread at once.
+      static Reporter _Reporter;
+      /// <summary>Reporter. Logs and writes messages to Console.</summary>
+      public static Reporter R {                     // Reported.Write can only be called from one thread at once.
          get {
             lock(_Reporter)
                return _Reporter; }
@@ -48,14 +49,14 @@ namespace Fluid.Internals {
             _Initialization.ContinueWith(
                (ant) => {
                   try {
-                     Reporter.Write(initMsg);
+                     R.R(initMsg);
                      main?.Invoke(); }
                   catch(Exception exc) {
-                     Reporter.Write($"Exception occured: {exc.Message}");
-                     Reporter.Write($"Stack trace:{exc.StackTrace}");
+                     R.R($"Exception occured: {exc.Message}");
+                     R.R($"Stack trace:{exc.StackTrace}");
                      throw exc; }
                   finally {
-                     Reporter.Write("Exiting application.");
+                     R.R("Exiting application.");
                      FileWriter.Flush(); } },
                TaskContinuationOptions.ExecuteSynchronously); }
       }

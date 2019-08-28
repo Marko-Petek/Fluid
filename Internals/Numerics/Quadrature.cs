@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>Guass-Legendre quadrature (integrator). Works for hyper-cubes with sides [-1,1].</summary>
-   public class QuadratureIntegrator {
+   public class Quadrature {
       /// <summary>Weights and abscissae for various order Gauss-Legendre Quadratures. [quadrature order i-2, i(2,7)][abscissa j (0,i+2)][weight val,abscissa val]</summary>
       public static double[][][] WA { get; } = new double[6][][] {
          new double[2][] {
@@ -48,16 +48,17 @@ namespace Fluid.Internals.Numerics {
       public Func<double[],double> F { get; set; }
 
 
-      public QuadratureIntegrator() {}
-      public QuadratureIntegrator(Func<double[],double> func) : this() {
+      public Quadrature() {}
+      public Quadrature(Func<double[],double> func) : this() {
          F = func;
       }
-      public QuadratureIntegrator(int order, int dim, Func<double[],double> func) : this(func) {
+      public Quadrature(int order, int dim, Func<double[],double> func) : this(func) {
          Order = order;
          Dim = dim;
          
       }
 
+      /// <summary>Integrates on reference coordiantes [-1,1] x [-1,1].</summary>
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       public double Integrate() {
          double result = 0.0;
