@@ -26,9 +26,9 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Triple overlap integrals ---- Rank 3 ---- ((α,p), (γ,q), (η,s)) ---- (36,36,36).</summary>
       public Tnr T { get; internal set; }
       /// <summary>A 2x2 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
-      public dbl[][] InvJ { get; private set; }
+      public Func<dbl[],dbl>[][] InvJ { get; private set; }
       /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
-      public dbl DetJ { get; private set; }
+      public Func<dbl[],dbl> DetJ { get; private set; }
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
       public ref Vec2 Pos(int inx) => ref Msh.Pos.E(P[inx]);
@@ -148,10 +148,24 @@ namespace Fluid.Internals.Lsfem {
          return vals;
       }
 
-      internal Tnr CalcQuadOverlaps() {
-
+      internal SymTnr CalcQuadOverlaps() {
+         var tnrQ = new SymTnr(new List<int> {36,36,36,36},                               // Result tensor.
+            new (int,int)[] {(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)}, 86_000);
+         var integrator = new Quadrature();                                               // Gauss-Legendre quadrature on reference square.
+         for(int i1 = 0; i1 < 12; ++i1) { for(int j1 = 0; j1 < 3; ++j1) {                 // Over 12 e-nodes, tnr index 1. Over 3 basis funcs at the e-node.
+            for(int i2 = i1; i2 < 12; ++i2) { for(int j2 = 0; j2 < 3; ++j2) {
+               for(int i3 = i2; i3 < 12; ++i3) { for(int j3 = 0; j3 < 3; ++j3) {
+                  for(int i4 = i3; i4 < 12; ++i4) { for(int j4 = 0; j4 < 3; ++j4) {
+                     integrator.F = (pos) => 
+                        (ϕ[0][i1](pos[0],pos[1]) + InvJ[0][0]*ϕ[1][i1](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]))*
+                        (ϕ[0][i2](pos[0],pos[1]) + InvJ[0][0]*ϕ[1][i2](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]));
+                     tnrQ[3*i1+j1, 3*i2+j2, 3*i3+j3, 3*i4+j4] = 
+                  } }
+               } }
+            } }
+         } }
       }
-      internal Tnr CalcTripOverlaps() {
+      internal SymTnr CalcTripOverlaps() {
          
       }
    }
