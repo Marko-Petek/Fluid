@@ -1,5 +1,7 @@
 ﻿using System;
 using static System.Math;
+using dbl = System.Double;
+using dA = Fluid.Internals.Numerics.DblArithmetic;
 
 namespace Fluid.Internals.Numerics {
    public static class MatOps {
@@ -94,6 +96,8 @@ namespace Fluid.Internals.Numerics {
                result[i][j] = O<τ,α>.A.Sum(mat1[i][j], mat2[i][j]); }
          return result;
       }
+      public static dbl[][] Sum(this dbl[][] mat1, dbl[][] mat2) =>
+         Sum<dbl,dA>(mat1, mat2);
       /// <summary>Take a matrix and add to it another matrix.</summary><param name="mat1">Matrix to be added to.</param><param name="mat2">Matrix that will be added to addee.</param>
       public static void SumInto<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
@@ -115,16 +119,24 @@ namespace Fluid.Internals.Numerics {
                result[i][j] = O<τ,α>.A.Sub(mat1[i][j], mat2[i][j]); }
          return result;
       }
+      /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
+      public static dbl[][] Sub(this dbl[][] mat1, dbl[][] mat2) =>
+         Sub<dbl,dA>(mat1, mat2);
       /// <summary>Coumpute determinant of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
       public static τ Det<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
          O<τ,α>.A.Sub(O<τ,α>.A.Mul(mat[0][0], mat[1][1]), O<τ,α>.A.Mul(mat[0][1], mat[1][0]));
+      public static dbl Det(dbl[][] mat) =>
+         Det<dbl,dA>(mat);
       /// <summary>Coumpute trace of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
       public static τ Tr<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
          O<τ,α>.A.Sum(mat[0][0], mat[1][1]);
+      /// <summary>Coumpute trace of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
+      public static double Tr(dbl[][] mat) =>
+         Tr<dbl,dA>(mat);
       /// <summary>Extends the capacity of an array if it does not satisfy the specified capacity.</summary>
       public static τ[] EnsureCapacity<τ>(this τ[] mat, int capacity) {
          if(mat.Length < capacity) {

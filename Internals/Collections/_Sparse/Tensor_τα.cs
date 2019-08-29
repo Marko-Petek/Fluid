@@ -64,6 +64,7 @@ namespace Fluid.Internals.Collections {
    using IA = IntArithmetic;
    /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
    /// <typeparam name="τ">Type of direct subordinates.</typeparam>
+   /// <typeparam name="α">Type of arithmetic.</typeparam>
    public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {

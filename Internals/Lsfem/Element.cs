@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using static System.Math;
+using dbl = System.Double;
+using dA = Fluid.Internals.Numerics.DblArithmetic;
+
 using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using Fluid.Internals.Numerics;
@@ -10,20 +13,22 @@ using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
-   using dbl = Double;
-   using dA = DblArithmetic;
-   using Tnr = Tensor<double,DblArithmetic>;
-   using Vec = Vector<double,DblArithmetic>;
-   // TODO: Implement abstract J(stdInx,p,q) and J(cmtInx,p,q) methods that return Jacobians for each element.
+   using Tnr = Tensor<dbl,dA>;
+   using SymTnr = SymTensor<dbl,dA>;
+   using Vec = Vector<dbl,dA>;
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public int[] P { get; }
-      /// <summary>Quadruple overlap integrals ---- Rank 8 ---- (α, p, β, q, γ, r, δ, s).</summary>
+      /// <summary>Quadruple overlap integrals ---- Rank 4 ---- ((α,p), (β,q), (γ,r), (δ,s)) ----  (36,36,36,36).</summary>
       public Tnr Q { get; internal set; }
-      /// <summary>Triple overlap integrals ---- Rank 6 ---- (α, p, γ, q, η, s).</summary>
+      /// <summary>Triple overlap integrals ---- Rank 3 ---- ((α,p), (γ,q), (η,s)) ---- (36,36,36).</summary>
       public Tnr T { get; internal set; }
+      /// <summary>A 2x2 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
+      public dbl[][] InvJ { get; private set; }
+      /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
+      public dbl DetJ { get; private set; }
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
       public ref Vec2 Pos(int inx) => ref Msh.Pos.E(P[inx]);
@@ -68,39 +73,38 @@ namespace Fluid.Internals.Lsfem {
          dbl a = FuncA(in posX);
          dbl b = FuncB(in posX);
          dbl c = FuncC(in posX);
-         dbl detMALessMB = MA.Sub<dbl,dA>(MB).Det<dbl,dA>();
-         dbl detNALessNB = NA.Sub<dbl,dA>(NB).Det<dbl,dA>();  // χ
+         dbl detMASubMB = Det(MA.Sub(MB));
+         dbl detNASubNB = Det(NA.Sub(NB));  // χ
          dbl ξ;
          dbl η;
          if(posX.X*posX.Y >= 0) {                                          // Quadrants I and III.
-            if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
-               ξ = (-b + Sqrt(b*b + c))/detMALessMB;
+            if(Abs(detMASubMB) > 10E-7)                                    // Opposing sides are not too parallel.
+               ξ = (-b + Sqrt(b*b + c))/detMASubMB;
             else                                                            // Opposing sides are virtually parallel. Use simplified model to preserve precision.
                ξ = Simp_ξ(in posX);
-            if(Abs(detNALessNB) > 10E-7)                                    // Opposing sides are not too parallel.
-               η = (-a - Sqrt(b*b + c))/detNALessNB;
+            if(Abs(detNASubNB) > 10E-7)                                    // Opposing sides are not too parallel.
+               η = (-a - Sqrt(b*b + c))/detNASubNB;
             else                                                            // Opposing sides are virtually parallel.
                η = Simp_η(in posX); }
          else {                                                              // Quadrants II and IV.
-               if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
-                  ξ = (-b - Sqrt(b*b + c))/detMALessMB;
+               if(Abs(detMASubMB) > 10E-7)                                    // Opposing sides are not too parallel.
+                  ξ = (-b - Sqrt(b*b + c))/detMASubMB;
                else                                                            // Opposing sides are virtually parallel. Use simplified model to preserve precision.
                   ξ = Simp_ξ(in posX);
-               if(Abs(detNALessNB) > 10E-7)                                    // Opposing sides are not too parallel.
-                  η = (-a + Sqrt(b*b + c))/detNALessNB;
+               if(Abs(detNASubNB) > 10E-7)                                    // Opposing sides are not too parallel.
+                  η = (-a + Sqrt(b*b + c))/detNASubNB;
                else                                                            // Opposing sides are virtually parallel.
                   η = Simp_η(in posX); }
          return new Vec2(ξ, η);
       }
       dbl FuncA(in Vec2 pos) =>
-         pos.X*MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + NA.Det<dbl,dA>() - NB.Det<dbl,dA>();
+         pos.X*Tr(MG) - pos.Y*Tr(MF) + Det(NA) - Det(NB);
 
       dbl FuncB(in Vec2 pos) =>
-         pos.X * MG.Tr<dbl,dA>() - pos.Y*MF.Tr<dbl,dA>() + MC.Det<dbl,dA>() + MD.Det<dbl,dA>();
+         pos.X*Tr(MG) - pos.Y*Tr(MF) + Det(MC) + Det(MD);
 
       dbl FuncC(in Vec2 pos) =>
-         MA.Sub<dbl,dA>(MB).Det<dbl,dA>()*(2*pos.X*MH.Tr<dbl,dA>() -
-            2*pos.Y*MJ.Tr<dbl,dA>() + MA.Sum<dbl,dA>(MB).Det<dbl,dA>());
+         Det(MA.Sub(MB)) * (2*pos.X * Tr(MH) - 2*pos.Y*Tr(MJ) + Det(MA.Sum(MB)));
       /// <summary>Distance of specified point P to a line going through lower edge.</summary>
       /// <param name="pos">Specified point.</param>
       dbl DistToLowerEdge(in Vec2 pos) {
