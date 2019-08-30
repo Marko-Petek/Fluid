@@ -1,5 +1,8 @@
 ﻿
 using System;
+using dbl = System.Double;
+using F2D = System.Func<double,double,double>;
+
 namespace Fluid.Internals.Numerics {
    /// <summary>Performs arithmetic on operands of type T.</summary><typeparam name="τ">Operand and result type.</typeparam>
    public interface IArithmetic<τ> {
@@ -30,6 +33,23 @@ namespace Fluid.Internals.Numerics {
       public double Abs(double val) => Math.Abs(val);
       public double Neg(double val) => -val;
       public double Unit() => 1.0;
+   }
+
+   public struct Func2DArithmetic : IArithmetic<Func2D> {
+      public Func2D Sum(Func2D f1, Func2D f2) =>
+         new Func2D( (x,y) => f1.F(x,y) + f2.F(x,y) );
+      public Func2D Sub(Func2D f1, Func2D f2) =>
+         new Func2D( (x,y) => f1.F(x,y) - f2.F(x,y) );
+      public Func2D Mul(Func2D f1, Func2D f2) =>
+         new Func2D( (x,y) => f1.F(x,y) * f2.F(x,y) );
+      public Func2D Div(Func2D f1, Func2D f2) =>
+         new Func2D( (x,y) => f1.F(x,y) / f2.F(x,y) );
+      public Func2D Abs(Func2D f) =>
+         new Func2D( (x,y) => Math.Abs(f.F(x,y)) );
+      public Func2D Neg(Func2D f) =>
+         new Func2D( (x,y) => -f.F(x,y) );
+      public Func2D Unit() =>
+         new Func2D( (x,y) => 1.0 );
    }
 
    public struct NoArithmetic : IArithmetic<int> {

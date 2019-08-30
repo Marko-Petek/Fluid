@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
 using dA = Fluid.Internals.Numerics.DblArithmetic;
+using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
 
 using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
@@ -16,6 +17,7 @@ namespace Fluid.Internals.Lsfem {
    using Tnr = Tensor<dbl,dA>;
    using SymTnr = SymTensor<dbl,dA>;
    using Vec = Vector<dbl,dA>;
+   using FTnr = Tensor<Func2D,F2DA>;
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {
@@ -25,10 +27,10 @@ namespace Fluid.Internals.Lsfem {
       public Tnr Q { get; internal set; }
       /// <summary>Triple overlap integrals ---- Rank 3 ---- ((α,p), (γ,q), (η,s)) ---- (36,36,36).</summary>
       public Tnr T { get; internal set; }
-      /// <summary>A 2x2 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
-      public Func<dbl[],dbl>[][] InvJ { get; private set; }
+      /// <summary>A 3x3 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
+      public FTnr InvJ { get; private set; }
       /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
-      public Func<dbl[],dbl> DetJ { get; private set; }
+      public Func2D DetJ { get; private set; }
       // Matrices to compute inverse transformation of specified element.
       readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
       public ref Vec2 Pos(int inx) => ref Msh.Pos.E(P[inx]);
@@ -156,9 +158,13 @@ namespace Fluid.Internals.Lsfem {
             for(int i2 = i1; i2 < 12; ++i2) { for(int j2 = 0; j2 < 3; ++j2) {
                for(int i3 = i2; i3 < 12; ++i3) { for(int j3 = 0; j3 < 3; ++j3) {
                   for(int i4 = i3; i4 < 12; ++i4) { for(int j4 = 0; j4 < 3; ++j4) {
-                     integrator.F = (pos) => 
-                        (ϕ[0][i1](pos[0],pos[1]) + InvJ[0][0]*ϕ[1][i1](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]))*
-                        (ϕ[0][i2](pos[0],pos[1]) + InvJ[0][0]*ϕ[1][i2](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]));
+                     integrator.F = (pos) => {
+                        ref dbl x = ref pos[0],
+                                y = ref pos[1];
+                        (ϕ[i1][0](x,y) + InvJ[j1][0](x,y)*ϕ[i1][1](x,y) + InvJ[j1][1]*ϕ[i1][2](x,y))*
+                        (ϕ[i2][0](x,y) + InvJ[0][0]*ϕ[1][i2](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]));
+                     } 
+                        
                      tnrQ[3*i1+j1, 3*i2+j2, 3*i3+j3, 3*i4+j4] = 
                   } }
                } }

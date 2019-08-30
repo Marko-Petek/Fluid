@@ -66,7 +66,7 @@ namespace Fluid.Internals.Collections {
    /// <typeparam name="τ">Type of direct subordinates.</typeparam>
    /// <typeparam name="α">Type of arithmetic.</typeparam>
    public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-   where τ : IEquatable<τ>, IComparable<τ>, new()
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       /// <summary>Tensor example intended to be used as an overload dummy in indexers.</summary>
       public static Tensor<τ,α> Ex { get; } = new Tensor<τ,α>(0);
