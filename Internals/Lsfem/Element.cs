@@ -18,6 +18,7 @@ namespace Fluid.Internals.Lsfem {
    using SymTnr = SymTensor<dbl,dA>;
    using Vec = Vector<dbl,dA>;
    using FTnr = Tensor<Func2D,F2DA>;
+   using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {
@@ -43,6 +44,9 @@ namespace Fluid.Internals.Lsfem {
       /// <param name="nodes">12 node indices that define an element.</param>
       public Element(params int[] nodes) {
          P = nodes;
+         var interm = CalcDetJ();
+         DetJ = interm.detJ;
+         InvJ = CalcInvJ(interm);
          MA = new dbl[2][] {  new dbl[2] {Pos(9).X, Pos(3).X},
                               new dbl[2] {Pos(9).Y, Pos(3).Y}  };
          MB = new dbl[2][] {  new dbl[2] {Pos(6).X, Pos(0).X},
@@ -64,7 +68,35 @@ namespace Fluid.Internals.Lsfem {
          NB = new dbl[2][] {  new dbl[2] {Pos(0).X, Pos(3).X},
                               new dbl[2] {Pos(0).Y, Pos(3).Y}  };
       }
-      
+      /// <summary>Calculate the extended inverse Jacobian for this element.</summary>
+      protected FTnr CalcInvJ( (Func2D detJ, Func2D J11,
+      Func2D J12, Func2D J21, Func2D J22) tuple) {
+         var invJ = new FTnr(new List<int>(2) {3,3}, 3);
+         (var detJ, var J11, var J12, var J21, var J22) = tuple;
+         invJ[0,0] = new Func2D();
+         invJ[1,1] = new Func2D( (x,y) => J22.F(x,y) / detJ.F(x,y) );
+         invJ[1,2] = new Func2D( (x,y) => -J12.F(x,y) / detJ.F(x,y) );
+         invJ[2,1] = new Func2D( (x,y) => -J21.F(x,y) / detJ.F(x,y) );
+         invJ[2,2] = new Func2D( (x,y) => J11.F(x,y) / detJ.F(x,y) );
+         return invJ;
+      }
+      protected (Func2D detJ, Func2D J11, Func2D J12, Func2D J21, Func2D J22)
+      CalcDetJ() {
+         dbl Δxd = Pos(3).X - Pos(0).X;
+         dbl Δxu = Pos(6).X - Pos(9).X;
+         dbl Δxl = Pos(9).X - Pos(0).X;
+         dbl Δxr = Pos(6).X - Pos(3).X;
+         dbl Δyd = Pos(3).Y - Pos(0).Y;
+         dbl Δyu = Pos(6).Y - Pos(9).Y;
+         dbl Δyl = Pos(9).Y - Pos(0).Y;
+         dbl Δyr = Pos(6).Y - Pos(3).Y;
+         var J11 = new Func2D( (ξ,η) => 0.25*(Δxd*(1-η) + Δxu*(1+η)) );
+         var J12 = new Func2D( (ξ,η) => 0.25*(Δxl*(1-ξ) + Δxr*(1+ξ)) );
+         var J21 = new Func2D( (ξ,η) => 0.25*(Δyd*(1-η) + Δyu*(1+η)) );
+         var J22 = new Func2D( (ξ,η) => 0.25*(Δyl*(1-ξ) + Δyr*(1+ξ)) );
+         var detJ = A.Sub(A.Mul(J11,J22), A.Mul(J12,J21));
+         return (detJ, J11, J12, J21, J22);
+      }
       /// <summary>Calculate the center of element's mass.</summary>
       public Vec2 CenterOfMass() =>
          Vec2.Sum(Pos(0), Pos(3), Pos(6), Pos(9)) / 4;
@@ -137,39 +169,25 @@ namespace Fluid.Internals.Lsfem {
          dbl posDist = DistToLowerEdge(in pos);
          return 2.0*(posDist/wholeStretchDist) - 1.0;
       }
-      /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary>
-      /// <param name="pos">Position on reference square in terms of (ksi, eta).</param>
-      /// <param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
-      internal dbl[] Vals(in Vec2 pos, params int[] varInxs) {       // TODO: Rethink this.
-         var vals = new dbl[varInxs.Length];
-         int varInx;
-         for(int i = 0; i < varInxs.Length; ++i) {
-            varInx = varInxs[i];
-            for(int node = 0; node < 12; ++node)
-               vals[i] += Vals(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
-         return vals;
-      }
+
+      // /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary>
+      // /// <param name="pos">Position on reference square in terms of (ksi, eta).</param>
+      // /// <param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
+      // internal dbl[] Vals(in Vec2 pos, params int[] varInxs) {       // TODO: Rethink this.
+      //    var vals = new dbl[varInxs.Length];
+      //    int varInx;
+      //    for(int i = 0; i < varInxs.Length; ++i) {
+      //       varInx = varInxs[i];
+      //       for(int node = 0; node < 12; ++node)
+      //          vals[i] += Vals(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
+      //    return vals;
+      // }
 
       internal SymTnr CalcQuadOverlaps() {
-         var tnrQ = new SymTnr(new List<int> {36,36,36,36},                               // Result tensor.
-            new (int,int)[] {(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)}, 86_000);
+         var tnrQ = InvJ.Contract()
+         //var funcs = new FTnr(new List<int> {12,3,12,3,12,3,12,3}, 200_000);              // Tensor of functions.
          var integrator = new Quadrature();                                               // Gauss-Legendre quadrature on reference square.
-         for(int i1 = 0; i1 < 12; ++i1) { for(int j1 = 0; j1 < 3; ++j1) {                 // Over 12 e-nodes, tnr index 1. Over 3 basis funcs at the e-node.
-            for(int i2 = i1; i2 < 12; ++i2) { for(int j2 = 0; j2 < 3; ++j2) {
-               for(int i3 = i2; i3 < 12; ++i3) { for(int j3 = 0; j3 < 3; ++j3) {
-                  for(int i4 = i3; i4 < 12; ++i4) { for(int j4 = 0; j4 < 3; ++j4) {
-                     integrator.F = (pos) => {
-                        ref dbl x = ref pos[0],
-                                y = ref pos[1];
-                        (ϕ[i1][0](x,y) + InvJ[j1][0](x,y)*ϕ[i1][1](x,y) + InvJ[j1][1]*ϕ[i1][2](x,y))*
-                        (ϕ[i2][0](x,y) + InvJ[0][0]*ϕ[1][i2](pos[0],pos[1]) + InvJ[0][1]*ϕ[2][i1](pos[0],pos[1]));
-                     } 
-                        
-                     tnrQ[3*i1+j1, 3*i2+j2, 3*i3+j3, 3*i4+j4] = 
-                  } }
-               } }
-            } }
-         } }
+         
       }
       internal SymTnr CalcTripOverlaps() {
          

@@ -80,6 +80,10 @@ namespace Fluid.Internals.Numerics {
          return new Vec2(vec1.X + vec2.X, vec1.Y + vec2.Y);
       }
 
+      public static Vec2 operator -(in Vec2 vec1, in Vec2 vec2) {
+         return new Vec2(vec1.X - vec2.X, vec1.Y - vec2.Y);
+      }
+
       public static Vec2 operator /(in Vec2 vec1, in double scal2) {
          return new Vec2(vec1.X/scal2, vec1.Y/scal2);
       }
