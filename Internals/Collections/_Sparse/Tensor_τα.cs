@@ -1041,6 +1041,14 @@ namespace Fluid.Internals.Collections {
             HowToCopyStructure.DoNotCopy,
             endRank: 0,
             extraCapacity: 4);
+         ///<summary>Copy values, rank, and structure (brand new created), but not superior.</summary>
+         public static readonly CopySpecStruct S352_00 = new CopySpecStruct(
+            WhichFields.ValuesAndNonValueFields,                              // 3
+            WhichNonValueFields.AllExceptSuperior,                            // 5
+            HowToCopyStructure.CreateNewStructure,                            // 2
+            endRank: 0,                                                       // 0
+            extraCapacity: 0                                                  // 0
+         );
       }
 
       /// <summary>Structure that tells Tensor's Copy method how to copy a tensor.</summary>
