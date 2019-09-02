@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using static System.Math;
 
 using Fluid.Internals.Numerics;
+using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
-using dA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Numerics.DblArithmetic;
 
 using Supercluster.KDTree;
 
 namespace Fluid.Internals.Lsfem {
-   
-   using Vec = Fluid.Internals.Collections.Vector<dbl,dA>;
-   using Tnr = Fluid.Internals.Collections.Tensor<dbl, dA>;
+   using SymTnr = SymTensor<dbl,DA>;
+   using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
+   using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    
    public abstract class Simulation {
       /// <summary>The Simulation.</summary>
       public static Simulation Sim { get; protected set; }
       /// <summary>Number of independent variables (= number of equations).</summary>
-      public int N_m { get; internal set; }
+      public int Nm { get; internal set; }
       /// <summary>Dynamics tensor (stiffness matrix), 4th rank.</summary>
       public Tnr K { get; internal set; }
       /// <summary>Forcing tensor, 2nd rank.</summary>
       public Tnr F { get; internal set; }
-      /// <summary>Stiffness tensor, 4th rank.
+      /// <summary>Stiffness tensor, 5th rank.
       /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
       public Tnr A { get; internal set; }
       
@@ -58,10 +59,10 @@ namespace Fluid.Internals.Lsfem {
       protected ConjGradsSolver Solver { get; }
       // TODO: Set up boundary conditions.
 
-      protected void CreateNodes() {                                    R.R("Creating Patches.");
+      protected void CreatePositions() {                                    R.R("Creating Patches.");
          Patches = CreatePatches();                                     R.R("Creating Joints.");
          Joints = CreateJoints();
-         int gInx = 0;                                                  R.R("Adding nodes to Mesh.");
+         int gInx = 0;                                                  R.R("Adding positions to Mesh.");
          foreach(var patch in Patches.Values) {                         // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
             foreach(var pseudoRow in patch) {
                foreach(var pseudoEmt in pseudoRow) {
@@ -104,19 +105,41 @@ namespace Fluid.Internals.Lsfem {
          return emtTree;
       }
 
-      protected Tnr CalcQuadrupleOverlaps(IList<Element> emts) {
-
-      }
-
-      protected Tnr CalcTripleOverlaps(IList<Element> emts) {
-
-      }
 
       public Simulation() {
          Sim = this;
          Mesh = new Mesh();
       }
 
+      /// <summary>Assemble the dynamics tensor.</summary>
+      /// <param name="emts">Elements list.</param>
+      SymTnr AssembleK(IEnumerable<Element> emts) {
+
+         var tnrK = new Tnr(new List<int> {})
+         foreach(var emt in emts) {                                                          // Over Elements.
+            for(int α = 0; α < 12; ++α) { for(int p = 0; p < 3; ++p) {                       // Over each e-node.
+               int a = emt.P[α];                                                             // Global index conversion.
+               for(int β = 0; β < 12; ++β) { for(int q = 0; q < 3; ++q) {
+                  int b = emt.P[β];
+                  for(int γ = 0; γ < 12; ++γ) { for(int r = 0; r < 3; ++r) {
+                     int c = emt.P[γ];
+                     for(int δ = 0; δ < 12; ++δ) { for(int s = 0; s < 3; ++s) {
+                        int d = emt.P[δ];
+                        var A1 = A[Tnr.Ex, a,p,r];                                           // Now 2nd rank.
+                        var A2 = A[Tnr.Ex, b,q,s];                                           // 2nd rank.
+                        var AA = Tnr.Contract(A1, A2, 1, 1);                                 // AA now also 2nd rank.
+                        for(int j = 0; j < 3; ++j) { for(int k = 0; k < 3; ++k) {            // TODO: Make this work symmetrically.
+
+                        
+
+                           
+                        }}
+                     }}
+                  }}
+               }}
+            }}
+         }
+      }
       /// <summary>Find solution value at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Vec2 pos);
    }

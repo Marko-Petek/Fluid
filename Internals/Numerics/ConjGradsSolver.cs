@@ -1,20 +1,22 @@
 using System;
 using Fluid.Internals.Collections;
 using TB = Fluid.Internals.Toolbox;
+using dbl = System.Double;
+using DA = Fluid.Internals.Numerics.DblArithmetic;
 
 namespace Fluid.Internals.Numerics {
-   using Tensor = Tensor<double,DblArithmetic>;
-   using Vector = Vector<double,DblArithmetic>;
+   using Tnr = Tensor<dbl,DA>;
+   using Vec = Vector<dbl,DA>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
    public class ConjGradsSolver {
       /// <summary>Left-hand side matrix of A x = b.</summary>
-      Tensor A { get; }
+      Tnr A { get; }
       /// <summary>Right-hand side vector of A x = b.</summary>
-      Tensor b { get; }
+      Tnr b { get; }
 
       /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
-      public ConjGradsSolver(Tensor tnrA, Tensor vecB) {
+      public ConjGradsSolver(Tnr tnrA, Tnr vecB) {
          A = tnrA;
          b = vecB;
       }
@@ -22,29 +24,29 @@ namespace Fluid.Internals.Numerics {
       /// <param name="x0">Initial guess vector.</param>
       /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
       /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
-      public Vector Solve(Vector x0, double maxRes) {
+      public Vec Solve(Vec x0, double maxRes) {
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;
-         var r = new Vector[2];
-         var d0 = (Vector) b - (Vector) A.Contract(x0, 2, 1);           //A * x0;
-         var d = new Vector[2] { null, d0 };
-         var x = new Vector[2] { x0, null };
+         var r = new Vec[2];
+         var d0 = (Vec) b - (Vec) Tnr.Contract(A, x0, 2, 1);           //A * x0;
+         var d = new Vec[2] { null, d0 };
+         var x = new Vec[2] { x0, null };
          var rr = new double[2];
 
          double alfa;
          double beta;
-         Vector Ad;
+         Vec Ad;
          int i = 0;
          int j = 1;
          while (true) {
-            r[i] = (Vector) b - (Vector) A.Contract(x[i], 2, 1);
+            r[i] = (Vec) b - (Vec) Tnr.Contract(A, x[i], 2, 1);
             d[i] = d[j];
             for (int k = 0; k < b.Structure[0]; ++k) {
                ++iteration;
                rr[i] = r[i] * r[i];
                if (rr[i] < maxResSqr)
                   return x[i];
-               Ad = (Vector) A.Contract(d[i], 2, 1);
+               Ad = (Vec) Tnr.Contract(A, d[i], 2, 1);
                alfa = rr[i] / (d[i] * Ad);
                x[j] = x[i] + alfa * d[i];
                r[j] = r[i] - alfa * Ad;
@@ -59,40 +61,40 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Special version with a rank 4 tensor as LH operand and a rank 2 tensor as RH operand.</summary>
       /// <param name="x0">Initial guess.</param>
       /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
-      public Tensor Solve(Tensor x0, double maxRes) {
+      public Tnr Solve(Tnr x0, double maxRes) {
          //throw new NotImplementedException();
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;
-         var r = new Tensor[2];                                   // rank 2
+         var r = new Tnr[2];                                   // rank 2
          // TB.DebugTag = "BeforeNullContraction";
          // var interRes = A.Contract(x0, 3, 1);
-         var Ax0 = A.Contract(x0, 3, 1).SelfContract(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
+         var Ax0 = Tnr.Contract(A, x0, 3, 1).SelfContract(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
          var d0 = b - Ax0;
-         var d = new Tensor[2] { null, d0 };                      // rank 2
-         var x = new Tensor[2] { x0, null };                      // rank 2
+         var d = new Tnr[2] { null, d0 };                      // rank 2
+         var x = new Tnr[2] { x0, null };                      // rank 2
          var rr = new double[2];
 
          double alfa;
          double beta;
-         Tensor Ad;
+         Tnr Ad;
          int i = 0;
          int j = 1;
          while (true) {
-            r[i] = b - A.Contract(x[i], 3, 1).SelfContract(3, 4);
+            r[i] = b - Tnr.Contract(A, x[i], 3, 1).SelfContract(3, 4);
             d[i] = d[j];
             for (int k = 0; k < b.Structure[0]*b.Structure[1]; ++k) {
                ++iteration;
-               rr[i] = r[i].Contract(r[i], 1, 1).SelfContractR2();         // Scalar.
+               rr[i] = Tnr.Contract(r[i], r[i], 1, 1).SelfContractR2();         // Scalar.
                if (rr[i] < maxResSqr)
                   return x[i];
                // TB.DebugTag = "OverflowContraction";
                // var AdDebug = A.Contract(d[i], 3, 1);
-               Ad = A.Contract(d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
-               var dAd = d[i].Contract(Ad, 1, 1).SelfContractR2();         // Scalar.
+               Ad = Tnr.Contract(A, d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
+               var dAd = Tnr.Contract(d[i], Ad, 1, 1).SelfContractR2();         // Scalar.
                alfa = alfa = rr[i] / dAd;
                x[j] = x[i] + alfa * d[i];
                r[j] = r[i] - alfa * Ad;
-               rr[j] = r[j].Contract(r[j], 1, 1).SelfContractR2();
+               rr[j] = Tnr.Contract(r[j], r[j], 1, 1).SelfContractR2();
                beta = rr[j] / rr[i];
                d[j] = r[j] + beta * d[i];
                i = (i + 1) % 2;

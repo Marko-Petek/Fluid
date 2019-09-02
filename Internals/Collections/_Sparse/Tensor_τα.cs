@@ -766,19 +766,19 @@ namespace Fluid.Internals.Collections {
                ElimR0_R2(int_tnr.Value, newVec, emtInx);
                tgt.Add(int_tnr.Key, newVec); } } }
 
-      protected (List<int> struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
-      Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
+      protected static (List<int> struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
+      Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
-         List<int>   struc1 = Structure, 
+         List<int>   struc1 = tnr1.Structure, 
                      struc2 = tnr2.Structure;
          int rank1 = struc1.Count,
              rank2 = struc2.Count;
-         TB.Assert.True(rank1 == Rank && rank2 == tnr2.Rank,
+         TB.Assert.True(rank1 == tnr1.Rank && rank2 == tnr2.Rank,
             "One of the tensors is not top rank.");
          TB.Assert.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal.");
-         int   conDim = Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
-               rankInx1 = ToRankInx(slotInx1),
+         int   conDim = tnr1.Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
+               rankInx1 = tnr1.ToRankInx(slotInx1),
                rankInx2 = tnr2.ToRankInx(slotInx2);
          var struc3_1 = struc1.Where((emt, i) => i != (slotInx1 - 1));
          var struc3_2 = struc2.Where((emt, i) => i != (slotInx2 - 1));
@@ -786,14 +786,14 @@ namespace Fluid.Internals.Collections {
          return (struc3, rankInx1, rankInx2, conDim);
       }
       
-      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int rankInx1, int rankInx2, List<int> struc3, int conDim) {
+      public static Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int rankInx1, int rankInx2, List<int> struc3, int conDim) {
          // 1) First eliminate, creating new tensors. Then add them together using tensor product.
-         if(Rank > 1) {
+         if(tnr1.Rank > 1) {
             if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.
                Tensor<τ,α> elimTnr1, elimTnr2, sumand, sum;
                sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
                for(int i = 0; i < conDim; ++i) {
-                  elimTnr1 = ReduceRank(rankInx1, i);
+                  elimTnr1 = tnr1.ReduceRank(rankInx1, i);
                   elimTnr2 = tnr2.ReduceRank(rankInx2, i);
                   if(elimTnr1.Count != 0 && elimTnr2.Count != 0) {
                      sumand = elimTnr1.TnrProduct(elimTnr2);
@@ -805,11 +805,11 @@ namespace Fluid.Internals.Collections {
             }
             else {                                                // Second tensor is rank 1 (a vector).
                Vector<τ,α> vec = (Vector<τ,α>) tnr2;
-               if(Rank == 2) {                                    // Result will be vector.
+               if(tnr1.Rank == 2) {                                    // Result will be vector.
                   Vector<τ,α> elimVec, sumand, sum;
                   sum = new Vector<τ,α>(struc3, null, 4);
                   for(int i = 0; i < conDim; ++i) {
-                     elimVec = (Vector<τ,α>) ReduceRank(rankInx1, i);
+                     elimVec = (Vector<τ,α>) tnr1.ReduceRank(rankInx1, i);
                      if(elimVec.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimVec;
                         sum.Sum(sumand); } }
@@ -821,7 +821,7 @@ namespace Fluid.Internals.Collections {
                   Tensor<τ,α> elimTnr1, sumand, sum;
                   sum = new Tensor<τ,α>(struc3);
                   for(int i = 0; i < conDim; ++i) {
-                     elimTnr1 = ReduceRank(rankInx1, i);
+                     elimTnr1 = tnr1.ReduceRank(rankInx1, i);
                      if(elimTnr1.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
                         sumand = val*elimTnr1;
                         sum.Sum(sumand); } }
@@ -830,8 +830,8 @@ namespace Fluid.Internals.Collections {
                   else
                      return CreateEmpty(0, struc3.Count, struc3); } } }
          else {                                                   // First tensor is rank 1 (a vector).
-            var vec1 = (Vector<τ,α>) this;
-            return vec1.ContractPart2(tnr2, rankInx2, struc3, conDim);}
+            var vec1 = (Vector<τ,α>) tnr1;
+            return Vector<τ,α>.ContractPart2(vec1, tnr2, rankInx2, struc3, conDim);}
       }
 
       /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction. Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</summary>
@@ -839,9 +839,9 @@ namespace Fluid.Internals.Collections {
       /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
       /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
       /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
-      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
-         (List<int> struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr2, slotInx1, slotInx2);
-         return ContractPart2(tnr2, rankInx1, rankInx2, struc3, conDim);
+      public static Tensor<τ,α> Contract(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
+         (List<int> struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr1, tnr2, slotInx1, slotInx2);
+         return ContractPart2(tnr1, tnr2, rankInx1, rankInx2, struc3, conDim);
       }
       /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
       /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>

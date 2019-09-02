@@ -1,9 +1,11 @@
+// Quadrature specialized for 2D cases.
 using System;
 using dbl = System.Double;
 
 namespace Fluid.Internals.Numerics {
+   using F2D = Func<dbl,dbl,dbl>;
    /// <summary>Guass-Legendre quadrature (integrator). Works for hyper-cubes with sides [-1,1].</summary>
-   public class Quadrature {
+   public class Quadrature2D {         // TODO: Test Quadrature2D.
       /// <summary>Weights and abscissae for various order Gauss-Legendre Quadratures. [quadrature order i-2, i(2,7)][abscissa j (0,i+2)][weight val,abscissa val]</summary>
       public static double[][][] WA { get; } = new double[6][][] {
          new double[2][] {
@@ -45,40 +47,46 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Dimension of hypercube that defines the integration domain. 1 = line, 2 = square, 3 = cube, etc.</summary>
       public int Dim { get; set; } = 2;
       /// <summary>Function to integrate.</summary>
-      public Func<double[],double> F { get; set; }
+      public F2D F { get; set; }
 
 
-      public Quadrature() {}
-      public Quadrature(Func<double[],double> func) : this() {
+      public Quadrature2D() {}
+      public Quadrature2D(F2D func) : this() {
          F = func;
       }
-      public Quadrature(int order, int dim, Func<double[],double> func) : this(func) {
+      public Quadrature2D(int order, F2D func) : this(func) {
          Order = order;
-         Dim = dim;
-         
       }
 
       /// <summary>Integrates on reference coordiantes [-1,1] x [-1,1].</summary>
       /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
       public double Integrate() {
          double result = 0.0;
-         //int depth = -1;
-         double[] coords = new double[Dim];
-         Recursion(-1, 1.0);
+         dbl x = 0.0;
+         dbl y = 0.0;
+         dbl wgh = 1.0;
+         for(int i = 0; i < Order; ++i) {
+            x = WA[Order - 2][i][1];                       // Must be here.
+            dbl newWgh = wgh*WA[Order - 2][i][0];
+            for(int j = 0; j < Order; ++j) {
+               y = WA[Order - 2][i][1];
+               result += newWgh*WA[Order - 2][i][0]*F(x,y); } }
          return result;
-         
-         // Recursion is entered once for each dimension of domain before it reaches bottom.
-         void Recursion(int depth, double wgh) {    // wa = weight and abscissa of current recursion. wgh = accumulated product of weights.
-            ++depth;
-            if(depth < Dim - 1) {                                          // Re-enter recursion, not all dimensions explored.
-               for(int i = 0; i < Order; ++i) {
-                  coords[depth] = WA[Order - 2][i][1];                       // Must be here.                  
-                  Recursion(depth, wgh*WA[Order - 2][i][0]); } }         // Multiply accumulated weight with current.
-            else {
-               for(int i = 0; i < Order; ++i) {
-                  coords[Dim-1] = WA[Order - 2][i][1];
-                  result += wgh*WA[Order - 2][i][0]*F(coords); } }
-         }
+      }
+      /// <summary>Order 7 Gaussian Quadrature in 2D.</summary>
+      /// <param name="f">Function to integrate over reference square.</param>
+      public static double Integrate(Func2D f) {
+         double result = 0.0;
+         dbl x = 0.0;
+         dbl y = 0.0;
+         dbl wgh = 1.0;
+         for(int i = 0; i < 7; ++i) {
+            x = WA[5][i][1];                       // Must be here.
+            dbl newWgh = wgh*WA[5][i][0];
+            for(int j = 0; j < 7; ++j) {
+               y = WA[5][i][1];
+               result += newWgh*WA[5][i][0]*f[x,y]; } }
+         return result;
       }
    }
 }

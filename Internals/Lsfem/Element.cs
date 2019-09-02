@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
-using dA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Numerics.DblArithmetic;
 using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
 
 using Fluid.Internals.Collections;
-using My = Fluid.Internals.Collections.Custom;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Lsfem.Simulation;
 using static Fluid.Internals.Lsfem.Mesh;
@@ -14,9 +13,9 @@ using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
-   using Tnr = Tensor<dbl,dA>;
-   using SymTnr = SymTensor<dbl,dA>;
-   using Vec = Vector<dbl,dA>;
+   using Tnr = Tensor<dbl,DA>;
+   using SymTnr = SymTensor<dbl,DA>;
+   using Vec = Vector<dbl,DA>;
    using FTnr = Tensor<Func2D,F2DA>;
    using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
 
@@ -25,9 +24,9 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
       public int[] P { get; }
       /// <summary>Quadruple overlap integrals ---- Rank 4 ---- ((α,p), (β,q), (γ,r), (δ,s)) ----  (36,36,36,36).</summary>
-      public Tnr Q { get; internal set; }
+      public SymTnr Q { get; internal set; }
       /// <summary>Triple overlap integrals ---- Rank 3 ---- ((α,p), (γ,q), (η,s)) ---- (36,36,36).</summary>
-      public Tnr T { get; internal set; }
+      public SymTnr T { get; internal set; }
       /// <summary>A 3x3 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
       public FTnr InvJ { get; private set; }
       /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
@@ -47,6 +46,9 @@ namespace Fluid.Internals.Lsfem {
          var interm = CalcDetJ();
          DetJ = interm.detJ;
          InvJ = CalcInvJ(interm);
+         var tnrFactor = FTnr.Contract(InvJ, ϕ, 2, 2);
+         Q = CalcQuadOverlaps(tnrFactor);
+         T = CalcTripOverlaps(tnrFactor);
          MA = new dbl[2][] {  new dbl[2] {Pos(9).X, Pos(3).X},
                               new dbl[2] {Pos(9).Y, Pos(3).Y}  };
          MB = new dbl[2][] {  new dbl[2] {Pos(6).X, Pos(0).X},
@@ -182,15 +184,12 @@ namespace Fluid.Internals.Lsfem {
       //          vals[i] += Vals(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
       //    return vals;
       // }
-
-      internal SymTnr CalcQuadOverlaps() {
-         var tnrQ = InvJ.Contract()
-         //var funcs = new FTnr(new List<int> {12,3,12,3,12,3,12,3}, 200_000);              // Tensor of functions.
-         var integrator = new Quadrature();                                               // Gauss-Legendre quadrature on reference square.
-         
-      }
-      internal SymTnr CalcTripOverlaps() {
-         
-      }
+      
+      /// <summary>Takes the single unique repeating factor (tensor) in a tensor product, multiplies it with itself four times and multiplies that with the element's determinant. Then it integrates the resulting function over the element.</summary>
+      /// <param name="tnrFactor">The repeating factor.</param>
+      internal SymTnr CalcQuadOverlaps(FTnr tnrFactor) =>
+         SymTnr.CreateAsQuadProd(tnrFactor, DetJ, Quadrature2D.Integrate);
+      internal SymTnr CalcTripOverlaps(FTnr tnrFactor) =>
+         SymTnr.CreateAsTripProd(tnrFactor, DetJ, Quadrature2D.Integrate);
    }
 }

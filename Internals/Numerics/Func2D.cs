@@ -26,6 +26,19 @@ namespace Fluid.Internals.Numerics {
       }
 
 
+      public dbl this[dbl x, dbl y] {
+         get => F(x,y);
+      }
+
+      public static Func2D operator *(Func2D f1, Func2D f2) {
+         return new Func2D( (x,y) => f1[x,y] * f2[x,y] );
+      }
+      public static Func2D TripProd(Func2D f1, Func2D f2, Func2D f3) =>
+         new Func2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y] );
+      public static Func2D QuadProd(Func2D f1, Func2D f2, Func2D f3, Func2D f4) =>
+         new Func2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y] );
+      public static Func2D QuintProd(Func2D f1, Func2D f2, Func2D f3, Func2D f4, Func2D f5) =>
+         new Func2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y]*f5[x,y] );
       /// <summary>Generates a (highly-likely) unique ID based on Func return value.</summary>
       public override int GetHashCode() =>
          (int) (F(1,2) + F(2,3) + F(3,5) + F(5,7) + F(Math.E, Math.PI));

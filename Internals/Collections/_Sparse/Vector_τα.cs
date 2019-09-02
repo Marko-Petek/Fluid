@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using dbl = System.Double;
+
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 using Fluid.TestRef;
@@ -206,13 +208,13 @@ namespace Fluid.Internals.Collections {
          return res;
       }
 
-      public Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr2, int truInx2, List<int> struc3, int conDim) {
+      public static Tensor<τ,α> ContractPart2(Vector<τ,α> vec1, Tensor<τ,α> tnr2, int truInx2, List<int> struc3, int conDim) {
          if(tnr2.Rank > 2) {                                                  // Result is tensor.
             Tensor<τ,α> elimTnr2, sumand, sum;
             sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
             for(int i = 0; i < conDim; ++i) {
                elimTnr2 = tnr2.ReduceRank(truInx2, i);
-               if(Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
+               if(vec1.Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
                   sumand = val*elimTnr2;
                   sum.Sum(sumand); } }
             if(sum.Count != 0)
@@ -224,7 +226,7 @@ namespace Fluid.Internals.Collections {
             sum = new Vector<τ,α>(struc3, null, 4);
             for(int i = 0; i < conDim; ++i) {
                elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
-               if(Vals.TryGetValue(i, out var val) && elimVec2 != null) {
+               if(vec1.Vals.TryGetValue(i, out var val) && elimVec2 != null) {
                   sumand = val*elimVec2;
                   sum.Sum(sumand); } }
             if(sum.Vals.Count != 0)
@@ -235,13 +237,13 @@ namespace Fluid.Internals.Collections {
             throw new ArgumentException("Explicitly cast tnr2 to vector before using contract."); }
       }
 
-      public Tensor<τ,α> Contract(Tensor<τ,α> tnr2, int natInx2) {
-         (List<int> struc3, _, int truInx2, int conDim) = ContractPart1(tnr2, 1, natInx2);
-         return ContractPart2(tnr2, truInx2, struc3, conDim);
+      public static Tensor<τ,α> Contract(Vector<τ,α> vec1, Tensor<τ,α> tnr2, int natInx2) {
+         (List<int> struc3, _, int truInx2, int conDim) = Tensor<τ,α>.ContractPart1(vec1, tnr2, 1, natInx2);
+         return ContractPart2(vec1, tnr2, truInx2, struc3, conDim);
       }
-      public τ Contract(Vector<τ,α> vec2) {
+      public static τ Contract(Vector<τ,α> vec1, Vector<τ,α> vec2) {
          τ res = default;
-         foreach(var int_val1 in Vals) {
+         foreach(var int_val1 in vec1.Vals) {
             if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
                res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
          return res;
@@ -249,7 +251,7 @@ namespace Fluid.Internals.Collections {
       /// <summary>Dot (scalar) product.</summary>
       /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
       public static τ operator *(Vector<τ,α> vec1, Vector<τ,α> vec2) =>
-         vec1.Contract(vec2);
+         Contract(vec1, vec2);
 
       /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
       public τ NormSqr() {
