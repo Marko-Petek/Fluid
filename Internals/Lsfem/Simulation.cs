@@ -151,11 +151,11 @@ namespace Fluid.Internals.Lsfem {
          var tnrF = new Tnr(new Lst{NF,NM}, NF);
          foreach(var emt in emts) {
             for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
-            for(int p = 0; p < 3; ++p) {
-               for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
+            for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
+            for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
+               for(int p = 0; p < 3; ++p) {
                for(int r = 0; r < 3; ++r) { 
-                  for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
-                  for(int s = 0; s < 3; ++s) {
+               for(int s = 0; s < 3; ++s) {
                      for(int j = 0; j < NM; ++j) {
                         var A1 = A[Tnr.Ex, a,p,r];
                         var secF = SecF[Vec.Ex, h, s];
