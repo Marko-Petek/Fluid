@@ -127,27 +127,27 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Assemble the dynamics tensor.</summary>
       /// <param name="initDynTnr">Sample Dynamics Tensor with existing entries (e.g.from previous time step).</param>
       /// <param name="emts">Elements list.</param>
-      Tnr AssemblePrimDynTnr(IEnumerable<Element> emts) {
-         var tnrK = new Tnr(new Lst{NF,NM,NF,NM}, NF);// initDynTnr.Copy(Tnr.CopySpecs.S352_00);
+      Tnr AssemblePrimaryDynamics(IEnumerable<Element> emts) {
+         var tnrK = new Tnr(new Lst{NF,NM,NF,NM}, NF);
          foreach(var emt in emts) {                                                          // Over Elements.
-            for(int α = 0, a = emt.P[α]; α < 12; ++α, a = emt.P[α]) {
-            for(int p = 0; p < 3; ++p) {                                                     // Over each e-node. Convert e-index to global index.
-               for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
+            for(int α = 0, a = emt.P[α]; α < 12; ++α, a = emt.P[α]) {                        // Over each e-node. Convert e-index to global index.
+            for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
+            for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
+            for(int δ = 0, d = emt.P[δ];  δ < 12;  ++δ, d = emt.P[δ]) {
+               for(int p = 0; p < 3; ++p) {
                for(int q = 0; q < 3; ++q) {
-                  for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-                  for(int r = 0; r < 3; ++r) {
-                     for(int δ = 0, d = emt.P[δ];  δ < 12;  ++δ, d = emt.P[δ]) {
-                     for(int s = 0; s < 3; ++s) {
-                        var A1 = A[Tnr.Ex, a,p,r];                                           // Now 2nd rank.
-                        var A2 = A[Tnr.Ex, b,q,s];                                           // 2nd rank.
-                        var AA = Tnr.Contract(A1, A2, 1, 1);                                 // AA now also 2nd rank.
-                        for(int j = 0; j < NM; ++j) { for(int k = 0; k < NM; ++k) {            // TODO: Make the dynamics tensor assembly happen symmetrically. The way it is now is simpler conceptually, but not optimal.
-                           tnrK[c,j,d,k] = emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*δ+s] * AA[j,k];
-         }} }} }} }} }} }
+               for(int r = 0; r < 3; ++r) {
+               for(int s = 0; s < 3; ++s) {
+                     var A1 = A[Tnr.Ex, a,p,r];                                              // Now 2nd rank.
+                     var A2 = A[Tnr.Ex, b,q,s];                                              // 2nd rank.
+                     var AA = Tnr.Contract(A1, A2, 1, 1);                                    // AA now also 2nd rank.
+                     for(int j = 0; j < NM; ++j) { for(int k = 0; k < NM; ++k) {             // TODO: Make the dynamics tensor assembly happen symmetrically (when determined it is actually symmetrical). The way it is now is simpler conceptually, but not optimal.
+                        tnrK[c,j,d,k] += emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*δ+s] * AA[j,k];
+         }} }}}} }}}} }
          return tnrK;
       }
 
-      Tnr AssemblePrimFcgTnr(Tnr initFcgTnr, IEnumerable<Element> emts) {
+      Tnr AssemblePrimaryForcing(IEnumerable<Element> emts) {
          var tnrF = new Tnr(new Lst{NF,NM}, NF);
          foreach(var emt in emts) {
             for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {

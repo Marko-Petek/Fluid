@@ -6,7 +6,6 @@
 	],
 	"settings": {
 		"editor.codeLens": true,
-		"editor.lineNumbers": "on",
 		"editor.useTabStops": true,
 		"editor.minimap.enabled": false,
 		"editor.detectIndentation": false,
@@ -18,10 +17,6 @@
 		//"jupyter.appendResults": true,
       "latex-workshop.view.pdf.viewer": "tab",
       "latex-workshop.latex.autoBuild.run": "onFileChange",
-      "omnisharp.path": "latest",
-		"python.jediEnabled": false,
-		"python.linting.pylintEnabled": true,
-		"python.pythonPath": "/usr/bin/python3.7",
 		"terminal.integrated.fontWeight": "bold",
 		"terminal.integrated.fontWeightBold": "bold",
 		"todo-tree.defaultHighlight": {
@@ -105,11 +100,6 @@
 		},
 		"workbench.settings.editor": "json",
 		"zenMode.hideActivityBar": true,
-
-		"[csharp]": {
-			"editor.codeLens": true,
-			"editor.lineNumbers": "on"
-		},
 		"[latex]": {
 			"editor.lineNumbers": "off"
       },
