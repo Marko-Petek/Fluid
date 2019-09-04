@@ -53,16 +53,16 @@ namespace Fluid.Internals.Lsfem {
          else return UC[inxs];
       }
       /// <summary>Secondary F. Third rank participant in the assembly process of F.</summary>
-      public Tnr SecF { get; internal set; }
+      public Tnr Fs { get; internal set; }
       protected Mesh Mesh { get; }
       /// <summary>2D lists of nodes lying inside a block.</summary>
       protected Dictionary<string,PseudoElement[][]> Patches { get; set; }
       /// <summary>1D lists of nodes shared across blocks.</summary>
       protected Dictionary<string,PseudoElement[]> Joints { get; set; }
       /// <summary></summary>
-      public abstract Dictionary<string,PseudoElement[][]> CreatePatches();
+      protected abstract Dictionary<string,PseudoElement[][]> CreatePatches();
       /// <summary></summary>
-      public abstract Dictionary<string,PseudoElement[]> CreateJoints();
+      protected abstract Dictionary<string,PseudoElement[]> CreateJoints();
       protected ConjGradsSolver Solver { get; }
 
 
@@ -118,9 +118,9 @@ namespace Fluid.Internals.Lsfem {
          return emtTree;
       }
       /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uc, int nc, int nf) CreateConstrainedTnr();
+      protected abstract (Tnr uc, int nc, int nf) CreateConstrainedVars();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
-      protected virtual Tnr CreateFreeTnr() =>
+      protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NF,NM}, NF*NM);
       
 
@@ -130,19 +130,24 @@ namespace Fluid.Internals.Lsfem {
       Tnr AssemblePrimaryDynamics(IEnumerable<Element> emts) {
          var tnrK = new Tnr(new Lst{NF,NM,NF,NM}, NF);
          foreach(var emt in emts) {                                                          // Over Elements.
-            for(int α = 0, a = emt.P[α]; α < 12; ++α, a = emt.P[α]) {                        // Over each e-node. Convert e-index to global index.
-            for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
             for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
             for(int δ = 0, d = emt.P[δ];  δ < 12;  ++δ, d = emt.P[δ]) {
+            for(int α = 0, a = emt.P[α]; α < 12; ++α, a = emt.P[α]) {                        // Over each e-node. Convert e-index to global index.
+            for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
                for(int p = 0; p < 3; ++p) {
                for(int q = 0; q < 3; ++q) {
                for(int r = 0; r < 3; ++r) {
                for(int s = 0; s < 3; ++s) {
-                     var A1 = A[Tnr.Ex, a,p,r];                                              // Now 2nd rank.
-                     var A2 = A[Tnr.Ex, b,q,s];                                              // 2nd rank.
-                     var AA = Tnr.Contract(A1, A2, 1, 1);                                    // AA now also 2nd rank.
-                     for(int j = 0; j < NM; ++j) { for(int k = 0; k < NM; ++k) {             // TODO: Make the dynamics tensor assembly happen symmetrically (when determined it is actually symmetrical). The way it is now is simpler conceptually, but not optimal.
-                        tnrK[c,j,d,k] += emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*δ+s] * AA[j,k];
+                     Tnr a_ij = A[Tnr.Ex, a,p,r];                                              // Now 2nd rank.
+                     Tnr a_ik = A[Tnr.Ex, b,q,s];                                              // 2nd rank.
+                     Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                                    // AA now also 2nd rank.
+                     foreach(var tnr_aa_k in aa_jk) {                                              // j
+                        int j = tnr_aa_k.Key;
+                        Vec aa_k = (Vec) tnr_aa_k.Value;
+                        foreach(var kv_aa in aa_k) {                                             // k
+                           int k = kv_aa.Key;
+                           dbl aa = kv_aa.Value;
+                           tnrK[c,j,d,k] += emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*δ+s] * aa;     // v is AA[j,k]
          }} }}}} }}}} }
          return tnrK;
       }
@@ -150,31 +155,33 @@ namespace Fluid.Internals.Lsfem {
       Tnr AssemblePrimaryForcing(IEnumerable<Element> emts) {
          var tnrF = new Tnr(new Lst{NF,NM}, NF);
          foreach(var emt in emts) {
-            for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
             for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-            for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
-               for(int p = 0; p < 3; ++p) {
-               for(int r = 0; r < 3; ++r) { 
-               for(int s = 0; s < 3; ++s) {
-                     for(int j = 0; j < NM; ++j) {
-                        var A1 = A[Tnr.Ex, a,p,r];
-                        var secF = SecF[Vec.Ex, h, s];
-                        Vec A1SecF = (Vec) Tnr.Contract(A1, secF, 1, 1);
-                        tnrF[Vec.Ex, c] = emt.T[3*α+p, 3*γ+r, 3*η+s] * A1SecF;        // First part added.
-                        for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
+               Vec fc_j = new Vec(NM, NM);
+               for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
+               for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
+                  for(int p = 0; p < 3; ++p) {
+                  for(int r = 0; r < 3; ++r) { 
+                  for(int s = 0; s < 3; ++s) {
+                     var a_ij = A[Tnr.Ex, a,p,r];
+                     Vec f_i = Fs[Vec.Ex, h, s];
+                     Vec af_j = (Vec) Tnr.Contract(a_ij, f_i, 1, 1);
+                     fc_j += emt.T[3*α+p, 3*γ+r, 3*η+s] * af_j;        // First part added.
+            
+                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {       // η is useda as δ now
                         for(int q = 0; q < 3; ++q) {
-                           var A2 = A[Tnr.Ex, b,q,s];
-                           var AA = Tnr.Contract(A1, A2, 1, 1);   // Rank 2 now.
-                           var U = UC[Vec.Ex, h];
-                           Vec AAU = (Vec) Tnr.Contract(AA, U, 2, 1);
-                           tnrF[Vec.Ex, c] += emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*η+s] * AAU;
-                        }}
-                     }
-                  }}
-               }}
-            }}
-         }
+                           Tnr a_ik = A[Tnr.Ex, b,q,s];
+                           Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);   // Rank 2 now.
+                           Vec u_k = UC[Vec.Ex, h];
+                           Vec aau_j = (Vec) Tnr.Contract(aa_jk, u_k, 2, 1);
+                           fc_j -= emt.Q[3*α+p, 3*β+q, 3*γ+r, 3*η+s] * aau_j; }} }}} }}   // Second part added.
+               tnrF[Vec.Ex, c] += fc_j; }}
+         return tnrF;
       }
+      /// <summary>Construct new A and Fs </summary>
+      /// <param name="nextA">Next step dynamics.</param>
+      /// <param name="nextFs">Next step forcing (secondary).</param>
+      /// <param name="prevUF">Previous step state.</param>
+      protected abstract (Tnr nextA, Tnr nextFs) AdvanceDynamics(Tnr prevUF);
 
       /// <summary>Find solution value at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Vec2 pos);

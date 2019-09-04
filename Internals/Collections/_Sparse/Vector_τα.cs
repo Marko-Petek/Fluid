@@ -270,6 +270,11 @@ namespace Fluid.Internals.Collections {
                return false; }
          return true;
       }
+      /// <summary>So that foreach statements work properly.</summary>
+      new public IEnumerator<KeyValuePair<int,τ>> GetEnumerator() {
+         foreach(var kv in Vals)
+            yield return kv;
+      }
 
       public override string ToString() {
          var sb = new StringBuilder(2*Count);
