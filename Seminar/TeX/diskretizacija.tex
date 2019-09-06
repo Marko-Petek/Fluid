@@ -308,11 +308,11 @@ Po vozliščih $(a, b, c, d \in [1,N])$:
 \begin{equation}
    \braket{
       \qty(A^{a p r}_{\mkern28mu i j} \mkern1mu
-      \qty( \pdv{\Psi_{\mkern-1mu a}}{x_p} ) \pdv{}{x_r} ) \mkern-2mu
+      \qty( \pdv{\Psi_{\mkern-1mu a}}{x_r} ) \pdv{}{x_p} ) \mkern-2mu
       \qty(v^{\mkern1mu c}_{\triangleright \mkern1mu j} \mkern1mu \Psi_c ) \mkern5mu  }
    {
       \mkern4mu \qty(A^{b q s i k} \mkern1mu
-      \qty( \pdv{\Psi_{\mkern-1mu b}}{x_q} ) \pdv{}{x_s} ) \mkern-4mu
+      \qty( \pdv{\Psi_{\mkern-1mu b}}{x_s} ) \pdv{}{x_q} ) \mkern-4mu
       \qty(u^{d k}_\triangleright \mkern1mu \Psi_d + u^{d k}_\triangleleft \mkern1mu \Psi_d )
       -
       f^{h s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_s} }
@@ -322,12 +322,12 @@ Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število 
    \sum^n_{\varepsilon}
    \braket{
       \qty(A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j} \mkern2mu
-      \qty( \pdv{\psi_{ \varepsilon \alpha}}{x_p} ) \frac{\pd}{\pd x_r} ) \mkern-4mu
+      \qty( \pdv{\psi_{ \varepsilon \alpha}}{x_r} ) \frac{\pd}{\pd x_p} ) \mkern-4mu
       \qty(v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern2mu
          \psi_{\varepsilon \gamma} )}
    {
       \qty(A^{\substack{\mkern2mu \varepsilon \\[-0.05mm] \beta} \mkern2mu q s i k} \mkern2mu
-      \qty( \pdv{\psi_{\varepsilon \beta}}{x_q} ) \frac{\pd}{\pd x_s} ) \mkern-4mu
+      \qty( \pdv{\psi_{\varepsilon \beta}}{x_s} ) \frac{\pd}{\pd x_q} ) \mkern-4mu
       \qty(u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleright
       \psi_{\varepsilon \delta}
       +
@@ -342,17 +342,17 @@ Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklep
    \sum^n_\varepsilon
    \braket{
       \qty( A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j} \mkern2mu
-      \psi_{ \varepsilon \alpha p} )
+      \psi_{ \varepsilon \alpha r} )
       v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern2mu
-      \psi_{\varepsilon \gamma r} \mkern4mu}
+      \psi_{\varepsilon \gamma p} \mkern4mu}
    {
       \mkern2mu \qty( A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern2mu
-      \psi_{\varepsilon \beta q} ) \mkern-4mu 
+      \psi_{\varepsilon \beta s} ) \mkern-4mu 
       \qty( u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleright
-      \psi_{\varepsilon \delta s}
+      \psi_{\varepsilon \delta q}
       +
       u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleleft
-      \psi_{\varepsilon \delta s} )
+      \psi_{\varepsilon \delta q} )
       -
       f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} \mkern1mu
       \psi_{\varepsilon \eta s} }
@@ -362,17 +362,17 @@ Preuredimo:
    \sum^n_\varepsilon
    v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern-2mu
    \braket{
-      \mkern-4mu \psi_{ \varepsilon \alpha p}
-      \psi_{\varepsilon \gamma r} \mkern1mu
+      \mkern-4mu \psi_{ \varepsilon \alpha r}
+      \psi_{\varepsilon \gamma p} \mkern1mu
       A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}  \mkern3mu }
    {
-      \mkern2mu \psi_{\varepsilon \beta q}
-      \psi_{\varepsilon \delta s} \mkern1mu
+      \mkern2mu \psi_{\varepsilon \beta s}
+      \psi_{\varepsilon \delta q} \mkern1mu
       A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
       u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
       +
-      \psi_{\varepsilon \beta q}
-      \psi_{\varepsilon \delta s} \mkern1mu
+      \psi_{\varepsilon \beta s}
+      \psi_{\varepsilon \delta q} \mkern1mu
       A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
       u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
       -
@@ -384,62 +384,64 @@ Kar lahko, postavimo izven integrala:
    \mkern-20mu \sum^n_\varepsilon
    v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j}
    \qty( \expval{
-      \psi_{ \varepsilon \alpha p} \mkern1mu
-      \psi_{\varepsilon \gamma r} \mkern1mu
-      \psi_{\varepsilon \beta q} \mkern1mu
-      \psi_{\varepsilon \delta s} }
+      \psi_{ \varepsilon \alpha r} \mkern1mu
+      \psi_{\varepsilon \gamma p} \mkern1mu
+      \psi_{\varepsilon \beta s} \mkern1mu
+      \psi_{\varepsilon \delta q} }
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
    +
    \expval{
-      \psi_{ \varepsilon \alpha p} \mkern1mu
-      \psi_{\varepsilon \gamma r} \mkern1mu
-      \psi_{\varepsilon \beta q} \mkern1mu
-      \psi_{\varepsilon \delta s} }
+      \psi_{ \varepsilon \alpha r} \mkern1mu
+      \psi_{\varepsilon \gamma p} \mkern1mu
+      \psi_{\varepsilon \beta s} \mkern1mu
+      \psi_{\varepsilon \delta q} }
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
    -
    \expval{
-      \psi_{ \varepsilon \alpha p} \mkern1mu
-      \psi_{\varepsilon \gamma r} \mkern1mu
+      \psi_{ \varepsilon \alpha r} \mkern1mu
+      \psi_{\varepsilon \gamma p} \mkern1mu
       \psi_{\varepsilon \eta s} }
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie} )
 \end{equation*}
 Definiramo tenzorja $\mathbsf{Q}$ (četverni prekrivni integrali) in $\mathbsf{T}$ (trojni prekrivni integrali):
 \begin{equation}
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   \boxed{
+   Q_{\varepsilon \mkern1mu  \alpha r  \mkern-1mu \beta s   \gamma \mkern1mu p \mkern1mu  \delta q}
    =
    \expval{
-      \psi_{ \varepsilon   \alpha p} \mkern1mu
-      \psi_{ \varepsilon   \beta q} \mkern1mu
-      \psi_{ \varepsilon   \gamma r} \mkern1mu
-      \psi_{ \varepsilon   \delta s} } \ ,
+      \psi_{ \varepsilon   \alpha r} \mkern1mu
+      \psi_{ \varepsilon   \beta s} \mkern1mu
+      \psi_{ \varepsilon   \gamma p} \mkern1mu
+      \psi_{ \varepsilon   \delta q} } } \ ,
 \end{equation}
 \begin{equation}
-   T_{\varepsilon   \alpha p   \gamma r   \eta s}
+   \boxed{
+   T_{\varepsilon \mkern1mu  \alpha r   \gamma \mkern1mu p  \mkern1mu \eta s}
    =
    \expval{
-      \psi_{\varepsilon \alpha p} \mkern1mu
-      \psi_{\varepsilon \gamma r} \mkern1mu
-      \psi_{ \varepsilon \eta s} } \ .
+      \psi_{\varepsilon \alpha r} \mkern1mu
+      \psi_{\varepsilon \gamma p} \mkern1mu
+      \psi_{ \varepsilon \eta s} } } \ .
 \end{equation}
 Tako imamo:
 \begin{equation}
    \sum^n_\varepsilon v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j}
-   \qty( Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   \qty( Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
    +
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
    -
-   T_{\varepsilon   \alpha p   \gamma r   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \eta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    ) = 0 \ .
@@ -448,14 +450,14 @@ Sestavitev globalnega tenzorja:
 \begin{equation}
    \hspace{-18mm}
    \forall \, v^{c j}_{\triangleright}: \quad
-   \sum^N_{a,b} \mkern-2mu v^{a  j}_{\triangleright}
+   \sum^N_{a,b} \mkern-2mu v^{c  j}_{\triangleright}
    \sum^n_\varepsilon
    \mkern-7mu
    \sum_{\substack{\gamma, \delta \, \ni: \\
       (\varepsilon,\gamma) = c \\ (\varepsilon,\delta) = d}}^{12}
    \mkern-10mu
    \qty(
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright )
@@ -466,11 +468,11 @@ Sestavitev globalnega tenzorja:
    \sum_{\substack{\gamma \, \ni: \\ (\varepsilon,\gamma) = c}}^{12}
    \mkern-10mu
    \qty(
-   T_{\varepsilon   \alpha p   \gamma r   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \eta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s}
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft )
@@ -484,7 +486,7 @@ Sestavitev globalnega tenzorja:
       (\varepsilon,\gamma) = c \\ (\varepsilon,\delta) = d}}^{12}
    \mkern-10mu
    \qty(
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} p \mkern2mu r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu  q s i k} ) \mkern3mu }
 \end{equation}
@@ -498,11 +500,11 @@ Sestavitev globalnega tenzorja:
       (\varepsilon,\gamma) = c}}^{12}
    \mkern-10mu
    \qty(
-   T_{\varepsilon   \alpha p   \gamma r   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \eta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   Q_{\varepsilon   \alpha p   \beta q   \gamma r   \delta s} \mkern2mu
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft ) \mkern3mu }
@@ -535,21 +537,21 @@ Končno:
 \end{equation}
 Prekrivne integrale integriramo na referenčnem kvadratu:
 \begin{equation}
-   Q_{\varepsilon  \alpha p \beta q \gamma r \delta s}
+   Q_{\varepsilon  \alpha r \beta s \gamma p \delta q}
    =
    \expval{
-      ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\alpha i}) \mkern1mu
-      ( \mathfrak{J}_{\varepsilon q}^{\mkern18mu i} \phi_{\beta i} ) \mkern1mu
-      ( \mathfrak{J}_{\varepsilon r}^{\mkern18mu i} \phi_{\gamma i})
-      ( \mathfrak{J}_{\varepsilon s}^{\mkern18mu i} \phi_{\mkern-1mu \delta i} ) \mkern2mu
+      ( \mathfrak{J}_{\varepsilon r}^{\mkern18mu i} \phi_{\alpha i}) \mkern1mu
+      ( \mathfrak{J}_{\varepsilon s}^{\mkern18mu i} \phi_{\beta i} ) \mkern1mu
+      ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\gamma i})
+      ( \mathfrak{J}_{\varepsilon q}^{\mkern18mu i} \phi_{\mkern-1mu \delta i} ) \mkern2mu
       |\mkern-2mu \det \mathbsf{J}_\varepsilon | }_{\bm{\chi}}
 \end{equation}
 \begin{equation}
-   T_{\varepsilon \alpha p \beta q \eta s}
+   T_{\varepsilon \alpha r \gamma p \eta s}
    =
    \expval{
-      ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\alpha i}) \mkern1mu
-      ( \mathfrak{J}_{\varepsilon r}^{\mkern18mu i} \phi_{\beta i} ) \mkern1mu
+      ( \mathfrak{J}_{\varepsilon r}^{\mkern18mu i} \phi_{\alpha i}) \mkern1mu
+      ( \mathfrak{J}_{\varepsilon p}^{\mkern18mu i} \phi_{\gamma i} ) \mkern1mu
       ( \mathfrak{J}_{\varepsilon s}^{\mkern18mu i} \phi_{\mkern-1mu \eta i} ) \mkern2mu
       |\mkern-2mu \det \mathbsf{J}_\varepsilon | }_{\bm{\chi}} \ .
 \end{equation}

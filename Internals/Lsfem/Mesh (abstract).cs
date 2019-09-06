@@ -18,7 +18,7 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>A list of positions.   (global index) => (x,y)</summary>
       public My.List<Vec2> Pos { get; internal set; }
       /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
-      protected KDTree<double,Element> ElementTree { get; }
+      internal KDTree<double,Element> Elements { get; set; }
       
 
       /// <summary>Create a block-structured mesh.</summary>
