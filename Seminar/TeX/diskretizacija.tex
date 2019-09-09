@@ -308,12 +308,30 @@ Po vozliščih $(a, b, c, d \in [1,N])$:
 \begin{equation}
    \braket{
       \qty(A^{a p r}_{\mkern28mu i j} \mkern1mu
-      \qty( \pdv{\Psi_{\mkern-1mu a}}{x_r} ) \pdv{}{x_p} ) \mkern-2mu
-      \qty(v^{\mkern1mu c}_{\triangleright \mkern1mu j} \mkern1mu \Psi_c ) \mkern5mu  }
+      \pdv{\Psi_{\mkern-1mu a}}{x_r} \pdv{}{x_p})
+      v^{\mkern1mu c}_{\triangleright \mkern1mu j} \mkern1mu \Psi_c \mkern5mu  }
    {
       \mkern4mu \qty(A^{b q s i k} \mkern1mu
-      \qty( \pdv{\Psi_{\mkern-1mu b}}{x_s} ) \pdv{}{x_q} ) \mkern-4mu
-      \qty(u^{d k}_\triangleright \mkern1mu \Psi_d + u^{d k}_\triangleleft \mkern1mu \Psi_d )
+      \pdv{\Psi_{\mkern-1mu b}}{x_s} \pdv{}{x_q} )
+      u^{d k}_{\bowtie} \mkern1mu \Psi_d
+      -
+      f^{h s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_s} }
+\end{equation}
+\begin{equation}
+   \braket{
+      A^{a p r}_{\mkern28mu i j} \mkern1mu
+      \pdv{\Psi_{\mkern-1mu a}}{x_r} \pdv{}{x_p}
+      v^{\mkern1mu c}_{\triangleright \mkern1mu j} \mkern1mu \Psi_c \mkern5mu  }
+   {
+         \mkern4mu
+      \pdv{\Psi_{\mkern-1mu b}}{x_s}
+      \pdv{}{x_q}
+         \qty(
+      A^{b q s i k} \mkern1mu
+      u^{d k}_\triangleright \mkern1mu \Psi_d
+      +
+      A^{b q s i l} \mkern1mu
+      u^{e l}_\triangleleft \mkern1mu \Psi_e )
       -
       f^{h s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_s} }
 \end{equation}
@@ -321,19 +339,21 @@ Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število 
 \begin{equation}
    \sum^n_{\varepsilon}
    \braket{
-      \qty(A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j} \mkern2mu
-      \qty( \pdv{\psi_{ \varepsilon \alpha}}{x_r} ) \frac{\pd}{\pd x_p} ) \mkern-4mu
-      \qty(v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern2mu
-         \psi_{\varepsilon \gamma} )}
+      A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j} \mkern2mu
+      \pdv{\psi_{ \varepsilon \alpha}}{x_r} \pdv{}{x_p}
+      v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern2mu
+      \psi_{\varepsilon \gamma} \mkern3mu }
    {
-      \qty(A^{\substack{\mkern2mu \varepsilon \\[-0.05mm] \beta} \mkern2mu q s i k} \mkern2mu
-      \qty( \pdv{\psi_{\varepsilon \beta}}{x_s} ) \frac{\pd}{\pd x_q} ) \mkern-4mu
-      \qty(u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleright
-      \psi_{\varepsilon \delta}
+         \mkern2mu
+      \pdv{\psi_{\varepsilon \beta}}{x_s}
+      \frac{\pd}{\pd x_q}
+         \qty(
+      A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
+      u^{d k}_\triangleright \mkern1mu \Psi_d
       +
-      u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleleft
-      \psi_{\varepsilon \delta} )
-      -
+      A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l} \mkern1mu
+      u^{e l}_\triangleleft \mkern1mu \Psi_e
+         ) -
       f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} \mkern1mu
       \pdv{\psi_{\varepsilon \eta}}{x_s}}
 \end{equation}
@@ -341,18 +361,21 @@ Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklep
 \begin{equation*}
    \sum^n_\varepsilon
    \braket{
-      \qty( A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j} \mkern2mu
-      \psi_{ \varepsilon \alpha r} )
+      A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
+         \mkern1mu
+      \psi_{ \varepsilon \alpha r}
+         \mkern1mu
       v^{\mkern 2mu \substack{\varepsilon \\[-0.65mm] \gamma \\[-0.2mm]}}_{\triangleright \mkern5mu j} \mkern2mu
       \psi_{\varepsilon \gamma p} \mkern4mu}
    {
-      \mkern2mu \qty( A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern2mu
-      \psi_{\varepsilon \beta s} ) \mkern-4mu 
-      \qty( u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleright
+         \mkern2mu
+      \psi_{\varepsilon \beta s} 
+      \qty( A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleright
       \psi_{\varepsilon \delta q}
       +
-      u^{\substack{\mkern2mu \varepsilon \\[0.10mm] \delta} \mkern2mu k}_\triangleleft
-      \psi_{\varepsilon \delta q} )
+      A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+      u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
+      \psi_{\varepsilon \epsilon q} )
       -
       f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} \mkern1mu
       \psi_{\varepsilon \eta s} }
@@ -372,9 +395,9 @@ Preuredimo:
       u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
       +
       \psi_{\varepsilon \beta s}
-      \psi_{\varepsilon \delta q} \mkern1mu
-      A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
-      u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
+      \psi_{\varepsilon \epsilon q} \mkern1mu
+      A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+      u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
       -
       \psi_{\varepsilon \eta s} \mkern1mu
       f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} }
@@ -396,10 +419,10 @@ Kar lahko, postavimo izven integrala:
       \psi_{ \varepsilon \alpha r} \mkern1mu
       \psi_{\varepsilon \gamma p} \mkern1mu
       \psi_{\varepsilon \beta s} \mkern1mu
-      \psi_{\varepsilon \delta q} }
+      \psi_{\varepsilon \epsilon q} }
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
-   u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
+   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+   u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
    -
    \expval{
       \psi_{ \varepsilon \alpha r} \mkern1mu
@@ -436,10 +459,10 @@ Tako imamo:
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k} \mkern1mu
    u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleright
    +
-   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q}
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \epsilon q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
-   u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft
+   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+   u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
    -
    T_{\varepsilon   \alpha r   \gamma p   \eta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
@@ -472,11 +495,12 @@ Sestavitev globalnega tenzorja:
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q}
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \epsilon q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
-   u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft )
+   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+   u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft )
 \end{equation}
+Pomembno: $(\gamma, j)$ in $(\delta, k)$ pri sestavitvi tenzorja $K$ tečeta le preko prostih speremenljivk. $i$ teče preko vseh spremenljivk.
 \begin{equation}
    \boxed{ \phantom{\rule[-12mm]{1mm}{20mm}}
    K_{cjdk} =
@@ -491,6 +515,8 @@ Sestavitev globalnega tenzorja:
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu  q s i k} ) \mkern3mu }
 \end{equation}
 \vspace{1mm}
+Pri sestavitvi $F$ oznaučuje $(\gamma, j)$ proste spremenljivke, medtem ko $(\epsilon, l)$ označuje vezane speremenljivke.
+\vspace{-1mm}
 \begin{equation}
    \boxed{ \phantom{\rule[-9mm]{1mm}{18mm}}
    F_{c j} =
@@ -504,10 +530,10 @@ Sestavitev globalnega tenzorja:
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
    f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
    -
-   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \delta q} \mkern2mu
+   Q_{\varepsilon   \alpha r   \beta s   \gamma p   \epsilon q} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i k}
-   u^{\substack{\mkern2mu \varepsilon \\[0.09mm] \delta} \mkern2mu k}_\triangleleft ) \mkern3mu }
+   A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
+   u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft ) \mkern3mu }
 \end{equation}
 \begin{equation*}
    v^{c j}_{\triangleright} \left(

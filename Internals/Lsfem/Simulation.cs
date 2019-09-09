@@ -19,8 +19,6 @@ namespace Fluid.Internals.Lsfem {
    using Lst = List<int>;
    
    public abstract class Simulation {
-      /// <summary>The Simulation.</summary>
-      public static Simulation Sim { get; protected set; }
       /// <summary>Number of independent variables at a single position (= number of equations).</summary>
       public int Nm { get; internal set; }
       /// <summary>Number of all positions.</summary>
@@ -29,11 +27,11 @@ namespace Fluid.Internals.Lsfem {
       public int NcPos { get; protected set; }
       /// <summary>Number of positions with free variables.</summary>
       public int NfPos { get; protected set; }
-      /// <summary>Primary Dynamics tensor, 4th rank.</summary>
+      /// <summary>Primary Dynamics tensor, 4th rank. Includes only free variables.</summary>
       public Tnr K { get; internal set; }
       /// <summary>Forcing tensor, 2nd rank.</summary>
       public Tnr F { get; internal set; }
-      /// <summary>Secondary dynamics tensor, 5th rank.
+      /// <summary>Secondary dynamics tensor, 5th rank. Includes both, free and constrained variables.
       /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
       public Tnr A { get; internal set; }
       
@@ -41,6 +39,13 @@ namespace Fluid.Internals.Lsfem {
       public Tnr UF { get; internal set; }
       /// <summary>Constrained node values tensor, 2nd rank.</summary>
       public Tnr UC { get; internal set; }
+
+      public Tnr U(Tnr dummy, params int[] inx) {
+         Tnr u = UF[dummy, inx];
+         if(u != null)
+            return u;
+         else return UC[dummy, inx];
+      }
       public Vec U(Vec dummy, int inx) {
          Vec u = UF[dummy, inx];
          if(u != null)
@@ -49,30 +54,31 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Nodes values tensor, 2nd rank. Returns value at desired index regardless of which tensor it resides in.</summary>
       /// <param name="inxs">A set of indices that extends all the way down to value rank.</param>
-      public dbl U(params int[] inxs) {
+      public (dbl val, bool free) U(params int[] inxs) {
          dbl u = UF[inxs];
          if(u != 0.0)
-            return u;
-         else return UC[inxs];
+            return (u, true);
+         else return (UC[inxs], false);
       }
       /// <summary>Secondary F. Third rank participant in the assembly process of F.</summary>
       public Tnr Fs { get; internal set; }
-      protected Mesh Mesh { get; }
+      protected Mesh Mesh { get; private set; }
       /// <summary>2D lists of nodes lying inside a block.</summary>
       protected Dictionary<string,PseudoElement[][]> Patches { get; set; }
       /// <summary>1D lists of nodes shared across blocks.</summary>
       protected Dictionary<string,PseudoElement[]> Joints { get; set; }
+      /// <summary>Solver that solves the linear system using Conjugate Gradients.</summary>
       protected ConjGradsSolver Solver { get; }
 
 
       public Simulation() {
-         Sim = this;
-         Mesh = new Mesh();
+         Initialize();
       }
 
       public void Initialize() {                                        R.R("Creating Patches.");
          Patches = CreatePatches();                                     R.R("Creating Joints.");
-         Joints = CreateJoints();                                       R.R("Creating Positions.");
+         Joints = CreateJoints();
+         Mesh = new Mesh();                                             R.R("Creating Positions.");
          Mesh.Pos = CreatePositions();
          NPos = Mesh.Pos.Count;
          var emts = CreateElements();                              R.R("Creating a list of Centers of Mass.");
@@ -167,32 +173,28 @@ namespace Fluid.Internals.Lsfem {
          var tnrF = new Tnr(new Lst{NfPos,Nm}, NfPos);
          foreach(var emt in emts) {
             for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-               Vec fc_j = new Vec(Nm, Nm);
+               Vec fc_j = new Vec(dim: Nm, cap: Nm);
                for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
                for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
                   for(int p = 0; p < 3; ++p) {
                   for(int r = 0; r < 3; ++r) { 
                   for(int s = 0; s < 3; ++s) {
-                     var a_ij = A[Tnr.Ex, a,p,r];
+                     Tnr a_ij = A[Tnr.Ex, a,p,r];
                      Vec f_i = Fs[Vec.Ex, h, s];
                      Vec af_j = (Vec) Tnr.Contract(a_ij, f_i, 1, 1);
-                     fc_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * af_j;        // First part added.
-            
-                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {       // η is useda as δ now
+                     fc_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * af_j;                              // First part added.
+                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // η is useda as δ now
                         for(int q = 0; q < 3; ++q) {
                            Tnr a_ik = A[Tnr.Ex, b,q,s];
-                           Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);   // Rank 2 now.
+                           Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                       // Rank 2 now.
                            Vec u_k = UC[Vec.Ex, h];
                            Vec aau_j = (Vec) Tnr.Contract(aa_jk, u_k, 2, 1);
-                           fc_j -= emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*η+q] * aau_j; }} }}} }}   // Second part added.
+                           fc_j -= emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*η+q] * aau_j; }} }}} }}      // Second part added.
                tnrF[Vec.Ex, c] += fc_j; }}
          return tnrF;
       }
       /// <summary>Construct new A and Fs </summary>
-      /// <param name="nextA">Next step dynamics.</param>
-      /// <param name="nextFs">Next step forcing (secondary).</param>
-      /// <param name="prevUF">Previous step state.</param>
-      protected abstract (Tnr nextA, Tnr nextFs) AdvanceDynamics(Tnr prevUF);
+      protected abstract void AdvanceDynamics();
 
       /// <summary>Find solution value at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Vec2 pos);

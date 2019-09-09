@@ -14,7 +14,6 @@ namespace Fluid.Internals.Lsfem {
    using Tnr = Tensor<double, DblArithmetic>;
    /// <summary>A mesh made of structured blocks which consist of quadrilateral elements.</summary>
    public class Mesh {
-      public static Mesh Msh { get; protected set; }
       /// <summary>A list of positions.   (global index) => (x,y)</summary>
       public My.List<Vec2> Pos { get; internal set; }
       /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
@@ -22,8 +21,6 @@ namespace Fluid.Internals.Lsfem {
       
 
       /// <summary>Create a block-structured mesh.</summary>
-      public Mesh() {
-         Msh = this;
-      }
+      public Mesh() { }
    }
 }
