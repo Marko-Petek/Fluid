@@ -160,9 +160,13 @@ namespace Fluid.Internals.Lsfem {
                      Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                                    // AA now also 2nd rank.
                      foreach(var tnr_aa_k in aa_jk) {                                              // j
                         int j = tnr_aa_k.Key;
+                        if(UF[c,j] == 0.0)                                                      // No candidate (c,j) among free variables.
+                           continue;
                         Vec aa_k = (Vec) tnr_aa_k.Value;
                         foreach(var kv_aa in aa_k) {                                             // k
                            int k = kv_aa.Key;
+                           if(UF[d,k] == 0.0)                                                   // No candidate (d,k) among free variables.
+                              continue;                                                         
                            dbl aa = kv_aa.Value;
                            tnrK[c,j,d,k] += emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q] * aa;     // v is AA[j,k]
          }} }}}} }}}} }
@@ -183,7 +187,7 @@ namespace Fluid.Internals.Lsfem {
                      Vec f_i = Fs[Vec.Ex, h, s];
                      Vec af_j = (Vec) Tnr.Contract(a_ij, f_i, 1, 1);
                      fc_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * af_j;                              // First part added.
-                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // η is useda as δ now
+                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // η is useda as ε now, with additional checks
                         for(int q = 0; q < 3; ++q) {
                            Tnr a_ik = A[Tnr.Ex, b,q,s];
                            Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                       // Rank 2 now.
