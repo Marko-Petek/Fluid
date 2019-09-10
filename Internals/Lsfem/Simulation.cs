@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
@@ -35,24 +36,22 @@ namespace Fluid.Internals.Lsfem {
       /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
       public Tnr A { get; internal set; }
       
-      /// <summary>Free node values tensor, 2nd rank.</summary>
+      /// <summary>Free variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
       public Tnr UF { get; internal set; }
-      /// <summary>Constrained node values tensor, 2nd rank.</summary>
+      /// <summary>Constrained variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
       public Tnr UC { get; internal set; }
-
-      public Tnr U(Tnr dummy, params int[] inx) {
-         Tnr u = UF[dummy, inx];
-         if(u != null)
-            return u;
-         else return UC[dummy, inx];
-      }
+      /// <summary>A sequence of bits that indicate constrainedness of each variable: (i,j) => NVar*i + j</summary>
+      protected BitArray C { get; protected set; }
+      /// <summary>Fetches a vector of variables</summary>
+      /// <param name="dummy"></param>
+      /// <param name="inx"></param>
       public Vec U(Vec dummy, int inx) {
          Vec u = UF[dummy, inx];
          if(u != null)
             return u;
          else return UC[dummy, inx];
       }
-      /// <summary>Nodes values tensor, 2nd rank. Returns value at desired index regardless of which tensor it resides in.</summary>
+      /// <summary>Fetches a variable value at existing (i,j) from wherever the variable exists (free variables UF or constrained variables UC).</summary>
       /// <param name="inxs">A set of indices that extends all the way down to value rank.</param>
       public (dbl val, bool free) U(params int[] inxs) {
          dbl u = UF[inxs];
@@ -75,6 +74,11 @@ namespace Fluid.Internals.Lsfem {
          Initialize();
       }
 
+      /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
+      /// <param name="i">Position index.</param>
+      /// <param name="j">Variable index.</param>
+      public bool Ctrds(int i, int j) => C[Nm*i + j];
+      /// <summary>Set the Simulation up.</summary>
       public void Initialize() {                                        R.R("Creating Patches.");
          Patches = CreatePatches();                                     R.R("Creating Joints.");
          Joints = CreateJoints();
@@ -173,28 +177,31 @@ namespace Fluid.Internals.Lsfem {
          return tnrK;
       }
 
-      Tnr AssemblePrimaryForcing(IEnumerable<Element> emts) {
+      Tnr AssemblePrimaryForcing(IEnumerable<Element> emts) {     // FIXME: j has to come from free nodes, l from constrained nodes.
          var tnrF = new Tnr(new Lst{NfPos,Nm}, NfPos);
          foreach(var emt in emts) {
             for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-               Vec fc_j = new Vec(dim: Nm, cap: Nm);
+            for(int j = 0; j < Nm; ++j) {
+            if(UC[c,j] == 0.0 && UF(c,j) !=) {                                                 // 
+               Vec f_j = new Vec(dim: Nm, cap: Nm);
                for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
                for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
                   for(int p = 0; p < 3; ++p) {
                   for(int r = 0; r < 3; ++r) { 
                   for(int s = 0; s < 3; ++s) {
                      Tnr a_ij = A[Tnr.Ex, a,p,r];
-                     Vec f_i = Fs[Vec.Ex, h, s];
-                     Vec af_j = (Vec) Tnr.Contract(a_ij, f_i, 1, 1);
-                     fc_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * af_j;                              // First part added.
+                     Vec fs_i = Fs[Vec.Ex, h, s];
+                     Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);
+                     f_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * afs_j;                              // First part added.
                      for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // η is useda as ε now, with additional checks
                         for(int q = 0; q < 3; ++q) {
-                           Tnr a_ik = A[Tnr.Ex, b,q,s];
-                           Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                       // Rank 2 now.
+                           Tnr a_il = A[Tnr.Ex, b,q,s];
+                           Tnr aa_jl = Tnr.Contract(a_ij, a_il, 1, 1);                       // Rank 2 now.
                            Vec u_k = UC[Vec.Ex, h];
-                           Vec aau_j = (Vec) Tnr.Contract(aa_jk, u_k, 2, 1);
-                           fc_j -= emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*η+q] * aau_j; }} }}} }}      // Second part added.
-               tnrF[Vec.Ex, c] += fc_j; }}
+                           Vec aau_j = (Vec) Tnr.Contract(aa_jl, u_k, 2, 1);
+                           f_j -= emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*η+q] * aau_j; }} }}} }}      // Second part added.
+               tnrF[Vec.Ex, c] += f_j; }}}
+            }
          return tnrF;
       }
       /// <summary>Construct new A and Fs </summary>
