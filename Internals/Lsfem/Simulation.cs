@@ -41,7 +41,7 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Constrained variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
       public Tnr UC { get; internal set; }
       /// <summary>A sequence of bits that indicate constrainedness of each variable: (i,j) => NVar*i + j</summary>
-      protected BitArray C { get; protected set; }
+      protected BitArray C { get; set; }
       /// <summary>Fetches a vector of variables</summary>
       /// <param name="dummy"></param>
       /// <param name="inx"></param>
@@ -73,11 +73,6 @@ namespace Fluid.Internals.Lsfem {
       public Simulation() {
          Initialize();
       }
-
-      /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
-      /// <param name="i">Position index.</param>
-      /// <param name="j">Variable index.</param>
-      public bool Ctrds(int i, int j) => C[Nm*i + j];
       /// <summary>Set the Simulation up.</summary>
       public void Initialize() {                                        R.R("Creating Patches.");
          Patches = CreatePatches();                                     R.R("Creating Joints.");
@@ -89,6 +84,10 @@ namespace Fluid.Internals.Lsfem {
          var coms = CreateCOMs(emts);
          Mesh.Elements = CreateElementTree(coms, emts);
       }
+      /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
+      /// <param name="i">Position index.</param>
+      /// <param name="j">Variable index.</param>
+      public bool Constr(int i, int j) => C[Nm*i + j];
       /// <summary></summary>
       protected abstract Dictionary<string,PseudoElement[][]> CreatePatches();
       /// <summary></summary>
@@ -143,66 +142,44 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,Nm}, NfPos);
-      
 
-      /// <summary>Assemble the dynamics tensor.</summary>
-      /// <param name="initDynTnr">Sample Dynamics Tensor with existing entries (e.g.from previous time step).</param>
-      /// <param name="emts">Elements list.</param>
-      Tnr AssemblePrimaryDynamics(IEnumerable<Element> emts) {
-         var tnrK = new Tnr(new Lst{NfPos,Nm,NfPos,Nm}, NfPos);            // FIXME: NF must be number of positions where free variables are located. 
-         foreach(var emt in emts) {                                                          // Over Elements.
-            for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-            for(int δ = 0, d = emt.P[δ];  δ < 12;  ++δ, d = emt.P[δ]) {
-            for(int α = 0, a = emt.P[α]; α < 12; ++α, a = emt.P[α]) {                        // Over each e-node. Convert e-index to global index.
-            for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
-               for(int p = 0; p < 3; ++p) {
-               for(int q = 0; q < 3; ++q) {
-               for(int r = 0; r < 3; ++r) {
-               for(int s = 0; s < 3; ++s) {
-                     Tnr a_ij = A[Tnr.Ex, a,p,r];                                              // Now 2nd rank.
-                     Tnr a_ik = A[Tnr.Ex, b,q,s];                                              // 2nd rank.
-                     Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                                    // AA now also 2nd rank.
-                     foreach(var tnr_aa_k in aa_jk) {                                              // j
-                        int j = tnr_aa_k.Key;
-                        if(UF[c,j] == 0.0)                                                      // No candidate (c,j) among free variables.
-                           continue;
-                        Vec aa_k = (Vec) tnr_aa_k.Value;
-                        foreach(var kv_aa in aa_k) {                                             // k
-                           int k = kv_aa.Key;
-                           if(UF[d,k] == 0.0)                                                   // No candidate (d,k) among free variables.
-                              continue;                                                         
-                           dbl aa = kv_aa.Value;
-                           tnrK[c,j,d,k] += emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q] * aa;     // v is AA[j,k]
-         }} }}}} }}}} }
-         return tnrK;
-      }
-
-      Tnr AssemblePrimaryForcing(IEnumerable<Element> emts) {     // FIXME: j has to come from free nodes, l from constrained nodes.
-         var tnrF = new Tnr(new Lst{NfPos,Nm}, NfPos);
+      (Tnr K, Tnr F) AssemblePrimaryTensors(IEnumerable<Element> emts) {
+         var tnrK = new Tnr(new Lst{NPos,Nm,NPos,Nm}, NfPos);                    // Create a 4th rank result tensor.
+         var tnrF = new Tnr(new Lst{NPos,Nm}, NfPos);                            // Create a 2nd rank result tensor.
+         Lst allJs = Enumerable.Range(0,Nm).ToList();
          foreach(var emt in emts) {
-            for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-            for(int j = 0; j < Nm; ++j) {
-            if(UC[c,j] == 0.0 && UF(c,j) !=) {                                                 // 
-               Vec f_j = new Vec(dim: Nm, cap: Nm);
-               for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
-               for(int η = 0, h = emt.P[η];  η < 12;  ++η, h = emt.P[η]) {
-                  for(int p = 0; p < 3; ++p) {
-                  for(int r = 0; r < 3; ++r) { 
-                  for(int s = 0; s < 3; ++s) {
-                     Tnr a_ij = A[Tnr.Ex, a,p,r];
-                     Vec fs_i = Fs[Vec.Ex, h, s];
-                     Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);
-                     f_j += emt.T[3*α+r, 3*γ+p, 3*η+s] * afs_j;                              // First part added.
-                     for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // η is useda as ε now, with additional checks
-                        for(int q = 0; q < 3; ++q) {
-                           Tnr a_il = A[Tnr.Ex, b,q,s];
-                           Tnr aa_jl = Tnr.Contract(a_ij, a_il, 1, 1);                       // Rank 2 now.
-                           Vec u_k = UC[Vec.Ex, h];
-                           Vec aau_j = (Vec) Tnr.Contract(aa_jl, u_k, 2, 1);
-                           f_j -= emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*η+q] * aau_j; }} }}} }}      // Second part added.
-               tnrF[Vec.Ex, c] += f_j; }}}
-            }
-         return tnrF;
+         for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
+            Vec vecF_j = tnrF[Vec.Ex, c];
+            var jfs = allJs.Where( j => !Constr(c,j) ).ToArray();                      // Determine which variables (c,j) are free.
+            for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
+            for(int p = 0; p < 3; ++p) {
+            for(int r = 0; r < 3; ++r) {
+               Tnr a_ij = A[Tnr.Ex, a,p,r];                                            // Precursor for all terms.
+               for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
+                  Tnr f_si = Fs[Tnr.Ex, b];
+                  for(int s = 0; s < 3; ++s) {                                         // Index for A*Fs_j
+                     Vec fs_i = f_si[Vec.Ex, s];
+                     Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
+                     foreach(var j in allJs)
+                        vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
+                     for(int q = 0; q < 3; ++q) {
+                        Tnr a_ik = A[Tnr.Ex, b,q,s];                                   // For second term in primary forcing.
+                        Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
+                        for(int δ = 0, d = emt.P[δ]; δ < 12; ++δ, d = emt.P[δ]) {
+                           var grpsK = allJs.GroupBy( j => Constr(c,j) ).ToArray();
+                           var kfs = grpsK.Where( grp => grp.Key == false ).
+                              Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
+                           var kcs = grpsK.Where( grp => grp.Key == true ).
+                              Single().ToArray();
+                           dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
+                           foreach(var jf in jfs) {
+                              Vec aa_k = aa_jk[Vec.Ex,jf];
+                              foreach(int k in kfs)
+                                 tnrK[c,jf,d,k] += coefQ * aa_k[k];
+                              foreach(int l in kcs)
+                                 vecF_j[jf] -= coefQ * aa_k[l] * UC[d,l];
+            } } } } } } } } } }
+         return (tnrK, tnrF);
       }
       /// <summary>Construct new A and Fs </summary>
       protected abstract void AdvanceDynamics();

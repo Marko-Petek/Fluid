@@ -1,3 +1,4 @@
+% !TeX root = ./seminar.tex
 \section{Diskretizacija problema}
 
 Večina literature iz teorije \texttt{FEM} obravnava skalarne funkcije s stališča funkcionalne analize - kot vektorje. Enačbe iz prejšnjega poglavja bi v takšnem zapisu izgledale preprosteje. Omenjen pristop bi dodal novo plast konceptov, ki bi jih moral bralec predhodno razumeti, zato smo se ga za zaćetek izognili. Eden takšnih konceptov je koncept prostostnih stopenj funkcije. Razlaga diskretizacije problema je brez njega precej otežena, zato bomo tukaj na hitro opisali bistvo vektorske obravnave funkcij.
@@ -315,7 +316,7 @@ Po vozliščih $(a, b, c, d \in [1,N])$:
       \pdv{\Psi_{\mkern-1mu b}}{x_s} \pdv{}{x_q} )
       u^{d k}_{\bowtie} \mkern1mu \Psi_d
       -
-      f^{h s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_s} }
+      f^{b s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_b} }
 \end{equation}
 \begin{equation}
    \braket{
@@ -333,7 +334,7 @@ Po vozliščih $(a, b, c, d \in [1,N])$:
       A^{b q s i l} \mkern1mu
       u^{e l}_\triangleleft \mkern1mu \Psi_e )
       -
-      f^{h s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{x_s} }
+      f^{b s i}_{\bowtie} \mkern1mu \pdv{\Psi_{\mkern-1mu h}}{b_s} }
 \end{equation}
 Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število elementov.
 \begin{equation}
@@ -354,8 +355,8 @@ Po elementih $(\alpha, \beta, \gamma, \delta) \in [1,12]$, kjer je $n$ število 
       A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l} \mkern1mu
       u^{e l}_\triangleleft \mkern1mu \Psi_e
          ) -
-      f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} \mkern1mu
-      \pdv{\psi_{\varepsilon \eta}}{x_s}}
+      f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern1mu s i}_{\bowtie} \mkern1mu
+      \pdv{\psi_{\varepsilon \beta}}{x_s}}
 \end{equation}
 Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklepaj):
 \begin{equation*}
@@ -377,8 +378,8 @@ Uporabimo parcialni diferencialni operator (absorbiramo indeks v naslednji oklep
       u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
       \psi_{\varepsilon \epsilon q} )
       -
-      f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} \mkern1mu
-      \psi_{\varepsilon \eta s} }
+      f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern1mu s i}_{\bowtie} \mkern1mu
+      \psi_{\varepsilon \beta s} }
 \end{equation*}
 Preuredimo:
 \begin{equation*}
@@ -399,8 +400,8 @@ Preuredimo:
       A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
       u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
       -
-      \psi_{\varepsilon \eta s} \mkern1mu
-      f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern1mu s i}_{\bowtie} }
+      \psi_{\varepsilon \beta s} \mkern1mu
+      f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern1mu s i}_{\bowtie} }
 \end{equation*}
 Kar lahko, postavimo izven integrala:
 \begin{equation*}
@@ -427,9 +428,9 @@ Kar lahko, postavimo izven integrala:
    \expval{
       \psi_{ \varepsilon \alpha r} \mkern1mu
       \psi_{\varepsilon \gamma p} \mkern1mu
-      \psi_{\varepsilon \eta s} }
+      \psi_{\varepsilon \beta s} }
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie} )
+   f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu s i}_{\bowtie} )
 \end{equation*}
 Definiramo tenzorja $\mathbsf{Q}$ (četverni prekrivni integrali) in $\mathbsf{T}$ (trojni prekrivni integrali):
 \begin{equation}
@@ -449,7 +450,7 @@ Definiramo tenzorja $\mathbsf{Q}$ (četverni prekrivni integrali) in $\mathbsf{T
    \expval{
       \psi_{\varepsilon \alpha r} \mkern1mu
       \psi_{\varepsilon \gamma p} \mkern1mu
-      \psi_{ \varepsilon \eta s} } } \ .
+      \psi_{ \varepsilon \beta s} } } \ .
 \end{equation}
 Tako imamo:
 \begin{equation}
@@ -464,9 +465,9 @@ Tako imamo:
    A^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu q s i l}
    u^{\substack{\mkern2mu \varepsilon \\[-0.55mm] \epsilon} \mkern2mu l}_\triangleleft
    -
-   T_{\varepsilon   \alpha r   \gamma p   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \beta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
+   f^{\substack{\mkern2mu \varepsilon \\[0.55mm] \beta} \mkern2mu s i}_{\bowtie}
    ) = 0 \ .
 \end{equation}
 Sestavitev globalnega tenzorja:
@@ -491,9 +492,9 @@ Sestavitev globalnega tenzorja:
    \sum_{\substack{\gamma \, \ni: \\ (\varepsilon,\gamma) = c}}^{12}
    \mkern-10mu
    \qty(
-   T_{\varepsilon   \alpha r   \gamma p   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \beta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
+   f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu s i}_{\bowtie}
    -
    Q_{\varepsilon   \alpha r   \beta s   \gamma p   \epsilon q}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
@@ -526,9 +527,9 @@ Pri sestavitvi $F$ oznaučuje $(c, j)$ proste spremenljivke, medtem ko $(e, l)$ 
       (\varepsilon,\gamma) = c}}^{12}
    \mkern-10mu
    \qty(
-   T_{\varepsilon   \alpha r   \gamma p   \eta s}
+   T_{\varepsilon   \alpha r   \gamma p   \beta s}
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
-   f^{\substack{\mkern2mu \varepsilon \\[-0.59mm] \eta} \mkern2mu s i}_{\bowtie}
+   f^{\substack{\mkern2mu \varepsilon \\[0.05mm] \beta} \mkern2mu s i}_{\bowtie}
    -
    Q_{\varepsilon   \alpha r   \beta s   \gamma p   \epsilon q} \mkern2mu
    A^{\substack{\mkern2mu \varepsilon \\[-0.65mm] \alpha} \mkern2mu p r}_{\mkern29mu i j}
