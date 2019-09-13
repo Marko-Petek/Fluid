@@ -44,7 +44,7 @@ namespace Fluid.Internals.Collections {
          return remapped;
       }
       // TODO: Generalize CreateAsQuadProd with recursion.
-      /// <summary>Creates a SymTensor as a (multiple) tensor product of a tensor with itself.</summary>
+      /// <summary>Creates a SymTensor as a (multiple) tensor product of a 2nd rank tensor with itself.</summary>
       /// <param name="tnr">Tensor product constituent.</param>
       /// <param name="n">Number of times the constituent appears.</param>
       /// <remarks>For now this is specialized for the case of a rank two tensor.</remarks>
