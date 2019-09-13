@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Internals", "Internals\Inte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NodeCreation", "Seminar\NodeCreation\NodeCreation.csproj", "{3B172432-26C3-40BE-829B-E90069BBA188}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{742B28AF-09E5-472D-9B49-903E7176F27C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CavityFlow", "Demos\CavityFlow\CavityFlow.csproj", "{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,18 @@ Global
 		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x64.Build.0 = Release|Any CPU
 		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x86.ActiveCfg = Release|Any CPU
 		{3B172432-26C3-40BE-829B-E90069BBA188}.Release|x86.Build.0 = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|x64.Build.0 = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Debug|x86.Build.0 = Debug|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|x64.ActiveCfg = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|x64.Build.0 = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|x86.ActiveCfg = Release|Any CPU
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,5 +112,8 @@ Global
 		$2.NewLineForClausesInQuery = False
 		$2.SpaceAfterControlFlowStatementKeyword = False
 		$2.scope = text/x-csharp
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{198DC24B-4D9E-4EE8-A9C7-C797C1AD225F} = {742B28AF-09E5-472D-9B49-903E7176F27C}
 	EndGlobalSection
 EndGlobal

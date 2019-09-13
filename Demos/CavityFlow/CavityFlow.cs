@@ -1,5 +1,9 @@
+using System;
+
+using Fluid.Internals.Lsfem;
+
 namespace Fluid.Demos {
-   public class CavityFlow {
+   public class CavityFlow : NavStokesSim {
       
    }
 }

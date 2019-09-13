@@ -26,7 +26,7 @@ namespace Fluid.Internals.Lsfem {
 
       /// <summary>We have to initialize secondary tensors with zeros due to the nature of the optimized algorithm in AdvanceDynamics. It presupposes the tensors being assigned to already exist.</summary>
       private (Tnr initA, Tnr initFs) InitializeSecondaries() {                                // TODO: Fix Tensor so that this is unnecessary.
-         var a_bqsik = new Tnr(new Lst{NPos,3,3,Nm,Nm}, NfPos);            // Initialize a_bqsik. 5th rank tensor. It will be returned.
+         var a_bqsik = new Tnr(new Lst{NPos,3,3,NVar,NVar}, NfPos);            // Initialize a_bqsik. 5th rank tensor. It will be returned.
          for(int b = 0; b < NPos; ++b) {
             var a_qsik = new Tnr(a_bqsik, 3);
             a_bqsik[Tnr.Ex, b] = a_qsik;
@@ -36,7 +36,7 @@ namespace Fluid.Internals.Lsfem {
                for(int s = 0; s < 3; ++s) {
                   var a_ik = new Tnr(a_sik, 3);
                   a_sik[Tnr.Ex, s] = a_ik; } } }
-         var fs_hsi = new Tnr(new Lst{NPos,3,Nm}, NPos);                   // Initialize fs_hsi, 3rd rank tensor.
+         var fs_hsi = new Tnr(new Lst{NPos,3,NVar}, NPos);                   // Initialize fs_hsi, 3rd rank tensor.
          for(int h = 0; h < NPos; ++h) {
             var fs_si = new Tnr(fs_hsi, 3);
             fs_hsi[Tnr.Ex, h] = fs_si;

@@ -21,7 +21,7 @@ namespace Fluid.Internals.Lsfem {
    
    public abstract class Simulation {
       /// <summary>Number of independent variables at a single position (= number of equations).</summary>
-      public int Nm { get; internal set; }
+      public int NVar { get; internal set; }
       /// <summary>Number of all positions.</summary>
       public int NPos { get; protected set; }
       /// <summary>Number of positions with constrained variables.</summary>
@@ -40,7 +40,7 @@ namespace Fluid.Internals.Lsfem {
       public Tnr UF { get; internal set; }
       /// <summary>Constrained variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
       public Tnr UC { get; internal set; }
-      /// <summary>A sequence of bits that indicate constrainedness of each variable: (i,j) => NVar*i + j</summary>
+      /// <summary>A sequence of bits that indicate constrainedness of each variable: (i,j) => NVar*i + j. Therefore the BitArray holds NPos*NVar bits.</summary>
       protected BitArray C { get; set; }
       /// <summary>Fetches a vector of variables</summary>
       /// <param name="dummy"></param>
@@ -79,15 +79,15 @@ namespace Fluid.Internals.Lsfem {
          Joints = CreateJoints();
          Mesh = new Mesh();                                             R.R("Creating Positions.");
          Mesh.Pos = CreatePositions();
-         NPos = Mesh.Pos.Count;
-         var emts = CreateElements();                              R.R("Creating a list of Centers of Mass.");
+         NPos = Mesh.Pos.Count;                                         R.R("Creating Elements and calculating overlap integrals.");
+         var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
          var coms = CreateCOMs(emts);
          Mesh.Elements = CreateElementTree(coms, emts);
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
       /// <param name="j">Variable index.</param>
-      public bool Constr(int i, int j) => C[Nm*i + j];
+      public bool Constr(int i, int j) => C[NVar*i + j];
       /// <summary></summary>
       protected abstract Dictionary<string,PseudoElement[][]> CreatePatches();
       /// <summary></summary>
@@ -96,15 +96,15 @@ namespace Fluid.Internals.Lsfem {
          int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
             Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
          var posList = new My.List<Vec2>(approxNPos);
-         int gInx = 0;                                                  R.R("Adding positions to Mesh.");
-         foreach(var patch in Patches.Values) {                         // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
+         int gInx = 0;                                                        R.R("Adding positions to Mesh.");
+         foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
             foreach(var pseudoRow in patch) {
                foreach(var pseudoEmt in pseudoRow) {
                   for(int i = 0; i < pseudoEmt.LInx.Length; ++i) {
                      pseudoEmt.GInx[i] = gInx;
                      posList.Add(pseudoEmt.Pos[i]);
                      ++gInx; } } } }
-         foreach(var joint in Joints.Values) {                          // We also set global indices on Joints and add their positions to Mesh.
+         foreach(var joint in Joints.Values) {                                // We also set global indices on Joints and add their positions to Mesh.
                foreach(var pseudoEmt in joint) {
                   for(int i = 0; i < pseudoEmt.LInx.Length; ++i) {
                      pseudoEmt.GInx[i] = gInx;
@@ -138,17 +138,17 @@ namespace Fluid.Internals.Lsfem {
          return emtTree;
       }
       /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uc, int ncPos, int nfPos) CreateConstrainedVars();
+      protected abstract (Tnr uc, int ncPos, int nfPos) CreateConstrVars();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
-         new Tnr(new List<int> {NfPos,Nm}, NfPos);
+         new Tnr(new List<int> {NfPos,NVar}, NfPos);
 
       /// <summary>Takes updated secondary (dynamics and forcing) tensors and constrained node variables and creates primary tensors which are ready to be passed to the Solver. This process iterates over all Elements (surfaces) and adds their contribution to corresponding nodes (points).</summary>
       /// <param name="emts">A collection of Elements, each element containing overlap integrals of node functions and a mapping from eNodes to gNodes.</param>
       (Tnr K, Tnr F) AssemblePrimaryTensors(IEnumerable<Element> emts) {
-         var tnrK = new Tnr(new Lst{NPos,Nm,NPos,Nm}, NfPos);                    // Create a 4th rank result tensor.
-         var tnrF = new Tnr(new Lst{NPos,Nm}, NfPos);                            // Create a 2nd rank result tensor.
-         Lst allJs = Enumerable.Range(0,Nm).ToList();
+         var tnrK = new Tnr(new Lst{NPos,NVar,NPos,NVar}, NfPos);                    // Create a 4th rank result tensor.
+         var tnrF = new Tnr(new Lst{NPos,NVar}, NfPos);                            // Create a 2nd rank result tensor.
+         Lst allJs = Enumerable.Range(0,NVar).ToList();
          foreach(var emt in emts) {
          for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
             Vec vecF_j = tnrF[Vec.Ex, c];
