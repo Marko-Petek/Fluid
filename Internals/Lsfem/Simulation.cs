@@ -94,7 +94,7 @@ namespace Fluid.Internals.Lsfem {
       protected abstract Dictionary<string,PseudoElement[]> CreateJoints();
       protected My.List<Vec2> CreatePositions() {
          int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
-            Joints.Sum( joint => joint.Value.Length ) * 3;
+            Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
          var posList = new My.List<Vec2>(approxNPos);
          int gInx = 0;                                                  R.R("Adding positions to Mesh.");
          foreach(var patch in Patches.Values) {                         // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
@@ -143,6 +143,8 @@ namespace Fluid.Internals.Lsfem {
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,Nm}, NfPos);
 
+      /// <summary>Takes updated secondary (dynamics and forcing) tensors and constrained node variables and creates primary tensors which are ready to be passed to the Solver. This process iterates over all Elements (surfaces) and adds their contribution to corresponding nodes (points).</summary>
+      /// <param name="emts">A collection of Elements, each element containing overlap integrals of node functions and a mapping from eNodes to gNodes.</param>
       (Tnr K, Tnr F) AssemblePrimaryTensors(IEnumerable<Element> emts) {
          var tnrK = new Tnr(new Lst{NPos,Nm,NPos,Nm}, NfPos);                    // Create a 4th rank result tensor.
          var tnrF = new Tnr(new Lst{NPos,Nm}, NfPos);                            // Create a 2nd rank result tensor.
@@ -181,8 +183,8 @@ namespace Fluid.Internals.Lsfem {
             } } } } } } } } } }
          return (tnrK, tnrF);
       }
-      /// <summary>Construct new A and Fs </summary>
-      protected abstract void AdvanceDynamics();
+      /// <summary>Construct new secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>
+      protected abstract void UpdateDynamicsAndForcing();
 
       /// <summary>Find solution value at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
       public abstract double[] Solution(in Vec2 pos);
