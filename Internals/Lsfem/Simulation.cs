@@ -92,6 +92,8 @@ namespace Fluid.Internals.Lsfem {
       protected abstract Dictionary<string,PseudoElement[][]> CreatePatches();
       /// <summary></summary>
       protected abstract Dictionary<string,PseudoElement[]> CreateJoints();
+      /// <summary>User must supply custom logic here. The logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
+      protected abstract Element[] CreateElements();
       protected My.List<Vec2> CreatePositions() {
          int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
             Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
@@ -113,8 +115,6 @@ namespace Fluid.Internals.Lsfem {
          posList.TrimExcessSpace();
          return posList;
       }
-      /// <summary>User must supply custom logic here. The logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
-      protected abstract Element[] CreateElements();
       /// <summary>Create the list of COMs after the Elements are created.</summary>
       protected double[][] CreateCOMs(IList<Element> elements) {
          int nEmts = elements.Count;

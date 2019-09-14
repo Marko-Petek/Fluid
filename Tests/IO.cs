@@ -53,9 +53,6 @@ namespace Fluid.Tests {
       [Fact] public void HierarchyInput() {
          TB.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
          var hierWriteBack = TB.FileReader.ReadHierarchy<double>();
-         //TB.FileWriter.SetDirAndFile("Tests", nameof(hierWriteBack), ".txt");
-         //TB.FileWriter.WriteLine(hierWriteBack);
-         //TB.FileWriter.Flush();
          var strw = new StringWriter();
          IO.Write(hierWriteBack, strw);
          Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");

@@ -18,9 +18,7 @@ namespace Fluid.Internals.Lsfem {
       public NavStokesSim(dbl dt, dbl re) : base() {
          Dt = dt;
          Re = re;
-         (var a, var fs) = InitializeSecondaries();
-         A = a;
-         Fs = fs;
+         (A, Fs) = InitializeSecondaries();
       }
 
 
