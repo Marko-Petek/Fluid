@@ -22,7 +22,7 @@ namespace Fluid.Internals.Lsfem {
          int nNodes = eNodes.Length;
          var lInx = new int[nNodes];
          var gInx = new int[nNodes];
-         var pos = new Vec2[nNodes];
+         var pos = new Vec2[nNodes];                  // TODO: Add constructor that takes corner nodes.
          for(int i = 0; i < nNodes; ++i) {            // Over each specified eNode.
             lInx[i] = eNodes[i].lInx;
             gInx[i] = startGInx++;
