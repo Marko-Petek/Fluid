@@ -18,6 +18,7 @@ namespace Fluid.Internals.Lsfem {
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    using Lst = List<int>;
+   using PE = PseudoElement;
    
    public abstract class Simulation {
       /// <summary>Number of independent variables at a single position (= number of equations).</summary>
@@ -75,7 +76,8 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Set the Simulation up.</summary>
       public void Initialize() {                                        R.R("Creating Patches.");
-         Patches = CreatePatches();                                     R.R("Creating Joints.");
+         int currGInx = 0;
+         (currGInx, Patches) = CreatePatches();                                     R.R("Creating Joints.");
          Joints = CreateJoints();
          Mesh = new Mesh();                                             R.R("Creating Positions.");
          Mesh.Pos = CreatePositions();
@@ -89,9 +91,9 @@ namespace Fluid.Internals.Lsfem {
       /// <param name="j">Variable index.</param>
       public bool Constr(int i, int j) => C[NVar*i + j];
       /// <summary></summary>
-      protected abstract Dictionary<string,PseudoElement[][]> CreatePatches();
+      protected abstract (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(int currGinx);
       /// <summary></summary>
-      protected abstract Dictionary<string,PseudoElement[]> CreateJoints();
+      protected abstract (int newCurrGInx, Dictionary<string,PseudoElement[]>) CreateJoints(int currGInx);
       /// <summary>User must supply custom logic here. The logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
       protected abstract Element[] CreateElements();
       protected My.List<Vec2> CreatePositions() {
@@ -102,13 +104,13 @@ namespace Fluid.Internals.Lsfem {
          foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
             foreach(var pseudoRow in patch) {
                foreach(var pseudoEmt in pseudoRow) {
-                  for(int i = 0; i < pseudoEmt.LInx.Length; ++i) {
+                  for(int i = 0; i < pseudoEmt.PEInx.Length; ++i) {
                      pseudoEmt.GInx[i] = gInx;
                      posList.Add(pseudoEmt.Pos[i]);
                      ++gInx; } } } }
          foreach(var joint in Joints.Values) {                                // We also set global indices on Joints and add their positions to Mesh.
                foreach(var pseudoEmt in joint) {
-                  for(int i = 0; i < pseudoEmt.LInx.Length; ++i) {
+                  for(int i = 0; i < pseudoEmt.PEInx.Length; ++i) {
                      pseudoEmt.GInx[i] = gInx;
                      posList.Add(pseudoEmt.Pos[i]);
                      ++gInx; } } }

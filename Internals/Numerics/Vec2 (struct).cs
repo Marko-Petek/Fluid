@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using static System.Math;
+using dbl = System.Double;
 
 using Fluid.Internals.Lsfem;
 
@@ -17,6 +18,10 @@ namespace Fluid.Internals.Numerics {
       public Vec2(double x, double y) {
          X = x;
          Y = y;
+      }
+      public Vec2(in dbl[] p) {
+         X = p[0];
+         Y = p[1];
       }
       /// <summary>Creates a copy of a given 2D vector.</summary>
       /// <param name="vec"></param>
