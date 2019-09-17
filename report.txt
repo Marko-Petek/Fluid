@@ -1,0 +1,56 @@
+21:04     Nearest points: System.Tuple`2[System.Doub  0         /Tests/Numerics.cs       KDTreeTrial       132   
+          le[],System.Double][]                                                                                  
+21:06     Nearest points: System.Tuple`2[System.Doub  0         /Tests/Numerics.cs       KDTreeTrial       132   
+          le[],System.Double][]                                                                                  
+21:09     Nearest point 0: (System.Double[], 0,96307  0         /Tests/Numerics.cs       KDTreeTrial       133   
+          1087358087)                                                                                            
+          Nearest point 1: (System.Double[], 0,36002  0,0111    /Tests/Numerics.cs       KDTreeTrial       133   
+          5892667484)                                                                                            
+          Nearest point 2: (System.Double[], 0,45679  0,00454   /Tests/Numerics.cs       KDTreeTrial       133   
+          1429527472)                                                                                            
+          Nearest point 3: (System.Double[], 0,55406  0,0051    /Tests/Numerics.cs       KDTreeTrial       133   
+          0322024888)                                                                                            
+          Nearest point 4: (System.Double[], 0,33165  0,00463   /Tests/Numerics.cs       KDTreeTrial       133   
+          3185343208)                                                                                            
+21:11     Nearest point 0: System.Double[], 0,331926  0         /Tests/Numerics.cs       KDTreeTrial       133   
+          54481713                                                                                               
+          Nearest point 1: System.Double[], 0,885885  0,0115    /Tests/Numerics.cs       KDTreeTrial       133   
+          309840499                                                                                              
+          Nearest point 2: System.Double[], 0,221699  0,00514   /Tests/Numerics.cs       KDTreeTrial       133   
+          971343251                                                                                              
+          Nearest point 3: System.Double[], 0,853591  0,0042    /Tests/Numerics.cs       KDTreeTrial       133   
+          247393559                                                                                              
+          Nearest point 4: System.Double[], 0,892422  0,00451   /Tests/Numerics.cs       KDTreeTrial       133   
+          508398268                                                                                              
+21:13     Nearest point 0: 0,309948788168816, 0,2172  0         /Tests/Numerics.cs       KDTreeTrial       135   
+          93048844344, 0,0940381461261018                                                                        
+          Nearest point 1: 0,339505614405268, 0,2267  0,0122    /Tests/Numerics.cs       KDTreeTrial       135   
+          18316425904, 0,879115787278449                                                                         
+          Nearest point 2: 0,294069142683441, 0,2006  0,00506   /Tests/Numerics.cs       KDTreeTrial       135   
+          66189752829, 0,798061319998494                                                                         
+          Nearest point 3: 0,300347903883247, 0,2307  0,00516   /Tests/Numerics.cs       KDTreeTrial       135   
+          3491883964, 0,565953094775767                                                                          
+          Nearest point 4: 0,351123569696734, 0,2314  0,00548   /Tests/Numerics.cs       KDTreeTrial       135   
+          17443711039, 0,799281706940048                                                                         
+21:14     Starting KDTreeTrial.                       0         /Tests/Numerics.cs       KDTreeTrial       126   
+          Nearest point 0: 0,316639708968177, 0,2060  0,0336    /Tests/Numerics.cs       KDTreeTrial       136   
+          98265576222, 0,830675808633992                                                                         
+          Nearest point 1: 0,310854271199021, 0,2014  0,00537   /Tests/Numerics.cs       KDTreeTrial       136   
+          55912180923, 0,413961880101805                                                                         
+          Nearest point 2: 0,313309245423092, 0,1957  0,00617   /Tests/Numerics.cs       KDTreeTrial       136   
+          19126237426, 0,747624647220422                                                                         
+          Nearest point 3: 0,335575124405127, 0,2221  0,00467   /Tests/Numerics.cs       KDTreeTrial       136   
+          3064237597, 0,40789372073854                                                                           
+          Nearest point 4: 0,301890827855976, 0,2189  0,00475   /Tests/Numerics.cs       KDTreeTrial       136   
+          07439717514, 0,276700319851143                                                                         
+21:15     Starting KDTreeTrial.                       0         /Tests/Numerics.cs       KDTreeTrial       126   
+          0: 0,322271798421755, 0,212611063016863, 0  0,0311    /Tests/Numerics.cs       KDTreeTrial       136   
+          ,463336925238062                                                                                       
+          1: 0,329405425269811, 0,19374493891082, 0,  0,00566   /Tests/Numerics.cs       KDTreeTrial       136   
+          986469032702255                                                                                        
+          2: 0,322506325469588, 0,233155208282711, 0  0,00508   /Tests/Numerics.cs       KDTreeTrial       136   
+          ,707076534026804                                                                                       
+          3: 0,29899273174768, 0,229330389867225, 0,  0,00439   /Tests/Numerics.cs       KDTreeTrial       136   
+          743441062859931                                                                                        
+          4: 0,34758432085979, 0,226476359752229, 0,  0,00358   /Tests/Numerics.cs       KDTreeTrial       136   
+          108972276146045                                                                                        

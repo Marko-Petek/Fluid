@@ -77,14 +77,15 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Set the Simulation up.</summary>
       public void Initialize() {                                        R.R("Creating Patches.");
          int currGInx = 0;
-         (currGInx, Patches) = CreatePatches();                                     R.R("Creating Joints.");
-         Joints = CreateJoints();
+         (currGInx, Patches) = CreatePatches(currGInx);                 R.R("Creating Joints.");
+         (currGInx, Joints) = CreateJoints(currGInx);
          Mesh = new Mesh();                                             R.R("Creating Positions.");
          Mesh.Pos = CreatePositions();
          NPos = Mesh.Pos.Count;                                         R.R("Creating Elements and calculating overlap integrals.");
          var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
          var coms = CreateCOMs(emts);
          Mesh.Elements = CreateElementTree(coms, emts);
+         (UC, NcPos, NfPos) = CreateConstrVars();
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
@@ -140,7 +141,7 @@ namespace Fluid.Internals.Lsfem {
          return emtTree;
       }
       /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uc, int ncPos, int nfPos) CreateConstrVars();
+      protected abstract (Tnr uc, int nCPos, int nFPos) CreateConstrVars();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,NVar}, NfPos);
@@ -188,7 +189,7 @@ namespace Fluid.Internals.Lsfem {
       /// <summary>Update secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>
       protected abstract void UpdateDynamicsAndForcing();
 
-      /// <summary>Find solution value at specified point.</summary><param name="pos">Sought after position.</param><param name="vars">Indices of variables we wish to retrieve.</param>S
-      public abstract double[] Solution(in Vec2 pos);
+      // TODO: Test KDTree.
+      // TODO: Set constraints.
    }
 }

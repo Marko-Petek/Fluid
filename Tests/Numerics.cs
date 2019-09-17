@@ -1,12 +1,15 @@
 using Xunit;
 using System;
 using System.Linq;
-using System.Threading;
+using static System.Math;
+
 using Fluid.Internals;
 using Fluid.Internals.Collections;
+using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
+using Supercluster.KDTree;
 
 namespace Fluid.Tests {
    using dbl = Double;
@@ -14,6 +17,7 @@ namespace Fluid.Tests {
    using Vector = Vector<double,DblArithmetic>;
    using TensorInt = Tensor<int,IntArithmetic>;
    using VectorInt = Vector<int,IntArithmetic>;
+   using Emt = Element;
    public partial class Thread2 {
 
       [InlineData(
@@ -91,7 +95,7 @@ namespace Fluid.Tests {
          var F = Tensor.FromFlatSpec(spanF, strucF);
          var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
          var solver = new ConjGradsSolver(K, F);
-         TB.DebugTag = "x0Creation";
+         DebugTag = "x0Creation";
          var x0 = Tensor.FromFlatSpec(spanX0, strucF);
          var solution = solver.Solve(x0, 0.001);
          Assert.True(true);
@@ -116,6 +120,21 @@ namespace Fluid.Tests {
          var integrator = new Quadrature(7, 2,  x => Math.Pow(x[0], 12.0) * Math.Pow(x[1], 8.0));    // 1D case.
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/117, 0.001));
+      }
+
+      [Fact] public void KDTreeTrial() {
+         R.R("Starting KDTreeTrial.");
+         Rng.SetRange(0,1);
+         var pts = Enumerable.Range(0, 1_000).Select(
+            i => new dbl[2] {Rng.Dbl, Rng.Dbl} ).ToArray();
+         var vals = Enumerable.Range(0, 1_000).Select( i => Rng.Dbl ).ToArray();
+         var kdTree = new KDTree<dbl,dbl>(2, pts, vals, (r1,r2) => Sqrt( Pow(r2[0]-r1[0], 2) + Pow(r2[1]-r1[1], 2) ));
+         var nearPts = kdTree.NearestNeighbors(new dbl[] {0.32, 0.21}, 5);
+         for(int i = 0; i < 5; ++i) {
+            dbl[] pt = nearPts[i].Item1;
+            dbl val = nearPts[i].Item2;
+            R.R($"{i}: {pt[0]}, {pt[1]}, {val}");
+         }
       }
    }
 }

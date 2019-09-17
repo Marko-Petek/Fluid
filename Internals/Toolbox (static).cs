@@ -21,7 +21,7 @@ namespace Fluid.Internals {
          _FileReader = new IO.FileReader();
          _FileWriter = new IO.FileWriter();
          _Reporter = new Reporter();
-         _Rng = new Rng();
+         _Rng = new RandomNumberGen();
       });
       static IO.FileReader _FileReader;
       public static IO.FileReader FileReader => _FileReader;
@@ -36,8 +36,8 @@ namespace Fluid.Internals {
             lock(_Reporter)
                return _Reporter; }
       }
-      static Rng _Rng;
-      public static Rng Rng => _Rng;
+      static RandomNumberGen _Rng;
+      public static RandomNumberGen Rng => _Rng;
 
       /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
       public static void EntryPointSetup(string initMsg = "Program started.",
@@ -61,7 +61,7 @@ namespace Fluid.Internals {
                TaskContinuationOptions.ExecuteSynchronously); }
       }
       /// <summary>A class which simplifies exception coding.</summary>
-      public static class Assert {
+      public static class Assume {
          public static void True(bool cond, string msg = "Assert.True failed.") {
             if(!cond)
                throw new Exception(msg);

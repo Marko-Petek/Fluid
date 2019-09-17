@@ -15,6 +15,7 @@ namespace Fluid.Demos {
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    using Lst = List<int>;
    using PE = PseudoElement;
+   using Emt = Element;
    public class CavityFlow : NavStokesSim {
       dbl [][][] Pos { get; }
       
@@ -74,11 +75,18 @@ namespace Fluid.Demos {
          var uJoint = Joints["UpperJoint"];
          var uRJoint = Joints["UpperRightJoint"];
          var emts = new Element[9];
-         var pe00 = patch[0][0];
-         var pe01 = patch[0][1];
-         var pe10 = patch[1][0];
-         var pe11 = patch[1][1];
-         emts[0] = new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], pe11[2], pe10[4], pe10[3], pe10[2], pe00[0], pe00[1]);
-      }  // TODO: Create a factory method on element that creates elements from a single patch and also from combinations of patches and joints.
+         for(int i = 0, n = 0; i < 2; ++i)
+            for(int j = 0; j < 2; ++j, ++n)
+               emts[n] = Emt.CreatePatchElement(patch, i, j);
+         for(int j = 4; j < 6; ++j)
+            emts[j] = Emt.CreateUpperJointElement(patch, uJoint, j);
+         for(int i = 6; i < 8; ++i)
+            emts[i] = Emt.CreateRightJointElement(patch, rJoint, i);
+         emts[8] = Emt.CreateUpperRightJointElement(patch, rJoint, uJoint, uRJoint);
+         return emts;
+      }
+      protected override (Tnr uc, int nCPos, int nFPos) CreateConstrVars() {
+         throw new NotImplementedException();
+      }
    }
 }

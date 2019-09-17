@@ -43,7 +43,7 @@ namespace Fluid.Internals.Development {
             // ReportWriter.WriteMessage(0);   
                         // Write initial message (Program started, etc.)
       }
-
+      // TODO: Make Reporter write when XUnit tests are running (currently only works when they are being debugged).
       /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="text">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
       [Conditional("REPORT")]
       public void R(string text, VerbositySettings verbosity = Moderate,

@@ -90,21 +90,31 @@ namespace Fluid.Internals.Lsfem {
       public static Element CreateLowerPatchElement(PE[][] patch, int j) =>
          CreatePatchElement(patch, 0, j);
       public static Element CreateUpperJointElement(PE[][] patch, PE[] joint, int j) {
-         int m = patch.Length - 1;
-         var pe00 = patch[m][j];
-         var pe01 = patch[m][j+1];
+         int iL = patch.Length - 1;
+         var pe00 = patch[iL][j];
+         var pe01 = patch[iL][j+1];
          var je10 = joint[j];
          var je11 = joint[j+1];
          return new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], je11[0], je10[2], je10[1], je10[0], pe00[0], pe00[1]);
       }
-      public static Element CreateRightJointElement(PE[][] patch, PE[] joint, int i) {
-         int m = patch.Length - 1;
-         var pe00 = patch[i][m];
-         var pe01 = patch[m][j+1];
-         var je10 = joint[j];
-         var je11 = joint[j+1];
-         return new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], je11[0], je10[2], je10[1], je10[0], pe00[0], pe00[1]);
+      public static Element CreateRightJointElement(PE[][] patch, PE[] rightJoint, int i) {
+         int jL = patch[0].Length - 1;
+         var pe00 = patch[i][jL];
+         var pe10 = patch[i+1][jL];
+         var je01 = rightJoint[i];
+         var je11 = rightJoint[i+1];
+         return new Element(pe00[2], pe00[3], pe00[4], je01[0], je01[1], je01[2], je11[0], pe10[4], pe10[3], pe10[2], pe00[0], pe00[1]);
       }
+      public static Element CreateUpperRightJointElement(PE[][] patch, PE[] rightJoint, PE[] upperJoint, PE[] upperRightJoint) {
+         int iL = patch.Length - 1;
+         int jL = patch[0].Length - 1;
+         var pe00 = patch[iL][jL];
+         var je01 = rightJoint[iL];
+         var je10 = upperJoint[jL];
+         var je11 = upperRightJoint[0];
+         return new Element(pe00[2], pe00[3], pe00[4], je01[0], je01[1], je01[2], je11[0], je10[2], je10[1], je10[0], pe00[0], pe00[1]);
+      }
+
       /// <summary>Calculate the extended inverse Jacobian for this element.</summary>
       protected FTnr CalcInvJ( (Func2D detJ, Func2D J11,
       Func2D J12, Func2D J21, Func2D J22) tuple) {

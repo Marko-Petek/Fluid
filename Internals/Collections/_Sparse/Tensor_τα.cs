@@ -155,7 +155,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="aTgt">Copy target.</param>
       /// <param name="cs">Exact specification of what fields to copy. Default is all.</param>
       public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct cs) {
-         TB.Assert.True(aSrc.Rank > 1,
+         TB.Assume.True(aSrc.Rank > 1,
             "Tensors's rank has to be at least 2 to be copied via this method.");
          CopyMetaFields(aSrc, aTgt, in cs.NonValueFieldsSpec, in cs.StructureSpec);
          if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues) {
@@ -404,7 +404,7 @@ namespace Fluid.Internals.Collections {
          Action<int, Tensor<τ,α>, Tensor<τ,α>>  onNoEquivalent,
          Action<Tensor<τ,α>, Tensor<τ,α>>       onStopRank)
       {
-         TB.Assert.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
+         TB.Assume.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
          Recurse(recurseSrc, recurseTgt);
 
          void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
@@ -432,7 +432,7 @@ namespace Fluid.Internals.Collections {
          Func<int, Tensor<τ,α>, Tensor<τ,α>, Tensor<τ,α>>   createSubTgt,
          Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
       {
-         TB.Assert.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
+         TB.Assume.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
          Recurse(recurseSrc, recurseTgt);
 
          void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
@@ -673,7 +673,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="emtInx">Zero-based element index in that rank in favor of which the elimination will take place.</param>
       /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
       public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
-         TB.Assert.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
+         TB.Assume.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToList();    // Created a new structure. Assign it to new host tensor.
@@ -742,7 +742,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="tgt">Initialized result vector.</param>
       /// <param name="emtInx">Element index in favor of which the elimination will proceed.</param>
       public static void ElimR0_R2(Tensor<τ,α> src, Vector<τ,α> tgt, int emtInx) {
-         TB.Assert.True(src.Rank == 2, "This method is intended for rank 2 tensors only.");
+         TB.Assume.True(src.Rank == 2, "This method is intended for rank 2 tensors only.");
          foreach(var int_tnrR1 in src) {
             var subVec = (Vector<τ,α>) int_tnrR1.Value;
             if(subVec.Vals.TryGetValue(emtInx, out var val))
@@ -753,7 +753,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="tgt">Tensor one rank lower than source.</param>
       /// <param name="emtInx">Element index in favor of which to eliminate.</param>
       public static void ElimR0_R3Plus(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {
-         TB.Assert.True(src.Rank > 2, "This method is applicable to rank 3 and higher tensors.");
+         TB.Assume.True(src.Rank > 2, "This method is applicable to rank 3 and higher tensors.");
          if(src.Rank > 3) {
             foreach(var int_tnr in src) {
                var subTnr = new Tensor<τ,α>(tgt, src.Count);
@@ -773,9 +773,9 @@ namespace Fluid.Internals.Collections {
                      struc2 = tnr2.Structure;
          int rank1 = struc1.Count,
              rank2 = struc2.Count;
-         TB.Assert.True(rank1 == tnr1.Rank && rank2 == tnr2.Rank,
+         TB.Assume.True(rank1 == tnr1.Rank && rank2 == tnr2.Rank,
             "One of the tensors is not top rank.");
-         TB.Assert.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
+         TB.Assume.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal.");
          int   conDim = tnr1.Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
                rankInx1 = tnr1.ToRankInx(slotInx1),
@@ -846,8 +846,8 @@ namespace Fluid.Internals.Collections {
       /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
       /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
       public τ SelfContractR2() {
-         TB.Assert.True(Rank == 2, "Tensor rank has to be 2 for this method.");
-         TB.Assert.True(Structure[0] == Structure[1], "Corresponding dimensions have to be equal.");
+         TB.Assume.True(Rank == 2, "Tensor rank has to be 2 for this method.");
+         TB.Assume.True(Structure[0] == Structure[1], "Corresponding dimensions have to be equal.");
          τ result = default;
          foreach(var int_vec in this) {
             var vec = (Vector<τ,α>) int_vec.Value;
@@ -857,8 +857,8 @@ namespace Fluid.Internals.Collections {
       }
 
       public Vector<τ,α> SelfContractR3(int natInx1, int natInx2) {
-         TB.Assert.True(Rank == 3, "Tensor rank has to be 3 for this method.");
-         TB.Assert.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
+         TB.Assume.True(Rank == 3, "Tensor rank has to be 3 for this method.");
+         TB.Assume.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
             "Corresponding dimensions have to be equal.");
          Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, null, 4);
          int truInx1 = ToRankInx(natInx1);
@@ -888,8 +888,8 @@ namespace Fluid.Internals.Collections {
       /// <param name="slotInx2">Slot index 2.</param>
       /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
       public Tensor<τ,α> SelfContract(int slotInx1, int slotInx2) {
-         TB.Assert.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
-         TB.Assert.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1],
+         TB.Assume.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
+         TB.Assume.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1],
             "Dimensions of contracted slots have to be equal.");
          if(Rank > 3) {
             var newStruct1 = Structure.Take(slotInx1 - 1);
@@ -912,7 +912,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr1">First tensor.</param>
       /// <param name="tnr2">Second tensor.</param>
       public static void ThrowOnSubstructureMismatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-         TB.Assert.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
+         TB.Assume.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
          int topRank1 = tnr1.Structure.Count;                                      // We have to check that all dimensions below current ranks match.
          int topRank2 = tnr2.Structure.Count;
          var structInx1 = topRank1 - tnr1.Rank;                         // Index in structure array.
@@ -924,7 +924,7 @@ namespace Fluid.Internals.Collections {
 
       /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
       public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
-         TB.Assert.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
+         TB.Assume.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
             foreach(var subTnr in Recursion(this))
                yield return subTnr; }

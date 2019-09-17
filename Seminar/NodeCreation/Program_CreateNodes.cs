@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using static System.Math;
 
 using Fluid.Internals;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Seminar.NodeCreation {
    partial class Program {
@@ -17,26 +17,26 @@ namespace Fluid.Seminar.NodeCreation {
                   new double[] {-3.0 + col * (6.0/9), -3.0 + row * (6.0/9)}
                ).ToArray()
             ).ToArray();
-         TB.FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(nodes), ".txt");
-         TB.FileWriter.WriteLine(nodes);
+         FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(nodes), ".txt");
+         FileWriter.WriteLine(nodes);
          var nodesM =                                                                      // Only the mid 2 by 2 = 4 nodes on a regular lattice.
             nodes.Take(7).Skip(3).Select(col =>
                col.Take(7).Skip(3)
                .ToArray()
             ).ToArray();
-         TB.FileWriter.WriteLine(nodesM, nameof(nodesM));
-         TB.Rng.SetRange(-0.6, 0.6);                                                // Set RNG range.
+         FileWriter.WriteLine(nodesM, nameof(nodesM));
+         Rng.SetRange(-0.6, 0.6);                                                // Set RNG range.
          var nodesC =                                                                    // Only corners of elements.
             nodes.Where( (row, i) => i % 3 == 0 )
             .Select( row =>
                row.Where( (col, j) => j % 3 == 0 ).ToArray()
             ).ToArray();
-         TB.FileWriter.WriteLine(nodesC, nameof(nodesC));
+         FileWriter.WriteLine(nodesC, nameof(nodesC));
          var transNodesCM =                                                            // C = element corner nodes (only nodes on corners of elements)
             nodesC.Take(3).Skip(1).Select( row =>                        // Pick only those nodes that we will be moving. Take 2 inner rows (3,6).
                row.Take(3).Skip(1).Select( col =>                      // Take 2 inner nodes from each row (3,6).
-                  col.Select( coord => coord + TB.Rng.Double() ).ToArray()
+                  col.Select( coord => coord + Rng.Dbl ).ToArray()
                ).ToArray()
             ).ToArray();
-         TB.FileWriter.WriteLine(transNodesCM, nameof(transNodesCM));
+         FileWriter.WriteLine(transNodesCM, nameof(transNodesCM));
 }  }  }
