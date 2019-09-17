@@ -17,6 +17,7 @@ namespace Fluid.Internals.Lsfem {
    using Vec = Vector<dbl,DA>;
    using FTnr = Tensor<Func2D,F2DA>;
    using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
+   using PE = PseudoElement;
 
    /// <summary>A quadrilateral element.</summary>
    public class Element {
@@ -70,6 +71,39 @@ namespace Fluid.Internals.Lsfem {
                               new dbl[2] {Pos(9).Y, Pos(6).Y}  };
          NB = new dbl[2][] {  new dbl[2] {Pos(0).X, Pos(3).X},
                               new dbl[2] {Pos(0).Y, Pos(3).Y}  };
+      }
+
+
+      public static Element CreatePatchElement(PE pe00, PE pe01, PE pe10, PE pe11) =>
+         new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], pe11[2], pe10[4], pe10[3], pe10[2], pe00[0], pe00[1]);
+      public static Element CreatePatchElement(PE[][] patch, int i, int j) {
+         var pe00 = patch[i][j];
+         var pe01 = patch[i][j+1];
+         var pe10 = patch[i+1][j];
+         var pe11 = patch[i+1][j+1];
+         return CreatePatchElement(pe00, pe01, pe10, pe11);
+      }
+      public static Element CreateLowerLeftPatchElement(PE[][] patch) =>
+         CreatePatchElement(patch, 0, 0);
+      public static Element CreateLeftPatchElement(PE[][] patch, int i) =>
+         CreatePatchElement(patch, i, 0);
+      public static Element CreateLowerPatchElement(PE[][] patch, int j) =>
+         CreatePatchElement(patch, 0, j);
+      public static Element CreateUpperJointElement(PE[][] patch, PE[] joint, int j) {
+         int m = patch.Length - 1;
+         var pe00 = patch[m][j];
+         var pe01 = patch[m][j+1];
+         var je10 = joint[j];
+         var je11 = joint[j+1];
+         return new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], je11[0], je10[2], je10[1], je10[0], pe00[0], pe00[1]);
+      }
+      public static Element CreateRightJointElement(PE[][] patch, PE[] joint, int i) {
+         int m = patch.Length - 1;
+         var pe00 = patch[i][m];
+         var pe01 = patch[m][j+1];
+         var je10 = joint[j];
+         var je11 = joint[j+1];
+         return new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], je11[0], je10[2], je10[1], je10[0], pe00[0], pe00[1]);
       }
       /// <summary>Calculate the extended inverse Jacobian for this element.</summary>
       protected FTnr CalcInvJ( (Func2D detJ, Func2D J11,

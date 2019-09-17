@@ -79,6 +79,6 @@ namespace Fluid.Demos {
          var pe10 = patch[1][0];
          var pe11 = patch[1][1];
          emts[0] = new Element(pe00[2], pe00[3], pe00[4], pe01[2], pe01[1], pe01[0], pe11[2], pe10[4], pe10[3], pe10[2], pe00[0], pe00[1]);
-      }
+      }  // TODO: Create a factory method on element that creates elements from a single patch and also from combinations of patches and joints.
    }
 }
