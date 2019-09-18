@@ -1,4 +1,5 @@
 using Xunit;
+using Xunit.Abstractions;
 using System;
 using System.Linq;
 using static System.Math;
@@ -18,7 +19,7 @@ namespace Fluid.Tests {
    using TensorInt = Tensor<int,IntArithmetic>;
    using VectorInt = Vector<int,IntArithmetic>;
    using Emt = Element;
-   public partial class Thread2 {
+   public partial class Thread2 : CustomTest {
 
       [InlineData(
          1.0, -1.0,  1.0,    // Left-hand side.

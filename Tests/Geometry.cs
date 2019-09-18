@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using static System.Console;
 using Xunit;
+using Xunit.Abstractions;
 
 using Fluid.ChannelFlow;
 using Fluid.Internals;
@@ -13,10 +14,12 @@ using Fluid.TestRef;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   public partial class Thread2 {
+   public partial class Thread2 : CustomTest {
       static Thread2() {
          TB.EntryPointSetup("Starting Thread2 tests.");
       }
+
+      public Thread2(ITestOutputHelper outHelper) : base(outHelper) { }
 
       [InlineData(-0.5, 0.5)]
       [InlineData(0.5, 0.5)]
