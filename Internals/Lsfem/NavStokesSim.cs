@@ -45,7 +45,7 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Construct new A and Fs for the next time step. Assuming no external volume forces.</summary>
       protected override void UpdateDynamicsAndForcing() {
-         var positions = Mesh.Pos;
+         var positions = Pos;
          dbl dt = Dt;
          dbl re = Re;
          for(int b = 0; b < NPos; ++b) {                                   // For each position.

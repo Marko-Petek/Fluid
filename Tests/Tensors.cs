@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using System.Threading;
 using Xunit;
+using Xunit.Abstractions;
+
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace Fluid.Tests {
    using VecInt = Vector<int,IntArithmetic>;
    using IA = IntArithmetic;
    
-   public partial class Thread3 {
+   public partial class Thread3 : CustomTest {
       static Thread3() {
          TB.EntryPointSetup("Starting Thread3 tests.");
       }
+
+      public Thread3(ITestOutputHelper outHelper) : base(outHelper) { }
 
       [InlineData(1,7,                    // Rank 1 tensor.
          6,5,3,8,0,1,4)]

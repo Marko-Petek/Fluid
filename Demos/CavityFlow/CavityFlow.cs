@@ -17,11 +17,15 @@ namespace Fluid.Demos {
    using PE = PseudoElement;
    using Emt = Element;
    public class CavityFlow : NavStokesSim {
-      dbl [][][] Pos { get; }
+      /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
+      dbl [][][] OrdPos { get; set; }
+
+      public dbl BoundaryVelocity { get; }
       
 
-      public CavityFlow(dbl dt, dbl re) : base(dt, re) {
-         Pos = ReadPos();
+      public CavityFlow(dbl dt, dbl re, dbl boundaryVelocity) : base(dt, re) {
+         OrdPos = ReadPos();
+         BoundaryVelocity = boundaryVelocity;
       }
 
       dbl[][][] ReadPos() {
@@ -50,7 +54,7 @@ namespace Fluid.Demos {
          var patches = new Dictionary<string,PE[][]>(1) { {"Patch", pEmts} };
          return (currGInx, patches);
 
-         (int,PE) CreatePE(int i, int j) => PE.CreatePatchElement(currGInx, Pos[i][j], Pos[i][j+1], Pos[i+1][j]);
+         (int,PE) CreatePE(int i, int j) => PE.CreatePatchElement(currGInx, OrdPos[i][j], OrdPos[i][j+1], OrdPos[i+1][j]);
       }
       protected override (int newCurrGInx, Dictionary<string,PseudoElement[]>) CreateJoints(int currGInx) {
          var rPEmts = new PE[3];
@@ -62,12 +66,12 @@ namespace Fluid.Demos {
             (currGInx, uPEmts[j]) = CreateHorzPE(3,j);
          joints.Add("UpperJoint", uPEmts);
          var finalPEmt = new PE[1];
-         (currGInx, finalPEmt[0]) = PE.CreateCustom(currGInx, (2, Pos[3][3]));
+         (currGInx, finalPEmt[0]) = PE.CreateCustom(currGInx, (2, OrdPos[3][3]));
          joints.Add("UpperRightJoint", finalPEmt);
          return (currGInx, joints);
 
-         (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, Pos[i][j], Pos[i+1][j]);
-         (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, Pos[i][j], Pos[i][j+1]);
+         (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, OrdPos[i][j], OrdPos[i+1][j]);
+         (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, OrdPos[i][j], OrdPos[i][j+1]);
       }
       protected override Element[] CreateElements() {
          var patch = Patches["Patch"];
@@ -86,7 +90,18 @@ namespace Fluid.Demos {
          return emts;
       }
       protected override (Tnr uc, int nCPos, int nFPos) CreateConstrVars() {
-         throw new NotImplementedException();
+         var emt00 = Elements.NearestNeighbors(new dbl[] {-2,-2}, 1)[0].Item2;
+         var emt10 = Elements.NearestNeighbors(new dbl[] {-2, 0}, 1)[0].Item2;
+         var emt20 = Elements.NearestNeighbors(new dbl[] {-2, 2}, 1)[0].Item2;
+         var emt21 = Elements.NearestNeighbors(new dbl[] {0, 2}, 1)[0].Item2;
+         var emt22 = Elements.NearestNeighbors(new dbl[] {2, 2}, 1)[0].Item2;
+         var emt12 = Elements.NearestNeighbors(new dbl[] {2, 0}, 1)[0].Item2;
+         var emt02 = Elements.NearestNeighbors(new dbl[] {2, -2}, 1)[0].Item2;
+         var emt01 = Elements.NearestNeighbors(new dbl[] {0, -2}, 1)[0].Item2;
+         emt00.Vals(0)[0] = BoundaryVelocity;                                          // Element 00.
+         emt00.Vals(0)[1] = 0.0;
+         SetConstr(emt00.P[0], 0);
+         SetConstr(emt00.P[0], 1);
       }
    }
 }

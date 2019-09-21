@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Xunit;
+using Xunit.Abstractions;
 
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
@@ -15,7 +15,9 @@ using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Tests {
    using dbl = Double;
    using DA = DblArithmetic;
-   public partial class Thread1 {
+   public partial class Thread1 : CustomTest {
+
+      public Thread1(ITestOutputHelper outHelper) : base(outHelper) { }
 
       [Fact] public void ReadAndParseArray() {
           TB.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");

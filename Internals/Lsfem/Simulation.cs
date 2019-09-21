@@ -18,9 +18,14 @@ namespace Fluid.Internals.Lsfem {
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    using Lst = List<int>;
+   using VecLst = My.List<Vec2>;
    using PE = PseudoElement;
    
    public abstract class Simulation {
+      /// <summary>An unordered (listed in sequence) array of positions.</summary>
+      public Vec2[] Pos { get; protected set;}
+      /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
+      public KDTree<double,Element> Elements { get; set; }
       /// <summary>Number of independent variables at a single position (= number of equations).</summary>
       public int NVar { get; internal set; }
       /// <summary>Number of all positions.</summary>
@@ -62,7 +67,6 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Secondary F. Third rank participant in the assembly process of F.</summary>
       public Tnr Fs { get; internal set; }
-      protected Mesh Mesh { get; private set; }
       /// <summary>2D lists of nodes lying inside a block.</summary>
       protected Dictionary<string,PseudoElement[][]> Patches { get; set; }
       /// <summary>1D lists of nodes shared across blocks.</summary>
@@ -78,26 +82,25 @@ namespace Fluid.Internals.Lsfem {
       public void Initialize() {                                        R.R("Creating Patches.");
          int currGInx = 0;
          (currGInx, Patches) = CreatePatches(currGInx);                 R.R("Creating Joints.");
-         (currGInx, Joints) = CreateJoints(currGInx);
-         Mesh = new Mesh();                                             R.R("Creating Positions.");
-         Mesh.Pos = CreatePositions();
-         NPos = Mesh.Pos.Count;                                         R.R("Creating Elements and calculating overlap integrals.");
+         (currGInx, Joints) = CreateJoints(currGInx);                   R.R("Creating Positions.");
+         (NPos, Pos) = CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
          var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
          var coms = CreateCOMs(emts);
-         Mesh.Elements = CreateElementTree(coms, emts);
+         Elements = CreateElementTree(coms, emts);
          (UC, NcPos, NfPos) = CreateConstrVars();
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
       /// <param name="j">Variable index.</param>
       public bool Constr(int i, int j) => C[NVar*i + j];
+      protected void SetConstr(int i, int j) => C[NVar*i + j] = true;
       /// <summary></summary>
       protected abstract (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(int currGinx);
       /// <summary></summary>
       protected abstract (int newCurrGInx, Dictionary<string,PseudoElement[]>) CreateJoints(int currGInx);
       /// <summary>User must supply custom logic here. The logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
       protected abstract Element[] CreateElements();
-      protected My.List<Vec2> CreatePositions() {
+      protected (int nPos, Vec2[]) CreatePositions() {
          int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
             Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
          var posList = new My.List<Vec2>(approxNPos);
@@ -116,7 +119,7 @@ namespace Fluid.Internals.Lsfem {
                      posList.Add(pseudoEmt.Pos[i]);
                      ++gInx; } } }
          posList.TrimExcessSpace();
-         return posList;
+         return (posList.Count, posList._E);
       }
       /// <summary>Create the list of COMs after the Elements are created.</summary>
       protected double[][] CreateCOMs(IList<Element> elements) {
@@ -140,8 +143,27 @@ namespace Fluid.Internals.Lsfem {
             (r1,r2) => Sqrt(Pow(r2[0]-r1[0], 2.0) + Pow(r2[1]-r1[1], 2.0)));
          return emtTree;
       }
+      /// <summary>Take the constraints tensor by reference and create values on the left boundary of a patch. Specify the variable index and the variable field.</summary>
+      /// <param name="patch">A left boundary patch (not connected to anything on its left).</param>
+      /// <param name="uC">Contraints tensor.</param>
+      /// <param name="varInx">Variable index of the variable that will take on the field values.</param>
+      /// <param name="f">Field to assign to the variable.</param>
+      protected void CreateLeftBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
+         int m = patch.Length;
+         PE currPEmt;
+         
+         for(int i = 0; i < m; ++i) {
+            currPEmt = patch[i][0];
+            for(int k = 0; k < 3; ++k) {
+               ref Vec2 currPos = ref currPEmt[k]     // TODO:Create a ref passing method on PseudoElement which will pass a position.
+            }
+            
+            uC[]
+         }
+      }
+
       /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uc, int nCPos, int nFPos) CreateConstrVars();
+      protected abstract (Tnr uC, int nCPos, int nFPos) CreateConstrVars();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,NVar}, NfPos);
@@ -188,8 +210,6 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Update secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>
       protected abstract void UpdateDynamicsAndForcing();
-
-      // TODO: Test KDTree.
       // TODO: Set constraints.
    }
 }

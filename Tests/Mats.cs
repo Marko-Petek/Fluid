@@ -10,7 +10,7 @@ namespace Fluid.Tests {
    using dbl = Double;
    using DA = DblArithmetic;
    using IA = IntArithmetic;
-   public partial class Thread2 {
+   public partial class Thread2 : CustomTest {
 
       /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
       [Fact] public void MatrixInvert1() {

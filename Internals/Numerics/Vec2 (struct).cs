@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Globalization;
 using static System.Math;
 using dbl = System.Double;
@@ -13,6 +15,7 @@ namespace Fluid.Internals.Numerics {
       public readonly double X;
       /// <summary>Y component.</summary>
       public readonly double Y;
+
 
       /// <summary>Create a 2D vector with specified x and y components.</summary><param name="x">X component.</param><param name="y">Y component.</param>
       public Vec2(double x, double y) {
@@ -34,6 +37,7 @@ namespace Fluid.Internals.Numerics {
          X = pos2.X - pos1.X;
          Y = pos2.Y - pos1.Y;
       }
+
 
       /// <summary>Euclidian norm.</summary>
       public double Norm() => Sqrt(X*X + Y*Y);
@@ -72,7 +76,11 @@ namespace Fluid.Internals.Numerics {
                   --oddIfTrue;
          }
       }
-
+      /// <summary>Returns a non-evaluated delegate.</summary>
+      /// <param name="cartArr">Ordered cartesian array.</param>
+      public static IEnumerable<Vec2> FromCartesianArray(dbl[][][] cartArr) {
+         return cartArr.SelectMany( i => i.Select( j => new Vec2(j) ) );
+      }
       public static Vec2 Sum(params Vec2[] vecs) {
          double resX = 0.0, resY = 0.0;
          foreach(var vec in vecs) {
@@ -80,26 +88,21 @@ namespace Fluid.Internals.Numerics {
             resY += vec.Y; }
          return new Vec2(resX, resY);
       }
-
       public static Vec2 operator +(in Vec2 vec1, in Vec2 vec2) {
          return new Vec2(vec1.X + vec2.X, vec1.Y + vec2.Y);
       }
-
       public static Vec2 operator -(in Vec2 vec1, in Vec2 vec2) {
          return new Vec2(vec1.X - vec2.X, vec1.Y - vec2.Y);
       }
-
       public static Vec2 operator /(in Vec2 vec1, in double scal2) {
          return new Vec2(vec1.X/scal2, vec1.Y/scal2);
       }
-
       public bool Equals(Vec2 vec2) {
          if(X == vec2.X && Y == vec2.Y)
             return true;
          else
             return false;
       }
-      
       public override string ToString() => $"{{{X.ToString(CultureInfo.InvariantCulture)}, {Y.ToString(CultureInfo.InvariantCulture)}}}";
    }
 }
