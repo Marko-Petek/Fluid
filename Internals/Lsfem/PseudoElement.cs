@@ -8,11 +8,15 @@ namespace Fluid.Internals.Lsfem {
    /// <summary>Contains up to 5 unique nodes from the Mesh that are contained in no other PseudoElement.</summary>
    public class PseudoElement {
       /// <summary>Local indices of nodes from 0 to 4.</summary>
-      public int[] PEInx { get; set; }
+      public int[] PEInxs { get; set; }
       /// <summary>Global indices of nodes on Mesh.</summary>
-      public int[] GInx { get; set; }
+      public int[] GInxs { get; set; }
+      internal Vec2[] _Poss;
       /// <summary>Positions of nodes.</summary>
-      public Vec2[] Pos { get; }
+      public Vec2[] Poss {
+         get => _Poss;
+         protected set => _Poss = value;
+      }
 
       /// <summary>Create a PseudoElement that contains up to 5 unique nodes from the Mesh that are contained in no other PseudoElement. First, specify the current unoccupied global index, then specify all eNodes as a sequence of tuples: (local index, x, y).</summary>
       /// <param name="startGInx">Current (unoccupied) global index.</param>
@@ -28,9 +32,9 @@ namespace Fluid.Internals.Lsfem {
             lInx[i] = eNodes[i].lInx;
             gInx[i] = startGInx++;
             pos[i] = new Vec2(eNodes[i].x, eNodes[i].y); }
-         PEInx = lInx;
-         GInx = gInx;
-         Pos = pos;
+         PEInxs = lInx;
+         GInxs = gInx;
+         Poss = pos;
       }
       public PseudoElement(ref int startGInx, params (int lInx, dbl[] p)[] eNodes) {
          int nNodes = eNodes.Length;
@@ -41,9 +45,9 @@ namespace Fluid.Internals.Lsfem {
             lInx[i] = eNodes[i].lInx;
             gInx[i] = startGInx++;
             pos[i] = new Vec2(eNodes[i].p); }
-         PEInx = lInx;
-         GInx = gInx;
-         Pos = pos;
+         PEInxs = lInx;
+         GInxs = gInx;
+         Poss = pos;
       }
       public static (int currGInx, PseudoElement) CreateCustom(int currGInx, params (int lInx, dbl[])[] eNodes) {
          var pe = new PseudoElement(ref currGInx, eNodes);
@@ -103,7 +107,7 @@ namespace Fluid.Internals.Lsfem {
 
       public int this[int pEInx] {
          get =>
-            PEInx.First(inx => inx == pEInx);
+            PEInxs.First(inx => inx == pEInx);
       }
    }
 }

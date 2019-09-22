@@ -87,7 +87,7 @@ namespace Fluid.Internals.Lsfem {
          var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
          var coms = CreateCOMs(emts);
          Elements = CreateElementTree(coms, emts);
-         (UC, NcPos, NfPos) = CreateConstrVars();
+         (UC, NcPos, NfPos) = CreateConstraints();
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
@@ -108,15 +108,15 @@ namespace Fluid.Internals.Lsfem {
          foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
             foreach(var pseudoRow in patch) {
                foreach(var pseudoEmt in pseudoRow) {
-                  for(int i = 0; i < pseudoEmt.PEInx.Length; ++i) {
-                     pseudoEmt.GInx[i] = gInx;
-                     posList.Add(pseudoEmt.Pos[i]);
+                  for(int i = 0; i < pseudoEmt.PEInxs.Length; ++i) {
+                     pseudoEmt.GInxs[i] = gInx;
+                     posList.Add(pseudoEmt.Poss[i]);
                      ++gInx; } } } }
          foreach(var joint in Joints.Values) {                                // We also set global indices on Joints and add their positions to Mesh.
                foreach(var pseudoEmt in joint) {
-                  for(int i = 0; i < pseudoEmt.PEInx.Length; ++i) {
-                     pseudoEmt.GInx[i] = gInx;
-                     posList.Add(pseudoEmt.Pos[i]);
+                  for(int i = 0; i < pseudoEmt.PEInxs.Length; ++i) {
+                     pseudoEmt.GInxs[i] = gInx;
+                     posList.Add(pseudoEmt.Poss[i]);
                      ++gInx; } } }
          posList.TrimExcessSpace();
          return (posList.Count, posList._E);
@@ -148,22 +148,59 @@ namespace Fluid.Internals.Lsfem {
       /// <param name="uC">Contraints tensor.</param>
       /// <param name="varInx">Variable index of the variable that will take on the field values.</param>
       /// <param name="f">Field to assign to the variable.</param>
-      protected void CreateLeftBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
-         int m = patch.Length;
-         PE currPEmt;
-         
-         for(int i = 0; i < m; ++i) {
-            currPEmt = patch[i][0];
+      protected int CreateLeftBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
+         int m = patch.Length;                              // Number of rows.
+         PE pEmt;
+         int gInx;
+         for(int i = 0; i < m; ++i) {                       // Over all PE rows.
+            pEmt = patch[i][0];                             // Pick a PE.
+            for(int k = 0; k < 3; ++k) {                    // Over first three points in a PE.
+               ref Vec2 pos = ref pEmt._Poss[k];
+               gInx = pEmt.GInxs[k];
+               uC[gInx, varInx] = f(in pos);
+               SetConstr(gInx, varInx); } }
+         return 3*m;
+      }
+
+      protected int CreateLowerBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
+         int n = patch[0].Length;                          // Number of cols.
+         PE pEmt;
+         int gInx;
+         for(int j = 0; j < n; ++j) {
+            pEmt = patch[0][j];
+            for(int k = 2; k < 5; ++k) {
+               ref Vec2 pos = ref pEmt._Poss[k];
+               gInx = pEmt.GInxs[k];
+               uC[gInx, varInx] = f(in pos);
+               SetConstr(gInx, varInx); } }
+         return 3*n;
+      }
+
+      protected int CreateBoundaryVars(PE[] joint, Tnr uC, int varInx, F2Db f) {
+         int n = joint.Length;
+         PE pEmt;
+         int gInx;
+         for(int j = 0; j < n; ++j) {
+            pEmt = joint[j];
             for(int k = 0; k < 3; ++k) {
-               ref Vec2 currPos = ref currPEmt[k]     // TODO:Create a ref passing method on PseudoElement which will pass a position.
-            }
-            
-            uC[]
-         }
+               ref Vec2 pos = ref pEmt._Poss[k];
+               gInx = pEmt.GInxs[k];
+               uC[gInx, varInx] = f(in pos);
+               SetConstr(gInx, varInx); } }
+         return 3*n;
+      }
+
+      protected int CreateUpperRightCornerVar(PE[] joint, Tnr uC, int varInx, F2Db f) {
+         var pEmt = joint[0];
+         ref Vec2 pos = ref pEmt._Poss[0];
+         int gInx = pEmt.GInxs[0];
+         uC[gInx, varInx] = f(in pos);
+         SetConstr(gInx, varInx);
+         return 1;
       }
 
       /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uC, int nCPos, int nFPos) CreateConstrVars();
+      protected abstract (Tnr uC, int nCPos, int nFPos) CreateConstraints();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,NVar}, NfPos);

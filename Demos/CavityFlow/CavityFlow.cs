@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Lsfem;
+using Fluid.Internals.Numerics;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
@@ -19,13 +20,13 @@ namespace Fluid.Demos {
    public class CavityFlow : NavStokesSim {
       /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
       dbl [][][] OrdPos { get; set; }
-
-      public dbl BoundaryVelocity { get; }
+      /// <summary>Boundary velocity.</summary>
+      public dbl V { get; }
       
 
       public CavityFlow(dbl dt, dbl re, dbl boundaryVelocity) : base(dt, re) {
          OrdPos = ReadPos();
-         BoundaryVelocity = boundaryVelocity;
+         V = boundaryVelocity;
       }
 
       dbl[][][] ReadPos() {
@@ -89,19 +90,24 @@ namespace Fluid.Demos {
          emts[8] = Emt.CreateUpperRightJointElement(patch, rJoint, uJoint, uRJoint);
          return emts;
       }
-      protected override (Tnr uc, int nCPos, int nFPos) CreateConstrVars() {
-         var emt00 = Elements.NearestNeighbors(new dbl[] {-2,-2}, 1)[0].Item2;
-         var emt10 = Elements.NearestNeighbors(new dbl[] {-2, 0}, 1)[0].Item2;
-         var emt20 = Elements.NearestNeighbors(new dbl[] {-2, 2}, 1)[0].Item2;
-         var emt21 = Elements.NearestNeighbors(new dbl[] {0, 2}, 1)[0].Item2;
-         var emt22 = Elements.NearestNeighbors(new dbl[] {2, 2}, 1)[0].Item2;
-         var emt12 = Elements.NearestNeighbors(new dbl[] {2, 0}, 1)[0].Item2;
-         var emt02 = Elements.NearestNeighbors(new dbl[] {2, -2}, 1)[0].Item2;
-         var emt01 = Elements.NearestNeighbors(new dbl[] {0, -2}, 1)[0].Item2;
-         emt00.Vals(0)[0] = BoundaryVelocity;                                          // Element 00.
-         emt00.Vals(0)[1] = 0.0;
-         SetConstr(emt00.P[0], 0);
-         SetConstr(emt00.P[0], 1);
+      protected override (Tnr uC, int nCPos, int nFPos) CreateConstraints() {
+         var uc = new Tnr(new Lst {12, 4}, 12);                                      // There will be 12 boundary positions.
+         int nCPos = 12;
+         int nFPos = 28;                                                             // 12 + 4*4
+         var patch = Patches["Patch"];
+         var rightJoint = Joints["RightJoint"];
+         var upperJoint = Joints["UpperJoint"];
+         var upperRightJoint = Joints["UpperRightJoint"];
+         CreateLeftBoundaryVars(patch, uc, 0, (in Vec2 pos) => 0.0);
+         CreateLeftBoundaryVars(patch, uc, 1, (in Vec2 pos) => -V);
+         CreateLowerBoundaryVars(patch, uc, 0, (in Vec2 pos) => V);
+         CreateLowerBoundaryVars(patch, uc, 1, (in Vec2 pos) => 0.0);
+         CreateBoundaryVars(rightJoint, uc, 0, (in Vec2 pos) => 0.0);
+         CreateBoundaryVars(rightJoint, uc, 1, (in Vec2 pos) => V);
+         CreateBoundaryVars(upperJoint, uc, 0, (in Vec2 pos) => -V);
+         CreateBoundaryVars(upperJoint, uc, 1, (in Vec2 pos) => 0.0);
+         //CreateUpperRightCornerVar(upperRightJoint, uc, 0,)       // TODO: Set corner velocity to 0. Create a method that assigns proper values to the two middle edge points based on the specified function.
+         throw new NotImplementedException();
       }
    }
 }
