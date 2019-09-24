@@ -143,37 +143,100 @@ namespace Fluid.Internals.Lsfem {
             (r1,r2) => Sqrt(Pow(r2[0]-r1[0], 2.0) + Pow(r2[1]-r1[1], 2.0)));
          return emtTree;
       }
+
+      //void                   
+
       /// <summary>Take the constraints tensor by reference and create values on the left boundary of a patch. Specify the variable index and the variable field.</summary>
-      /// <param name="patch">A left boundary patch (not connected to anything on its left).</param>
+      /// <param name="leftPatch">A left boundary patch (not connected to anything on its left).</param>
+      /// <param name="upperJoint">An boundary joint.</param>
       /// <param name="uC">Contraints tensor.</param>
       /// <param name="varInx">Variable index of the variable that will take on the field values.</param>
       /// <param name="f">Field to assign to the variable.</param>
-      protected int CreateLeftBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
-         int m = patch.Length;                              // Number of rows.
-         PE pEmt;
-         int gInx;
-         for(int i = 0; i < m; ++i) {                       // Over all PE rows.
-            pEmt = patch[i][0];                             // Pick a PE.
-            for(int k = 0; k < 3; ++k) {                    // Over first three points in a PE.
-               ref Vec2 pos = ref pEmt._Poss[k];
-               gInx = pEmt.GInxs[k];
-               uC[gInx, varInx] = f(in pos);
-               SetConstr(gInx, varInx); } }
+      protected int CreateLeftBoundaryVars(PE[][] leftPatch, PE[] upperJoint, Tnr uC, int varInx, F2Db f) {
+         int m = leftPatch.Length;                                                     // Number of rows.
+         int iL = m - 1;                                                               // Last index.
+         PE pEmtLow, pEmtHigh;
+         dbl h10, h11;
+         int[] cap = new int[] {4};
+         int[] lowBound = new int[] {9};
+         int[] g = (int[]) Array.CreateInstance(typeof(int), cap, lowBound);          // Create an array of global indices, starting at index 9.
+         dbl[] u = (dbl[]) Array.CreateInstance(typeof(dbl), cap, lowBound);
+         for(int i = 0; i < iL; ++i) {                                                  // Over all PE rows, except last.
+            pEmtLow = leftPatch[i][0];
+            pEmtHigh = leftPatch[i+1][0];
+            SetNodeVals(2, 0, 1, 2,
+               in pEmtHigh._Poss[2], in pEmtLow._Poss[0],
+               in pEmtLow._Poss[1], in pEmtLow._Poss[2]);
+            Apply(10, 12); }
+         pEmtLow = leftPatch[iL][0];                                                    // And now for the last row.
+         pEmtHigh = upperJoint[0];
+         SetNodeVals(0, 0, 1, 2,
+            in pEmtHigh._Poss[0], in pEmtLow._Poss[0],
+            in pEmtLow._Poss[1], in pEmtLow._Poss[2]);
+         Apply(9, 12);
          return 3*m;
+
+         void SetNodeVals(int i1, int i2, int i3, int i4,
+         in Vec2 p9, in Vec2 p10, in Vec2 p11, in Vec2 p12) {
+            g[9] = pEmtHigh.GInxs[i1];
+            g[10] = pEmtLow.GInxs[i2];
+            g[11] = pEmtLow.GInxs[i3];
+            g[12] = pEmtLow.GInxs[i4];
+            h10 = f(in p10);
+            h11 = f(in p11);
+            u[9] = f(in p9);
+            u[12] = f(in p12);
+            u[10] = 0.25*(18*h10 - 9*h11 + 2*u[12] - 11*u[9]);
+            u[11] = 0.25*(-9*h10 + 18*h11 - 11*u[12] + 2*u[9]);
+         }
+         void Apply(int startNode, int endNode) {
+            for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
+               uC[g[p], varInx] = u[p];
+               SetConstr(g[p], varInx); }
+         }
       }
 
-      protected int CreateLowerBoundaryVars(PE[][] patch, Tnr uC, int varInx, F2Db f) {
-         int n = patch[0].Length;                          // Number of cols.
-         PE pEmt;
-         int gInx;
-         for(int j = 0; j < n; ++j) {
-            pEmt = patch[0][j];
-            for(int k = 2; k < 5; ++k) {
-               ref Vec2 pos = ref pEmt._Poss[k];
-               gInx = pEmt.GInxs[k];
-               uC[gInx, varInx] = f(in pos);
-               SetConstr(gInx, varInx); } }
+      protected int CreateLowerBoundaryVars(PE[][] lowerPatch, PE[] rightJoint,
+         Tnr uC, int varInx, F2Db f) {
+         int n = lowerPatch[0].Length;                          // Number of cols.
+         int jL = n - 1;
+         PE pEmtLeft, pEmtRight;
+         dbl h1, h2;
+         int[] g = new int[4];
+         dbl[] u = new dbl[4];
+         for(int j = 0; j < jL; ++j) {
+            pEmtLeft = lowerPatch[0][j];
+            pEmtRight = lowerPatch[0][j+1];
+            SetNodeVals(2,3,4,2,
+               in pEmtLeft._Poss[2], in pEmtLeft._Poss[3],
+               in pEmtLeft._Poss[4], in pEmtRight._Poss[2]);
+            Apply(0,2); }
+         pEmtLeft = lowerPatch[0][jL];
+         pEmtRight = rightJoint[0];
+         SetNodeVals(2,3,4,0,
+               in pEmtLeft._Poss[2], in pEmtLeft._Poss[3],
+               in pEmtLeft._Poss[4], in pEmtRight._Poss[0]);
+         Apply(0,3);
          return 3*n;
+
+         void SetNodeVals(int i1, int i2, int i3, int i4,
+         in Vec2 p0, in Vec2 p1, in Vec2 p2, in Vec2 p3) {
+            g[0] = pEmtLeft.GInxs[i1];
+            g[1] = pEmtLeft.GInxs[i2];
+            g[2] = pEmtLeft.GInxs[i3];
+            g[3] = pEmtRight.GInxs[i4];
+            h1 = f(in p1);
+            h2 = f(in p2);
+            u[0] = f(in p0);
+            u[3] = f(in p3);
+            u[1] = 0.25*(18*h1 - 9*h2 - 11*u[0] + 2*u[3]);
+            u[2] = 0.25*(-9*h1 + 18*h2 + 2*u[0] - 11*u[3]);
+         }
+         void Apply(int startNode, int endNode) {
+            for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
+               uC[g[p], varInx] = u[p];
+               SetConstr(g[p], varInx); }
+         }
       }
 
       protected int CreateBoundaryVars(PE[] joint, Tnr uC, int varInx, F2Db f) {
