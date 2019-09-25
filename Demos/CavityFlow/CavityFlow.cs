@@ -11,21 +11,21 @@ using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 
 
-namespace Fluid.Demos {
+namespace Fluid.Demos.CavityFlow {
    using SymTnr = SymTensor<dbl,DA>;
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    using Lst = List<int>;
    using PE = PseudoElement;
    using Emt = Element;
-   public class CavityFlow : NavStokesSim {
+   public class CavityFlow : NavStokesFlow {
       /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
       dbl [][][] OrdPos { get; set; }
       /// <summary>Boundary velocity.</summary>
       public dbl V { get; }
       
 
-      public CavityFlow(dbl dt, dbl re, dbl boundaryVelocity) : base(dt, re) {
+      public CavityFlow(dbl dt, dbl re, dbl boundaryVelocity) : base(dt, re) {   R.R("Reading element corner positions.");
          OrdPos = ReadPos();
          V = boundaryVelocity;
       }

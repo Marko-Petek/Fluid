@@ -83,9 +83,9 @@ namespace Fluid.Internals.Lsfem {
          (currGInx, Joints) = CreateJoints(currGInx);                   R.R("Creating Positions.");
          (NPos, Pos) = CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
          var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
-         var coms = CreateCOMs(emts);
-         Elements = CreateElementTree(coms, emts);
-         UC = CreateConstraints();
+         var coms = CreateCOMs(emts);                                   R.R("Creating ElementTree.");
+         Elements = CreateElementTree(coms, emts);                      R.R("Creating constraints.");
+         UC = CreateConstraints();                                      R.R("Counting free positions.");
          NfPos = CountFreePositions(NPos, NVar);
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>

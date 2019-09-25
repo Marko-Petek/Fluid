@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Lsfem {
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
    using Lst = List<int>;
-   public abstract class NavStokesSim : Simulation {
+   public abstract class NavStokesFlow : Simulation {
 
       /// <summary>Time step.</summary>
       public dbl Dt { get; protected set; }
@@ -15,9 +16,9 @@ namespace Fluid.Internals.Lsfem {
       public dbl Re { get; protected set; }
 
 
-      public NavStokesSim(dbl dt, dbl re) : base() {
+      public NavStokesFlow(dbl dt, dbl re) : base() {
          Dt = dt;
-         Re = re;
+         Re = re;                                        R.R("Initializing secondary tensors.");
          (A, Fs) = InitializeSecondaries();
       }
 
