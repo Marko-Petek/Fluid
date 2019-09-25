@@ -38,7 +38,8 @@ namespace Fluid.Internals.Numerics {
          Y = pos2.Y - pos1.Y;
       }
 
-
+      /// <summary>Creates a rank 1, 2D double array from a Vec2.</summary>
+      public dbl[] ToArray() => new dbl[2] {X,Y};
       /// <summary>Euclidian norm.</summary>
       public double Norm() => Sqrt(X*X + Y*Y);
       /// <summary>Square of Euclidian norm.</summary>

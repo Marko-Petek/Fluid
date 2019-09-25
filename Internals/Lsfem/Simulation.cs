@@ -30,9 +30,7 @@ namespace Fluid.Internals.Lsfem {
       public int NVar { get; internal set; }
       /// <summary>Number of all positions.</summary>
       public int NPos { get; protected set; }
-      /// <summary>Number of positions with constrained variables.</summary>
-      public int NcPos { get; protected set; }
-      /// <summary>Number of positions with free variables.</summary>
+      /// <summary>Number of positions with free variables. Used to determine solution tensor capacity.</summary>
       public int NfPos { get; protected set; }
       /// <summary>Primary Dynamics tensor, 4th rank. Includes only free variables.</summary>
       public Tnr K { get; internal set; }
@@ -87,7 +85,8 @@ namespace Fluid.Internals.Lsfem {
          var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
          var coms = CreateCOMs(emts);
          Elements = CreateElementTree(coms, emts);
-         (UC, NcPos, NfPos) = CreateConstraints();
+         UC = CreateConstraints();
+         NfPos = CountFreePositions(NPos, NVar);
       }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
@@ -143,16 +142,30 @@ namespace Fluid.Internals.Lsfem {
             (r1,r2) => Sqrt(Pow(r2[0]-r1[0], 2.0) + Pow(r2[1]-r1[1], 2.0)));
          return emtTree;
       }
-
-      //void                   
-
+      /// <summary>Count positions containing at least one free variable.</summary>
+      /// <param name="nPos">Number of positions.</param>
+      /// <param name="nVar">Number of variables at a position.</param>
+      int CountFreePositions(int nPos, int nVar) {
+         int nFreePos = 0;
+         int n = C.Length;
+         bool freePos;                          // This will signify whether a position is free after the j-loop.
+         for(int i = 0; i < nPos; ++i) {
+            freePos = false;
+            for(int j = 0; j < nVar; ++j) {
+               if(!Constr(i,j)) {               // If there is a single free position, then the position is free.
+                  freePos = true;
+                  break; } }
+            if(freePos) {                       // At least one free variable at position.
+               ++nFreePos; } }
+         return nFreePos;
+      }                
       /// <summary>Take the constraints tensor by reference and create values on the left boundary of a patch. Specify the variable index and the variable field.</summary>
       /// <param name="leftPatch">A left boundary patch (not connected to anything on its left).</param>
       /// <param name="upperJoint">An boundary joint.</param>
       /// <param name="uC">Contraints tensor.</param>
       /// <param name="varInx">Variable index of the variable that will take on the field values.</param>
       /// <param name="f">Field to assign to the variable.</param>
-      protected int CreateLeftBoundaryVars(PE[][] leftPatch, PE[] upperJoint, Tnr uC, int varInx, F2Db f) {
+      protected void CreateLeftBoundaryVars(PE[][] leftPatch, PE[] upperJoint, Tnr uC, int varInx, F2Db f) {
          int m = leftPatch.Length;                                                     // Number of rows.
          int iL = m - 1;                                                               // Last index.
          PE pEmtLow, pEmtHigh;
@@ -174,7 +187,6 @@ namespace Fluid.Internals.Lsfem {
             in pEmtHigh._Poss[0], in pEmtLow._Poss[0],
             in pEmtLow._Poss[1], in pEmtLow._Poss[2]);
          Apply(9, 12);
-         return 3*m;
 
          void SetNodeVals(int i1, int i2, int i3, int i4,
          in Vec2 p9, in Vec2 p10, in Vec2 p11, in Vec2 p12) {
@@ -195,8 +207,51 @@ namespace Fluid.Internals.Lsfem {
                SetConstr(g[p], varInx); }
          }
       }
+      protected void CreateRightBoundaryVars(PE[] rightJoint, PE[][] upperRightPatch,
+      Tnr uC, int varInx, F2Db f) {
+         int m = rightJoint.Length;                                                     // Number of rows.
+         int iL = m - 1;                                                               // Last index.
+         PE pEmtLow, pEmtHigh;
+         dbl h4, h5;
+         int[] cap = new int[] {4};
+         int[] lowBound = new int[] {3};
+         int[] g = (int[]) Array.CreateInstance(typeof(int), cap, lowBound);          // Create an array of global indices, starting at index 9.
+         dbl[] u = (dbl[]) Array.CreateInstance(typeof(dbl), cap, lowBound);
+         for(int i = 0; i < iL; ++i) {                                                  // Over all PE rows, except last.
+            pEmtLow = rightJoint[i];
+            pEmtHigh = rightJoint[i+1];
 
-      protected int CreateLowerBoundaryVars(PE[][] lowerPatch, PE[] rightJoint,
+            SetNodeVals(0, 1, 2, 0,
+               in pEmtLow._Poss[0], in pEmtLow._Poss[1],
+               in pEmtLow._Poss[2], in pEmtHigh._Poss[0]);
+            Apply(3, 5); }
+         pEmtLow = rightJoint[iL];                                                    // And now for the last row.
+         pEmtHigh = upperRightPatch[0][0];               // TODO: Create upper right patch instead of the Frankenstein joint.
+         SetNodeVals(0, 1, 2, 2,
+            in pEmtLow._Poss[0], in pEmtLow._Poss[1],
+            in pEmtLow._Poss[2], in pEmtHigh._Poss[2]);
+         Apply(3, 6);
+
+         void SetNodeVals(int i1, int i2, int i3, int i4,
+         in Vec2 p3, in Vec2 p4, in Vec2 p5, in Vec2 p6) {
+            g[3] = pEmtHigh.GInxs[i1];
+            g[4] = pEmtLow.GInxs[i2];
+            g[5] = pEmtLow.GInxs[i3];
+            g[6] = pEmtLow.GInxs[i4];
+            h4 = f(in p4);
+            h5 = f(in p5);
+            u[3] = f(in p3);
+            u[6] = f(in p6);
+            u[4] = 0.25*(18*h4 - 9*h5 - 11*u[3] + 2*u[6]);
+            u[5] = 0.25*(-9*h4 + 18*h5 + 2*u[3] - 11*u[6]);
+         }
+         void Apply(int startNode, int endNode) {
+            for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
+               uC[g[p], varInx] = u[p];
+               SetConstr(g[p], varInx); }
+         }
+      }
+      protected void CreateLowerBoundaryVars(PE[][] lowerPatch, PE[] rightJoint,
          Tnr uC, int varInx, F2Db f) {
          int n = lowerPatch[0].Length;                          // Number of cols.
          int jL = n - 1;
@@ -217,7 +272,6 @@ namespace Fluid.Internals.Lsfem {
                in pEmtLeft._Poss[2], in pEmtLeft._Poss[3],
                in pEmtLeft._Poss[4], in pEmtRight._Poss[0]);
          Apply(0,3);
-         return 3*n;
 
          void SetNodeVals(int i1, int i2, int i3, int i4,
          in Vec2 p0, in Vec2 p1, in Vec2 p2, in Vec2 p3) {
@@ -239,31 +293,53 @@ namespace Fluid.Internals.Lsfem {
          }
       }
 
-      protected int CreateBoundaryVars(PE[] joint, Tnr uC, int varInx, F2Db f) {
-         int n = joint.Length;
-         PE pEmt;
-         int gInx;
-         for(int j = 0; j < n; ++j) {
-            pEmt = joint[j];
-            for(int k = 0; k < 3; ++k) {
-               ref Vec2 pos = ref pEmt._Poss[k];
-               gInx = pEmt.GInxs[k];
-               uC[gInx, varInx] = f(in pos);
-               SetConstr(gInx, varInx); } }
-         return 3*n;
+      protected void CreateUpperBoundaryVars(PE[] upperJoint, PE[][] upperRightPatch,
+      Tnr uC, int varInx, F2Db f) {
+         int n = upperJoint.Length;
+         int jL = n - 1;
+         PE pEmtLeft, pEmtRight;
+         dbl h7, h8;
+         int[] cap = new int[] {4};
+         int[] lowBound = new int[] {6};
+         int[] g = (int[]) Array.CreateInstance(typeof(int), cap, lowBound);          // Create an array of global indices, starting at index 9.
+         dbl[] u = (dbl[]) Array.CreateInstance(typeof(dbl), cap, lowBound);
+         for(int j = 0; j < jL; ++j) {
+            pEmtLeft = upperJoint[j];
+            pEmtRight = upperJoint[j+1];
+            SetNodeVals(0,2,1,0,
+               in pEmtRight._Poss[0], in pEmtLeft._Poss[2],
+               in pEmtLeft._Poss[1], in pEmtLeft._Poss[0]);
+            Apply(7,9); }
+         pEmtLeft = upperJoint[jL];
+         pEmtRight = upperRightPatch[0][0];
+         SetNodeVals(2,2,1,0,
+               in pEmtRight._Poss[2], in pEmtLeft._Poss[2],
+               in pEmtLeft._Poss[1], in pEmtLeft._Poss[0]);
+         Apply(6,9);
+         
+
+         void SetNodeVals(int i1, int i2, int i3, int i4,
+         in Vec2 p6, in Vec2 p7, in Vec2 p8, in Vec2 p9) {
+            g[6] = pEmtRight.GInxs[i1];
+            g[7] = pEmtLeft.GInxs[i2];
+            g[8] = pEmtLeft.GInxs[i3];
+            g[9] = pEmtLeft.GInxs[i4];
+            h7 = f(in p7);
+            h8 = f(in p8);
+            u[6] = f(in p6);
+            u[9] = f(in p9);
+            u[7] = 0.25*(18*h7 - 9*h8 + 2*u[9] - 11*u[6]);
+            u[8] = 0.25*(-9*h7 + 18*h8 - 11*u[9] + 2*u[6]);
+         }
+         void Apply(int startNode, int endNode) {
+            for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
+               uC[g[p], varInx] = u[p];
+               SetConstr(g[p], varInx); }
+         }
       }
 
-      protected int CreateUpperRightCornerVar(PE[] joint, Tnr uC, int varInx, F2Db f) {
-         var pEmt = joint[0];
-         ref Vec2 pos = ref pEmt._Poss[0];
-         int gInx = pEmt.GInxs[0];
-         uC[gInx, varInx] = f(in pos);
-         SetConstr(gInx, varInx);
-         return 1;
-      }
-
-      /// <summary>Create constrained variables at desired positions and also return the number of constrained and free variables.</summary>
-      protected abstract (Tnr uC, int nCPos, int nFPos) CreateConstraints();
+      /// <summary>Create constrained variables at desired positions.</summary>
+      protected abstract Tnr CreateConstraints();
       /// <summary>Creates free values as zeros: an empty tensor.</summary>
       protected virtual Tnr CreateFreeVars() =>
          new Tnr(new List<int> {NfPos,NVar}, NfPos);
