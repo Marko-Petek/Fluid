@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using static System.Math;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Lsfem;
@@ -47,15 +48,19 @@ namespace Fluid.Demos {
       }
 
       protected override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(int currGInx) {
-         var pEmts = new PE[3][];
+         var pEmts = new PE[3][];                                                               // Main patch.                       
          for(int i = 0; i < 3; ++i) {                                                           // Create the 9 PseudoElements.
             pEmts[i] = new PE[3];
             for(int j = 0; j < 3; ++j)
-               (currGInx, pEmts[i][j]) = CreatePE(i,j); }
-         var patches = new Dictionary<string,PE[][]>(1) { {"Patch", pEmts} };
+               (currGInx, pEmts[i][j]) = PE.CreatePatchElement(
+                  currGInx, OrdPos[i][j], OrdPos[i][j+1], OrdPos[i+1][j]); }
+         var pEmts2 = new PE[1][];                                                              // Upper right patch containing a single element with a single position.
+         pEmts2[0] = new PE[1];
+         (currGInx, pEmts2[0][0]) = PE.CreateCustom(currGInx, (2, OrdPos[3][3]));
+         var patches = new Dictionary<string,PE[][]>(1) {
+            {"Patch", pEmts},
+            {"UpperRightPatch", pEmts2} };
          return (currGInx, patches);
-
-         (int,PE) CreatePE(int i, int j) => PE.CreatePatchElement(currGInx, OrdPos[i][j], OrdPos[i][j+1], OrdPos[i+1][j]);
       }
       protected override (int newCurrGInx, Dictionary<string,PseudoElement[]>) CreateJoints(int currGInx) {
          var rPEmts = new PE[3];
@@ -66,9 +71,6 @@ namespace Fluid.Demos {
          for(int j = 0; j < 3; ++j)
             (currGInx, uPEmts[j]) = CreateHorzPE(3,j);
          joints.Add("UpperJoint", uPEmts);
-         var finalPEmt = new PE[1];
-         (currGInx, finalPEmt[0]) = PE.CreateCustom(currGInx, (2, OrdPos[3][3]));
-         joints.Add("UpperRightJoint", finalPEmt);
          return (currGInx, joints);
 
          (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, OrdPos[i][j], OrdPos[i+1][j]);
@@ -90,24 +92,26 @@ namespace Fluid.Demos {
          emts[8] = Emt.CreateUpperRightJointElement(patch, rJoint, uJoint, uRJoint);
          return emts;
       }
-      protected override (Tnr uC, int nCPos, int nFPos) CreateConstraints() {
+      protected override Tnr CreateConstraints() {
          var uc = new Tnr(new Lst {12, 4}, 12);                                      // There will be 12 boundary positions.
-         int nCPos = 12;
-         int nFPos = 28;                                                             // 12 + 4*4
          var patch = Patches["Patch"];
          var rightJoint = Joints["RightJoint"];
          var upperJoint = Joints["UpperJoint"];
-         var upperRightJoint = Joints["UpperRightJoint"];
-         CreateLeftBoundaryVars(patch, uc, 0, (in Vec2 pos) => 0.0);
-         CreateLeftBoundaryVars(patch, uc, 1, (in Vec2 pos) => -V);
-         CreateLowerBoundaryVars(patch, uc, 0, (in Vec2 pos) => V);
-         CreateLowerBoundaryVars(patch, uc, 1, (in Vec2 pos) => 0.0);
-         CreateBoundaryVars(rightJoint, uc, 0, (in Vec2 pos) => 0.0);
-         CreateBoundaryVars(rightJoint, uc, 1, (in Vec2 pos) => V);
-         CreateBoundaryVars(upperJoint, uc, 0, (in Vec2 pos) => -V);
-         CreateBoundaryVars(upperJoint, uc, 1, (in Vec2 pos) => 0.0);
-         //CreateUpperRightCornerVar(upperRightJoint, uc, 0,)       // TODO: Set corner velocity to 0. Create a method that assigns proper values to the two middle edge points based on the specified function.
-         throw new NotImplementedException();
+         var upperRightPatch = Patches["UpperRightPatch"];                          // TODO: Screw Joints, only use Patches. This should simpify boundary creating methods.
+         F2Db fLow = (in Vec2 p) => V - (V/9)*Pow(p.X, 2);                          // Parabola that goes through p0 and p3 and has appex in the middle.
+         F2Db fHigh = (in Vec2 p) => -V + (V/9)*Pow(p.X, 2);
+         F2Db fRight = (in Vec2 p) => V - (V/9)*Pow(p.Y, 2);
+         F2Db fLeft = (in Vec2 p) => -V + (V/9)*Pow(p.Y, 2);
+         F2Db zero = (in Vec2 p) => 0.0;
+         CreateLowerBoundaryVars(patch, rightJoint, uc, 0, fLow);                   // Constrain X.
+         CreateLowerBoundaryVars(patch, rightJoint, uc, 1, zero);                   // Constrain Y.
+         CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, zero);         // etc.
+         CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, fRight);
+         CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 0, fHigh);
+         CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 1, zero);
+         CreateLeftBoundaryVars(patch, upperJoint, uc, 0, zero);
+         CreateLeftBoundaryVars(patch, upperJoint, uc, 1, fLeft);
+         return uc;
       }
    }
 }
