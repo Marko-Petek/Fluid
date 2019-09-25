@@ -66,6 +66,21 @@
          "group": "none"
       },
       {
+         "label": "Run CavityFlow",
+         "command": "dotnet",
+         "type": "process",
+         "args": [
+            "run",
+            "--project",
+            "${workspaceFolder}/Demos/CavityFlow/CavityFlow.csproj"
+         ],
+         "options": {
+            "cwd": "./Demos/CavityFlow"
+         },
+         "problemMatcher": "$msCompile",
+         "group": "none"
+      },
+      {
          "label": "Run NodeCreation",
          "command": "dotnet",
          "type": "process",
