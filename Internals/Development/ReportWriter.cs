@@ -30,8 +30,8 @@ namespace Fluid.Internals.Development {
       /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
       public ReportWriter(Reporter appReporter) {
          int buffer;
-         if(TB.Console.BufferWidth > 6 * 2 - 12 + 36 + 20)
-            buffer = TB.Console.BufferWidth - 6 * 2 - 12;              // spaces, some slack
+         if(TB.Writer.BufferWidth > 6 * 2 - 12 + 36 + 20)
+            buffer = TB.Writer.BufferWidth - 6 * 2 - 12;              // spaces, some slack
          else
             buffer = 36 + 60;
          int remainder = buffer - 8 - 8 - 16 - 4;
@@ -82,7 +82,7 @@ namespace Fluid.Internals.Development {
          var formattedLines = FormatMessage(i);
          if((AppReporter.Output & OutputSettings.Console) == OutputSettings.Console) {
             foreach(var line in formattedLines)
-               TB.Console.WriteLine(line); }
+               TB.Writer.WriteLine(line); }
          if((AppReporter.Output & OutputSettings.File) == OutputSettings.File) {
             foreach(var line in formattedLines)
                FileWriter.WriteLine(line);

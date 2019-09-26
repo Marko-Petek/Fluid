@@ -19,9 +19,6 @@ namespace Fluid.Tests {
    using IA = IntArithmetic;
    
    public partial class Thread3 : CustomTest {
-      static Thread3() {
-         TB.EntryPointSetup("Starting Thread3 tests.");
-      }
 
       public Thread3(ITestOutputHelper outHelper) : base(outHelper) { }
 

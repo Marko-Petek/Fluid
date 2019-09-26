@@ -10,7 +10,7 @@ namespace Fluid.Tests {
       public CustomTest(ITestOutputHelper outHelper) {
          OutHelper = outHelper;
          Console.TTW = new TestTextWriter(outHelper);
-         TB.Console.TW = Console.TTW;
+         TB.Writer.TW = Console.TTW;
       }
    }
 }

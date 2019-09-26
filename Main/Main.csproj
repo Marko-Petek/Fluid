@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+   <ProjectReference Include="..\TestRef\TestRef.csproj" />
+   <ProjectReference Include="..\Internals\Internals.csproj" />
+   <ProjectReference Include="..\Runnables\Runnables.csproj" />
+  </ItemGroup>
+
+</Project>
