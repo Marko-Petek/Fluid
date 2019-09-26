@@ -2,14 +2,14 @@
 "version": "2.0.0",
 "tasks": [
 {
-   "label": "Rebuild (Debug)",
+   "label": "Rebuild (Debug, REPORT)",
    "command": "dotnet",
    "type": "process",
    "args": ["msbuild", "-p:Configuration=Debug", "-p:DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
-   "label": "Rebuild (Release)",
+   "label": "Rebuild (Release, REPORT)",
    "command": "dotnet",
    "type": "process",
    "args": ["msbuild", "-p:Configuration=Release", "-p:DefineConstants=REPORT", "/t:Rebuild", "Fluid.sln"],

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -22,6 +23,7 @@ namespace Fluid.Internals {
          _FileWriter = new IO.FileWriter();
          _Reporter = new Reporter();
          _Rng = new RandomNumberGen();
+         AddReportIfDefined();
       });
       static IO.FileReader _FileReader;
       public static IO.FileReader FileReader => _FileReader;
@@ -36,12 +38,13 @@ namespace Fluid.Internals {
             lock(_Reporter)
                return _Reporter; }
       }
+      public static StringBuilder DefineConstants { get; } = new StringBuilder(100);
       static RandomNumberGen _Rng;
       public static RandomNumberGen Rng => _Rng;
 
-      /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="main">Action delegate.</param>
+      /// <summary>Sets up reporter to catch and display exceptions. Pass an action delegate as argument.</summary><param name="entry">Action delegate.</param>
       public static void EntryPointSetup(string initMsg = "Program started.",
-      Action main = null, VerbositySettings verbosity = VerbositySettings.Moderate) {
+      Action entry = null, VerbositySettings verbosity = VerbositySettings.Moderate) {
          lock(_Initialization) {
             if(!_Initializing) {
                _Initializing = true;
@@ -49,8 +52,9 @@ namespace Fluid.Internals {
             _Initialization.ContinueWith(
                (ant) => {
                   try {
+                     System.Console.WriteLine($"Define constants: {DefineConstants.ToString()}");
                      R.R(initMsg);
-                     main?.Invoke(); }
+                     entry?.Invoke(); }
                   catch(Exception exc) {
                      R.R($"Exception occured: {exc.Message}");
                      R.R($"Stack trace:{exc.StackTrace}");
@@ -60,6 +64,10 @@ namespace Fluid.Internals {
                      FileWriter.Flush(); } },
                TaskContinuationOptions.ExecuteSynchronously); }
       }
+      [Conditional("REPORT")] static void AddReportIfDefined() {
+         DefineConstants.Append(" REPORT ");
+      }
+
       /// <summary>A class which simplifies exception coding.</summary>
       public static class Assume {
          public static void True(bool cond, string msg = "Assert.True failed.") {
