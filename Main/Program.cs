@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Text;
 
+using Tests = Fluid.Tests;
 using CavityFlow = Fluid.Runnables.CavityFlow;
+
 using Fluid.Internals.Development;
 using IO = Fluid.Internals.IO;
 using Fluid.Internals.Numerics;
@@ -13,7 +15,7 @@ class Program {
    static void Main(string[] args) {
       try {
          Initialize();
-         CavityFlow.Entry.Point();
+         Tests.Entry.Point(args);
          R.R($"Define constants: {DefineConstants.ToString()}"); }
       catch(Exception exc) {
          R.R($"Exception occured: {exc.Message}");
