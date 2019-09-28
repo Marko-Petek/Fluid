@@ -16,10 +16,12 @@ namespace Fluid.Internals.Lsfem {
       public dbl Re { get; protected set; }
 
 
-      public NavStokesFlow(dbl dt, dbl re) : base() {
-         Dt = dt;
-         Re = re;                                        R.R("Initializing secondary tensors.");
-         (A, Fs) = InitializeSecondaries();
+      protected NavStokesFlow() : base() { }
+      protected static void Initialize(NavStokesFlow flow, dbl dt, dbl re) {
+         flow.Dt = dt;
+         flow.Re = re;                                        R.R("Initializing secondary tensors.");
+         Simulation.Initialize(flow);
+         (flow.A, flow.Fs) = flow.InitializeSecondaries();
       }
 
 

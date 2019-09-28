@@ -73,21 +73,34 @@ namespace Fluid.Internals.Lsfem {
       protected ConjGradsSolver Solver { get; }
 
 
-      public Simulation() {
-         Initialize();
-      }
-      /// <summary>Set the Simulation up.</summary>
-      public void Initialize() {                                        R.R("Creating Patches.");
+      protected Simulation() { }
+      /// <summary>We must call this from the derived type's factory method.</summary>
+      /// <param name="sim"></param>
+      protected static void Initialize(Simulation sim) {   R.R("Creating Patches.");
          int currGInx = 0;
-         (currGInx, Patches) = CreatePatches(currGInx);                 R.R("Creating Joints.");
-         (currGInx, Joints) = CreateJoints(currGInx);                   R.R("Creating Positions.");
-         (NPos, Pos) = CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
-         var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
-         var coms = CreateCOMs(emts);                                   R.R("Creating ElementTree.");
-         Elements = CreateElementTree(coms, emts);                      R.R("Creating constraints.");
-         UC = CreateConstraints();                                      R.R("Counting free positions.");
-         NfPos = CountFreePositions(NPos, NVar);
+         (currGInx, sim.Patches) = sim.CreatePatches(currGInx);                 R.R("Creating Joints.");
+         (currGInx, sim.Joints) = sim.CreateJoints(currGInx);                   R.R("Creating Positions.");
+         (sim.NPos, sim.Pos) = sim.CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
+         var emts = sim.CreateElements();                                   R.R("Creating a list of Centers of Mass.");
+         var coms = sim.CreateCOMs(emts);                                   R.R("Creating ElementTree.");
+         sim.Elements = sim.CreateElementTree(coms, emts);                      R.R("Creating constraints.");
+         sim.UC = sim.CreateConstraints();                                      R.R("Counting free positions.");
+         sim.NfPos = sim.CountFreePositions(sim.NPos, sim.NVar);
       }
+
+
+      // /// <summary>Set the Simulation up.</summary>
+      // public void Initialize() {                                        R.R("Creating Patches.");
+      //    int currGInx = 0;
+      //    (currGInx, Patches) = CreatePatches(currGInx);                 R.R("Creating Joints.");
+      //    (currGInx, Joints) = CreateJoints(currGInx);                   R.R("Creating Positions.");
+      //    (NPos, Pos) = CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
+      //    var emts = CreateElements();                                   R.R("Creating a list of Centers of Mass.");
+      //    var coms = CreateCOMs(emts);                                   R.R("Creating ElementTree.");
+      //    Elements = CreateElementTree(coms, emts);                      R.R("Creating constraints.");
+      //    UC = CreateConstraints();                                      R.R("Counting free positions.");
+      //    NfPos = CountFreePositions(NPos, NVar);
+      // }
       /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
       /// <param name="i">Position index.</param>
       /// <param name="j">Variable index.</param>

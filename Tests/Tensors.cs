@@ -540,6 +540,16 @@ namespace Fluid.Tests {
          var expRes = Tensor<int,IA>.FromFlatSpec(span3, structure3);
          Assert.True(res.Equals(expRes));
       }
+      [InlineData(
+         1,  4,                          // First top rank.
+         4,  2,2,2,2,                      // First structure.
+         1,  4,                           // Second top rank.
+         4,  2,2,2,2,                        // Second structure.
+      )]
+      [Theory] public void NonTopTnrProduct(params int[] data) {
+         int read = 0, pos = 0;                                         Read(data, ref pos, ref read);
+         var slotInx1 = data[pos];
+      }
       [InlineData(5,3,2, 7,6,9, 0,4,2,  13)]
       [InlineData(3,1,0, 4,2,8, 7,2,3,  8)]
       [InlineData(8,4,2, 11,8,17, 7,6,5,  21)]

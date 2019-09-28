@@ -12,8 +12,8 @@ public class Entry {
    static ManualResetEvent _Finished = new ManualResetEvent(false);            // An event to know when we're done.
    static int _Result = 0;                                                     // Start out assuming success; we'll set this to 1 if we get a failed test.
 
-   public static int Point(string[] args) {
-      var testAssembly = args[0];
+   public static int Point(string[] args) {                                    // args[1] has to be the name of the test assembly without extension.
+      var testAssembly = args[1];
       using (var runner = AssemblyRunner.WithoutAppDomain(testAssembly)) {
          runner.OnDiscoveryComplete = OnDiscoveryComplete;
          runner.OnExecutionComplete = OnExecutionComplete;

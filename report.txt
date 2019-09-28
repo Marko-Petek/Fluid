@@ -285,3 +285,17 @@
        Starting KDTreeTrial.                                         0,356     /Tests/Numerics.cs                KDTreeTrial           127   
        Finished: 117 tests in 0,409s (0 failed, 0 skipped)           0,0823    /Tests/Entry.cs                   OnExecutionComplete   40    
        Exiting application.                                          0,0163    /Main/Program.cs                  Main                  24    
+19:26  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 117 of 117 tests...                                   0,172     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,341     /Tests/Numerics.cs                KDTreeTrial           127   
+       Finished: 117 tests in 0,399s (0 failed, 0 skipped)           0,088     /Tests/Entry.cs                   OnExecutionComplete   40    
+       Exiting application.                                          0,017     /Main/Program.cs                  Main                  32    
+19:28  Creating Patches.                                             0         /Internals/Lsfem/Simulation.cs    Initialize            80    
+20:54  Creating Patches.                                             0         /Internals/Lsfem/Simulation.cs    Initialize            80    
+21:20  Reading element corner positions.                             0         /Runnables/CavityFlow/CavityFlow  .ctor                 29    
+                                                                               Sim.cs                                                        
+       Creating Patches.                                             0,0645    /Internals/Lsfem/Simulation.cs    Initialize            79    
+       Creating Joints.                                              0,0031    /Internals/Lsfem/Simulation.cs    Initialize            81    
+       Creating Positions.                                           0,00212   /Internals/Lsfem/Simulation.cs    Initialize            82    
+       Adding positions to Mesh.                                     0,00492   /Internals/Lsfem/Simulation.cs    CreatePositions       119   
+       Creating Elements and calculating overlap integrals.          0,00161   /Internals/Lsfem/Simulation.cs    Initialize            83    

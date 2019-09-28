@@ -19,16 +19,21 @@ namespace Fluid.Runnables.CavityFlow {
    using PE = PseudoElement;
    using Emt = Element;
    /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
-   public class Sim : NavStokesFlow {
+   public class CavityFlowSim : NavStokesFlow {
       /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
       dbl [][][] OrdPos { get; set; }
       /// <summary>Boundary velocity.</summary>
       public dbl V { get; }
       
 
-      public Sim(dbl dt, dbl re, dbl boundaryVelocity) : base(dt, re) {   R.R("Reading element corner positions.");
+      CavityFlowSim(dbl dt, dbl re, dbl boundaryVelocity) : base() {   R.R("Reading element corner positions.");
          OrdPos = ReadPos();
          V = boundaryVelocity;
+      }
+      public static CavityFlowSim Create(dbl dt, dbl re, dbl boundaryVelocity) {
+         var cavFlow = new CavityFlowSim(dt, re, boundaryVelocity);
+         NavStokesFlow.Initialize(cavFlow);
+         return cavFlow;
       }
 
       dbl[][][] ReadPos() {
@@ -49,7 +54,7 @@ namespace Fluid.Runnables.CavityFlow {
       }
 
       protected override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(int currGInx) {
-         var pEmts = new PE[3][];                                                               // Main patch.                       
+         var pEmts = new PE[3][];                                                               // Main patch.
          for(int i = 0; i < 3; ++i) {                                                           // Create the 9 PseudoElements.
             pEmts[i] = new PE[3];
             for(int j = 0; j < 3; ++j)

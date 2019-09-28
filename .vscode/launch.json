@@ -38,22 +38,18 @@
    "name": "CavityFlow Debug",
    "type": "coreclr",
    "request": "launch",
-   //"preLaunchTask": "none",
-   // If you have changed target frameworks, make sure to update the program path.
-   "program": "${workspaceFolder}/Demos/CavityFlow/bin/Debug/netcoreapp2.2/CavityFlow.dll",
-   "args": [],
+   "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp2.2/Main.dll",
+   "args": ["CavityFlow"],
    "cwd": "${workspaceFolder}/Demos/CavityFlow",
-   // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
    "console": "integratedTerminal",
    "stopAtEntry": false,
-   "internalConsoleOptions": "openOnSessionStart",
-   "justMyCode": true },
+   "internalConsoleOptions": "neverOpen" },
 {
-   "name": "Tests",
+   "name": "Tests (Debug)",                                                              // 
    "type": "coreclr",
    "request": "launch",
    "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp2.2/Main.dll",
-   "args": ["${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Project where tests reside.
+   "args": ["Tests", "${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Project where tests reside.
    "console": "integratedTerminal",
    "stopAtEntry": false,
    "internalConsoleOptions": "neverOpen" }

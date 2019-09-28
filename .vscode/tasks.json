@@ -16,10 +16,10 @@
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
-   "label": "Build",
+   "label": "Build (Debug, REPORT)",
    "command": "dotnet",
    "type": "process",
-   "args": ["build"],
+   "args": ["msbuild", "-p:Configuration=Debug", "-p:DefineConstants=REPORT", "-restore:False", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": {
       "kind": "build",
