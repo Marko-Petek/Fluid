@@ -108,3 +108,26 @@
           14502445                                                                                                          
           4: 0,307729335645088, 0,178610812490159, 0,4393949  0,000112  /Tests/Numerics.cs          KDTreeTrial       137   
           65506808                                                                                                          
+06:44     Starting KDTreeTrial.                                0         /Tests/Numerics.cs           KDTreeTrial       127   
+06:45     Starting KDTreeTrial.                                0         /Tests/Numerics.cs           KDTreeTrial       127   
+          0: 0,31520934138224, 0,197496819401857, 0,701235370  0,061     /Tests/Numerics.cs           KDTreeTrial       137   
+          571369                                                                                                              
+          1: 0,33903634610541, 0,191709429114922, 0,212480904  0,000489  /Tests/Numerics.cs           KDTreeTrial       137   
+          633403                                                                                                              
+          2: 0,319379663243601, 0,249155024648251, 0,14337008  9,57E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          6859618                                                                                                             
+          3: 0,362527550832614, 0,20548456218349, 0,068749027  2,12E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          8243781                                                                                                             
+          4: 0,335439324069507, 0,250312897027616, 0,53279060  1,44E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          0570287                                                                                                             
+06:51     Starting KDTreeTrial.                                0         /Tests/Numerics.cs           KDTreeTrial       127   
+          0: 0,32918000562544, 0,229882485805956, 0,207469240  0,063     /Tests/Numerics.cs           KDTreeTrial       137   
+          393242                                                                                                              
+          1: 0,295452530167742, 0,186798821290396, 0,95152623  7,33E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          297252                                                                                                              
+          2: 0,345382696178454, 0,232774868715915, 0,70923722  2,05E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          1027369                                                                                                             
+          3: 0,349470129399314, 0,192437751308287, 0,96461189  1,54E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          1174974                                                                                                             
+          4: 0,301380735962363, 0,179619177793907, 0,96699314  1,42E−05  /Tests/Numerics.cs           KDTreeTrial       137   
+          1904004                                                                                                             

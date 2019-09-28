@@ -15,6 +15,7 @@ using static Fluid.Internals.Development.Reporter;
 namespace Fluid.Internals {
 
 public static class Toolbox {
+   static object _locker = new object();
    public static string DebugTag = "";
 
    public static IO.FileReader FileReader { get; set; }
@@ -24,10 +25,10 @@ public static class Toolbox {
    /// <summary>Reporter. Logs and writes messages to Console.</summary>
    public static Reporter R {                     // Reported.Write can only be called from one thread at once.
       get {
-         lock(_Reporter)
+         lock(_locker)
             return _Reporter; }
       set {
-         lock(_Reporter)
+         lock(_locker)
             _Reporter = value; }
    }
    public static RandomNumberGen Rng { get; set; }

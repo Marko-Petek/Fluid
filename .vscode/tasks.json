@@ -28,7 +28,7 @@
    "label": "Test",
    "command": "dotnet",
    "type": "process",
-   "args": ["run", "--project", "${workspaceFolder}/Tests/Tests.csproj"],
+   "args": ["run", "--project", "${workspaceFolder}/Main/Main.csproj", "--launch-profile", "LaunchTests"],
    "options": {
       "cwd": "./" },
    "problemMatcher": "$msCompile",

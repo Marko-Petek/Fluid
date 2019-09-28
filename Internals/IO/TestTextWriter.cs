@@ -16,7 +16,7 @@ namespace Fluid.Internals.IO {
 
 
       public override void WriteLine(string str) {
-            OutHelper.WriteLine(str);
+         OutHelper.WriteLine(str);
       }
 
       class TestOutStream : Stream {
