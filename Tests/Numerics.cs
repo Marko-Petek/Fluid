@@ -19,7 +19,7 @@ namespace Fluid.Tests {
    using TensorInt = Tensor<int,IntArithmetic>;
    using VectorInt = Vector<int,IntArithmetic>;
    using Emt = Element;
-   public partial class Thread2 : CustomTest {
+   public class Numerics {
 
       [InlineData(
          1.0, -1.0,  1.0,    // Left-hand side.

@@ -13,9 +13,7 @@ using Fluid.TestRef;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
-   public partial class Thread2 : CustomTest {
-
-      public Thread2(ITestOutputHelper outHelper) : base(outHelper) { }
+   public class Geometry {
 
       [InlineData(-0.5, 0.5)]
       [InlineData(0.5, 0.5)]

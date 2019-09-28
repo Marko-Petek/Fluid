@@ -131,3 +131,12 @@
           1174974                                                                                                             
           4: 0,301380735962363, 0,179619177793907, 0,96699314  1,42E−05  /Tests/Numerics.cs           KDTreeTrial       137   
           1904004                                                                                                             
+12:33     Exception occured: Cannot dispose the assembly runn  0         /Main/Program.cs             Main              21    
+          er when it's not idle                                                                                               
+          Stack trace:   at Xunit.Runners.AssemblyRunner.Disp  0,113     /Main/Program.cs             Main              22    
+          ose() in C:\Dev\xunit\xunit\src\xunit.runner.utilit                                                                 
+          y\Runners\AssemblyRunner.cs:line 149   at Fluid.Tes                                                                 
+          ts.Entry.Point(String[] args) in /home/marko/Dokume                                                                 
+          nti/Fluid/Tests/Entry.cs:line 37   at Fluid.Main.Pr                                                                 
+          ogram.Main(String[] args) in /home/marko/Dokumenti/                                                                 
+          Fluid/Main/Program.cs:line 18                                                                                       

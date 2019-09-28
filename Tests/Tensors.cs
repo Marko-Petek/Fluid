@@ -18,9 +18,7 @@ namespace Fluid.Tests {
    using VecInt = Vector<int,IntArithmetic>;
    using IA = IntArithmetic;
    
-   public partial class Thread3 : CustomTest {
-
-      public Thread3(ITestOutputHelper outHelper) : base(outHelper) { }
+   public class Tensors {
 
       [InlineData(1,7,                    // Rank 1 tensor.
          6,5,3,8,0,1,4)]

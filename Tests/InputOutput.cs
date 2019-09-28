@@ -15,9 +15,7 @@ using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Tests {
    using dbl = Double;
    using DA = DblArithmetic;
-   public partial class Thread1 : CustomTest {
-
-      public Thread1(ITestOutputHelper outHelper) : base(outHelper) { }
+   public class InputOutput {
 
       [Fact] public void ReadAndParseArray() {
           TB.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");

@@ -25,17 +25,6 @@
       "kind": "build",
       "isDefault": true } },
 {
-   "label": "Test",
-   "command": "dotnet",
-   "type": "process",
-   "args": ["run", "--project", "${workspaceFolder}/Main/Main.csproj", "--launch-profile", "LaunchTests"],
-   "options": {
-      "cwd": "./" },
-   "problemMatcher": "$msCompile",
-   "group": {
-      "kind": "test",
-      "isDefault": true } },
-{
    "label": "ChannelFlow (Run)",
    "command": "dotnet",
    "type": "process",
