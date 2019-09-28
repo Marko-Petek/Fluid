@@ -53,7 +53,7 @@
    "type": "coreclr",
    "request": "launch",
    "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp2.2/Main.dll",
-   "args": ["${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Where to search for tests.
+   "args": ["${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Project where tests reside.
    "console": "integratedTerminal",
    "stopAtEntry": false,
    "internalConsoleOptions": "openOnSessionStart" }

@@ -15,6 +15,9 @@ public class Entry {
          Console.WriteLine("usage: TestRunner <assembly> [typeName]");
          return 2; }
       var testAssembly = args[0];
+
+      Xunit.
+
       var typeName = args.Length == 2 ? args[1] : null;
       using (var runner = AssemblyRunner.WithoutAppDomain(testAssembly)) {
          runner.OnDiscoveryComplete = OnDiscoveryComplete;
