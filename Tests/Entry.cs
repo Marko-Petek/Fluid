@@ -3,6 +3,8 @@ using System.Threading;
 using Xunit;
 using Xunit.Runners;
 
+using static Fluid.Internals.Toolbox;
+
 namespace Fluid.Tests {
 
 public class Entry {
@@ -18,51 +20,48 @@ public class Entry {
          runner.OnExecutionComplete = OnExecutionComplete;
          runner.OnTestFailed = OnTestFailed;
          runner.OnTestSkipped = OnTestSkipped;
-         Console.WriteLine("Discovering...");
-         Start(nameof(InputOutput));
-         _Finished.WaitOne();
-         Start(nameof(Geometry));
-         _Finished.WaitOne();
-         Start(nameof(Matrices));
-         _Finished.WaitOne();
-         Start(nameof(Numerics));
-         _Finished.WaitOne(); 
-         Start(nameof(Tensors));
+         R.R("Discovering...");
+         Start(null);
+         // _Finished.WaitOne();
+         // Start(nameof(Fluid.Tests.Geometry));
+         // _Finished.WaitOne();
+         // Start(nameof(Fluid.Tests.Matrices));
+         // _Finished.WaitOne();
+         // Start(nameof(Fluid.Tests.Numerics));
+         // _Finished.WaitOne();
+         // Start(nameof(Fluid.Tests.Tensors));
          _Finished.WaitOne();
          _Finished.Dispose();  
          
          void Start(string type) {
-            runner.Start("InputOutput", diagnosticMessages: true, null, null, null,       // Runs start here.
+            //_Finished.Reset();
+            runner.Start(type, diagnosticMessages: true, null, null, null,       // Runs start here.
                parallel: true, maxParallelThreads: 3, null); }
       return _Result; }
    }
 
-   static void RunType(Type type, int nThreads) {
-
-   }
-
    static void OnDiscoveryComplete(DiscoveryCompleteInfo info) {
       lock (_ConsoleLock)
-         Console.WriteLine($"Running {info.TestCasesToRun} of {info.TestCasesDiscovered} tests...");
+         R.R($"Running {info.TestCasesToRun} of {info.TestCasesDiscovered} tests...");
    }
    static void OnExecutionComplete(ExecutionCompleteInfo info) {
       lock (_ConsoleLock)
-         Console.WriteLine($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
+         R.R($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
       _Finished.Set();
    }
    static void OnTestFailed(TestFailedInfo info) {
       lock (_ConsoleLock) {
          Console.ForegroundColor = ConsoleColor.Red;
-         Console.WriteLine("[FAIL] {0}: {1}", info.TestDisplayName, info.ExceptionMessage);
+         R.R($"[FAIL] {info.TestDisplayName}: {info.ExceptionMessage}");
          if (info.ExceptionStackTrace != null)
-            Console.WriteLine(info.ExceptionStackTrace);
+            R.R(info.ExceptionStackTrace);
          Console.ResetColor(); }
       _Result = 1;
    }
    static void OnTestSkipped(TestSkippedInfo info) {
       lock (_ConsoleLock) {
          Console.ForegroundColor = ConsoleColor.Yellow;
-         Console.WriteLine("[SKIP] {0}: {1}", info.TestDisplayName, info.SkipReason);
+         R.R($"[SKIP] {info.TestDisplayName}: {info.SkipReason}");
          Console.ResetColor(); }
    }
 }

@@ -140,3 +140,67 @@
           nti/Fluid/Tests/Entry.cs:line 37   at Fluid.Main.Pr                                                                 
           ogram.Main(String[] args) in /home/marko/Dokumenti/                                                                 
           Fluid/Main/Program.cs:line 18                                                                                       
+17:12     Define constants:  REPORT                                0         /Main/Program.cs               Main              19    
+          Exiting application.                                     0,0125    /Main/Program.cs               Main              25    
+17:18     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 0 of 0 tests...                                  0,142     /Tests/Entry.cs                OnDiscoveryCompl  49    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,079s (0 failed, 0 skipped)        0,104     /Tests/Entry.cs                OnExecutionCompl  53    
+                                                                                                            ete                     
+          Running 0 of 0 tests...                                  0,0261    /Tests/Entry.cs                OnDiscoveryCompl  49    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,026s (0 failed, 0 skipped)        0,0292    /Tests/Entry.cs                OnExecutionCompl  53    
+                                                                                                            ete                     
+          Running 0 of 0 tests...                                  0,0372    /Tests/Entry.cs                OnDiscoveryCompl  49    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,022s (0 failed, 0 skipped)        0,0234    /Tests/Entry.cs                OnExecutionCompl  53    
+                                                                                                            ete                     
+17:19     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 0 of 0 tests...                                  0,134     /Tests/Entry.cs                OnDiscoveryCompl  49    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,080s (0 failed, 0 skipped)        0,101     /Tests/Entry.cs                OnExecutionCompl  53    
+                                                                                                            ete                     
+          Running 0 of 0 tests...                                  0,0326    /Tests/Entry.cs                OnDiscoveryCompl  49    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,011s (0 failed, 0 skipped)        0,0161    /Tests/Entry.cs                OnExecutionCompl  53    
+                                                                                                            ete                     
+17:29     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 0 of 0 tests...                                  0,136     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,084s (0 failed, 0 skipped)        0,113     /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Running 0 of 0 tests...                                  0,0514    /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,019s (0 failed, 0 skipped)        0,0231    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+17:34     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 0 of 0 tests...                                  0,143     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Finished: 0 tests in 0,086s (0 failed, 0 skipped)        0,107     /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+18:04     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,245     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    41,1      /Tests/Numerics.cs             KDTreeTrial       127   
+          0: 0,332958827881589, 0,211142017138722, 0,194536351689  0,0489    /Tests/Numerics.cs             KDTreeTrial       137   
+          387                                                                                                                       
+          1: 0,297300313272188, 0,194350527224294, 0,882754486465  0,000261  /Tests/Numerics.cs             KDTreeTrial       137   
+          247                                                                                                                       
+          2: 0,344956662666498, 0,227171624185132, 0,199885904416  0,000208  /Tests/Numerics.cs             KDTreeTrial       137   
+          389                                                                                                                       
+          3: 0,351076098788099, 0,227377821797215, 0,612551780702  9,59E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          803                                                                                                                       
+          4: 0,346948956300946, 0,175150266464404, 0,575120616506  7,89E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          376                                                                                                                       
+          here                                                     0,0292    /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000279  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000239  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000186  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          Finished: 117 tests in 41,198s (0 failed, 0 skipped)     0,0206    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Define constants:  REPORT                                0,0224    /Main/Program.cs               Main              19    
+          Exiting application.                                     0,00109   /Main/Program.cs               Main              25    
