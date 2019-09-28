@@ -204,3 +204,74 @@
                                                                                                             ete                     
           Define constants:  REPORT                                0,0224    /Main/Program.cs               Main              19    
           Exiting application.                                     0,00109   /Main/Program.cs               Main              25    
+18:15     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,262     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    0,366     /Tests/Numerics.cs             KDTreeTrial       127   
+          0: 0,357378687410326, 0,237369849922773, 0,999099029227  0,0467    /Tests/Numerics.cs             KDTreeTrial       137   
+          672                                                                                                                       
+          1: 0,296155763462258, 0,16995067995505, 0,1310664523071  8,75E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          92                                                                                                                        
+          2: 0,279330541044162, 0,235049696282972, 0,798178422636  7,39E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          436                                                                                                                       
+          3: 0,276324603835272, 0,236587640008231, 0,670202012951  2,76E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          58                                                                                                                        
+          4: 0,267949036447308, 0,204074970541557, 0,583573146994  2,11E−05  /Tests/Numerics.cs             KDTreeTrial       137   
+          958                                                                                                                       
+          here                                                     0,0243    /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000398  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000239  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          here                                                     0,000226  /Internals/Numerics/ConjGrads  Solve             103   
+                                                                             Solver.cs                                              
+          Finished: 117 tests in 0,412s (0 failed, 0 skipped)      0,0101    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Define constants:  REPORT                                0,0154    /Main/Program.cs               Main              19    
+          Exiting application.                                     9,09E−05  /Main/Program.cs               Main              25    
+18:20     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,187     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    0,466     /Tests/Numerics.cs             KDTreeTrial       127   
+          Finished: 117 tests in 0,537s (0 failed, 0 skipped)      0,0953    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+18:22     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,221     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    0,35      /Tests/Numerics.cs             KDTreeTrial       127   
+          Finished: 117 tests in 0,409s (0 failed, 0 skipped)      0,084     /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Define constants:  REPORT                                0,0225    /Main/Program.cs               Main              19    
+          Exiting application.                                     0,000109  /Main/Program.cs               Main              25    
+18:25     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,187     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    0,38      /Tests/Numerics.cs             KDTreeTrial       127   
+          Finished: 117 tests in 0,425s (0 failed, 0 skipped)      0,0682    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Define constants:  REPORT                                0,0183    /Main/Program.cs               Main              19    
+          Exiting application.                                     0,000117  /Main/Program.cs               Main              25    
+18:37     Discovering...                                           0         /Tests/Entry.cs                Point             23    
+          Running 117 of 117 tests...                              0,235     /Tests/Entry.cs                OnDiscoveryCompl  45    
+                                                                                                            ete                     
+          Starting KDTreeTrial.                                    0,372     /Tests/Numerics.cs             KDTreeTrial       127   
+          Finished: 117 tests in 0,424s (0 failed, 0 skipped)      0,0816    /Tests/Entry.cs                OnExecutionCompl  49    
+                                                                                                            ete                     
+          Exiting application.                                     0,0143    /Main/Program.cs               Main              24    
+18:40     Discovering...                                                 0         /Tests/Entry.cs                   Point             23    
+          Running 117 of 117 tests...                                    0,189     /Tests/Entry.cs                   OnDiscoveryCompl  45    
+                                                                                                                     ete                     
+          Starting KDTreeTrial.                                          0,414     /Tests/Numerics.cs                KDTreeTrial       127   
+          Finished: 117 tests in 0,466s (0 failed, 0 skipped)            0,0777    /Tests/Entry.cs                   OnExecutionCompl  49    
+                                                                                                                     ete                     
+          Exiting application.                                           0,0194    /Main/Program.cs                  Main              24    
+18:49  Discovering...                                                0         /Tests/Entry.cs                   Point                 23    
+       Running 117 of 117 tests...                                   0,202     /Tests/Entry.cs                   OnDiscoveryComplete   45    
+       Starting KDTreeTrial.                                         0,386     /Tests/Numerics.cs                KDTreeTrial           127   
+       Finished: 117 tests in 0,434s (0 failed, 0 skipped)           0,0713    /Tests/Entry.cs                   OnExecutionComplete   49    
+18:51  Discovering...                                                0         /Tests/Entry.cs                   Point                 23    
+       Running 117 of 117 tests...                                   0,226     /Tests/Entry.cs                   OnDiscoveryComplete   46    
+       Starting KDTreeTrial.                                         0,38      /Tests/Numerics.cs                KDTreeTrial           127   
+       Finished: 117 tests in 0,447s (0 failed, 0 skipped)           0,103     /Tests/Entry.cs                   OnExecutionComplete   50    
+       Exiting application.                                          0,0176    /Main/Program.cs                  Main                  24    

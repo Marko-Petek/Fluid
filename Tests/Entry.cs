@@ -30,7 +30,8 @@ public class Entry {
          // Start(nameof(Fluid.Tests.Numerics));
          // _Finished.WaitOne();
          // Start(nameof(Fluid.Tests.Tensors));
-         _Finished.WaitOne();
+         _Finished.WaitOne(-1);
+         Thread.Sleep(10);
          _Finished.Dispose();  
          
          void Start(string type) {

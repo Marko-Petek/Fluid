@@ -30,14 +30,17 @@ namespace Fluid.Internals.Development {
       /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
       public ReportWriter(Reporter appReporter) {
          int buffer;
-         if(TB.Writer.BufferWidth > 6 * 2 - 12 + 36 + 20)
-            buffer = TB.Writer.BufferWidth - 6 * 2 - 12;              // spaces, some slack
+         if(TB.Writer.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.
+            buffer = TB.Writer.BufferWidth - 6 * 2 - 3;              // spaces, some slack
          else
             buffer = 36 + 60;
-         int remainder = buffer - 8 - 8 - 16 - 4;
+         int timeWidth = 5;
+         int durationWidth = 8;
+         int callerWidth = 20;
+         int remainder = buffer - timeWidth - durationWidth - callerWidth - 4;
          int textWidth = (int)(0.66*remainder);
          int pathWidth = remainder - textWidth;
-         _ColWidths = new int[] {8, textWidth, 8, pathWidth, 16, 4};
+         _ColWidths = new int[] {timeWidth, textWidth, durationWidth, pathWidth, callerWidth, 4};
          NCols = _ColWidths.Length;
          FileWriter = new FileWriter("", "report", ".txt", true);
          AppReporter = appReporter;

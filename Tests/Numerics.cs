@@ -134,7 +134,7 @@ namespace Fluid.Tests {
          for(int i = 0; i < 5; ++i) {
             dbl[] pt = nearPts[i].Item1;
             dbl val = nearPts[i].Item2;
-            R.R($"{i}: {pt[0]}, {pt[1]}, {val}");
+            R.R($"{i}: {pt[0]}, {pt[1]}, {val}", Internals.Development.Reporter.VerbositySettings.Obnoxious);
          }
       }
    }

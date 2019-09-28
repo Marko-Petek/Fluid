@@ -15,8 +15,7 @@ class Program {
    static void Main(string[] args) {
       try {
          Initialize();
-         Tests.Entry.Point(args);
-         R.R($"Define constants: {DefineConstants.ToString()}"); }
+         Tests.Entry.Point(args); }
       catch(Exception exc) {
          R.R($"Exception occured: {exc.Message}");
          R.R($"Stack trace:{exc.StackTrace}");
@@ -32,14 +31,6 @@ class Program {
       FileWriter = new IO.FileWriter();
       R = new Reporter();
       Rng = new RandomNumberGen();
-      AddReportIfDefined();
-   }
-
-   
-   public static StringBuilder DefineConstants { get; } = new StringBuilder(100);
-
-   [Conditional("REPORT")] static void AddReportIfDefined() {
-      DefineConstants.Append(" REPORT ");
    }
 }
 

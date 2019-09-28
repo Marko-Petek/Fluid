@@ -3,21 +3,26 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 
+using static Fluid.Internals.Toolbox;
+
 namespace Fluid.Internals.IO {
    /// <summary>Contains methods which write out nicely formatted values to console.</summary>
    public class Console {
-      /// <summary>Set by the test.</summary>
-      public static TestTextWriter TTW { get; set; }
       public int BufferWidth => System.Console.IsOutputRedirected ? 125 : System.Console.BufferWidth;
       /// <summary>TextWriter belonging to System.Console.</summary>
       public TextWriter TW { get; set; }
+      public static StringBuilder DefineConstants { get; } = new StringBuilder(100);
 
       public Console() {
          System.Console.OutputEncoding = Encoding.UTF8;
-         if(TTW != null)
-            TW = TTW;
-         else
-            TW = System.Console.IsOutputRedirected ? new DebugTextWriter() : System.Console.Out;
+         TW = System.Console.IsOutputRedirected ? new DebugTextWriter() : System.Console.Out;
+         WriteLine($"OutputRedirected: {System.Console.IsOutputRedirected}");
+         AddReportIfDefined();
+         WriteLine($"Define constants: {DefineConstants.ToString()}");                    // This has to be relayed without relying on Reporter.
+      }
+
+      [Conditional("REPORT")] static void AddReportIfDefined() {
+         DefineConstants.Append(" REPORT ");
       }
 
       /// <summary>Write a 1D array to console.</summary><param name="array1d">1D array.</param>

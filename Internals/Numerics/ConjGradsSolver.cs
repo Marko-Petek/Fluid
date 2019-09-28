@@ -99,8 +99,6 @@ namespace Fluid.Internals.Numerics {
                d[j] = r[j] + beta * d[i];
                i = (i + 1) % 2;
                j = (j + 1) % 2;
-
-               TB.R.R("here");
             }
          }
       }
