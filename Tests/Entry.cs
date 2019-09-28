@@ -14,7 +14,6 @@ public class Entry {
 
    public static int Point(string[] args) {
       var testAssembly = args[0];
-      //var typeName = args.Length == 2 ? args[1] : null;
       using (var runner = AssemblyRunner.WithoutAppDomain(testAssembly)) {
          runner.OnDiscoveryComplete = OnDiscoveryComplete;
          runner.OnExecutionComplete = OnExecutionComplete;
@@ -22,20 +21,11 @@ public class Entry {
          runner.OnTestSkipped = OnTestSkipped;
          R.R("Discovering...");
          Start(null);
-         // _Finished.WaitOne();
-         // Start(nameof(Fluid.Tests.Geometry));
-         // _Finished.WaitOne();
-         // Start(nameof(Fluid.Tests.Matrices));
-         // _Finished.WaitOne();
-         // Start(nameof(Fluid.Tests.Numerics));
-         // _Finished.WaitOne();
-         // Start(nameof(Fluid.Tests.Tensors));
          _Finished.WaitOne(-1);
          Thread.Sleep(10);
          _Finished.Dispose();  
          
          void Start(string type) {
-            //_Finished.Reset();
             runner.Start(type, diagnosticMessages: true, null, null, null,       // Runs start here.
                parallel: true, maxParallelThreads: 3, null); }
       return _Result; }
