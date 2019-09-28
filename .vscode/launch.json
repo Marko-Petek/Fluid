@@ -56,7 +56,7 @@
    "args": ["${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Project where tests reside.
    "console": "integratedTerminal",
    "stopAtEntry": false,
-   "internalConsoleOptions": "openOnSessionStart" }
+   "internalConsoleOptions": "neverOpen" }
 
 ]
 }
