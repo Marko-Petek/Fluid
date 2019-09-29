@@ -82,7 +82,7 @@ namespace Fluid.Internals.Collections {
                Vals.Remove(i); }
       }
       /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {          // TODO: Test TnrProduct with operands which are not top tensors.    
+      public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
          if(tnr2.Rank > 1) {
             int newRank = Rank + tnr2.Rank;
             var struct1 = CopySubstructure();

@@ -219,7 +219,7 @@ namespace Fluid.Internals.Lsfem {
       // /// <summary>Returns values of desired variables at specified reference position (ksi, eta) inside element.</summary>
       // /// <param name="pos">Position on reference square in terms of (ksi, eta).</param>
       // /// <param name="varInxs">Indices of variables whose values we wish to retrieve.</param>
-      // internal dbl[] Vals(in Vec2 pos, params int[] varInxs) {       // TODO: Rethink this.
+      // internal dbl[] Vals(in Vec2 pos, params int[] varInxs) {       // TODO: Write a method that returns solution values at desired positions.
       //    var vals = new dbl[varInxs.Length];
       //    int varInx;
       //    for(int i = 0; i < varInxs.Length; ++i) {

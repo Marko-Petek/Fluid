@@ -266,7 +266,7 @@ namespace Fluid.Internals.Lsfem {
       }
       protected void CreateLowerBoundaryVars(PE[][] lowerPatch, PE[] rightJoint,
          Tnr uC, int varInx, F2Db f) {
-         int n = lowerPatch[0].Length;                          // Number of cols.
+         int n = lowerPatch[0].Length;                                           // Number of cols.
          int jL = n - 1;
          PE pEmtLeft, pEmtRight;
          dbl h1, h2;
@@ -399,6 +399,5 @@ namespace Fluid.Internals.Lsfem {
       }
       /// <summary>Update secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>
       protected abstract void UpdateDynamicsAndForcing();
-      // TODO: Set constraints.
    }
 }

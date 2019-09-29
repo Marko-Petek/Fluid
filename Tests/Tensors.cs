@@ -541,14 +541,30 @@ namespace Fluid.Tests {
          Assert.True(res.Equals(expRes));
       }
       [InlineData(
-         1,  4,                          // First top rank.
-         4,  2,2,2,2,                      // First structure.
-         1,  4,                           // Second top rank.
-         4,  2,2,2,2,                        // Second structure.
+         4,    2,2,2,2,                                                 // First structure.
+         16,   5,3, 7,5,  2,1, 0,9,  9,9, 3,2,  7,4, 6,8,               // First values.
+         4,    2,2,2,2,                                                 // Second structure.
+         16,   9,3, 2,5,  7,1, 3,6,  0,0, 2,0,  4,3, 7,9,               // Second values.
+         1,    1,                                                       // Indices to reach the first subtensor to multiply.
+         2,    0,1,                                                     // Indices to reach the second subtensor to multiply.
+         5,    2,2,2,2,2,                                               // Expected result structure.
+         //    expRes: (9,9, 3,2,  7,4, 6,8) x (7,1, 3,6)               // Below: expected result.
+         32,   63,9, 27,54,  63,9, 27,54,   21,3, 9,18,  14,2, 6,12,    49,7, 21,42,  28,4, 12,24,   42,6, 18,36,  56,8, 24,48
       )]
       [Theory] public void NonTopTnrProduct(params int[] data) {
-         int read = 0, pos = 0;                                         Read(data, ref pos, ref read);
-         var slotInx1 = data[pos];
+         int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
+         var struc1 = new Span<int>(data, pos, read).ToArray();                        Read(data, ref pos, ref read);
+         var tnr1 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc1);       Read(data, ref pos, ref read);
+         var struc2 = new Span<int>(data, pos, read).ToArray();                        Read(data, ref pos, ref read);
+         var tnr2 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc2);       Read(data, ref pos, ref read);
+         var inxs1 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
+         var inxs2 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
+         var expStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+         var expRes = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), expStruc);
+         var subTnr1 = tnr1[TnrInt.Ex, inxs1];
+         var subTnr2 = tnr2[TnrInt.Ex, inxs2];
+         var res = subTnr1.TnrProduct(subTnr2);
+         Assert.True(res.Equals(expRes));
       }
       [InlineData(5,3,2, 7,6,9, 0,4,2,  13)]
       [InlineData(3,1,0, 4,2,8, 7,2,3,  8)]

@@ -299,3 +299,16 @@
        Creating Positions.                                           0,00212   /Internals/Lsfem/Simulation.cs    Initialize            82    
        Adding positions to Mesh.                                     0,00492   /Internals/Lsfem/Simulation.cs    CreatePositions       119   
        Creating Elements and calculating overlap integrals.          0,00161   /Internals/Lsfem/Simulation.cs    Initialize            83    
+12:55  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 118 of 118 tests...                                   0,176     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,361     /Tests/Numerics.cs                KDTreeTrial           127   
+       Finished: 118 tests in 0,429s (0 failed, 0 skipped)           0,0964    /Tests/Entry.cs                   OnExecutionComplete   40    
+       Exiting application.                                          0,0302    /Main/Program.cs                  Main                  32    
+12:56  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 118 of 118 tests...                                   0,198     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,348     /Tests/Numerics.cs                KDTreeTrial           127   
+13:39  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 119 of 119 tests...                                   0,205     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,602     /Tests/Numerics.cs                KDTreeTrial           134   
+       Finished: 119 tests in 0,691s (0 failed, 0 skipped)           0,124     /Tests/Entry.cs                   OnExecutionComplete   40    
+       Exiting application.                                          0,0203    /Main/Program.cs                  Main                  32    

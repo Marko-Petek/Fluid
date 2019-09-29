@@ -123,6 +123,13 @@ namespace Fluid.Tests {
          Assert.True(result.Equals(4.0/117, 0.001));
       }
 
+      [Fact] public void GaussQuadrature2D() {
+         var integrator = new Quadrature(order: 7, dim: 2, r => 100.0*Pow(r[0],12)*Pow(r[1],12)
+            + 7*Pow(r[0],7)*Pow(r[1],6) + Pow(r[0],2)*r[1]);
+         var result = integrator.Integrate();
+         Assert.True(result.Equals(2.36686, 0.001));
+      }
+
       [Fact] public void KDTreeTrial() {
          R.R("Starting KDTreeTrial.");
          Rng.SetRange(0,1);
