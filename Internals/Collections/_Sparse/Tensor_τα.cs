@@ -54,9 +54,10 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals.Numerics;
+using Fluid.Internals.Text;
 using Fluid.TestRef;
 
 
@@ -156,7 +157,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="aTgt">Copy target.</param>
       /// <param name="cs">Exact specification of what fields to copy. Default is all.</param>
       public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct cs) {
-         Assume.True(aSrc.Rank > 1,
+         Assume.True(aSrc.Rank > 1, () =>
             "Tensors's rank has to be at least 2 to be copied via this method.");
          CopyMetaFields(aSrc, aTgt, in cs.NonValueFieldsSpec, in cs.StructureSpec);
          if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues) {
@@ -400,25 +401,32 @@ namespace Fluid.Internals.Collections {
       /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
       /// <param name="onNoEquivalent">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
       /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-      protected static void SimultaneousRecurse(
-         Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
-         Action<int, Tensor<τ,α>, Tensor<τ,α>>  onNoEquivalent,
-         Action<Tensor<τ,α>, Tensor<τ,α>>       onStopRank)
-      {
-         Assume.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
+      protected static void SimultaneousRecurse<ρ>(
+      Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
+      Func<ρ> onEmptySrc,
+      Func<ρ,ρ> onResurface,
+      Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
+      Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
+         Assume.True(inclStopRank > 1, () => {
+            S.A("InclusiveStopRank has to be at least 2, ");
+            S.A("because method deals exclusively with tensors.");
+            return S.Y(); } );
          Recurse(recurseSrc, recurseTgt);
 
-         void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
+         ρ Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {                        // ρ is type of info passed from the deeper level
             if(src.Rank > inclStopRank) {
                foreach(var int_subSrc in src) {
                   int subKey = int_subSrc.Key;
                   var subSrc = int_subSrc.Value;
-                  if(tgt.TryGetValue(subKey, out var subTgt))              // Subtensor exists in aTgt.
-                     Recurse(subSrc, subTgt);
+                  if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
+                     ρ resurfaceInfo = Recurse(subSrc, subTgt);
+                     return onResurface(resurfaceInfo);
+                  }
                   else                                                        // Equivalent tensor does not exist on tgt.
-                     onNoEquivalent?.Invoke(subKey, subSrc, tgt); } }
+                     return onNoEquivalent(subKey, subSrc, tgt); }
+               return onEmptySrc(); }
             else                                                              // inclusive StopRank reached.
-               onStopRank?.Invoke(src, tgt);
+               return onStopRank(src, tgt);
          }
       }
 
@@ -433,7 +441,10 @@ namespace Fluid.Internals.Collections {
          Func<int, Tensor<τ,α>, Tensor<τ,α>, Tensor<τ,α>>   createSubTgt,
          Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
       {
-         Assume.True(inclStopRank > 1, "InclusiveStopRank has to be at least 2, because method deals exclusively with tensors.");
+         Assume.True(inclStopRank > 1, () => {
+            S.A("InclusiveStopRank has to be at least 2, ");
+            S.A("because method deals exclusively with tensors.");
+            return S.Y(); } );
          Recurse(recurseSrc, recurseTgt);
 
          void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
@@ -492,29 +503,36 @@ namespace Fluid.Internals.Collections {
       /// <summary>Creates a new tensor which is a difference of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
       /// <param name="tnr1">Left operand.</param>
       /// <param name="tnr2">Right operand.</param>
-      /// <remarks> <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
+      /// <remarks>First, we create our result tensor as a copy of tnr1. Then we take tnr2 as recursion dictator (yielding subtensors subTnr2) and we look for equivalent subtensors on tnr1 (call them subTnr1). If no equivalent is found, we negate subTnr2 and add it to a proper place in the result tensor, otherwise we subtract subTnr2 from subTnr1 and add that to result. Such a subtraction can yield a zero tensor (without entries) in which case we make sure we remove it (the empty tensor) from the result.
+      /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         //var newStructure = tnr1.CopySubstructure();
-         var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);          // Create a copy of first tensor.
+         var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);                        // Result tnr starts as a copy of tnr1.
          res.AssignStructFromSubStruct(tnr1);
-         SimultaneousRecurse(tnr2, res, 2,                     // Source now is tnr2, opposed to + operator where it was tnr1.
+         SimultaneousRecurse<(bool,Tensor<τ,α>)>(tnr2, res, 2,                                    // tnr2 = recursion dictator, res = recursion peer
+            onEmptySrc: () => (true, null),
+            onResurface: ( tup ) => {
+               if(!tup.Item1)                                                 // subTnr not empty, subTnr present as item2.
+                  
+            },
             onNoEquivalent: (key, subTnr2, supRes) => {    // Simply copy, negate and add. Could be done more optimally. BUt I'll leave it like that for now, because it's simpler.
                var subTnr2Copy = new Tensor<τ,α>(subTnr2, in CopySpecs.S322_04);
                   subTnr2Copy.Negate();
-                  supRes.Add(key, subTnr2Copy); },
+                  supRes.Add(key, subTnr2Copy);
+            },
             onStopRank: (tnr2R2, res1R2) => {                    // stopTnrs are rank 2.
                foreach(var int_tnr2R1 in tnr2R2) {
                   if(res1R2.TryGetValue(int_tnr2R1.Key, out var res1R1)) {         // Same subtensor exists in target. Sum them and overwrite the one on target.
                      int subKey = int_tnr2R1.Key;
                      var subVec2 = (Vector<τ,α>) int_tnr2R1.Value;
                      var difVec = (Vector<τ,α>) res1R1 - subVec2;
-                     res1R2[Vector<τ,α>.Ex, subKey] = difVec; }
+                     res1R2[Vector<τ,α>.Ex, subKey] = difVec; }                     // FIXME: This can be zero. What then?
                   else {                                                               // Same subtensor does not exist on target. Copy branch from source and negate it.
                      var srcCopy = new Vector<τ,α>((Vector<τ,α>) int_tnr2R1.Value,
                         in CopySpecs.S322_04);
-                        srcCopy.Negate();
-                     res1R2.Add(int_tnr2R1.Key, srcCopy); } } } );
+                     srcCopy.Negate();
+                     res1R2.Add(int_tnr2R1.Key, srcCopy); } }
+            } );
          return res;
       }
       /// <summary>Sums tnr2 into the caller. Don't use the tnr2 reference afterwards.</summary>
@@ -674,7 +692,10 @@ namespace Fluid.Internals.Collections {
       /// <param name="emtInx">Zero-based element index in that rank in favor of which the elimination will take place.</param>
       /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
       public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
-         Assume.True(elimRank < Rank && elimRank > -1, "You can only eliminate a non-negative rank greater than or equal to top rank.");
+         Assume.True(elimRank < Rank && elimRank > -1, () => {
+            S.A("You can only eliminate a non-negative ");
+            S.A("rank greater than or equal to top rank.");
+            return S.Y(); } );
          var newStructureL = Structure.Take(elimRank);
          var newStructureR = Structure.Skip(elimRank + 1);
          var newStructure = newStructureL.Concat(newStructureR).ToList();    // Created a new structure. Assign it to new host tensor.
@@ -743,7 +764,8 @@ namespace Fluid.Internals.Collections {
       /// <param name="tgt">Initialized result vector.</param>
       /// <param name="emtInx">Element index in favor of which the elimination will proceed.</param>
       public static void ElimR0_R2(Tensor<τ,α> src, Vector<τ,α> tgt, int emtInx) {
-         Assume.True(src.Rank == 2, "This method is intended for rank 2 tensors only.");
+         Assume.True(src.Rank == 2, () =>
+            "This method is intended for rank 2 tensors only.");
          foreach(var int_tnrR1 in src) {
             var subVec = (Vector<τ,α>) int_tnrR1.Value;
             if(subVec.Vals.TryGetValue(emtInx, out var val))
@@ -754,7 +776,8 @@ namespace Fluid.Internals.Collections {
       /// <param name="tgt">Tensor one rank lower than source.</param>
       /// <param name="emtInx">Element index in favor of which to eliminate.</param>
       public static void ElimR0_R3Plus(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {
-         Assume.True(src.Rank > 2, "This method is applicable to rank 3 and higher tensors.");
+         Assume.True(src.Rank > 2, () =>
+            "This method is applicable to rank 3 and higher tensors.");
          if(src.Rank > 3) {
             foreach(var int_tnr in src) {
                var subTnr = new Tensor<τ,α>(tgt, src.Count);
@@ -775,7 +798,7 @@ namespace Fluid.Internals.Collections {
          int rank1 = struc1.Count,
              rank2 = struc2.Count;
          Assume.True(rank1 == tnr1.Rank && rank2 == tnr2.Rank,
-            "One of the tensors is not top rank.");
+            () => "One of the tensors is not top rank.");
          Assume.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
             "Rank dimensions at specified indices must be equal.");
          int   conDim = tnr1.Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
@@ -847,8 +870,9 @@ namespace Fluid.Internals.Collections {
       /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
       /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
       public τ SelfContractR2() {
-         Assume.True(Rank == 2, "Tensor rank has to be 2 for this method.");
-         Assume.True(Structure[0] == Structure[1], "Corresponding dimensions have to be equal.");
+         Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
+         Assume.True(Structure[0] == Structure[1], () =>
+            "Corresponding dimensions have to be equal.");
          τ result = default;
          foreach(var int_vec in this) {
             var vec = (Vector<τ,α>) int_vec.Value;
@@ -858,8 +882,8 @@ namespace Fluid.Internals.Collections {
       }
 
       public Vector<τ,α> SelfContractR3(int natInx1, int natInx2) {
-         Assume.True(Rank == 3, "Tensor rank has to be 3 for this method.");
-         Assume.True(Structure[natInx1 - 1] == Structure[natInx2 - 1],
+         Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
+         Assume.True(Structure[natInx1 - 1] == Structure[natInx2 - 1], () =>
             "Corresponding dimensions have to be equal.");
          Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, null, 4);
          int truInx1 = ToRankInx(natInx1);
@@ -889,8 +913,9 @@ namespace Fluid.Internals.Collections {
       /// <param name="slotInx2">Slot index 2.</param>
       /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
       public Tensor<τ,α> SelfContract(int slotInx1, int slotInx2) {
-         Assume.True(Rank > 2, "This method is not applicable to rank 2 tensors.");
-         Assume.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1],
+         Assume.True(Rank > 2, () =>
+            "This method is not applicable to rank 2 tensors.");
+         Assume.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1], () =>
             "Dimensions of contracted slots have to be equal.");
          if(Rank > 3) {
             var newStruct1 = Structure.Take(slotInx1 - 1);
@@ -913,7 +938,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="tnr1">First tensor.</param>
       /// <param name="tnr2">Second tensor.</param>
       public static void ThrowOnSubstructureMismatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-         Assume.True(tnr1.Rank == tnr2.Rank);                                    // First, ranks must match.
+         Assume.True(tnr1.Rank == tnr2.Rank, () => "Tensor ranks do not match.");                                    // First, ranks must match.
          int topRank1 = tnr1.Structure.Count;                                      // We have to check that all dimensions below current ranks match.
          int topRank2 = tnr2.Structure.Count;
          var structInx1 = topRank1 - tnr1.Rank;                         // Index in structure array.
@@ -925,7 +950,8 @@ namespace Fluid.Internals.Collections {
 
       /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
       public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
-         Assume.True(rankInx > 1, "This method applies only to ranks that hold pure tensors.");
+         Assume.True(rankInx > 1, () =>
+            "This method applies only to ranks that hold pure tensors.");
          if(Rank > rankInx + 1) {
             foreach(var subTnr in Recursion(this))
                yield return subTnr; }

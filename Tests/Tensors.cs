@@ -125,8 +125,8 @@ namespace Fluid.Tests {
          tnr1.Sum(tnr2);
          Assert.True(tnr1.Equals(tnr3));
       }
-
-      [InlineData(
+      // Test cases described besides the inline data.
+      [InlineData(            // Subtract a non-zero tensor from non-zero and get a non-zero result.
          5,3,2,
          7,6,9,
          0,4,2,
@@ -138,7 +138,7 @@ namespace Fluid.Tests {
           2, 2, 2,
           3, 4, 1,
          -7, 2,-1)]
-      [InlineData(
+      [InlineData(            // Subtract a non-zero tensor from a zero (line) tensor and get a non-zero result.
          0,0,0,
          7,6,9,
          0,4,2,
@@ -150,7 +150,7 @@ namespace Fluid.Tests {
          -3,-1, 0,
           3, 4, 1,
          -7, 2,-1)]
-      [InlineData(
+      [InlineData(            // Subtract a zero (line) tensor from a zero tensor and get a non-zero result.
          0,0,0,
          7,6,9,
          0,4,2,
@@ -162,7 +162,7 @@ namespace Fluid.Tests {
          -3,-1, 0,
           3, 4, 1,
           0, 4, 2)]
-      [InlineData(
+      [InlineData(            // Subtract a non-zero tensor from a zero (line) tensor and get a zero (line) result.
          0,0,0,
          4,2,8,
          0,4,2,
@@ -174,6 +174,19 @@ namespace Fluid.Tests {
          -3,-1, 0,
           0, 0, 0,
           0, 4, 2)]
+      [InlineData(
+         1,2,3,
+         0,0,0,
+         7,8,9,
+
+         1,2,3,
+         0,0,0,
+         7,8,9,
+
+         0,0,0,
+         0,0,0,
+         0,0,0
+      )]
       /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
       [Theory] public void TensorSub(params int[] data) {      // TODO: Test zero result when non-zero operands. Also for operators.
          var span1 = new Span<int>(data, 0, 9);
@@ -648,6 +661,68 @@ namespace Fluid.Tests {
          -1,-2,-3,
           3, 1,-1,
          -1,-3,-1 )]
+      // Test cases described besides the inline data.
+      [InlineData(            // Subtract a non-zero tensor from non-zero and get a non-zero result.
+         5,3,2,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         7,2,3,
+
+          2, 2, 2,
+          3, 4, 1,
+         -7, 2,-1)]
+      [InlineData(            // Subtract a non-zero tensor from a zero (line) tensor and get a non-zero result.
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         7,2,3,
+
+         -3,-1, 0,
+          3, 4, 1,
+         -7, 2,-1)]
+      [InlineData(            // Subtract a zero (line) tensor from a zero tensor and get a non-zero result.
+         0,0,0,
+         7,6,9,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         0,0,0,
+
+         -3,-1, 0,
+          3, 4, 1,
+          0, 4, 2)]
+      [InlineData(            // Subtract a non-zero tensor from a zero (line) tensor and get a zero (line) result.
+         0,0,0,
+         4,2,8,
+         0,4,2,
+
+         3,1,0,
+         4,2,8,
+         0,0,0,
+
+         -3,-1, 0,
+          0, 0, 0,
+          0, 4, 2)]
+      [InlineData(
+         1,2,3,
+         0,0,0,
+         7,8,9,
+
+         1,2,3,
+         0,0,0,
+         7,8,9,
+
+         0,0,0,
+         0,0,0,
+         0,0,0
+      )]
       /// <remarks> <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       [Theory] public void Op_TensorSubtraction(params int[] data) {
          var tnr1 = TnrInt.FromFlatSpec(data.AsSpan<int>(0,9), 3,3);

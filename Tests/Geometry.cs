@@ -67,6 +67,8 @@ namespace Fluid.Tests {
          Assert.False(point.IsInsidePolygon(vertices));
       }
 
+      
+
       // [Fact] public void StructBehavior() {              // Behaves well.
       //    Variable var = new Variable(1, true);
       //    var.Val = 2;

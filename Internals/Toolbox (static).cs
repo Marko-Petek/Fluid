@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Fluid.Internals.Development;
 using IO = Fluid.Internals.IO;
 using Fluid.Internals.Numerics;
+using Fluid.Internals.Text;
 
 using static Fluid.Internals.Development.Reporter;
 
@@ -32,6 +33,8 @@ public static class Toolbox {
             _Reporter = value; }
    }
    public static RandomNumberGen Rng { get; set; }
+   public static Stringer S { get; set; }
+
 }
 
 }

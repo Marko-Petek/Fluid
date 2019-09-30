@@ -32,6 +32,7 @@ namespace Fluid.TestRef {
       public static Test ConjGrads4By4;
       public static Test ConjGradsSpecial;
       public static Test GaussQuadrature;
+      public static Test GaussQuadrature2D;
       public static Test MatrixInvert;
       public static Test HierarchyOutput;
       public static Test HierarchyInput;

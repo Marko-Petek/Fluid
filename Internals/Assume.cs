@@ -5,9 +5,9 @@ using SCG = System.Collections.Generic;
 namespace Fluid.Internals {
 /// <summary>A class which simplifies exception coding.</summary>
 public static class Assume {
-   public static void True(bool cond, string msg = "Assert.True failed.") {
+   public static void True(bool cond, Func<string> msg) {               // msg is a method so that we can use Stringer from toolbox.
       if(!cond)
-         throw new Exception(msg);
+         throw new Exception(msg());
    }
    /// <summary>Makes sure a variable is not equal to specified value.</summary><param name="i">Variable.</param><param name="j">Value the variable should not be equal to.</param><param name="varName">Name of variable.</param><param name="remarks">Remarks appended to default exception report.</param><param name="varKind">Variable kind: local, field or property.</param><param name="callerName">Assigns compiler.</param>
    public static void NotEquals<T>(ref T i, T j, SCG.EqualityComparer<T> comparer, string varName = "N/A", string remarks = "", MemberKinds varKind = MemberKinds.Argument, [CallerMemberName] string callerName = null) {

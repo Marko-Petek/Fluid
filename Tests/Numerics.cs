@@ -122,7 +122,7 @@ namespace Fluid.Tests {
          var result = integrator.Integrate();
          Assert.True(result.Equals(4.0/117, 0.001));
       }
-
+      /// <remarks><see cref="TestRefs.GaussQuadrature2D"/></remarks>
       [Fact] public void GaussQuadrature2D() {
          var integrator = new Quadrature(order: 7, dim: 2, r => 100.0*Pow(r[0],12)*Pow(r[1],12)
             + 7*Pow(r[0],7)*Pow(r[1],6) + Pow(r[0],2)*r[1]);

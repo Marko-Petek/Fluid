@@ -5,7 +5,7 @@ using dbl = System.Double;
 namespace Fluid.Internals.Numerics {
    using F2D = Func<dbl,dbl,dbl>;
    /// <summary>Guass-Legendre quadrature (integrator). Works for hyper-cubes with sides [-1,1].</summary>
-   public class Quadrature2D {         // TODO: Test Quadrature2D.
+   public class Quadrature2D {
       /// <summary>Weights and abscissae for various order Gauss-Legendre Quadratures. [quadrature order i-2, i(2,7)][abscissa j (0,i+2)][weight val,abscissa val]</summary>
       public static double[][][] WA { get; } = new double[6][][] {
          new double[2][] {
@@ -59,7 +59,8 @@ namespace Fluid.Internals.Numerics {
       }
 
       /// <summary>Integrates on reference coordiantes [-1,1] x [-1,1].</summary>
-      /// <remarks><see cref="TestRefs.GaussQuadrature"/></remarks>
+      /// <remarks><see cref="TestRefs.GaussQuadrature"/>
+      ///          <see cref="TestRefs.GaussQuadrature2D"/></remarks>
       public double Integrate() {
          double result = 0.0;
          dbl x = 0.0;

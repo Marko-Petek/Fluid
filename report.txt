@@ -312,3 +312,11 @@
        Starting KDTreeTrial.                                         0,602     /Tests/Numerics.cs                KDTreeTrial           134   
        Finished: 119 tests in 0,691s (0 failed, 0 skipped)           0,124     /Tests/Entry.cs                   OnExecutionComplete   40    
        Exiting application.                                          0,0203    /Main/Program.cs                  Main                  32    
+15:44  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 120 of 120 tests...                                   0,175     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,335     /Tests/Numerics.cs                KDTreeTrial           134   
+       Finished: 120 tests in 0,417s (0 failed, 0 skipped)           0,112     /Tests/Entry.cs                   OnExecutionComplete   40    
+       Exiting application.                                          0,0206    /Main/Program.cs                  Main                  32    
+15:49  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
+       Running 125 of 125 tests...                                   0,181     /Tests/Entry.cs                   OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                         0,34      /Tests/Numerics.cs                KDTreeTrial           134   
