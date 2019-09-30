@@ -507,13 +507,13 @@ namespace Fluid.Internals.Collections {
       /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
       public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
-         var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);                        // Result tnr starts as a copy of tnr1.
+         var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);                           // Result tnr starts as a copy of tnr1.
          res.AssignStructFromSubStruct(tnr1);
-         SimultaneousRecurse<(bool,Tensor<τ,α>)>(tnr2, res, 2,                                    // tnr2 = recursion dictator, res = recursion peer
-            onEmptySrc: () => (true, null),
+         SimultaneousRecurse<(bool,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
+            onEmptySrc: () => (true, null, 0, null),
             onResurface: ( tup ) => {
-               if(!tup.Item1)                                                 // subTnr not empty, subTnr present as item2.
-                  
+               if(!tup.Item1)                                                          // subTnr not empty, subTnr present as item4 with index item3.
+                  tup.Item2[Tensor<τ,α>.Ex, tup.Item3] = tup.Item4;
             },
             onNoEquivalent: (key, subTnr2, supRes) => {    // Simply copy, negate and add. Could be done more optimally. BUt I'll leave it like that for now, because it's simpler.
                var subTnr2Copy = new Tensor<τ,α>(subTnr2, in CopySpecs.S322_04);
