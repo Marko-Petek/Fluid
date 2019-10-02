@@ -10,7 +10,7 @@ using static System.Char;
 using TB = Fluid.Internals.Toolbox;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Ops;
+using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
    public static partial class IO {

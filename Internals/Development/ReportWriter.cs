@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.Reporter;
-using static Fluid.Internals.Ops;
+using static Fluid.Internals.Algorithms;
 using TB = Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Development {

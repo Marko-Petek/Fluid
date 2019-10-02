@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using static System.Math;
 
 namespace Fluid.Internals {
-   public static class Ops {
+   public static class Algorithms {
       /// <summary>Swap two items.</summary><param name="first">First item.</param><param name="second">Second item.</param>
       public static void Swap<T>(ref T first, ref T second) {
          T temp = first;
@@ -89,6 +89,32 @@ namespace Fluid.Internals {
             return false;
          else
             return true;
+      }
+      // λ = lower level data, χ = higher level data
+      // This rank data.
+      /// <summary></summary>
+      /// <param name="inclStopDepth">Tensors of this rank are provided to the onStopRank delegate.</param>
+      /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
+      public static void Recursion<λ,χ>(χ inData, Func<λ,χ,λ> onResurf,
+      int inclStopDepth, Func<λ> onStopDepth) {
+      //Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) 
+         //Recurse(recurseSrc, recurseTgt);
+
+         λ Recurse(int depth, χ inDat) {                        // Takes in inDat from above, returns outDat from its depth.
+            if(depth <= inclStopDepth) {
+               foreach(var int_subSrc in src) {
+                  int subKey = int_subSrc.Key;
+                  var subSrc = int_subSrc.Value;
+                  if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
+                     ρ resurfaceInfo = Recurse(subSrc, subTgt);
+                     return onResurf(resurfaceInfo);
+                  }
+                  else                                                        // Equivalent tensor does not exist on tgt.
+                     return onNoEquivalent(subKey, subSrc, tgt); }
+               return onEmptySrc(); }
+            else                                                              // inclusive StopRank reached.
+               return onStopRank(src, tgt);
+         }
       }
    }
 }
