@@ -395,84 +395,125 @@ namespace Fluid.Internals.Collections {
                vec.Negate(); }
          }
       }
-      /// <summary>RecurseSrc and recurseTgt are recursed simultaneously. RecurseSrc dictates the recursion. If at each step the equivalent tensor does not exist in tgt then onNoEquivalent is called and the recursion ceases afterwards. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
-      /// <param name="recurseSrc">First tensor.</param>
-      /// <param name="recurseTgt">Second tensor.</param>
-      /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
-      /// <param name="onNoEquivalent">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
+      /// <summary></summary>
+      /// <param name="inclStopDepth">Tensors of this rank are provided to the onStopRank delegate.</param>
       /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-      protected static void SimultaneousRecurse<λ,χ>(                         // λ = lower level data, χ = higher level data
-      Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
-      Func<ρ> onEmptySrc,
-      Func<λ,χ,λ> onResurface,
-      Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
-      Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
+      public static void Recursion(Tensor<τ,α> leader, Tensor<τ,α> follower,
+      Action<int,Tensor<τ,α>,Tensor<τ,α>, int,Tensor<τ,α>,Tensor<τ,α>> descending,
+      Action<int,Tensor<τ,α>,Tensor<τ,α>, int,Tensor<τ,α>,Tensor<τ,α>> ascending,        // take in from current level, put out from current level
+      int inclStopRank,
+      Func<int, Tensor<τ,α>, Tensor<τ,α>, (int, Tensor<τ,α>, Tensor<τ,α>)> onStopRank) {        // take from current, return from below.
          Assume.True(inclStopRank > 1, () => {
             S.A("InclusiveStopRank has to be at least 2, ");
-            S.A("because method deals exclusively with tensors.");
-            return S.Y(); } );
-         Recurse(recurseSrc, recurseTgt);
+            return S.Y("because method deals exclusively with tensors."); } );
+         Descend(leader.Rank, 0, leader, follower);
 
-         ρ Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {                        // ρ is type of info passed from the deeper level
-            if(src.Rank > inclStopRank) {
-               foreach(var int_subSrc in src) {
-                  int subKey = int_subSrc.Key;
-                  var subSrc = int_subSrc.Value;
-                  if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
-                     ρ resurfaceInfo = Recurse(subSrc, subTgt);
-                     return onResurface(resurfaceInfo);
-                  }
-                  else                                                        // Equivalent tensor does not exist on tgt.
-                     return onNoEquivalent(subKey, subSrc, tgt); }
-               return onEmptySrc(); }
-            else                                                              // inclusive StopRank reached.
-               return onStopRank(src, tgt);
+         /// <summary>Returned values are from the corresponding body (from below). Input values are from above.</summary>
+         (int, Tensor<τ,α>, Tensor<τ,α>) Descend(int rank, int inx,
+         Tensor<τ,α> lead, Tensor<τ,α> folw) {                                            // Takes in inDat from above, returns outDat from its depth.
+            if(rank > inclStopRank) {
+               foreach(var inx_subLead in lead) {
+                  int subInx = inx_subLead.Key;
+                  var subLead = inx_subLead.Value;
+                  if(folw.TryGetValue(subInx, out var subFolw)) {
+                     descending(inx, lead, folw, subInx, subLead, subFolw);
+                     (int ssubInx, var ssubLead, var ssubFolw) =
+                        Descend(rank - 1, subInx, subLead, subFolw);
+                     ascending(subInx, subLead, subFolw, ssubInx, ssubLead, ssubFolw);
+                     return (subInx, subLead, subFolw); }
+                  else
+                     return (subInx, subLead, null); }
+               return (-1, null, null); }
+            else                                                                          // inclusive StopRank reached.
+               return onStopRank(inx, lead, folw);
          }
       }
+      // /// <summary>RecurseSrc and recurseTgt are recursed simultaneously. RecurseSrc dictates the recursion. If at each step the equivalent tensor does not exist in tgt then onNoEquivalent is called and the recursion ceases afterwards. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
+      // /// <param name="recurseSrc">First tensor.</param>
+      // /// <param name="recurseTgt">Second tensor.</param>
+      // /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
+      // /// <param name="onNoEquivalent">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
+      // /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
+      // protected static void SimultaneousRecurse<λ,χ>(                         // λ = lower level data, χ = higher level data
+      // Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
+      // Func<ρ> onEmptySrc,
+      // Func<λ,χ,λ> onResurface,
+      // Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
+      // Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
+      //    Assume.True(inclStopRank > 1, () => {
+      //       S.A("InclusiveStopRank has to be at least 2, ");
+      //       S.A("because method deals exclusively with tensors.");
+      //       return S.Y(); } );
+      //    Recurse(recurseSrc, recurseTgt);
 
-      /// <summary>RecurseSrc and recurseTgt are recursed simultaneously, but we know that the tgt is empty so we avoid the check for existence. RecurseSrc dictates the recursion. For each subtensor of src createSubTgt is called. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
-      /// <param name="recurseSrc">First tensor.</param>
-      /// <param name="recurseTgt">Second, empty tensor.</param>
-      /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
-      /// <param name="createSubTgt">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
-      /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-      protected static void SimultRecurseEmptyTgt(
-         Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
-         Func<int, Tensor<τ,α>, Tensor<τ,α>, Tensor<τ,α>>   createSubTgt,
-         Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
-      {
-         Assume.True(inclStopRank > 1, () => {
-            S.A("InclusiveStopRank has to be at least 2, ");
-            S.A("because method deals exclusively with tensors.");
-            return S.Y(); } );
-         Recurse(recurseSrc, recurseTgt);
+      //    ρ Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {                        // ρ is type of info passed from the deeper level
+      //       if(src.Rank > inclStopRank) {
+      //          foreach(var int_subSrc in src) {
+      //             int subKey = int_subSrc.Key;
+      //             var subSrc = int_subSrc.Value;
+      //             if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
+      //                ρ resurfaceInfo = Recurse(subSrc, subTgt);
+      //                return onResurface(resurfaceInfo);
+      //             }
+      //             else                                                        // Equivalent tensor does not exist on tgt.
+      //                return onNoEquivalent(subKey, subSrc, tgt); }
+      //          return onEmptySrc(); }
+      //       else                                                              // inclusive StopRank reached.
+      //          return onStopRank(src, tgt);
+      //    }
+      // }
 
-         void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
-            if(src.Rank > inclStopRank) {
-               foreach(var int_subSrc in src) {
-                  int subSrcKey = int_subSrc.Key;
-                  var subSrc = int_subSrc.Value;
-                  var subTgt = createSubTgt(subSrcKey, subSrc, tgt);       // Careful: tgt tensor is 1 rank higher than subSrc.
-                  Recurse(subSrc, subTgt); } }
-            else                                                           // inclusive StopRank reached.
-               onStopRank?.Invoke(src, tgt);
-         }
-      }
-      /// <summary>Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
+      // /// <summary>RecurseSrc and recurseTgt are recursed simultaneously, but we know that the tgt is empty so we avoid the check for existence. RecurseSrc dictates the recursion. For each subtensor of src createSubTgt is called. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
+      // /// <param name="recurseSrc">First tensor.</param>
+      // /// <param name="recurseTgt">Second, empty tensor.</param>
+      // /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
+      // /// <param name="createSubTgt">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
+      // /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
+      // protected static void SimultRecurseEmptyTgt(
+      //    Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
+      //    Func<int, Tensor<τ,α>, Tensor<τ,α>, Tensor<τ,α>>   createSubTgt,
+      //    Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
+      // {
+      //    Assume.True(inclStopRank > 1, () => {
+      //       S.A("InclusiveStopRank has to be at least 2, ");
+      //       S.A("because method deals exclusively with tensors.");
+      //       return S.Y(); } );
+      //    Recurse(recurseSrc, recurseTgt);
+
+      //    void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
+      //       if(src.Rank > inclStopRank) {
+      //          foreach(var int_subSrc in src) {
+      //             int subSrcKey = int_subSrc.Key;
+      //             var subSrc = int_subSrc.Value;
+      //             var subTgt = createSubTgt(subSrcKey, subSrc, tgt);       // Careful: tgt tensor is 1 rank higher than subSrc.
+      //             Recurse(subSrc, subTgt); } }
+      //       else                                                           // inclusive StopRank reached.
+      //          onStopRank?.Invoke(src, tgt);
+      //    }
+      // }
+      /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
       /// <param name="tnr1">Operand.</param>
       /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
       public static Tensor<τ,α> operator -(Tensor<τ,α> tnr1) {
          var newStructure = tnr1.CopySubstructure();
          var res = new Tensor<τ,α>(newStructure, tnr1.Rank, null, tnr1.Count);
-         SimultRecurseEmptyTgt(tnr1, res, 2,
-            createSubTgt: (inx, subSrc, tgt) => {
-               var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
-               tgt.Add(inx, subTgt);
-               return subTgt; },
-            onStopRank: (srcR2, tgtR2) => {
-               foreach(var int_srcR1 in srcR2) {
-                  tgtR2.Add(int_srcR1.Key, - ((Vector<τ,α>) int_srcR1.Value)); } });
-         return res;
+         Recursion(tnr1, res,
+         beforeSubmerge: (hInx,hLead,hFolw, lInx,lLead,lFolw) => {
+
+         }
+         // onResurface: (rnk, subLead, subFolw) => {
+            
+         // }
+         )
+         // SimultRecurseEmptyTgt(tnr1, res, 2,
+         //    createSubTgt: (inx, subSrc, tgt) => {
+         //       var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
+         //       tgt.Add(inx, subTgt);
+         //       return subTgt; },
+         //    onStopRank: (srcR2, tgtR2) => {
+         //       foreach(var int_srcR1 in srcR2) {
+         //          tgtR2.Add(int_srcR1.Key, - ((Vector<τ,α>) int_srcR1.Value)); } });
+         // return res;
       }
       /// <summary>Creates a new tensor which is a sum of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
       /// <param name="tnr1">Left operand.</param>

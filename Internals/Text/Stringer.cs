@@ -17,5 +17,11 @@ namespace Fluid.Internals.Text {
          _SB.Clear();
          return str;
       }
+      public string Y(string str) {
+         _SB.Append(str);
+         var outStr = _SB.ToString();
+         _SB.Clear();
+         return outStr;
+      }
    }
 }
