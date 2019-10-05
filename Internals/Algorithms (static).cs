@@ -95,19 +95,27 @@ namespace Fluid.Internals {
       /// <summary></summary>
       /// <param name="inclStopDepth">Tensors of this rank are provided to the onStopRank delegate.</param>
       /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-      public static void Recursion<λ,χ>(χ inData, Func<λ,χ,λ> onResurf,
-      int inclStopDepth, Func<λ> onStopDepth) {
+      public static void Recursion<τ>(IEnumerable<τ> leader, IEnumerable<τ> follower,
+      Func<KeyValuePair<int,IEnumerable<τ>>> onResurface,
+      int inclStopDepth, Func<IEnumerable<τ>> onStopDepth) {
       //Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) 
          //Recurse(recurseSrc, recurseTgt);
 
-         λ Recurse(int depth, χ inDat) {                        // Takes in inDat from above, returns outDat from its depth.
+         /// <summary>Returned values are from the current level of local Recurse.</summary>
+         /// <param name="depth"></param>
+         /// <param name="KeyValuePair<int"></param>
+         /// <param name="lead"></param>
+         /// <param name="folw"></param>
+         /// <returns></returns>
+         (KeyValuePair<int,IEnumerable<τ>>, KeyValuePair<int,IEnumerable<τ>>) Recurse(int depth, 
+         KeyValuePair<int,IEnumerable<τ>> lead, KeyValuePair<int,IEnumerable<τ>> folw) {                        // Takes in inDat from above, returns outDat from its depth.
             if(depth <= inclStopDepth) {
-               foreach(var int_subSrc in src) {
+               foreach(var int_subLead in lead) {
                   int subKey = int_subSrc.Key;
                   var subSrc = int_subSrc.Value;
                   if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
                      ρ resurfaceInfo = Recurse(subSrc, subTgt);
-                     return onResurf(resurfaceInfo);
+                     return onResurface(resurfaceInfo);
                   }
                   else                                                        // Equivalent tensor does not exist on tgt.
                      return onNoEquivalent(subKey, subSrc, tgt); }
