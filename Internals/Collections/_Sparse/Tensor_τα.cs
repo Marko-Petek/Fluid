@@ -401,10 +401,10 @@ namespace Fluid.Internals.Collections {
       /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
       /// <param name="onNoEquivalent">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
       /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-      protected static void SimultaneousRecurse<ρ>(
+      protected static void SimultaneousRecurse<λ,χ>(                         // λ = lower level data, χ = higher level data
       Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
       Func<ρ> onEmptySrc,
-      Func<ρ,ρ> onResurface,
+      Func<λ,χ,λ> onResurface,
       Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
       Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
          Assume.True(inclStopRank > 1, () => {
@@ -509,8 +509,8 @@ namespace Fluid.Internals.Collections {
          ThrowOnSubstructureMismatch(tnr1, tnr2);
          var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);                           // Result tnr starts as a copy of tnr1.
          res.AssignStructFromSubStruct(tnr1);
-         SimultaneousRecurse<(bool,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
-            onEmptySrc: () => (true, null, 0, null),
+         SimultaneousRecurse<(bool,int,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
+            onEmptySrc: () => (true, 0, null, 0, null),
             onResurface: ( tup ) => {
                if(!tup.Item1)                                                          // subTnr not empty, subTnr present as item4 with index item3.
                   tup.Item2[Tensor<τ,α>.Ex, tup.Item3] = tup.Item4;
