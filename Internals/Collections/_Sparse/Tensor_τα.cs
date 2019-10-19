@@ -408,7 +408,7 @@ where α : IArithmetic<τ>, new() {
          return S.Y("because method deals exclusively with tensors."); } );
       Descend(leader.Rank, 0, leader, follower);
 
-      /// <summary>Returned values are from the corresponding body (from below). Input values are from above.</summary>
+      /// <summary>Returned values are from below, input values are from above.</summary>
       (int, Tensor<τ,α>, Tensor<τ,α>) Descend(int rank, int inx,
       Tensor<τ,α> lead, Tensor<τ,α> folw) {                                               // Takes in inDat from above, returns outDat from its depth.
          if(rank > inclStopRank) {
