@@ -15,8 +15,9 @@ using static Fluid.Internals.Algorithms;
 namespace Fluid.Internals.IO {
    public static partial class IO {
       /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
-      public static void Write<T>(Hierarchy<T> hier, TextWriter tw) {
-         if(hier.TopNode is ValueNode<T> valueNode)           // top node is already a value.
+      public static void Write<τ>(Hierarchy<τ> hier, TextWriter tw)
+      where τ : IEquatable<τ>, new() {
+         if(hier.TopNode is ValueNode<τ> valueNode)           // top node is already a value.
             tw.Write(valueNode.Value.ToString());
          else
             Recursion(hier.TopNode);
@@ -25,8 +26,8 @@ namespace Fluid.Internals.IO {
             int i = 0;
             tw.Write('{');
             foreach(var node in startNode.Subordinates) {
-               if(node is ValueNode<T> vNode)                                  // This is a value node.
-                  tw.Write(((ValueNode<T>)node).Value.ToString());            // Write its value.
+               if(node is ValueNode<τ> vNode)                                  // This is a value node.
+                  tw.Write(((ValueNode<τ>)node).Value.ToString());            // Write its value.
                else                                                            // This is not a value node.
                   Recursion(node);                                            // Re-enter recursion.                            
                if(++i < startNode.Subordinates.Count)                                     // We have more than one node left in this group.
@@ -34,19 +35,21 @@ namespace Fluid.Internals.IO {
             tw.Write('}');
          }
       }
-      public static void WriteLine<T>(this Hierarchy<T> hier, TextWriter tw) {
+      public static void WriteLine<τ>(this Hierarchy<τ> hier, TextWriter tw)
+      where τ : IEquatable<τ>, new() {
          Write(hier, tw);
          tw.WriteLine();
       }
       
       /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
-      public static Hierarchy<T> ReadHierarchy<T>(TextReader tr) {
+      public static Hierarchy<τ> ReadHierarchy<τ>(TextReader tr)
+      where τ : IEquatable<τ>, new() {
          var nFI = new NumberFormatInfo();
          nFI.NumberDecimalSeparator = ".";
          var types = new Type[] { typeof(string), typeof(IFormatProvider) };
-         var parseMethod = typeof(T).GetMethod("Parse", types);
-         var parse = (Func<string,IFormatProvider,T>) Delegate.CreateDelegate(
-            typeof(Func<string,IFormatProvider,T>), parseMethod);
+         var parseMethod = typeof(τ).GetMethod("Parse", types);
+         var parse = (Func<string,IFormatProvider,τ>) Delegate.CreateDelegate(
+            typeof(Func<string,IFormatProvider,τ>), parseMethod);
          var wholeStr = tr.ReadToEnd();
          var sb = new StringBuilder(@"(\w+\.?\w*|", 300);
          sb.Append(@"\{                     ");
@@ -65,7 +68,7 @@ namespace Fluid.Internals.IO {
          var firstMatch = matcher.Match(wholeStr);
          if(firstMatch.Success) {                                     // Now check elements inside it.
             var topNode = new RankedNode();
-            var hier = new Hierarchy<T>(topNode);
+            var hier = new Hierarchy<τ>(topNode);
             Recursion(firstMatch.Value, topNode);
             return hier; }
          else
@@ -80,7 +83,7 @@ namespace Fluid.Internals.IO {
                if(newMatch.Value[0] == '{')                                            // If it was a non-value node.
                   Recursion(newMatch.Value, new RankedNode(nodeAbove));
                else                                                                    // If it was a value node.
-                  new ValueNode<T>(nodeAbove, parse(newMatch.Value, nFI));
+                  new ValueNode<τ>(nodeAbove, parse(newMatch.Value, nFI));
                newMatch = newMatch.NextMatch(); }
          }
       }

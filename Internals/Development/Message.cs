@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 
 namespace Fluid.Internals.Development {
@@ -26,3 +27,4 @@ namespace Fluid.Internals.Development {
       }
    }
 }
+#nullable restore

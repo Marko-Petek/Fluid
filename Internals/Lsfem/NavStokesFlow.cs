@@ -7,7 +7,7 @@ using static Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Lsfem {
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
-   using Voids = Fluid.Internals.Collections.Voids<dbl,DA>;
+   using Voids = Fluid.Internals.Voids<dbl,DA>;
    using Lst = List<int>;
    public abstract class NavStokesFlow : Simulation {
 

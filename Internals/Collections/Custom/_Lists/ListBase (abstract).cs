@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace Fluid.Internals.Collections.Custom {
       /// <summary>Comparer used by IndexOf(), Contains(), Remove() methods.</summary>
       public static SCG.EqualityComparer<T> Comparer { get; protected set; }
       /// <summary>Internal storage array.</summary>
-      public T[] _E;
+      public T[] _E = new T[0];
       /// <summary>Number of elements inside internal storage array.</summary>
       public int Count { get; protected set; }
       /// <summary>Length of internal array.</summary>
@@ -80,3 +81,4 @@ namespace Fluid.Internals.Collections.Custom {
       SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
    }
 }
+#nullable restore

@@ -114,8 +114,9 @@ namespace Fluid.Internals.IO {
          tw.WriteLine();
       }
 
-      public static Array Read<T>(TextReader tr) {
-         var hier = ReadHierarchy<T>(tr);
+      public static Array Read<τ>(TextReader tr)
+      where τ : IEquatable<τ>, new() {
+         var hier = ReadHierarchy<τ>(tr);
          (bool succ, Array res) = hier.ConvertToArray();
          if(succ)
             return res;

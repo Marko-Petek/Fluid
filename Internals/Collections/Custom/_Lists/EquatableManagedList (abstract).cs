@@ -1,8 +1,10 @@
+#nullable enable
 using System;
 
 namespace Fluid.Internals.Collections.Custom {
-   public abstract class EquatableManagedList<T>
-      : ManagedList<T>, IEquatable<EquatableManagedList<T>> where T : IEquatable<T> {
+   public abstract class EquatableManagedList<T> : ManagedList<T>,
+   IEquatable<EquatableManagedList<T>>
+   where T : struct, IEquatable<T> {
          /// <summary>Create ManagedList with default initial capacity of internal array.</summary>
          public EquatableManagedList() : base() { }
          /// <summary>Create ManagedList with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array.</param>
@@ -22,3 +24,4 @@ namespace Fluid.Internals.Collections.Custom {
          }
    }
 }
+#nullable restore

@@ -5,6 +5,7 @@ using Xunit.Abstractions;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
+using Fluid.Internals;
 using System.Collections.Generic;
 using TB = Fluid.Internals.Toolbox;
 using Fluid.TestRef;

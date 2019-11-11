@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.IO;
@@ -23,3 +24,4 @@ namespace Fluid.Internals.IO {
       }
    }
 }
+#nullable restore

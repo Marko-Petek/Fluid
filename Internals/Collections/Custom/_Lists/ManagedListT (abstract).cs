@@ -1,10 +1,12 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using SCG = System.Collections.Generic;
 
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Collections.Custom {
-   public abstract class ManagedList<T> : List<T> {
+   public abstract class ManagedList<T> : List<T> 
+   where T : struct {
       /// <summary>Create ManagedList with default initial capacity of internal array.</summary>
       public ManagedList() : base() { }
       /// <summary>Create ManagedList with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array.</param>
@@ -105,3 +107,4 @@ namespace Fluid.Internals.Collections.Custom {
       }
    }
 }
+#nullable restore

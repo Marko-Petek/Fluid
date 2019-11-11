@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -29,8 +30,8 @@ namespace Fluid.Internals.Development {
 
 
       /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-      public Reporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = null,
-         [CallerMemberName] string caller = null, [CallerLineNumber] int line = 0) {
+      public Reporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = "",
+         [CallerMemberName] string caller = "", [CallerLineNumber] int line = 0) {
             Output = new OutputSettings();
             Output |= (OutputSettings.Console | OutputSettings.File);
             Verbosity = verbosity;
@@ -46,7 +47,7 @@ namespace Fluid.Internals.Development {
       /// <summary>Writes a string to console, to file or both, but only if specified verbosity is below the threshold.</summary><param name="text">String to write.</param><param name="verbosity">Sets lowest threshold at which message is still displayed.</param>
       [Conditional("REPORT")]
       public void R(string text, VerbositySettings verbosity = Moderate,
-         [CallerFilePath] string path = null, [CallerMemberName] string caller = null,
+         [CallerFilePath] string path = "", [CallerMemberName] string caller = "",
          [CallerLineNumber] int line = 0) {
             if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.
                var strippedText = Regex.Replace(text, @"\n", "");                            // Strip out any new lines.
@@ -69,3 +70,4 @@ namespace Fluid.Internals.Development {
       }
    }
 }
+#nullable restore

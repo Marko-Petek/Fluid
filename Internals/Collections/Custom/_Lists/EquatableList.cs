@@ -1,8 +1,9 @@
+#nullable enable
 using System;
 
 namespace Fluid.Internals.Collections.Custom {
    public class EquatableList<T> : List<T>, IEquatable<EquatableList<T>>
-      where T : IEquatable<T> {
+      where T : struct, IEquatable<T> {
          /// <summary>Create list with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array</param>
          public EquatableList(int capacity = 6) : base(capacity) { }
          /// <summary>Create a copy of specified source list.</summary><param name="sourceList">Source list to copy from.</param>
@@ -22,3 +23,4 @@ namespace Fluid.Internals.Collections.Custom {
          }
    }
 }
+#nullable restore

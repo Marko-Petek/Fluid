@@ -56,6 +56,7 @@ using System.Collections.Generic;
 
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
+using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Text;
 using Fluid.TestRef;
@@ -72,7 +73,7 @@ where α : IArithmetic<τ>, new() {
    
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
-   public List<int> Structure { get; protected set; } = Voids<τ,α>.ListInt;
+   public List<int> Structure { get; protected set; } = Voids.ListInt;
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
    public int Rank { get; protected set; }
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
@@ -259,7 +260,7 @@ where α : IArithmetic<τ>, new() {
       CreateEmpty(cap, rank, structure, Voids<τ,α>.Vec);
 
    public static Tensor<τ,α> CreateEmpty(int cap, int rank) =>
-      CreateEmpty(cap, rank, Voids<τ,α>.ListInt, Voids<τ,α>.Vec);
+      CreateEmpty(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
 
    /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
    /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
@@ -351,17 +352,17 @@ where α : IArithmetic<τ>, new() {
          int n = inx.Length - 2;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return Voids<τ,α>.Tau; }
+               return Voids<τ>.Tau; }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
             var vec = (Vector<τ,α>)tnr;                                          // Same.
             if(vec.Vals.TryGetValue(inx[n + 1], out τ val))
                return val; }
-         return Voids<τ,α>.Tau; }
+         return Voids<τ>.Tau; }
       set {
          Tensor<τ,α>? tnr = this;
          Tensor<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
          Vector<τ,α> vec;
-         if(!value.Equals(Voids<τ,α>.Tau)) {
+         if(!value.Equals(Voids<τ>.Tau)) {
             if(inx.Length > 1) {                                                 // At least a 2nd rank tensor.
                int n = inx.Length - 2;
                for(int i = 0; i < n; ++i) {                                      // This loop is entered only for a 3rd rank tensor or above.
@@ -412,39 +413,6 @@ where α : IArithmetic<τ>, new() {
       throw new NotImplementedException();
       //Descend(leader.Rank, 0, leader, follower);                                          // TODO: Continue Recursion.
 
-<<<<<<< HEAD
-      /// <summary>Returned values are from below, input values are from above.</summary>
-      (int, Tensor<τ,α>, Tensor<τ,α>) Descend(int rank, int inx,
-      Tensor<τ,α> lead, Tensor<τ,α> folw) {                                               // Takes in inDat from above, returns outDat from its depth.
-         if(rank > inclStopRank) {
-            foreach(var inx_subLead in lead) {
-               int subInx = inx_subLead.Key;
-               var subLead = inx_subLead.Value;
-               Tensor<τ,α> subFolw;
-               if(folw.TryGetValue(subInx, out subFolw)) {
-                  descending?.Invoke(inx, lead, folw, subInx, subLead, subFolw);
-                  (int ssubInx, var ssubLead, var ssubFolw) =
-                     Descend(rank - 1, subInx, subLead, subFolw);
-                  ascending?.Invoke(subInx, subLead, subFolw,
-                     ssubInx, ssubLead, ssubFolw); }
-               else {
-                  bool descend = false;                                    // Whether to continue descent.
-                  (subFolw, descend) =
-                     onNoSubFolw(subInx, subLead, inx, folw);
-                  if(descend) {
-                     descending?.Invoke(inx, lead, folw, subInx, subLead, subFolw);
-                     (int ssubInx, var ssubLead, var ssubFolw) =
-                        Descend(rank - 1, subInx, subLead, subFolw); }
-                  ascending?.Invoke(subInx, subLead, subFolw,
-                     ssubInx, ssubLead, ssubFolw);
-               } }                                  // Do not descend further. Return subordinate and start ascending.
-            throw new ArgumentException("Empty source tensor."); }                                        // empty 
-         else                                                                             // inclusive StopRank reached.
-            return onStopRank?.Invoke(inx, lead, folw) ??
-               throw new InvalidOperationException(
-                  "Reached StopRank, but no response method defined.");
-      }
-=======
    //    /// <summary>Returned values are from the corresponding body (from below). Input values are from above.</summary>
    //    (int, Tensor<τ,α>, Tensor<τ,α>) Descend(int rank, int inx,
    //    Tensor<τ,α> lead, Tensor<τ,α> folw) {                                               // Takes in inDat from above, returns outDat from its depth.
@@ -476,7 +444,6 @@ where α : IArithmetic<τ>, new() {
    //             throw new InvalidOperationException(
    //                "Reached StopRank, but no response method defined.");
    //    }
->>>>>>> 32500ab4c0e35431af42ad7730ae76c368df19c1
    }
    // /// <summary>RecurseSrc and recurseTgt are recursed simultaneously. RecurseSrc dictates the recursion. If at each step the equivalent tensor does not exist in tgt then onNoEquivalent is called and the recursion ceases afterwards. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
    // /// <param name="recurseSrc">First tensor.</param>

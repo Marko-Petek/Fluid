@@ -1,11 +1,13 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using SCG = System.Collections.Generic;
 
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Internals.Collections.Custom {
    // IEquatable<List<T>>
-   public class List<T> : ListBase<T> {
+   public class List<T> : ListBase<T>
+   where T : struct {
       /// <summary>Create list with default initial capacity of internal array.</summary>
       public List() : base() { }
       /// <summary>Create list with specified initial capacity of internal array.</summary><param name="capacity">Initial capacity of internal array</param>
@@ -133,3 +135,4 @@ namespace Fluid.Internals.Collections.Custom {
       }
    }
 }
+#nullable restore

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -98,3 +99,4 @@ namespace Fluid.Internals.Development {
       ~ReportWriter() => Dispose();
    }
 }
+#nullable restore

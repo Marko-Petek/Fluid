@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -29,3 +30,4 @@ namespace Fluid.Internals.IO {
       };
    }
 }
+#nullable restore

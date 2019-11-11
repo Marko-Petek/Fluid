@@ -1,9 +1,11 @@
 #nullable enable
 using System;
 using System.Reflection;
+using Fluid.Internals;
 
 namespace Fluid.Internals.Collections {
-   public class Hierarchy<T> {
+   public class Hierarchy<τ>
+   where τ : IEquatable<τ>, new() {
       public RankedNode? TopNode { get; protected set; }
 
       public Hierarchy(RankedNode topNode) {
@@ -27,7 +29,7 @@ namespace Fluid.Internals.Collections {
          }
       }
         /// <summary>Tries to convert hierarchy to jagged array.</summary>
-      public (bool success,Array? array) ConvertToArray() {
+      public (bool success, Array array) ConvertToArray() {
          int valDepth = 0;
          bool valDepthNotYetReached = true;
          // Fail: When value node is reached at depth above value depth.
@@ -37,7 +39,7 @@ namespace Fluid.Internals.Collections {
          if(array != null)
             return (true, array);
          else
-            return (false, null);
+            return (false, Voids<τ>.Arr);
 
          Array? Recursion(RankedNode? startNode, int currDepth) {
             if(startNode == null)
@@ -48,7 +50,7 @@ namespace Fluid.Internals.Collections {
                Array? currDepthArray = null;
                int i = 0;
                foreach(var subNode in startNode.Subordinates) {
-                  if(subNode is ValueNode<T> valNode) {              // Value node.
+                  if(subNode is ValueNode<τ> valNode) {              // Value node.
                      if(currDepth != valDepth) {                       // Current depth not value depth.
                         if(valDepthNotYetReached) {                     // We reached value depth for the first time.                                 
                            valDepthNotYetReached = false;
@@ -56,7 +58,7 @@ namespace Fluid.Internals.Collections {
                         else
                            return null; }                          // Hierarchy can not be converted.
                      if(currDepthArray == null)                                                        // Create array if it does not yet exist.
-                        currDepthArray = Array.CreateInstance(typeof(T), startNode.Subordinates.Count);
+                        currDepthArray = Array.CreateInstance(typeof(τ), startNode.Subordinates.Count);
                      currDepthArray.SetValue(valNode.Value, i++); }                                       // Create entry here.
                   else {                                          // Non-value node.
                      if(currDepth == valDepth)                   // At value depth.

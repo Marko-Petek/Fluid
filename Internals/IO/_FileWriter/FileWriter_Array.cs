@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.IO;
@@ -24,14 +25,15 @@ namespace Fluid.Internals.IO {
          string fileExt = DefaultExt, bool append = DefaultAppend) :
          base(dirPath, fileNameNoExt, fileExt) {
             Append = append;
-            OnSettingsChanged();
+            Writer = new StreamWriter(File.FullName, Append);
+            //OnSettingsChanged();
       }
 
       protected override void ResetUnmanagedResource() {
          Writer?.Dispose();                                      // Dispose old writer if it exists.
          Writer = new StreamWriter(File.FullName, Append);
       }
-      void AppendChanged(object sender, EventArgs e) { }
+      void AppendChanged(object? sender, EventArgs e) { }
       // dirPath can be relative or absolute
       public void SetFile(string fileNameNoExt, string fileExt, bool append) {
          base.SetFile(fileNameNoExt, fileExt);
@@ -192,3 +194,4 @@ namespace Fluid.Internals.IO {
       ~FileWriter() => Dispose();
    }
 }
+#nullable restore

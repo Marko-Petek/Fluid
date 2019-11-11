@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.IO;
@@ -17,21 +18,23 @@ namespace Fluid.Internals.IO {
       StreamReader Reader { get; set; }
 
       public FileReader(string dirPath = DefaultDirPath, string fileNameNoExt = DefaultFileName,
-         string fileExt = DefaultExt) : base(dirPath, fileNameNoExt, fileExt) {
-            OnSettingsChanged();
+      string fileExt = DefaultExt) : base(dirPath, fileNameNoExt, fileExt) {
+         Reader = new StreamReader(File.FullName, Encoding.UTF8);
       }
 
       protected override void ResetUnmanagedResource() {
          Reader?.Dispose();                                                  // Dispose old reader if it exists.
          Reader = new StreamReader(File.FullName, Encoding.UTF8);
       }
-      public Hierarchy<T> ReadHierarchy<T>() {
+      public Hierarchy<τ> ReadHierarchy<τ>()
+      where τ : IEquatable<τ>, new() {
          OnSettingsChanged();
-         return IO.ReadHierarchy<T>(Reader);
+         return IO.ReadHierarchy<τ>(Reader);
       }
-      public Array ReadArray<T>() {
+      public Array ReadArray<τ>()
+      where τ : IEquatable<τ>, new() {
          OnSettingsChanged();
-         (var succ, var arr) = IO.ReadHierarchy<T>(Reader).ConvertToArray();
+         (bool succ, Array arr) = IO.ReadHierarchy<τ>(Reader).ConvertToArray();
          if(succ)
             return arr;
          else
@@ -44,3 +47,4 @@ namespace Fluid.Internals.IO {
       ~FileReader() => Dispose();
    }
 }
+#nullable restore

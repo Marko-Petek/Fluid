@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using dbl = System.Double;
 
+using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using TB = Fluid.Internals.Toolbox;
 using Fluid.TestRef;
@@ -29,7 +30,7 @@ namespace Fluid.Internals.Collections {
 
       internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      public Vector(int cap) : this(Voids<τ,α>.ListInt, Voids<τ,α>.Vec, cap) { }
+      public Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
       public Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
 
@@ -75,7 +76,7 @@ namespace Fluid.Internals.Collections {
          CreateEmpty(cap, structure, Voids<τ,α>.Vec);
       
       public static Vector<τ,α> CreateEmpty(int cap) =>
-         CreateEmpty(cap, Voids<τ,α>.ListInt, Voids<τ,α>.Vec);
+         CreateEmpty(cap, Voids.ListInt, Voids<τ,α>.Vec);
 
       /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
       /// <param name="key">Index.</param>
