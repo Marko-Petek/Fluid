@@ -1,9 +1,10 @@
+#nullable enable
 using System;
 using System.Reflection;
 
 namespace Fluid.Internals.Collections {
    public class Hierarchy<T> {
-      public RankedNode TopNode { get; protected set; }
+      public RankedNode? TopNode { get; protected set; }
 
       public Hierarchy(RankedNode topNode) {
          TopNode = topNode;
@@ -26,23 +27,25 @@ namespace Fluid.Internals.Collections {
          }
       }
         /// <summary>Tries to convert hierarchy to jagged array.</summary>
-      public (bool success,Array array) ConvertToArray() {
+      public (bool success,Array? array) ConvertToArray() {
          int valDepth = 0;
          bool valDepthNotYetReached = true;
          // Fail: When value node is reached at depth above value depth.
          // Fail: When non value nodes coexist with value nodes.
          // Fail: When value node is reached at any other depth than any previous value node.
-         Array array = Recursion(TopNode, 0);
+         Array? array = Recursion(TopNode, 0);
          if(array != null)
             return (true, array);
          else
             return (false, null);
 
-         Array Recursion(RankedNode startNode, int currDepth) {
-            if(startNode.Subordinates.Count != 0) {                   // Explore further.
+         Array? Recursion(RankedNode? startNode, int currDepth) {
+            if(startNode == null)
+               throw new ArgumentNullException("StartNode Cannot be null.");
+            else if(startNode.Subordinates.Count != 0) {                   // Explore further.
                ++currDepth;                                            // Set currDepth for foreach loop.
-               Array nextDepthArray = null;
-               Array currDepthArray = null;
+               Array? nextDepthArray = null;
+               Array? currDepthArray = null;
                int i = 0;
                foreach(var subNode in startNode.Subordinates) {
                   if(subNode is ValueNode<T> valNode) {              // Value node.
@@ -74,3 +77,5 @@ namespace Fluid.Internals.Collections {
       }
    }
 }
+
+#nullable restore
