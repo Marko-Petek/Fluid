@@ -15,7 +15,7 @@ namespace Fluid.Internals.Collections {
    public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      new public static Vector<τ,α> Ex { get; } = new Vector<τ,α>();
+      public static Vector<τ,α> VoidVector { get; } = new Vector<τ,α>();
       public new int Count => CountInternal;
       protected override int CountInternal => Vals.Count;
       public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.

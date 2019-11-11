@@ -22,3 +22,8 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+*.deps.json
+*.dev.json
+*.runtimeconfig.json
+*.g.props
+*.cache

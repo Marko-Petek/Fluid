@@ -574,8 +574,8 @@ namespace Fluid.Tests {
          var inxs2 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
          var expStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
          var expRes = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), expStruc);
-         var subTnr1 = tnr1[TnrInt.Ex, inxs1];
-         var subTnr2 = tnr2[TnrInt.Ex, inxs2];
+         var subTnr1 = tnr1[TnrInt.VoidTnr, inxs1];
+         var subTnr2 = tnr2[TnrInt.VoidTnr, inxs2];
          var res = subTnr1.TnrProduct(subTnr2);
          Assert.True(res.Equals(expRes));
       }
@@ -946,18 +946,18 @@ namespace Fluid.Tests {
          var expRes3 = VecInt.FromFlatSpec(data.AsSpan(pos,read));         Read(data, ref pos, ref read);
          var inxs4 = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
          var expRes4 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
-         Assert.True(tnr[VecInt.Ex, inxs1].Equals(expRes1));
-         Assert.True(tnr[VecInt.Ex, inxs2].Equals(expRes2));
-         Assert.True(tnr[VecInt.Ex, inxs3].Equals(expRes3));
-         Assert.True(tnr[VecInt.Ex, inxs4].Equals(expRes4));               Read(data, ref pos, ref read);
+         Assert.True(tnr[VecInt.VoidVector, inxs1].Equals(expRes1));
+         Assert.True(tnr[VecInt.VoidVector, inxs2].Equals(expRes2));
+         Assert.True(tnr[VecInt.VoidVector, inxs3].Equals(expRes3));
+         Assert.True(tnr[VecInt.VoidVector, inxs4].Equals(expRes4));               Read(data, ref pos, ref read);
          var wrtInxs1 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
          var wrtVec1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
-         tnr[VecInt.Ex, wrtInxs1] = wrtVec1;
-         Assert.True(tnr[VecInt.Ex, wrtInxs1].Equals(wrtVec1));            Read(data, ref pos, ref read);
+         tnr[VecInt.VoidVector, wrtInxs1] = wrtVec1;
+         Assert.True(tnr[VecInt.VoidVector, wrtInxs1].Equals(wrtVec1));            Read(data, ref pos, ref read);
          var wrtInxs2 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
          var wrtVec2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
-         tnr[VecInt.Ex, wrtInxs2] = wrtVec2;
-         Assert.True(tnr[VecInt.Ex, wrtInxs2].Equals(wrtVec2));
+         tnr[VecInt.VoidVector, wrtInxs2] = wrtVec2;
+         Assert.True(tnr[VecInt.VoidVector, wrtInxs2].Equals(wrtVec2));
       }
 
       [InlineData(
@@ -990,19 +990,19 @@ namespace Fluid.Tests {
          var expRes3 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);     Read(data, ref pos, ref read);
          var inxs4 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
          var expRes4 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
-         var res1 = tnr[TnrInt.Ex, inxs1];
+         var res1 = tnr[TnrInt.VoidTnr, inxs1];
          Assert.True(res1.Equals(expRes1));
-         Assert.True(tnr[TnrInt.Ex, inxs2].Equals(expRes2));
-         Assert.True(tnr[TnrInt.Ex, inxs3].Equals(expRes3));
-         Assert.True(tnr[TnrInt.Ex, inxs4].Equals(expRes4));                        Read(data, ref pos, ref read);
+         Assert.True(tnr[TnrInt.VoidTnr, inxs2].Equals(expRes2));
+         Assert.True(tnr[TnrInt.VoidTnr, inxs3].Equals(expRes3));
+         Assert.True(tnr[TnrInt.VoidTnr, inxs4].Equals(expRes4));                        Read(data, ref pos, ref read);
          var wrtInxs1 = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
          var wrtTnr1 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
-         tnr[TnrInt.Ex, wrtInxs1] = wrtTnr1;
-         Assert.True(tnr[TnrInt.Ex, wrtInxs1].Equals(wrtTnr1));                     Read(data, ref pos, ref read);
+         tnr[TnrInt.VoidTnr, wrtInxs1] = wrtTnr1;
+         Assert.True(tnr[TnrInt.VoidTnr, wrtInxs1].Equals(wrtTnr1));                     Read(data, ref pos, ref read);
          var wrtInxs2 = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
          var wrtTnr2 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
-         tnr[TnrInt.Ex, wrtInxs2] = wrtTnr2;
-         Assert.True(tnr[TnrInt.Ex, wrtInxs2].Equals(wrtTnr2));
+         tnr[TnrInt.VoidTnr, wrtInxs2] = wrtTnr2;
+         Assert.True(tnr[TnrInt.VoidTnr, wrtInxs2].Equals(wrtTnr2));
       }
 
       [InlineData(

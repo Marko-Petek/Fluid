@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 
@@ -6,3 +7,4 @@ namespace Fluid.Internals.Collections {
       public Node(IEnumerable<Node> peers) : base(peers) {}
    }
 }
+#nullable restore

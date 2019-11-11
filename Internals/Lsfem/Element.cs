@@ -36,7 +36,7 @@ namespace Fluid.Internals.Lsfem {
       public ref Vec2 Pos(int inx) => ref Sim.Pos[inx];
       /// <summary>A vector of values at specified local node index.</summary>
       /// <param name="inx">Local node index.</param>
-      public Vec Vals(int inx) => Sim.U(Vec.Ex, P[inx]);
+      public Vec Vals(int inx) => Sim.U(Vec.VoidVector, P[inx]);
       static Simulation Sim { get; set; }
 
 
