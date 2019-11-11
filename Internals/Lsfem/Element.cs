@@ -15,6 +15,7 @@ namespace Fluid.Internals.Lsfem {
    using Tnr = Tensor<dbl,DA>;
    using SymTnr = SymTensor<dbl,DA>;
    using Vec = Vector<dbl,DA>;
+   using Voids = Voids<dbl,DA>;
    using FTnr = Tensor<Func2D,F2DA>;
    using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
    using PE = PseudoElement;
@@ -36,7 +37,7 @@ namespace Fluid.Internals.Lsfem {
       public ref Vec2 Pos(int inx) => ref Sim.Pos[inx];
       /// <summary>A vector of values at specified local node index.</summary>
       /// <param name="inx">Local node index.</param>
-      public Vec Vals(int inx) => Sim.U(Vec.VoidVector, P[inx]);
+      public Vec Vals(int inx) => Sim.U(Voids.Vec, P[inx]);
       static Simulation Sim { get; set; }
 
 

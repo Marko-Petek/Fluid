@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 
 namespace Fluid.Internals.Collections {
@@ -8,3 +9,4 @@ namespace Fluid.Internals.Collections {
       public TensorBase() : base(6) {}
    }
 }
+#nullable restore

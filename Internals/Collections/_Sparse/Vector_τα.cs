@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
@@ -15,10 +16,10 @@ namespace Fluid.Internals.Collections {
    public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
-      public static Vector<τ,α> VoidVector { get; } = new Vector<τ,α>();
+      //public static Vector<τ,α> VoidVec { get; } = new Vector<τ,α>();
       public new int Count => CountInternal;
       protected override int CountInternal => Vals.Count;
-      public Dictionary<int,τ> Vals { get; internal set; }          // An extra wrapped Dictionary which holds values.
+      public Dictionary<int,τ> Vals { get; internal set; }         // An extra wrapped Dictionary which holds values.
       internal Vector() : base(0) {
          Vals = new Dictionary<int, τ>();
          Rank = 1; }
@@ -28,41 +29,53 @@ namespace Fluid.Internals.Collections {
 
       internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      public Vector(int cap) : this(null, null, cap) { }
+      public Vector(int cap) : this(Voids<τ,α>.ListInt, Voids<τ,α>.Vec, cap) { }
       /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-      public Vector(int dim, int cap) : this(new List<int> {dim}, null, cap) { }
+      public Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
+
+      #nullable restore       // The warning we get is moot.
       /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
       /// <param name="src"></param>
-      public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(src.Count + cs.ExtraCapacity) {
+      public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
          Copy(src, this, cs);
       }
+      #nullable enable
+
       public Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
       /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
       /// <param name="src">Copy source.</param>
       /// <param name="tgt">Copy target.</param>
       public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
          CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);               // Structure created here.
-         if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues)
-            tgt.Vals = new Dictionary<int,τ>(src.Vals);
-         else
-            tgt.Vals = new Dictionary<int,τ>();
+         switch (cs.FieldsSpec & WhichFields.OnlyValues) {
+            case WhichFields.OnlyValues:
+               tgt.Vals = new Dictionary<int,τ>(src.Count + cs.ExtraCapacity);
+               foreach(var int_val in src.Vals) {
+                  tgt.Vals.Add(int_val.Key, int_val.Value); } break;
+            default:
+               tgt.Vals = new Dictionary<int,τ>(); break; }
       }
       /// <summary>Creates a new vector from an array slice.</summary>
       /// <param name="slc">Array slice.</param>
       public static Vector<τ,α> FromFlatSpec(Span<τ> slc , List<int> structure, Tensor<τ,α> sup) {
          var vec = new Vector<τ,α>(structure, sup, slc.Length);
          for(int i = 0; i < slc.Length; ++i) {
-            if(!slc[i].Equals(default(τ)))
+            if(!slc[i].Equals(O<τ,α>.A.Zero()))
                vec.Vals.Add(i, slc[i]); }
          return vec;
       }
       public static Vector<τ,α> FromFlatSpec(Span<τ> slc) =>
-         FromFlatSpec(slc, new List<int>(1) { slc.Length }, null);
+         FromFlatSpec(slc, new List<int>(1) { slc.Length }, Voids<τ,α>.Vec);
 
-      public static Vector<τ,α> CreateEmpty(int cap, List<int> structure = null, Tensor<τ,α> sup = null) {
+      public static Vector<τ,α> CreateEmpty(int cap, List<int> structure, Tensor<τ,α> sup) {
          var vec = new Vector<τ,α>(structure, sup, cap);
          return vec;
       }
+      public static Vector<τ,α> CreateEmpty(int cap, List<int> structure) =>
+         CreateEmpty(cap, structure, Voids<τ,α>.Vec);
+      
+      public static Vector<τ,α> CreateEmpty(int cap) =>
+         CreateEmpty(cap, Voids<τ,α>.ListInt, Voids<τ,α>.Vec);
 
       /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
       /// <param name="key">Index.</param>
@@ -76,7 +89,7 @@ namespace Fluid.Internals.Collections {
             Vals.TryGetValue(i, out τ val);
             return val; }
          set {
-            if(!value.Equals(default)) {
+            if(!value.Equals(O<τ,α>.A.Zero())) {
                Vals[i] = value; }
             else
                Vals.Remove(i); }
@@ -89,7 +102,7 @@ namespace Fluid.Internals.Collections {
             var struct2 = tnr2.CopySubstructure();
             var newStructure = struct1.Concat(struct2).ToList();
             // We must substitute this vector with a tensor whose elements are multiples of tnr2.
-            var res = new Tensor<τ,α>(newStructure, newRank, null, Vals.Count);
+            var res = new Tensor<τ,α>(newStructure, newRank, Voids<τ,α>.Vec, Vals.Count);
             foreach(var int_subVal in Vals) {
                int subKey = int_subVal.Key;
                var subVal = int_subVal.Value;
@@ -104,7 +117,7 @@ namespace Fluid.Internals.Collections {
          int dim1 = Structure.Last();
          int dim2 = vec2.Structure.Last();
          var newStructure = new List<int> {dim1, dim2};
-         var res = new Tensor<τ,α>(newStructure, rank: 2, sup: null, Vals.Count);
+         var res = new Tensor<τ,α>(newStructure, rank: 2, sup: Voids<τ,α>.Vec, Vals.Count);
          foreach(var int_subVal1 in Vals) {
             int subKey = int_subVal1.Key;
             var subVal1 = int_subVal1.Value;
@@ -121,7 +134,7 @@ namespace Fluid.Internals.Collections {
             var subVal2 = int_subVal2.Value;
             if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
                τ sum = O<τ,α>.A.Sum(subVal1, subVal2);
-               if(!sum.Equals(default))                                             // Sum is not zero.
+               if(!sum.Equals(O<τ,α>.A.Zero()))                                             // Sum is not zero.
                   Vals[subKey] = sum;
                else
                   Vals.Remove(subKey); }
@@ -135,7 +148,7 @@ namespace Fluid.Internals.Collections {
             var subVal2 = int_subVal2.Value;
             if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
                τ dif = O<τ,α>.A.Sub(subVal1, subVal2);
-               if(!dif.Equals(default))                                             // Sum is not zero.
+               if(!dif.Equals(O<τ,α>.A.Zero()))                                             // Sum is not zero.
                   Vals[subKey] = dif;
                else
                   Vals.Remove(subKey); }
@@ -194,7 +207,7 @@ namespace Fluid.Internals.Collections {
       /// <param name="vec">Vector to negate.</param>
       public static Vector<τ,α> operator - (Vector<τ,α> vec) {
          var newStruc = vec.CopySubstructure();
-         var res = new Vector<τ,α>(newStruc, null, vec.Count);
+         var res = new Vector<τ,α>(newStruc, Voids<τ,α>.Vec, vec.Count);
          foreach(var int_val in vec.Vals)
             res.Vals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
          return res;
@@ -202,7 +215,7 @@ namespace Fluid.Internals.Collections {
       /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
       public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
          var newStruc = vec.CopySubstructure();
-         var res = new Vector<τ,α>(newStruc, null, vec.Count);
+         var res = new Vector<τ,α>(newStruc, Voids<τ,α>.Vec, vec.Count);
          foreach(var int_val in vec.Vals)
             res.Vals.Add(int_val.Key, O<τ,α>.A.Mul(scal, vec[int_val.Key]));
          return res;
@@ -214,25 +227,28 @@ namespace Fluid.Internals.Collections {
             sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
             for(int i = 0; i < conDim; ++i) {
                elimTnr2 = tnr2.ReduceRank(truInx2, i);
-               if(vec1.Vals.TryGetValue(i, out var val) && elimTnr2 != null) {
+               if(vec1.Vals.TryGetValue(i, out var val) && elimTnr2 != Voids<τ,α>.Vec) {
                   sumand = val*elimTnr2;
                   sum.Sum(sumand); } }
             if(sum.Count != 0)
                return sum;
             else
-               return null; }
+               return Voids<τ,α>.Vec; }
          else if(tnr2.Rank == 2) {
+            Tensor<τ,α> elimTnr2;
             Vector<τ,α> elimVec2, sumand, sum;
-            sum = new Vector<τ,α>(struc3, null, 4);
+            sum = new Vector<τ,α>(struc3, Voids<τ,α>.Vec, 4);
             for(int i = 0; i < conDim; ++i) {
-               elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
-               if(vec1.Vals.TryGetValue(i, out var val) && elimVec2 != null) {
-                  sumand = val*elimVec2;
-                  sum.Sum(sumand); } }
+               elimTnr2 = tnr2.ReduceRank(truInx2, i);
+               if(elimTnr2 != Voids<τ,α>.Vec) {
+                  elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
+                  if(vec1.Vals.TryGetValue(i, out var val)) {
+                     sumand = val*elimVec2;
+                     sum.Sum(sumand); } } }
             if(sum.Vals.Count != 0)
                return sum;
             else
-               return null; }
+               return Voids<τ,α>.Vec; }
          else {                                                               // Result is scalar.
             throw new ArgumentException("Explicitly cast tnr2 to vector before using contract."); }
       }
@@ -242,7 +258,7 @@ namespace Fluid.Internals.Collections {
          return ContractPart2(vec1, tnr2, truInx2, struc3, conDim);
       }
       public static τ Contract(Vector<τ,α> vec1, Vector<τ,α> vec2) {
-         τ res = default;
+         τ res = O<τ,α>.A.Zero();
          foreach(var int_val1 in vec1.Vals) {
             if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
                res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
@@ -255,7 +271,7 @@ namespace Fluid.Internals.Collections {
 
       /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
       public τ NormSqr() {
-         τ res = default;
+         τ res = O<τ,α>.A.Zero();
          foreach(var kv in Vals)
             res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
          return res;
@@ -288,3 +304,4 @@ namespace Fluid.Internals.Collections {
       }
    }
 }
+#nullable restore

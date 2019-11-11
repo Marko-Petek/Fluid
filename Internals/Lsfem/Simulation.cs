@@ -17,6 +17,7 @@ namespace Fluid.Internals.Lsfem {
    using SymTnr = SymTensor<dbl,DA>;
    using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
    using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
+   using Voids = Voids<dbl,DA>;
    using Lst = List<int>;
    using VecLst = My.List<Vec2>;
    using PE = PseudoElement;
@@ -365,21 +366,21 @@ namespace Fluid.Internals.Lsfem {
          Lst allJs = Enumerable.Range(0,NVar).ToList();
          foreach(var emt in emts) {
          for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-            Vec vecF_j = tnrF[Vec.VoidVector, c];
+            Vec vecF_j = tnrF[Voids.Vec, c];
             var jfs = allJs.Where( j => !Constr(c,j) ).ToArray();                      // Determine which variables (c,j) are free.
             for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
             for(int p = 0; p < 3; ++p) {
             for(int r = 0; r < 3; ++r) {
-               Tnr a_ij = A[Tnr.VoidTnr, a,p,r];                                            // Precursor for all terms.
+               Tnr a_ij = A[Voids.Tnr, a,p,r];                                            // Precursor for all terms.
                for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
-                  Tnr f_si = Fs[Tnr.VoidTnr, b];
+                  Tnr f_si = Fs[Voids.Tnr, b];
                   for(int s = 0; s < 3; ++s) {                                         // Index for A*Fs_j
-                     Vec fs_i = f_si[Vec.VoidVector, s];
+                     Vec fs_i = f_si[Voids.Vec, s];
                      Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
                      foreach(var j in allJs)
                         vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
                      for(int q = 0; q < 3; ++q) {
-                        Tnr a_ik = A[Tnr.VoidTnr, b,q,s];                                   // For second term in primary forcing.
+                        Tnr a_ik = A[Voids.Tnr, b,q,s];                                   // For second term in primary forcing.
                         Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
                         for(int δ = 0, d = emt.P[δ]; δ < 12; ++δ, d = emt.P[δ]) {
                            var grpsK = allJs.GroupBy( j => Constr(c,j) ).ToArray();
@@ -389,7 +390,7 @@ namespace Fluid.Internals.Lsfem {
                               Single().ToArray();
                            dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
                            foreach(var jf in jfs) {
-                              Vec aa_k = aa_jk[Vec.VoidVector,jf];
+                              Vec aa_k = aa_jk[Voids.Vec,jf];
                               foreach(int k in kfs)
                                  tnrK[c,jf,d,k] += coefQ * aa_k[k];
                               foreach(int l in kcs)

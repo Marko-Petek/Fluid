@@ -69,22 +69,20 @@ using IA = IntArithmetic;
 public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : IEquatable<τ>, new()
 where α : IArithmetic<τ>, new() {
-   public static τ VoidTau { get; } = new τ();
-   /// <summary>Tensor example, also intended to be used as an overload dummy in indexers.</summary>
-   public static Tensor<τ,α> VoidTnr { get; } = new Tensor<τ,α>(0);
-   public static List<int> VoidStructure { get; } = new List<int>(0);
+   
+   
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
-   public List<int> Structure { get; protected set; } = VoidStructure;
+   public List<int> Structure { get; protected set; } = Voids<τ,α>.ListInt;
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
    public int Rank { get; protected set; }
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
-   public Tensor<τ,α> Superior { get; protected set; } = VoidTnr;
+   public Tensor<τ,α> Superior { get; protected set; } = Voids<τ,α>.Vec;
 
    public new int Count => CountInternal;
 
    protected virtual int CountInternal => base.Count;
 
-   protected Tensor(int cap) : base(cap) { }
+   public Tensor(int cap) : base(cap) { }
    /// <summary>Assigns rank and capacity only.</summary>
    /// <param name="rank">Tensor's rank.</param>
    /// <param name="cap">Capacity.</param>
@@ -104,7 +102,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
    /// <param name="structure">Specifies dimension of each rank.</param>
    /// <param name="cap">Initially assigned memory.</param>
-   public Tensor(List<int> structure, int cap = 6) : this(structure, structure.Count, VoidTnr, cap) { }
+   public Tensor(List<int> structure, int cap = 6) : this(structure, structure.Count, Voids<τ,α>.Vec, cap) { }
    /// <summary>Creates a non-top tensor with specified superior and initial capacity. Rank is assigned as one less that superior.</summary>
    /// <param name="sup">Tensor directly above in hierarchy.</param>
    /// <param name="cap">Initially assigned memory.</param>
@@ -223,7 +221,7 @@ where α : IArithmetic<τ>, new() {
       if(tnrRank == 1)
          return Vector<τ,α>.FromFlatSpec(slice);
       else {
-         var res = new Tensor<τ,α>(structure.ToList(), tnrRank, VoidTnr, structure[0]);
+         var res = new Tensor<τ,α>(structure.ToList(), tnrRank, Voids<τ,α>.Vec, structure[0]);
          Recursion(slice, 0, res);
          return res;
       }
@@ -257,8 +255,11 @@ where α : IArithmetic<τ>, new() {
          1 => Vector<τ,α>.CreateEmpty(cap, structure, sup),
          _ => new Tensor<τ,α>(structure, rank, sup, cap) };
 
+   public static Tensor<τ,α> CreateEmpty(int cap, int rank, List<int> structure) =>
+      CreateEmpty(cap, rank, structure, Voids<τ,α>.Vec);
+
    public static Tensor<τ,α> CreateEmpty(int cap, int rank) =>
-      CreateEmpty(cap, rank, VoidStructure, VoidTnr);
+      CreateEmpty(cap, rank, Voids<τ,α>.ListInt, Voids<τ,α>.Vec);
 
    /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
    /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
@@ -285,11 +286,11 @@ where α : IArithmetic<τ>, new() {
          Tensor<τ,α>? tnr = this;
          for(int i = 0; i < inxs.Length; ++i) {
             if(!tnr.TryGetValue(inxs[i], out tnr))
-               return VoidTnr; }
+               return Voids<τ,α>.Vec; }
          return tnr; }                                // No problem with tnr being null. We return above.
       set {
          Tensor<τ,α>? tnr = this;
-         if(value != VoidTnr) {
+         if(value != Voids<τ,α>.Vec) {
             int n = inxs.Length - 1;
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created
@@ -315,14 +316,14 @@ where α : IArithmetic<τ>, new() {
          int n = inx.Length - 1;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return Vector<τ,α>.VoidVector; }
+               return Voids<τ,α>.Vec; }
          if(tnr.TryGetValue(inx[n], out tnr))                                 // No problem with null.
             return (Vector<τ,α>)tnr;                                          // Same.
          else
-            return Vector<τ,α>.VoidVector; }
+            return Voids<τ,α>.Vec; }
       set {
          Tensor<τ,α>? tnr = this;
-         if(value != Vector<τ,α>.VoidVector) {
+         if(value != Voids<τ,α>.Vec) {
             int n = inx.Length - 1;                                           // Entry one before last chooses tensor, last chooses vector.
             for(int i = 0; i < n; ++i) {
                if(tnr.TryGetValue(inx[i], out Tensor<τ,α>? tnr2)) {
@@ -350,17 +351,17 @@ where α : IArithmetic<τ>, new() {
          int n = inx.Length - 2;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return VoidTau; }
+               return Voids<τ,α>.Tau; }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
             var vec = (Vector<τ,α>)tnr;                                          // Same.
             if(vec.Vals.TryGetValue(inx[n + 1], out τ val))
                return val; }
-         return VoidTau; }
+         return Voids<τ,α>.Tau; }
       set {
          Tensor<τ,α>? tnr = this;
          Tensor<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
          Vector<τ,α> vec;
-         if(!value.Equals(VoidTau)) {
+         if(!value.Equals(Voids<τ,α>.Tau)) {
             if(inx.Length > 1) {                                                 // At least a 2nd rank tensor.
                int n = inx.Length - 2;
                for(int i = 0; i < n; ++i) {                                      // This loop is entered only for a 3rd rank tensor or above.
@@ -725,7 +726,7 @@ where α : IArithmetic<τ>, new() {
       return Recursion(aTnr);
 
       Tensor<τ,α> Recursion(in Tensor<τ,α> tnr) {
-         var res = new Tensor<τ,α>(newStructure, aTnr.Rank, null, aTnr.Count);
+         var res = new Tensor<τ,α>(newStructure, aTnr.Rank, Voids<τ,α>.Vec, aTnr.Count);
          if(tnr.Rank > 2) {                                       // Subordinates are tensors.
             foreach (var int_subTnr in tnr) {
                int subKey = int_subTnr.Key;
@@ -756,7 +757,7 @@ where α : IArithmetic<τ>, new() {
       return Recursion(this, newRank);
 
       Tensor<τ,α> Recursion(Tensor<τ,α> tnr1, int resRank) {
-         var res = new Tensor<τ,α>(newStructure, resRank, null, tnr1.Count);
+         var res = new Tensor<τ,α>(newStructure, resRank, Voids<τ,α>.Vec, tnr1.Count);
          if(tnr1.Rank > 2) {                                                    // Only copy. Adjust ranks.
             foreach(var int_subTnr1 in tnr1) {
                int subKey = int_subTnr1.Key;
@@ -766,7 +767,7 @@ where α : IArithmetic<τ>, new() {
             foreach(var int_subTnr1R1 in tnr1) {    // Substitute each vector wiht a new tensor.
                int subKeyR1 = int_subTnr1R1.Key;
                var subVec1 = (Vector<τ,α>) int_subTnr1R1.Value;
-               var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, null, tnr1.Count);
+               var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, Voids<τ,α>.Vec, tnr1.Count);
                foreach(var int_subVal1 in subVec1.Vals) {
                   int subKeyR0 = int_subVal1.Key;
                   var subVal1 = int_subVal1.Value;
@@ -799,14 +800,14 @@ where α : IArithmetic<τ>, new() {
          else                                                                                      // Rank <= 1: impossible.
             throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
       else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
-         var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
+         var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 3) {                                                              // No special treatment due to Vector needed.
             RecursiveCopyAndElim(this, res, emtInx, elimRank + 2);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1,2,3 tensor with this branch."); }
       else if(elimRank == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
-         var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
+         var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 2) {                                                             // Result is tensor.
             RecursiveCopyAndElim(this, res, emtInx, 1);
             return res; }
@@ -814,11 +815,11 @@ where α : IArithmetic<τ>, new() {
             throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
       else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
          if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
-            var res = new Tensor<τ,α>(newStructure, Rank - 1, null, Count);
+            var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
             ElimR0_R3Plus(this, res, emtInx);
             return res; }
          else if(Rank == 2) {
-            var res = new Vector<τ,α>(newStructure, null, 4);
+            var res = new Vector<τ,α>(newStructure, Voids<τ,α>.Vec, 4);
             ElimR0_R2(this, res, emtInx);
             return res; }
          else
@@ -919,7 +920,7 @@ where α : IArithmetic<τ>, new() {
             Vector<τ,α> vec = (Vector<τ,α>) tnr2;
             if(tnr1.Rank == 2) {                                    // Result will be vector.
                Vector<τ,α> elimVec, sumand, sum;
-               sum = new Vector<τ,α>(struc3, null, 4);
+               sum = new Vector<τ,α>(struc3, Voids<τ,α>.Vec, 4);
                for(int i = 0; i < conDim; ++i) {
                   elimVec = (Vector<τ,α>) tnr1.ReduceRank(rankInx1, i);
                   if(elimVec.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
@@ -961,7 +962,7 @@ where α : IArithmetic<τ>, new() {
       Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
       Assume.True(Structure[0] == Structure[1], () =>
          "Corresponding dimensions have to be equal.");
-      τ result = default;
+      τ result = new τ();
       foreach(var int_vec in this) {
          var vec = (Vector<τ,α>) int_vec.Value;
          if(vec.Vals.TryGetValue(int_vec.Key, out τ val))
@@ -973,7 +974,7 @@ where α : IArithmetic<τ>, new() {
       Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
       Assume.True(Structure[natInx1 - 1] == Structure[natInx2 - 1], () =>
          "Corresponding dimensions have to be equal.");
-      Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, null, 4);
+      Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, Voids<τ,α>.Vec, 4);
       int truInx1 = ToRankInx(natInx1);
       int truInx2 = ToRankInx(natInx2);
       if(natInx1 == 1) {
@@ -1010,7 +1011,7 @@ where α : IArithmetic<τ>, new() {
          var newStruct2 = Structure.Take(slotInx2 - 1).Skip(slotInx1);
          var newStruct3 = Structure.Skip(slotInx2);
          var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToList();
-         var res = new Tensor<τ,α>(newStruct, Rank - 2, null, Count);
+         var res = new Tensor<τ,α>(newStruct, Rank - 2, Voids<τ,α>.Vec, Count);
          var rankInx1 = ToRankInx(slotInx1);
          var rankInx2 = ToRankInx(slotInx2);
          int dimRank = Structure[slotInx1 - 1];                // Dimension of contracted rank.
@@ -1068,7 +1069,7 @@ where α : IArithmetic<τ>, new() {
             return false;                                                                    // Keys have to match. This is crucial.
          if(sup1.Rank > 2) {
             foreach(var inx_sub1 in sup1) {
-               var sub2 = sup2[Tensor<τ,α>.VoidTnr, inx_sub1.Key];
+               var sub2 = sup2[Voids<τ,α>.Tnr, inx_sub1.Key];
                return TnrRecursion(inx_sub1.Value, sub2); }
             return true; }                                                                   // Both are empty.
          else
@@ -1080,7 +1081,7 @@ where α : IArithmetic<τ>, new() {
             return false;                                                                    // Keys have to match. This is crucial.
          foreach(var inx_sub1R1 in sup1R2) {
             var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
-            var vec2 = sup2R2[Vector<τ,α>.VoidVector, inx_sub1R1.Key];
+            var vec2 = sup2R2[Voids<τ,α>.Vec, inx_sub1R1.Key];
             if(!vec1.Equals(vec2))
                return false; }
          return true;
@@ -1097,7 +1098,7 @@ where α : IArithmetic<τ>, new() {
             return false;                                                                    // Keys have to match. This is crucial.
          if(sup1.Rank > 2) {
             foreach(var inx_sub1 in sup1) {
-               var sub2 = sup2[Vector<τ,α>.VoidVector, inx_sub1.Key];
+               var sub2 = sup2[Voids<τ,α>.Vec, inx_sub1.Key];
                return TnrRecursion(inx_sub1.Value, sub2); }
             return true; }                                                                   // Both are empty.
          else
@@ -1109,7 +1110,7 @@ where α : IArithmetic<τ>, new() {
             return false;                                                                    // Keys have to match. This is crucial.
          foreach(var inx_sub1R1 in sup1R2) {
             var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
-            var vec2 = sup2R2[Vector<τ,α>.VoidVector, inx_sub1R1.Key];
+            var vec2 = sup2R2[Voids<τ,α>.Vec, inx_sub1R1.Key];
             if(!vec1.Equals(vec2, eps))
                return false; }
          return true;

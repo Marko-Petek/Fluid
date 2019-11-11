@@ -13,6 +13,7 @@ namespace Fluid.Internals.Numerics {
       τ Abs(τ val);
       τ Neg(τ val);
       τ Unit();
+      τ Zero();
    }
 
    public struct IntArithmetic : IArithmetic<int> {
@@ -23,6 +24,7 @@ namespace Fluid.Internals.Numerics {
       public int Abs(int val) => Math.Abs(val);
       public int Neg(int val) => -val;
       public int Unit() => 1;
+      public int Zero() => 0;
    }
 
    public struct DblArithmetic : IArithmetic<double> {
@@ -33,6 +35,7 @@ namespace Fluid.Internals.Numerics {
       public double Abs(double val) => Math.Abs(val);
       public double Neg(double val) => -val;
       public double Unit() => 1.0;
+      public double Zero()  => 0.0;
    }
 
    public struct Func2DArithmetic : IArithmetic<Func2D> {
@@ -50,6 +53,8 @@ namespace Fluid.Internals.Numerics {
          new Func2D( (x,y) => -f.F(x,y) );
       public Func2D Unit() =>
          new Func2D( (x,y) => 1.0 );
+      public Func2D Zero() =>
+         new Func2D( (x,y) => 0.0 );
    }
 
    public struct NoArithmetic : IArithmetic<int> {
@@ -60,6 +65,7 @@ namespace Fluid.Internals.Numerics {
       public int Abs(int a) => throw new NotImplementedException("You are not supposed to use arithmetic.");
       public int Neg(int a) => throw new NotImplementedException("You are not supposed to use arithmetic.");
       public int Unit() => throw new NotImplementedException("You are not supposed to use arithmetic.");
+      public int Zero() => throw new NotImplementedException("You are not supposed to use arithmetic.");
    }
 
    public static class O<τ,α> where α : IArithmetic<τ>, new() {
