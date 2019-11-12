@@ -60,7 +60,6 @@ using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Text;
 using Fluid.TestRef;
-
 namespace Fluid.Internals.Collections {
 
 using IA = IntArithmetic;

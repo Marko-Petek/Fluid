@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.IO;
 using System.Linq;
@@ -13,13 +14,14 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
-   public static partial class IO {
-      public static void Write<T>(SCG.IEnumerable<T> ienum, TextWriter tw) {
-         tw.Write(ienum.ToString());
-      }
-      public static void WriteLine<T>(SCG.IEnumerable<T> ienum, TextWriter tw) {
-         Write(ienum, tw);
-         tw.WriteLine();
-      }
+public static partial class IO {
+   public static void Write<T>(SCG.IEnumerable<T> ienum, TextWriter tw) {
+      tw.Write(ienum.ToString());
+   }
+   public static void WriteLine<T>(SCG.IEnumerable<T> ienum, TextWriter tw) {
+      Write(ienum, tw);
+      tw.WriteLine();
    }
 }
+}
+#nullable restore

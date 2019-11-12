@@ -8,8 +8,9 @@ using static Fluid.Internals.Toolbox;
 namespace Fluid.Runnables.CavityFlow {
    /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
 public static class Entry {
-   public static void Point() {
+   public static int Point() {
       var cavFlow = CavityFlowSim.Create(0.1, 0.1, 3) ;
+      return 0;
    }
 
 

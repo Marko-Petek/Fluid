@@ -17,15 +17,10 @@ class Program {
    static void Main(string[] args) {            // args[0] has to be the name of the project without the extension.
       try {
          Initialize();
-         switch(args[0]) {
-            case "Tests":
-               Tests.Entry.Point(args);
-               break;
-            case "CavityFlow":
-               CavityFlow.Entry.Point();
-               break;
-            default:
-               break; } }
+         int result = args[0] switch {
+            "Tests" => Tests.Entry.Point(args),
+            "CavityFlow" => CavityFlow.Entry.Point(),
+            _ => -1 }; }
       catch(Exception exc) {
          R.R($"Exception occured: {exc.Message}");
          R.R($"Stack trace:{exc.StackTrace}");
