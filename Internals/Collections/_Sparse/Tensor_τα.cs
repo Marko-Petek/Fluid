@@ -407,7 +407,7 @@ where α : IArithmetic<τ>, new() {
    int inclStopRank,
    Func<int, Tensor<τ,α>, Tensor<τ,α>, (int, Tensor<τ,α>, Tensor<τ,α>)> onStopRank) {     // take from current, return from below.
       Assume.True(inclStopRank > 1, () => {
-         S.A("InclusiveStopRank has to be at least 2, ");
+         S!.A("InclusiveStopRank has to be at least 2, ");
          return S.Y("because method deals exclusively with tensors."); } );
       throw new NotImplementedException();
       //Descend(leader.Rank, 0, leader, follower);                                          // TODO: Continue Recursion.
@@ -748,7 +748,7 @@ where α : IArithmetic<τ>, new() {
    /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
    public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
       Assume.True(elimRank < Rank && elimRank > -1, () => {
-         S.A("You can only eliminate a non-negative ");
+         S!.A("You can only eliminate a non-negative ");
          S.A("rank greater than or equal to top rank.");
          return S.Y(); } );
       var newStructureL = Structure.Take(elimRank);

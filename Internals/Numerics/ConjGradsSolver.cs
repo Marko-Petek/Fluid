@@ -1,4 +1,6 @@
+#nullable enable
 using System;
+using Fluid.Internals;
 using Fluid.Internals.Collections;
 using TB = Fluid.Internals.Toolbox;
 using dbl = System.Double;
@@ -7,6 +9,7 @@ using DA = Fluid.Internals.Numerics.DblArithmetic;
 namespace Fluid.Internals.Numerics {
    using Tnr = Tensor<dbl,DA>;
    using Vec = Vector<dbl,DA>;
+   using V = Voids<dbl,DA>;
 
    /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
    public class ConjGradsSolver {
@@ -29,8 +32,8 @@ namespace Fluid.Internals.Numerics {
          double maxResSqr = maxRes * maxRes;
          var r = new Vec[2];
          var d0 = (Vec) b - (Vec) Tnr.Contract(A, x0, 2, 1);           //A * x0;
-         var d = new Vec[2] { null, d0 };
-         var x = new Vec[2] { x0, null };
+         var d = new Vec[2] { V.Vec, d0 };
+         var x = new Vec[2] { x0, V.Vec };
          var rr = new double[2];
 
          double alfa;
@@ -70,8 +73,8 @@ namespace Fluid.Internals.Numerics {
          // var interRes = A.Contract(x0, 3, 1);
          var Ax0 = Tnr.Contract(A, x0, 3, 1).SelfContract(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
          var d0 = b - Ax0;
-         var d = new Tnr[2] { null, d0 };                      // rank 2
-         var x = new Tnr[2] { x0, null };                      // rank 2
+         var d = new Tnr[2] { V.Vec, d0 };                      // rank 2
+         var x = new Tnr[2] { x0, V.Vec };                      // rank 2
          var rr = new double[2];
 
          double alfa;
@@ -133,3 +136,4 @@ namespace Fluid.Internals.Numerics {
       //return x0;
    }
 }
+#nullable restore

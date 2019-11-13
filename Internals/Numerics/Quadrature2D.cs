@@ -1,4 +1,5 @@
 // Quadrature specialized for 2D cases.
+#nullable enable
 using System;
 using dbl = System.Double;
 
@@ -50,8 +51,7 @@ namespace Fluid.Internals.Numerics {
       public F2D F { get; set; }
 
 
-      public Quadrature2D() {}
-      public Quadrature2D(F2D func) : this() {
+      public Quadrature2D(F2D func) {
          F = func;
       }
       public Quadrature2D(int order, F2D func) : this(func) {
@@ -91,3 +91,4 @@ namespace Fluid.Internals.Numerics {
       }
    }
 }
+#nullable restore

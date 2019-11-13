@@ -41,17 +41,14 @@ public class CavityFlowSim : NavStokesFlow {
       string dir = @"Seminar/Mathematica";
       string name = @"nodesC";
       string ext = @".txt";
-      FileReader.SetDirAndFile(dir, name, ext);       // Read the points to an array.
+      FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
       var hierarchy = FileReader.ReadHierarchy<dbl>();
-      (bool success, var array) = hierarchy.ConvertToArray();
-      if(success) {
-         if(array is dbl[][][] pos)
-            return pos;
-         else
-            throw new InvalidCastException("Positions array could not be cast to a rank 3 double array."); }
-      else
-         throw new FileNotFoundException("Could not locate nodes' position data.",
-            $"{dir}/{name}{ext}");
+      var convRes = hierarchy.ConvertToArray();
+      return convRes.success switch {
+         true => convRes.array switch {
+            dbl[][][] pos => pos,
+            _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
+         _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
    }
 
    protected override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(int currGInx) {

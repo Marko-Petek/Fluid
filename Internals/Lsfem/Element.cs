@@ -49,7 +49,7 @@ public class Element {
       var interm = CalcDetJ();
       DetJ = interm.detJ;
       InvJ = CalcInvJ(interm);
-      var tnrFactor = FTnr.Contract(InvJ, ϕ, 2, 2);                        R.R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
+      var tnrFactor = FTnr.Contract(InvJ, ϕ, 2, 2);                        R!.R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
       Q = CalcQuadOverlaps(tnrFactor);                                     R.R($"Calculating Triple Overlaps for element {Pos(0).ToString()}");
       T = CalcTripOverlaps(tnrFactor);
       MA = new dbl[2][] {  new dbl[2] {Pos(9).X, Pos(3).X},

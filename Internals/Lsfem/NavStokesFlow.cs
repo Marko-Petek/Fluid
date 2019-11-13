@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using dbl = System.Double;
@@ -21,7 +22,7 @@ public abstract class NavStokesFlow : Simulation {
    protected NavStokesFlow() : base() { }
    protected static void Initialize(NavStokesFlow flow, dbl dt, dbl re) {
       flow.Dt = dt;
-      flow.Re = re;                                        R.R("Initializing secondary tensors.");
+      flow.Re = re;                                        R!.R("Initializing secondary tensors.");
       Simulation.Initialize(flow);
       (flow.A, flow.Fs) = flow.InitializeSecondaries();
    }
@@ -91,3 +92,4 @@ public abstract class NavStokesFlow : Simulation {
    }
 }
 }
+#nullable restore

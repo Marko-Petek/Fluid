@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Linq;
 using dbl = System.Double;
@@ -35,7 +36,7 @@ public class PseudoElement {
          pos[i] = new Vec2(eNodes[i].x, eNodes[i].y); }
       PEInxs = lInx;
       GInxs = gInx;
-      Poss = pos;
+      _Poss = pos;
    }
    public PseudoElement(ref int startGInx, params (int lInx, dbl[] p)[] eNodes) {
       int nNodes = eNodes.Length;
@@ -48,7 +49,7 @@ public class PseudoElement {
          pos[i] = new Vec2(eNodes[i].p); }
       PEInxs = lInx;
       GInxs = gInx;
-      Poss = pos;
+      _Poss = pos;
    }
    public static (int currGInx, PseudoElement) CreateCustom(int currGInx, params (int lInx, dbl[])[] eNodes) {
       var pe = new PseudoElement(ref currGInx, eNodes);
@@ -112,3 +113,4 @@ public class PseudoElement {
    }
 }
 }
+#nullable restore

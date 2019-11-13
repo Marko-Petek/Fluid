@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using dbl = System.Double;
 
@@ -22,7 +23,8 @@ namespace Fluid.Internals.Numerics {
       /// <summary>Create a custom function of 2 arguments-</summary>
       /// <param name="func">Delegate instance.</param>
       public Func2D(Func<dbl,dbl,dbl> func) {
-         F = func;
+         _F = func;
+         Id = GetHashCode();
       }
 
 
@@ -52,3 +54,4 @@ namespace Fluid.Internals.Numerics {
       }
    }
 }
+#nullable restore

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using dbl = System.Double;
 
@@ -48,8 +49,7 @@ namespace Fluid.Internals.Numerics {
       public Func<double[],double> F { get; set; }
 
 
-      public Quadrature() {}
-      public Quadrature(Func<double[],double> func) : this() {
+      public Quadrature(Func<double[],double> func) {
          F = func;
       }
       public Quadrature(int order, int dim, Func<double[],double> func) : this(func) {
@@ -82,3 +82,4 @@ namespace Fluid.Internals.Numerics {
       }
    }
 }
+#nullable restore

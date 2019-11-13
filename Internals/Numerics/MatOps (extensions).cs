@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using static System.Math;
 using dbl = System.Double;
 using dA = Fluid.Internals.Numerics.DblArithmetic;
@@ -18,7 +19,7 @@ namespace Fluid.Internals.Numerics {
          int[] colIndices = new int[n];
          int[] rowIndices = new int[n];
          for(int i = 0; i < n; ++i) {
-            biggestElement = default;
+            biggestElement = O<τ,α>.A.Zero();
             for(int row = 0; row < n; ++row)
                if(pivotIndices[row] != 1)
                   for(int col = 0; col < n; ++col)
@@ -42,7 +43,7 @@ namespace Fluid.Internals.Numerics {
             for(int row = 0; row < n; ++row)
                if(row != pivotCol) {
                   dummy = mat[row][pivotCol];
-                  mat[row][pivotCol] = default;
+                  mat[row][pivotCol] = O<τ,α>.A.Zero();
                   for(int col = 0; col < n; ++col)
                      mat[row][col] = O<τ,α>.A.Sub(mat[row][col], O<τ,α>.A.Mul(mat[pivotCol][col], dummy)); }}
          for(int i = n - 1; i > -1; --i)
@@ -183,7 +184,7 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[] mat1, τ[] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, O<τ,α>.A.Zero());
       public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -197,7 +198,7 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, O<τ,α>.A.Zero());
       public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -211,6 +212,7 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, O<τ,α>.A.Zero());
    }
 }
+#nullable restore

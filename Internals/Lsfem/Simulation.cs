@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -80,16 +81,16 @@ public abstract class Simulation {
    }
    /// <summary>We must call this from the derived type's factory method.</summary>
    /// <param name="sim"></param>
-   protected static void Initialize(Simulation sim) {   R.R("Creating Patches.");
+   protected static void Initialize(Simulation sim) {                         R!.R("Started Sim.Initialize.");
       int currGInx = 0;
-      (currGInx, sim.Patches) = sim.CreatePatches(currGInx);                 R.R("Creating Joints.");
-      (currGInx, sim.Joints) = sim.CreateJoints(currGInx);                   R.R("Creating Positions.");
-      (sim.NPos, sim.Pos) = sim.CreatePositions();                               R.R("Creating Elements and calculating overlap integrals.");
-      var emts = sim.CreateElements();                                   R.R("Creating a list of Centers of Mass.");
-      var coms = sim.CreateCOMs(emts);                                   R.R("Creating ElementTree.");
-      sim.Elements = sim.CreateElementTree(coms, emts);                      R.R("Creating constraints.");
-      sim.UC = sim.CreateConstraints();                                      R.R("Counting free positions.");
-      sim.NfPos = sim.CountFreePositions(sim.NPos, sim.NVar);
+      (currGInx, sim.Patches) = sim.CreatePatches(currGInx);                  R.R("Created Patches.");
+      (currGInx, sim.Joints) = sim.CreateJoints(currGInx);                    R.R("Created Joints.");
+      (sim.NPos, sim.Pos) = sim.CreatePositions();                            R.R("Created Positions.");
+      var emts = sim.CreateElements();                                        R.R("Created Elements and calculated overlap integrals.");
+      var coms = sim.CreateCOMs(emts);                                        R.R("Created a list of Centers of Mass.");
+      sim.Elements = sim.CreateElementTree(coms, emts);                       R.R("Created the ElementTree.");
+      sim.UC = sim.CreateConstraints();                                       R.R("Created constraints.");
+      sim.NfPos = sim.CountFreePositions(sim.NPos, sim.NVar);                 R.R("Counted free positions.");
    }
 
 
@@ -120,7 +121,7 @@ public abstract class Simulation {
       int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
          Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
       var posList = new My.List<Vec2>(approxNPos);
-      int gInx = 0;                                                        R.R("Adding positions to Mesh.");
+      int gInx = 0;                                                        R!.R("Adding positions to Mesh.");
       foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
          foreach(var pseudoRow in patch) {
             foreach(var pseudoEmt in pseudoRow) {
@@ -154,7 +155,7 @@ public abstract class Simulation {
       return coms;
    }
    /// <summary>Elements are found in InternalNodeArray. Do not forget to trim excess space in array for proper operation of KDTree.</summary>
-   protected KDTree<double,Element> CreateElementTree(dbl[][] coms, Element[] emts) {               R.R("Creating KDTree of Elements vs. CoMs positions.");
+   protected KDTree<double,Element> CreateElementTree(dbl[][] coms, Element[] emts) {               R!.R("Creating KDTree of Elements vs. CoMs positions.");
       var emtTree = new KDTree<double,Element>(2, coms, emts,
          (r1,r2) => Sqrt(Pow(r2[0]-r1[0], 2.0) + Pow(r2[1]-r1[1], 2.0)));
       return emtTree;
@@ -405,3 +406,4 @@ public abstract class Simulation {
    protected abstract void UpdateDynamicsAndForcing();
 }
 }
+#nullable restore
