@@ -4,17 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using static System.Math;
-
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
-
 using Supercluster.KDTree;
-
 namespace Fluid.Internals.Lsfem {
+
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
@@ -23,12 +21,13 @@ using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
 
+/// <summary>Most general aspects of LSFEM.</summary>
 public abstract class Simulation {
    public static Simulation Sim { get; protected set; }
    /// <summary>An unordered (listed in sequence) array of positions.</summary>
    public Vec2[] Pos { get; protected set;}
-   /// <summary>Contains node indices that belong to an element. (element index, nodes)</summary>
-   public KDTree<double,Element> Elements { get; set; }
+   /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
+   public KDTree<double,Element> EmtTree { get; set; }
    /// <summary>Number of independent variables at a single position (= number of equations).</summary>
    public int NVar { get; internal set; }
    /// <summary>Number of all positions.</summary>
@@ -76,21 +75,21 @@ public abstract class Simulation {
    protected ConjGradsSolver Solver { get; }
 
 
-   protected Simulation() {
-      Sim = this;
-   }
-   /// <summary>We must call this from the derived type's factory method.</summary>
-   /// <param name="sim"></param>
-   protected static void Initialize(Simulation sim) {                         R!.R("Started Sim.Initialize.");
-      int currGInx = 0;
-      (currGInx, sim.Patches) = sim.CreatePatches(currGInx);                  R.R("Created Patches.");
-      (currGInx, sim.Joints) = sim.CreateJoints(currGInx);                    R.R("Created Joints.");
-      (sim.NPos, sim.Pos) = sim.CreatePositions();                            R.R("Created Positions.");
-      var emts = sim.CreateElements();                                        R.R("Created Elements and calculated overlap integrals.");
-      var coms = sim.CreateCOMs(emts);                                        R.R("Created a list of Centers of Mass.");
-      sim.Elements = sim.CreateElementTree(coms, emts);                       R.R("Created the ElementTree.");
-      sim.UC = sim.CreateConstraints();                                       R.R("Created constraints.");
-      sim.NfPos = sim.CountFreePositions(sim.NPos, sim.NVar);                 R.R("Counted free positions.");
+   // protected Simulation() {
+   //    Sim = this;
+   // }
+
+   /// <summary>Create a Simulation ready to run.</summary>
+   /// <param name="patches">2D lists of nodes lying inside a block.</param>
+   /// <param name="joints">1D lists of nodes shared across blocks.</param>
+   /// <param name="pos">An unordered (listed in sequence) array of positions.</param>
+   /// <param name="emtTree">A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</param>
+   /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
+   /// <param name="nfPos">Number of positions with free variables.</param>
+   public Simulation(Dictionary<string,PseudoElement[][]> patches,
+   Dictionary<string,PseudoElement[]> joints, Vec2[] pos, KDTree<double,Element> emtTree,
+   Tnr uC, int nfPos) {
+      Patches = patches; Joints = joints; Pos = pos; EmtTree = emtTree; UC = uC; NfPos = nfPos;
    }
 
 
