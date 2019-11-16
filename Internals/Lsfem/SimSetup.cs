@@ -31,7 +31,7 @@ public class SimSetup {
    /// <summary>We must call this from the derived type's factory method.</summary>
    /// <param name="sim"></param>
    protected static void Initialize() {                                       R!.R("Started Sim.Initialize.");
-      var sim = new Simulation()
+      //var sim = new Simulation()
       int currGInx = 0;
       (currGInx, sim.Patches) = sim.CreatePatches(currGInx);                  R.R("Created Patches.");
       (currGInx, sim.Joints) = sim.CreateJoints(currGInx);                    R.R("Created Joints.");
@@ -44,7 +44,7 @@ public class SimSetup {
    }
 
 
-   public Simulation CreateSim() {                                            R!.R("Started Simulation creation.");
+   public Sim CreateSim() {                                            R!.R("Started Simulation creation.");
       
    }
 }

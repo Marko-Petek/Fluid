@@ -11,7 +11,7 @@ using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
 using V = Fluid.Internals.Voids<dbl,DA>;
 using Lst = List<int>;
 
-public abstract class NavStokesFlow : Simulation {
+public abstract class NavStokesFlow : Sim {
 
    /// <summary>Time step.</summary>
    public dbl Dt { get; protected set; }
@@ -23,7 +23,7 @@ public abstract class NavStokesFlow : Simulation {
    protected static void Initialize(NavStokesFlow flow, dbl dt, dbl re) {
       flow.Dt = dt;
       flow.Re = re;                                        R!.R("Initializing secondary tensors.");
-      Simulation.Initialize(flow);
+         Lsfem.Sim.Initialize(flow);
       (flow.A, flow.Fs) = flow.InitializeSecondaries();
    }
 

@@ -22,8 +22,8 @@ using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
 
 /// <summary>Most general aspects of LSFEM.</summary>
-public abstract class Simulation {
-   public static Simulation Sim { get; protected set; }
+public abstract class Sim {
+   public static Sim Simu { get; protected set; }
    /// <summary>An unordered (listed in sequence) array of positions.</summary>
    public Vec2[] Pos { get; protected set;}
    /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
@@ -86,7 +86,7 @@ public abstract class Simulation {
    /// <param name="emtTree">A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</param>
    /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
    /// <param name="nfPos">Number of positions with free variables.</param>
-   public Simulation(Dictionary<string,PseudoElement[][]> patches,
+   public Sim(Dictionary<string,PseudoElement[][]> patches,
    Dictionary<string,PseudoElement[]> joints, Vec2[] pos, KDTree<double,Element> emtTree,
    Tnr uC, int nfPos) {
       Patches = patches; Joints = joints; Pos = pos; EmtTree = emtTree; UC = uC; NfPos = nfPos;

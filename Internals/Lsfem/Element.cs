@@ -8,7 +8,7 @@ using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Lsfem.Simulation;
+using static Fluid.Internals.Lsfem.Sim;
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
