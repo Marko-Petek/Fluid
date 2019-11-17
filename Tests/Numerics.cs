@@ -131,7 +131,7 @@ namespace Fluid.Tests {
       }
 
       [Fact] public void KDTreeTrial() {
-         R.R("Starting KDTreeTrial.");
+         T.R("Starting KDTreeTrial.");
          Rng.SetRange(0,1);
          var pts = Enumerable.Range(0, 1_000).Select(
             i => new dbl[2] {Rng.Dbl, Rng.Dbl} ).ToArray();
@@ -141,7 +141,7 @@ namespace Fluid.Tests {
          for(int i = 0; i < 5; ++i) {
             dbl[] pt = nearPts[i].Item1;
             dbl val = nearPts[i].Item2;
-            R.R($"{i}: {pt[0]}, {pt[1]}, {val}", Internals.Development.Reporter.VerbositySettings.Obnoxious);
+            T.R($"{i}: {pt[0]}, {pt[1]}, {val}", Internals.Development.Reporter.VerbositySettings.Obnoxious);
          }
       }
    }

@@ -19,7 +19,7 @@ public class Entry {
          runner.OnExecutionComplete = OnExecutionComplete;
          runner.OnTestFailed = OnTestFailed;
          runner.OnTestSkipped = OnTestSkipped;
-         R.R("Discovering...");
+         T.R("Discovering...");
          Start(null);
          _Finished.WaitOne(-1);
          Thread.Sleep(10);
@@ -33,26 +33,26 @@ public class Entry {
 
    static void OnDiscoveryComplete(DiscoveryCompleteInfo info) {
       lock (_ConsoleLock)
-         R.R($"Running {info.TestCasesToRun} of {info.TestCasesDiscovered} tests...");
+         T.R($"Running {info.TestCasesToRun} of {info.TestCasesDiscovered} tests...");
    }
    static void OnExecutionComplete(ExecutionCompleteInfo info) {
       lock (_ConsoleLock)
-         R.R($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
+         T.R($"Finished: {info.TotalTests} tests in {Math.Round(info.ExecutionTime, 3)}s ({info.TestsFailed} failed, {info.TestsSkipped} skipped)");
       _Finished.Set();
    }
    static void OnTestFailed(TestFailedInfo info) {
       lock (_ConsoleLock) {
          Console.ForegroundColor = ConsoleColor.Red;
-         R.R($"[FAIL] {info.TestDisplayName}: {info.ExceptionMessage}");
+         T.R($"[FAIL] {info.TestDisplayName}: {info.ExceptionMessage}");
          if (info.ExceptionStackTrace != null)
-            R.R(info.ExceptionStackTrace);
+            T.R(info.ExceptionStackTrace);
          Console.ResetColor(); }
       _Result = 1;
    }
    static void OnTestSkipped(TestSkippedInfo info) {
       lock (_ConsoleLock) {
          Console.ForegroundColor = ConsoleColor.Yellow;
-         R.R($"[SKIP] {info.TestDisplayName}: {info.SkipReason}");
+         T.R($"[SKIP] {info.TestDisplayName}: {info.SkipReason}");
          Console.ResetColor(); }
    }
 }

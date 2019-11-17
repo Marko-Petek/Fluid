@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.Reporter;
 using static Fluid.Internals.Algorithms;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Development {
 
 /// <summary>Writes out messages to console or file as an aesthetic output table.</summary>
@@ -30,8 +30,8 @@ internal class ReportWriter : IDisposable {
    /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
    public ReportWriter(Reporter appReporter) {
       int buffer;
-      if(TB.Writer!.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.
-         buffer = TB.Writer.BufferWidth - 6 * 2 - 3;              // spaces, some slack
+      if(T.Writer!.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.
+         buffer = T.Writer.BufferWidth - 6 * 2 - 3;              // spaces, some slack
       else
          buffer = 36 + 60;
       int timeWidth = 5;
@@ -85,7 +85,7 @@ internal class ReportWriter : IDisposable {
       var formattedLines = FormatMessage(i);
       if((AppReporter.Output & OutputSettings.Console) == OutputSettings.Console) {
          foreach(var line in formattedLines)
-            TB.Writer!.WriteLine(line); }
+            T.Writer!.WriteLine(line); }
       if((AppReporter.Output & OutputSettings.File) == OutputSettings.File) {
          foreach(var line in formattedLines)
             FileWriter.WriteLine(line);

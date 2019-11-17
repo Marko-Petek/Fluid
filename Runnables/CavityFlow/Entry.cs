@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Diagnostics;
-
 using static Fluid.Internals.Toolbox;
-
-
 namespace Fluid.Runnables.CavityFlow {
+
    /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
 public static class Entry {
    public static int Point() {
@@ -22,45 +20,45 @@ public static class Entry {
                new double[] {-3.0 + col * (6.0/9), -3.0 + row * (6.0/9)}
             ).ToArray()
          ).ToArray();
-      FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(nodes), ".txt");
-      FileWriter.WriteLine(nodes);
+      T.FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(nodes), ".txt");
+      T.FileWriter.WriteLine(nodes);
       var nodesM =                                                                      // Only the mid 2 by 2 = 4 nodes on a regular lattice.
          nodes.Take(7).Skip(3).Select(col =>
             col.Take(7).Skip(3)
             .ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodesM, nameof(nodesM));
-      Rng.SetRange(-0.6, 0.6);                                                // Set RNG range.
+      T.FileWriter.WriteLine(nodesM, nameof(nodesM));
+      T.Rng.SetRange(-0.6, 0.6);                                                // Set RNG range.
       var nodesC =                                                                    // Only corners of elements.
          nodes.Where( (row, i) => i % 3 == 0 )
          .Select( row =>
             row.Where( (col, j) => j % 3 == 0 ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodesC, nameof(nodesC));
+      T.FileWriter.WriteLine(nodesC, nameof(nodesC));
       var transNodesCM =                                                            // C = element corner nodes (only nodes on corners of elements)
          nodesC.Take(3).Skip(1).Select( row =>                        // Pick only those nodes that we will be moving. Take 2 inner rows (3,6).
             row.Take(3).Skip(1).Select( col =>                      // Take 2 inner nodes from each row (3,6).
                col.Select( coord => coord + Rng.Dbl ).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodesCM, nameof(transNodesCM));
+      T.FileWriter.WriteLine(transNodesCM, nameof(transNodesCM));
    }
 
 
    /// <summary>Once transformed nodes have been created, generate array combinations appropriate for Mathematica plotting.</summary>
    public static void CreateDerivedData() {
-      FileReader.SetDirAndFile("Seminar/Mathematica", "transNodesCM", ".txt");
-      var transNodesCM = (double[][][]) FileReader.ReadArray<double>();
-      FileReader.SetFile("nodesC", ".txt");
-      var nodesC = (double[][][]) FileReader.ReadArray<double>();
+      T.FileReader.SetDirAndFile("Seminar/Mathematica", "transNodesCM", ".txt");
+      var transNodesCM = (double[][][]) T.FileReader.ReadArray<double>();
+     T.FileReader.SetFile("nodesC", ".txt");
+      var nodesC = (double[][][])T.FileReader.ReadArray<double>();
       var transNodesC1 =                                                            // Reassemble the rows (including static nodes).
          transNodesCM.Select( (row, i) =>                                              // Take the newly created array.
             new double[][] {nodesC[i + 1][0]}.Concat(row).Append(nodesC[i + 1][3]).ToArray()       // Attach a static node to the left and a static node to the right of each row.
          ).ToArray();
-      FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(transNodesC1), ".txt");        // Have to set dir for the first time.
-      FileWriter.WriteLine(transNodesC1);
+     T.FileWriter.SetDirAndFile("Seminar/Mathematica/", nameof(transNodesC1), ".txt");        // Have to set dir for the first time.
+     T.FileWriter.WriteLine(transNodesC1);
       var transNodesC = transNodesC1.Prepend(nodesC[0]).Append(nodesC[3]).ToArray();      // Reassemble the array (including filtered static rows).
-      FileWriter.WriteLine(transNodesC, nameof(transNodesC));
+     T.FileWriter.WriteLine(transNodesC, nameof(transNodesC));
       var transNodesCByElms = Enumerable.Range(0,3).Select( row =>                                // Groups of 4 corner nodes for each element.
          Enumerable.Range(0,3).Select( col =>
             new double[][] {
@@ -71,7 +69,7 @@ public static class Entry {
             }
          ).ToArray()
       ).ToArray();
-      FileWriter.WriteLine(transNodesCByElms, nameof(transNodesCByElms));
+     T.FileWriter.WriteLine(transNodesCByElms, nameof(transNodesCByElms));
       var transNodesByElms = transNodesCByElms.Select( row =>
          row.Select( elm =>
             new double[][][] {
@@ -82,7 +80,7 @@ public static class Entry {
             }
          ).ToArray()
       ).ToArray();
-      FileWriter.WriteLine(transNodesByElms, nameof(transNodesByElms));
+     T.FileWriter.WriteLine(transNodesByElms, nameof(transNodesByElms));
       var transNodes = Enumerable.Range(0,10).Select( row =>                  // Create an empty 10 by 10 array.
          Enumerable.Range(0,10).Select( col =>
             new double[2] {0.0, 0.0}
@@ -105,58 +103,58 @@ public static class Entry {
          }).ToArray()
       ).ToArray();
       transNodes[9][9] = transNodesByElms[2][2][3][3];                        // Assign the last corner element.
-      FileWriter.WriteLine(transNodes, nameof(transNodes));
+     T.FileWriter.WriteLine(transNodes, nameof(transNodes));
       var transNodesM = 
          transNodes.Where( (row, i) => i > 2 && i < 7)          // Take only middle nodes.
          .Select( row =>
             row.Where( (col, j) => j > 2 && j < 7)
             .ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodesM, nameof(transNodesM));
-      FileReader.SetFile("nodes", ".txt");
-      var nodes = (double[][][]) FileReader.ReadArray<double>();
+     T.FileWriter.WriteLine(transNodesM, nameof(transNodesM));
+     T.FileReader.SetFile("nodes", ".txt");
+      var nodes = (double[][][])T.FileReader.ReadArray<double>();
       var nodes3dF =
          nodes.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dF, nameof(nodes3dF));
+     T.FileWriter.WriteLine(nodes3dF, nameof(nodes3dF));
       var transNodes3dF =
          transNodes.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dF, nameof(transNodes3dF));
+     T.FileWriter.WriteLine(transNodes3dF, nameof(transNodes3dF));
       var nodes3dMF =
          nodes.Take(7).Skip(3).Select( row =>
             row.Take(7).Skip(3).Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dMF, nameof(nodes3dMF));
+     T.FileWriter.WriteLine(nodes3dMF, nameof(nodes3dMF));
       var nodes3dMT =
          nodes.Take(7).Skip(3).Select( row =>
             row.Take(7).Skip(3).Select( col =>
                col.Append(1.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dMT, nameof(nodes3dMT));
+     T.FileWriter.WriteLine(nodes3dMT, nameof(nodes3dMT));
       var transNodes3dMF =
          transNodesM.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dMF, nameof(transNodes3dMF));
+     T.FileWriter.WriteLine(transNodes3dMF, nameof(transNodes3dMF));
       var transNodes3dMT =
          transNodesM.Select( row =>
             row.Select( col =>
                col.Append(1.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dMT, nameof(transNodes3dMT));
+     T.FileWriter.WriteLine(transNodes3dMT, nameof(transNodes3dMT));
    }  
    /// <summary>First shape function.</summary>
    static double S1(params double[] refCoords) => 0.25*(1 - refCoords[0])*(1 - refCoords[1]);   // Epsilon, eta.

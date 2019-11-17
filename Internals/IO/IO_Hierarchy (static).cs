@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using static System.Char;
 
-using TB = Fluid.Internals.Toolbox;                  // For Toolbox.
+using static Fluid.Internals.Toolbox;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;

@@ -4,7 +4,7 @@ using System.Linq;
 using SCG = System.Collections.Generic;
 
 using Fluid.Internals.Numerics;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Collections {
    public class Tensor2<τ,α> : Tensor2<τ>,
       IEquatable<Tensor2<τ,α>>                                                        // So we can compare two SparseMats via Equals method.
@@ -89,8 +89,8 @@ namespace Fluid.Internals.Collections {
          /// <summary>Creates a SparseMat that is a sum of two operand SparseMats.</summary><param name="lMat">Left operand.</param><param name="rMat">Right operand.</param>
          public static Tensor2<τ,α> operator +
             (Tensor2<τ,α> lMat, Tensor2<τ,α> rMat) {
-               TB.Assert.AreEqual(lMat.Dim1, rMat.Dim1);                                         // Check that width and height of operands match.
-               TB.Assert.AreEqual(lMat.Height, rMat.Height);
+               T.Assert.AreEqual(lMat.Dim1, rMat.Dim1);                                         // Check that width and height of operands match.
+               T.Assert.AreEqual(lMat.Height, rMat.Height);
                var res = new Tensor2<τ,α>(rMat);
                foreach(var lMatKVPair in lMat) {
                   res[lMatKVPair.Key] = lMatKVPair.Value + rMat[lMatKVPair.Key]; }
@@ -98,7 +98,7 @@ namespace Fluid.Internals.Collections {
          }
          public static Tensor1<τ,α> operator *
             (Tensor2<τ,α> lMat, Tensor1<τ,α> rRow) {
-               TB.Assert.AreEqual(lMat.Dim1, rRow.Dim);                                 // Check that matrix and row can be multiplied.                                        
+               T.Assert.AreEqual(lMat.Dim1, rRow.Dim);                                 // Check that matrix and row can be multiplied.                                        
                var resultRow = new Tensor1<τ,α>(lMat.Dim1);           // lMat.Count = # of non-zero rows.
                τ sum;
                foreach(var lMatKVPair in lMat) {                                           // Go through each row in lMat. Rows that do not exist, create no entries in result row.
@@ -111,7 +111,7 @@ namespace Fluid.Internals.Collections {
          }
          public static Tensor1<τ,α> operator *
             (Tensor1<τ,α> lRow, Tensor2<τ,α> rMat) {
-               TB.Assert.AreEqual(rMat.Dim1, lRow.Dim);                                      // Check that matrix and row can be multiplied.
+               T.Assert.AreEqual(rMat.Dim1, lRow.Dim);                                      // Check that matrix and row can be multiplied.
                var resultRow = new Tensor1<τ,α>(rMat.Height, rMat.Dim1);
                foreach(var rMatKVPair in rMat)
                   if(lRow.TryGetValue(rMatKVPair.Key, out τ lRowVal)) {

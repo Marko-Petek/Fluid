@@ -9,7 +9,7 @@ using Fluid.Internals.Numerics;
 using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
 using Fluid.TestRef;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 
 namespace Fluid.Tests {
@@ -18,8 +18,8 @@ namespace Fluid.Tests {
    public class InputOutput {
 
       [Fact] public void ReadAndParseArray() {
-          TB.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
-          var inputArray = (double[]) TB.FileReader.ReadArray<double>();
+          T.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
+          var inputArray = (double[]) T.FileReader.ReadArray<double>();
           var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
           Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
       }
@@ -37,13 +37,13 @@ namespace Fluid.Tests {
          var node9 = new ValueNode<int>(node8, 5);
          var node10 = new ValueNode<int>(node8, 2);
          var hier = new Hierarchy<int>(node4);
-         // TB.FileWriter.SetDirAndFile("Tests", nameof(hier), ".txt");
-         // TB.FileWriter.WriteLine(hier);
+         // T.FileWriter.SetDirAndFile("Tests", nameof(hier), ".txt");
+         // T.FileWriter.WriteLine(hier);
          hier.MakeTopNode(node5);
-         // TB.FileWriter.WriteLine(hier);
+         // T.FileWriter.WriteLine(hier);
          hier.MakeTopNode(node4);
-         // TB.FileWriter.WriteLine(hier);
-         // TB.FileWriter.Flush();
+         // T.FileWriter.WriteLine(hier);
+         // T.FileWriter.Flush();
          var strw = new StringWriter();
          IO.Write(hier, strw);
          Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
@@ -51,8 +51,8 @@ namespace Fluid.Tests {
 
       /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
       [Fact] public void HierarchyInput() {
-         TB.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
-         var hierWriteBack = TB.FileReader.ReadHierarchy<double>();
+         T.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
+         var hierWriteBack = T.FileReader.ReadHierarchy<double>();
          var strw = new StringWriter();
          IO.Write(hierWriteBack, strw);
          Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
@@ -69,8 +69,8 @@ namespace Fluid.Tests {
 
       /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
       [Fact] public void HierarchyInput2() {
-         TB.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
-         var hierWriteBack = TB.FileReader.ReadHierarchy<double>();
+         T.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
+         var hierWriteBack = T.FileReader.ReadHierarchy<double>();
          (var success, var array) = hierWriteBack.ConvertToArray();
          Assert.True(success);
          if(success) {

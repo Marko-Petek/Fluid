@@ -2,7 +2,7 @@
 using System;
 using Fluid.Internals;
 using Fluid.Internals.Collections;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 
@@ -69,7 +69,7 @@ namespace Fluid.Internals.Numerics {
          int iteration = 0;
          double maxResSqr = maxRes * maxRes;
          var r = new Tnr[2];                                   // rank 2
-         // TB.DebugTag = "BeforeNullContraction";
+         // T.DebugTag = "BeforeNullContraction";
          // var interRes = A.Contract(x0, 3, 1);
          var Ax0 = Tnr.Contract(A, x0, 3, 1).SelfContract(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
          var d0 = b - Ax0;
@@ -90,7 +90,7 @@ namespace Fluid.Internals.Numerics {
                rr[i] = Tnr.Contract(r[i], r[i], 1, 1).SelfContractR2();         // Scalar.
                if (rr[i] < maxResSqr)
                   return x[i];
-               // TB.DebugTag = "OverflowContraction";
+               // T.DebugTag = "OverflowContraction";
                // var AdDebug = A.Contract(d[i], 3, 1);
                Ad = Tnr.Contract(A, d[i], 3, 1).SelfContract(3, 4);         // Rank 2.
                var dAd = Tnr.Contract(d[i], Ad, 1, 1).SelfContractR2();         // Scalar.

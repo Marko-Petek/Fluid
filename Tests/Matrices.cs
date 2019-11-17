@@ -4,7 +4,7 @@ using System.Threading;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.TestRef;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    using dbl = Double;

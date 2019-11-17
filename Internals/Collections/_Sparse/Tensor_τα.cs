@@ -407,8 +407,8 @@ where α : IArithmetic<τ>, new() {
    int inclStopRank,
    Func<int, Tensor<τ,α>, Tensor<τ,α>, (int, Tensor<τ,α>, Tensor<τ,α>)> onStopRank) {     // take from current, return from below.
       Assume.True(inclStopRank > 1, () => {
-         S!.A("InclusiveStopRank has to be at least 2, ");
-         return S.Y("because method deals exclusively with tensors."); } );
+         T.S.A("InclusiveStopRank has to be at least 2, ");
+         return T.S.Y("because method deals exclusively with tensors."); } );
       throw new NotImplementedException();
       //Descend(leader.Rank, 0, leader, follower);                                          // TODO: Continue Recursion.
 
@@ -457,9 +457,9 @@ where α : IArithmetic<τ>, new() {
    // Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
    // Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
    //    Assume.True(inclStopRank > 1, () => {
-   //       S.A("InclusiveStopRank has to be at least 2, ");
-   //       S.A("because method deals exclusively with tensors.");
-   //       return S.Y(); } );
+   //      T.S.A("InclusiveStopRank has to be at least 2, ");
+   //      T.S.A("because method deals exclusively with tensors.");
+   //       returnT.S.Y(); } );
    //    Recurse(recurseSrc, recurseTgt);
 
    //    ρ Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {                        // ρ is type of info passed from the deeper level
@@ -491,9 +491,9 @@ where α : IArithmetic<τ>, new() {
    //    Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
    // {
    //    Assume.True(inclStopRank > 1, () => {
-   //       S.A("InclusiveStopRank has to be at least 2, ");
-   //       S.A("because method deals exclusively with tensors.");
-   //       return S.Y(); } );
+   //      T.S.A("InclusiveStopRank has to be at least 2, ");
+   //      T.S.A("because method deals exclusively with tensors.");
+   //       returnT.S.Y(); } );
    //    Recurse(recurseSrc, recurseTgt);
 
    //    void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
@@ -748,9 +748,9 @@ where α : IArithmetic<τ>, new() {
    /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
    public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
       Assume.True(elimRank < Rank && elimRank > -1, () => {
-         S!.A("You can only eliminate a non-negative ");
-         S.A("rank greater than or equal to top rank.");
-         return S.Y(); } );
+         T.S.A("You can only eliminate a non-negative ");
+        T.S.A("rank greater than or equal to top rank.");
+         return T.S.Y(); } );
       var newStructureL = Structure.Take(elimRank);
       var newStructureR = Structure.Skip(elimRank + 1);
       var newStructure = newStructureL.Concat(newStructureR).ToList();    // Created a new structure. Assign it to new host tensor.

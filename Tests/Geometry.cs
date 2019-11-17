@@ -10,7 +10,7 @@ using Fluid.Internals.Numerics;
 using Fluid.Internals.Lsfem;
 using Fluid.TestRef;
 //using Fluid.Tests.Mocks;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Tests {
    public class Geometry {
@@ -72,7 +72,7 @@ namespace Fluid.Tests {
       // [Fact] public void StructBehavior() {              // Behaves well.
       //    Variable var = new Variable(1, true);
       //    var.Val = 2;
-      //    TB.Reporter.Write($"var = {var.ToString()}");
+      //    T.Reporter.Write($"var = {var.ToString()}");
       // }
 
       // [Fact] public void StructInArrayBehavior() {       // Behaves well.

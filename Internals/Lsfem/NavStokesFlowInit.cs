@@ -53,8 +53,8 @@ public class NavStokesFlowInit : ISimInit {
       string dir = @"Seminar/Mathematica";
       string name = @"nodesC";
       string ext = @".txt";
-      FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
-      var hierarchy = FileReader.ReadHierarchy<dbl>();
+     T.FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
+      var hierarchy =T.FileReader.ReadHierarchy<dbl>();
       var convRes = hierarchy.ConvertToArray();
       return convRes.success switch {
          true => convRes.array switch {

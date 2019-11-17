@@ -4,7 +4,7 @@ using SCG = System.Collections.Generic;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Lsfem;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
@@ -31,13 +31,13 @@ namespace Fluid.ChannelFlow {
 
 
       /// <summary>Create a channel flow to solve.</summary><param name="peakInletVelocity">Peak velocity of fluid at inlet. Profile is parabolic, so peak velocity is situated in the middle.</param><param name="dt">Time step.</param>
-      public ChannelCylinderSystem(dbl peakInletVelocity, dbl dt, dbl viscosity) {         TB.Reporter.Write($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.", Verbose);
-         PeakInletVelocity = peakInletVelocity;                                           TB.Reporter.Write($"Integration step dt = {dt}.", Verbose);
+      public ChannelCylinderSystem(dbl peakInletVelocity, dbl dt, dbl viscosity) {         T.Reporter.Write($"Creating ChannelFlow with peak inlet velocity {peakInletVelocity} and viscosity {viscosity}.", Verbose);
+         PeakInletVelocity = peakInletVelocity;                                           T.Reporter.Write($"Integration step dt = {dt}.", Verbose);
          Dt = dt;
-         Viscosity = viscosity;                                                           TB.Reporter.Write("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
+         Viscosity = viscosity;                                                           T.Reporter.Write("Passing freshly created ChannelFlow to ChannelMesh'es constructor.", Obnoxious);
          Mesh = new ChannelMesh(this);                                             // Initial setup is now already present on _nodes list.
-         Width = Mesh.Width;                                                       TB.Reporter.Write("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
-         SolVec = Mesh.NodesArrayToSparseRow();                                  /* Take 0 field as initial solution. */  TB.Reporter.Write("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
+         Width = Mesh.Width;                                                       T.Reporter.Write("ChannelMesh constructed. Boundary conditions applied to each SubMesh. Merging all SubMeshes into a single SparseRow.", Verbose);
+         SolVec = Mesh.NodesArrayToSparseRow();                                  /* Take 0 field as initial solution. */  T.Reporter.Write("Creating a swap matrix which will specify which rows have to be swapped to bring boundary nodes towards end of SparseRow which we will be solving.", Verbose);
          SwapDict = CreateSwapDict();
       }
       // Reorder PreviousSolution
@@ -50,24 +50,24 @@ namespace Fluid.ChannelFlow {
       public void SolveNextAndAddToNodeArray() {
          throw new NotImplementedException();
 #if false
-         TB.Reporter.Write("Assembling stiffness matrix from node data.");
-         var stfsMat = Mesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ TB.Reporter.Write("Assembling forcing vector from node data.");
-         var frcgVec = Mesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ TB.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
+         T.Reporter.Write("Assembling stiffness matrix from node data.");
+         var stfsMat = Mesh.AssembleSfsMatrix(this);                                /* Acquire stiffness matrix from existing values. */ T.Reporter.Write("Assembling forcing vector from node data.");
+         var frcgVec = Mesh.AssembleFcgVector(this);                                    /* Acquire forcing vector. */ T.Reporter.Write("Applying column swaps to stiffnes matrix to bring constrained nodes to bottom.");
          stfsMat.ApplyColSwaps(SwapDict);                                                      // Swap columns so that constrained variables end up at right side.
-         int stfsMatW = stfsMat.Dim1; TB.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
+         int stfsMatW = stfsMat.Dim1; T.Reporter.Write("Applying column swaps to forcing vector to bring constrained nodes to bottom.");
          frcgVec.ApplySwaps(SwapDict);                                                           // Swap elements so that constrained elements end up at end.
          int frcgVecW = frcgVec.Width;
-         int nConts = Mesh.NConstraints; TB.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
-         var stfsMatRight = stfsMat.SplitAtCol(stfsMatW - nConts);     /* Split stiffness matrix vertically. Remember right part. */ TB.Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
-         stfsMat.SplitAtRow(stfsMatW - nConts);                                /* Further split stiffness matrix horizontally. */ TB.Reporter.Write("Applying swaps to solution SparseRow.");
-         SolVec.ApplySwaps(SwapDict);                                                                /* Apply swaps, do not forget to unswap after done. */ TB.Reporter.Write("Splitting previous solution SparseRow.");
-         var solVecLower = SolVec.SplitAt(stfsMatW - nConts);                      /* Split also previos solution vector. Remeber lower part. */ TB.Reporter.Write("Splitting forcing vector.");
-         frcgVec.SplitAt(stfsMatW - nConts);                                     /* Also split forcing vector. */ TB.Reporter.Write("Constructing modified forcing vector.");
-         frcgVec = frcgVec - stfsMatRight * solVecLower;                           /* Construct modified forcing vector which we will need to solve linear system. */ TB.Reporter.Write("Initiating ConjugateGradients solver.");
-         var solver = new ConjGradsSolver(stfsMat, frcgVec); TB.Reporter.Write("Solving.");
-         SolVec = solver.Solve(SolVec, 0.0001); TB.Reporter.Write("Merging solution with previously split values.");
-         SolVec.MergeWith(solVecLower);                                                              /* 1) Merge solution with solutionLower. */ TB.Reporter.Write("Unswapping solution.");
-         SolVec.ApplySwaps(SwapDict);                                                                /* 2) Unswap solution. */ TB.Reporter.Write("Adding changes to node array on channel mesh.");
+         int nConts = Mesh.NConstraints; T.Reporter.Write("Splitting stiffness matrix along constrained nodes column.");
+         var stfsMatRight = stfsMat.SplitAtCol(stfsMatW - nConts);     /* Split stiffness matrix vertically. Remember right part. */ T.Reporter.Write("Splitting stiffness matrix along connstrained nodes row.");
+         stfsMat.SplitAtRow(stfsMatW - nConts);                                /* Further split stiffness matrix horizontally. */ T.Reporter.Write("Applying swaps to solution SparseRow.");
+         SolVec.ApplySwaps(SwapDict);                                                                /* Apply swaps, do not forget to unswap after done. */ T.Reporter.Write("Splitting previous solution SparseRow.");
+         var solVecLower = SolVec.SplitAt(stfsMatW - nConts);                      /* Split also previos solution vector. Remeber lower part. */ T.Reporter.Write("Splitting forcing vector.");
+         frcgVec.SplitAt(stfsMatW - nConts);                                     /* Also split forcing vector. */ T.Reporter.Write("Constructing modified forcing vector.");
+         frcgVec = frcgVec - stfsMatRight * solVecLower;                           /* Construct modified forcing vector which we will need to solve linear system. */ T.Reporter.Write("Initiating ConjugateGradients solver.");
+         var solver = new ConjGradsSolver(stfsMat, frcgVec); T.Reporter.Write("Solving.");
+         SolVec = solver.Solve(SolVec, 0.0001); T.Reporter.Write("Merging solution with previously split values.");
+         SolVec.MergeWith(solVecLower);                                                              /* 1) Merge solution with solutionLower. */ T.Reporter.Write("Unswapping solution.");
+         SolVec.ApplySwaps(SwapDict);                                                                /* 2) Unswap solution. */ T.Reporter.Write("Adding changes to node array on channel mesh.");
          SolVec.UpdateNodeArray(Mesh.G);                                                    // 3) Add changes to Node[] array on _channelMesh.
 
 #endif

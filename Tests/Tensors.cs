@@ -7,7 +7,7 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals;
 using System.Collections.Generic;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using Fluid.TestRef;
 using static Fluid.Tests.Utils;
 using dbl = System.Double;

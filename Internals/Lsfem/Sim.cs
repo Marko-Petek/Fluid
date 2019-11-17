@@ -87,16 +87,16 @@ public abstract class Sim {
    /// <param name="nfPos">Number of positions with free variables.</param>
    public Sim(ISimGeometryInit simInit) {                                    R!.R("Started Sim Initialization.");
       int currGInx = 0;
-      (currGInx, Patches) = simInit.CreatePatches();                 R.R("Created Patches.");
-      Joints = simInit.CreateJoints(currGInx);                       R.R("Created Joints.");
-      (NPos, Pos) = CreatePositions();                               R.R("Created Positions.");
-      var emts = simInit.CreateElements();                           R.R("Created Elements and calculated overlap integrals.");
-      var coms = CreateCOMs(emts);                                   R.R("Created a list of Centers of Mass.");
-      EmtTree = CreateElementTree(coms, emts);                       R.R("Created the ElementTree.");
-      UC = simInit.CreateConstraints();                              R.R("Created constraints.");
-      NfPos = CountFreePositions(NPos, NVar);                        R.R("Counted free positions.");
-      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);               R.R("Created the free variables tensor.");      // Creates free vars as zeroes.
-      (A, Fs) = simInit.InitializeSecondaries(NPos, NfPos, NVar);    R.R("Initialized secondary tensors.");
+      (currGInx, Patches) = simInit.CreatePatches();                 T.R("Created Patches.");
+      Joints = simInit.CreateJoints(currGInx);                       T.R("Created Joints.");
+      (NPos, Pos) = CreatePositions();                               T.R("Created Positions.");
+      var emts = simInit.CreateElements();                           T.R("Created Elements and calculated overlap integrals.");
+      var coms = CreateCOMs(emts);                                   T.R("Created a list of Centers of Mass.");
+      EmtTree = CreateElementTree(coms, emts);                       T.R("Created the ElementTree.");
+      UC = simInit.CreateConstraints();                              T.R("Created constraints.");
+      NfPos = CountFreePositions(NPos, NVar);                        T.R("Counted free positions.");
+      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);               T.R("Created the free variables tensor.");      // Creates free vars as zeroes.
+      (A, Fs) = simInit.InitializeSecondaries(NPos, NfPos, NVar);    T.R("Initialized secondary tensors.");
    }
 
 
@@ -188,7 +188,7 @@ public abstract class Sim {
                   Vec fs_i = f_si[Voids.Vec, s];
                   Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
                   foreach(var j in allJs)
-                     vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
+                     vecF_j[j] += emt.Trip[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
                   for(int q = 0; q < 3; ++q) {
                      Tnr a_ik = A[Voids.Tnr, b,q,s];                                   // For second term in primary forcing.
                      Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
@@ -198,7 +198,7 @@ public abstract class Sim {
                            Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
                         var kcs = grpsK.Where( grp => grp.Key == true ).
                            Single().ToArray();
-                        dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
+                        dbl coefQ = emt.Quad[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
                         foreach(var jf in jfs) {
                            Vec aa_k = aa_jk[Voids.Vec,jf];
                            foreach(int k in kfs)

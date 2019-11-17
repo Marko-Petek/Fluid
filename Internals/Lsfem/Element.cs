@@ -27,9 +27,9 @@ public class Element {
    /// <summary>12 element nodes. Indexing starts in lower left corner and proceeds CCW.</summary>
    public int[] P { get; }
    /// <summary>Quadruple overlap integrals ---- Rank 4 ---- ((α,p), (β,q), (γ,r), (δ,s)) ----  (36,36,36,36).</summary>
-   public SymTnr Q { get; internal set; }
+   public SymTnr Quad { get; internal set; }
    /// <summary>Triple overlap integrals ---- Rank 3 ---- ((α,p), (γ,q), (η,s)) ---- (36,36,36).</summary>
-   public SymTnr T { get; internal set; }
+   public SymTnr Trip { get; internal set; }
    /// <summary>A 3x3 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
    public FTnr InvJ { get; private set; }
    /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
@@ -49,9 +49,9 @@ public class Element {
       var interm = CalcDetJ();
       DetJ = interm.detJ;
       InvJ = CalcInvJ(interm);
-      var tnrFactor = FTnr.Contract(InvJ, ϕ, 2, 2);                        R!.R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
-      Q = CalcQuadOverlaps(tnrFactor);                                     R.R($"Calculating Triple Overlaps for element {Pos(0).ToString()}");
-      T = CalcTripOverlaps(tnrFactor);
+      var tnrFactor = FTnr.Contract(InvJ, ϕ, 2, 2);                        T.R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
+      Quad = CalcQuadOverlaps(tnrFactor);                                     T.R($"Calculating Triple Overlaps for element {Pos(0).ToString()}");
+      Trip = CalcTripOverlaps(tnrFactor);
       MA = new dbl[2][] {  new dbl[2] {Pos(9).X, Pos(3).X},
                            new dbl[2] {Pos(9).Y, Pos(3).Y}  };
       MB = new dbl[2][] {  new dbl[2] {Pos(6).X, Pos(0).X},
