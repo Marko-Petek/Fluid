@@ -85,18 +85,18 @@ public abstract class Sim {
    /// <param name="emtTree">A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</param>
    /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
    /// <param name="nfPos">Number of positions with free variables.</param>
-   public Sim(ISimGeometryInit simInit) {                                    R!.R("Started Sim Initialization.");
+   public Sim(ISimGeometryInit simInit) {                               R("Started Sim Initialization.");
       int currGInx = 0;
-      (currGInx, Patches) = simInit.CreatePatches();                 T.R("Created Patches.");
-      Joints = simInit.CreateJoints(currGInx);                       T.R("Created Joints.");
-      (NPos, Pos) = CreatePositions();                               T.R("Created Positions.");
-      var emts = simInit.CreateElements();                           T.R("Created Elements and calculated overlap integrals.");
-      var coms = CreateCOMs(emts);                                   T.R("Created a list of Centers of Mass.");
-      EmtTree = CreateElementTree(coms, emts);                       T.R("Created the ElementTree.");
-      UC = simInit.CreateConstraints();                              T.R("Created constraints.");
-      NfPos = CountFreePositions(NPos, NVar);                        T.R("Counted free positions.");
-      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);               T.R("Created the free variables tensor.");      // Creates free vars as zeroes.
-      (A, Fs) = simInit.InitializeSecondaries(NPos, NfPos, NVar);    T.R("Initialized secondary tensors.");
+      (currGInx, Patches) = simInit.CreatePatches();                    R("Created Patches.");
+      Joints = simInit.CreateJoints(currGInx);                          R("Created Joints.");
+      (NPos, Pos) = CreatePositions();                                  R("Created Positions.");
+      var emts = simInit.CreateElements();                              R("Created Elements and calculated overlap integrals.");
+      var coms = CreateCOMs(emts);                                      R("Created a list of Centers of Mass.");
+      EmtTree = CreateElementTree(coms, emts);                          R("Created the ElementTree.");
+      UC = simInit.CreateConstraints();                                 R("Created constraints.");
+      NfPos = CountFreePositions(NPos, NVar);                           R("Counted free positions.");
+      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);                  R("Created the free variables tensor.");      // Creates free vars as zeroes.
+      (A, Fs) = simInit.InitializeSecondaries(NPos, NfPos, NVar);       R("Initialized secondary tensors.");
    }
 
 
@@ -110,7 +110,7 @@ public abstract class Sim {
       int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
          Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
       var posList = new My.List<Vec2>(approxNPos);
-      int gInx = 0;                                                        R!.R("Adding positions to Mesh.");
+      int gInx = 0;                                                        R("Adding positions to Mesh.");
       foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
          foreach(var pseudoRow in patch) {
             foreach(var pseudoEmt in pseudoRow) {
@@ -144,7 +144,7 @@ public abstract class Sim {
       return coms;
    }
    /// <summary>Elements are found in InternalNodeArray. Do not forget to trim excess space in array for proper operation of KDTree.</summary>
-   KDTree<double,Element> CreateElementTree(dbl[][] coms, Element[] emts) {               R!.R("Creating KDTree of Elements vs. CoMs positions.");
+   KDTree<double,Element> CreateElementTree(dbl[][] coms, Element[] emts) {               R("Creating KDTree of Elements vs. CoMs positions.");
       var emtTree = new KDTree<double,Element>(2, coms, emts,
          (r1,r2) => Sqrt(Pow(r2[0]-r1[0], 2.0) + Pow(r2[1]-r1[1], 2.0)));
       return emtTree;
@@ -188,7 +188,7 @@ public abstract class Sim {
                   Vec fs_i = f_si[Voids.Vec, s];
                   Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
                   foreach(var j in allJs)
-                     vecF_j[j] += emt.Trip[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
+                     vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
                   for(int q = 0; q < 3; ++q) {
                      Tnr a_ik = A[Voids.Tnr, b,q,s];                                   // For second term in primary forcing.
                      Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
@@ -198,7 +198,7 @@ public abstract class Sim {
                            Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
                         var kcs = grpsK.Where( grp => grp.Key == true ).
                            Single().ToArray();
-                        dbl coefQ = emt.Quad[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
+                        dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
                         foreach(var jf in jfs) {
                            Vec aa_k = aa_jk[Voids.Vec,jf];
                            foreach(int k in kfs)

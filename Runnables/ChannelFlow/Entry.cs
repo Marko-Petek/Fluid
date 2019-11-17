@@ -10,7 +10,7 @@ using static Fluid.Internals.Toolbox;
 namespace Fluid.Runnables.ChannelFlow {    
 public static class Entry {
    static int Point() {
-      T.R("Writing solution to file.");
+      R("Writing solution to file.");
       T.FileWriter.SetDirAndFile("ChannelFlow/Results", "solution", ".txt");
       return 0;
    }

@@ -24,11 +24,11 @@ class Program {
             "CavityFlow" => CavityFlow.Entry.Point(),
             _ => -1 }; }
       catch(Exception exc) {
-         T.R($"Exception occured: {exc.Message}");
-         T.R($"Stack trace:{exc.StackTrace}");
+         R($"Exception occured: {exc.Message}");
+         R($"Stack trace:{exc.StackTrace}");
          throw exc; }
       finally {
-         T.R("Exiting application.");
+         R("Exiting application.");
          T.FileWriter.Flush(); }
    }
 }

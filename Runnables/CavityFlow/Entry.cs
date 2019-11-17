@@ -38,7 +38,7 @@ public static class Entry {
       var transNodesCM =                                                            // C = element corner nodes (only nodes on corners of elements)
          nodesC.Take(3).Skip(1).Select( row =>                        // Pick only those nodes that we will be moving. Take 2 inner rows (3,6).
             row.Take(3).Skip(1).Select( col =>                      // Take 2 inner nodes from each row (3,6).
-               col.Select( coord => coord + Rng.Dbl ).ToArray()
+               col.Select( coord => coord + T.Rng.Dbl ).ToArray()
             ).ToArray()
          ).ToArray();
       T.FileWriter.WriteLine(transNodesCM, nameof(transNodesCM));

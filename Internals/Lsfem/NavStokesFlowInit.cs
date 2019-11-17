@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Fluid.Internals.Numerics;
@@ -23,7 +24,7 @@ public class NavStokesFlowInit : ISimInit {
    dbl [][][] OrdPos { get; set; }
 
    public NavStokesFlowInit() {
-      OrdPos = ReadPos();              R!.R("Read element corner positions from file.");
+      OrdPos = ReadPos();              R("Read element corner positions from file.");
    }
 
 

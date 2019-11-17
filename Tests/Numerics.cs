@@ -131,17 +131,17 @@ namespace Fluid.Tests {
       }
 
       [Fact] public void KDTreeTrial() {
-         T.R("Starting KDTreeTrial.");
-         Rng.SetRange(0,1);
+         R("Starting KDTreeTrial.");
+         T.Rng.SetRange(0,1);
          var pts = Enumerable.Range(0, 1_000).Select(
-            i => new dbl[2] {Rng.Dbl, Rng.Dbl} ).ToArray();
-         var vals = Enumerable.Range(0, 1_000).Select( i => Rng.Dbl ).ToArray();
+            i => new dbl[2] {T.Rng.Dbl, T.Rng.Dbl} ).ToArray();
+         var vals = Enumerable.Range(0, 1_000).Select( i => T.Rng.Dbl ).ToArray();
          var kdTree = new KDTree<dbl,dbl>(2, pts, vals, (r1,r2) => Sqrt( Pow(r2[0]-r1[0], 2) + Pow(r2[1]-r1[1], 2) ));
          var nearPts = kdTree.NearestNeighbors(new dbl[] {0.32, 0.21}, 5);
          for(int i = 0; i < 5; ++i) {
             dbl[] pt = nearPts[i].Item1;
             dbl val = nearPts[i].Item2;
-            T.R($"{i}: {pt[0]}, {pt[1]}, {val}", Internals.Development.Reporter.VerbositySettings.Obnoxious);
+            R($"{i}: {pt[0]}, {pt[1]}, {val}", Internals.Development.Reporter.VerbositySettings.Obnoxious);
          }
       }
    }

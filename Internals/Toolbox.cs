@@ -12,7 +12,12 @@ using Fluid.Internals.Text;
 using static Fluid.Internals.Development.Reporter;
 namespace Fluid.Internals {
 public class Toolbox {
+   /// <summary>The default toolbox.</summary>
    public static Toolbox T { get; set; }
+   /// <summary>Shortcut to Report method.</summary>
+   /// <param name="s">Text to report.</param>
+   public static void R(string s, VerbositySettings verbosity = VerbositySettings.Moderate)
+      => T.Reporter.R(s, verbosity);
    static object _locker = new object();
    public static string DebugTag = "";
 
@@ -25,7 +30,6 @@ public class Toolbox {
       get { lock(_locker) return _Reporter; }
       private set {  lock(_locker) _Reporter = value; }
    }
-   public void R(string s) => Reporter.R(s);
    public RNG Rng { get; set; }
    public Stringer S { get; set; }
 
