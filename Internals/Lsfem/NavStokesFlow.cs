@@ -19,38 +19,15 @@ public abstract class NavStokesFlow : Sim {
    public dbl Re { get; protected set; }
 
 
-   protected NavStokesFlow() : base() { }
-   protected static void Initialize(NavStokesFlow flow, dbl dt, dbl re) {
-      flow.Dt = dt;
-      flow.Re = re;                                        R!.R("Initializing secondary tensors.");
-         Lsfem.Sim.Initialize(flow);
-      (flow.A, flow.Fs) = flow.InitializeSecondaries();
+   protected NavStokesFlow(ISimGeometryInit simInit, dbl dt, dbl re) : base(simInit) {
+      Dt = dt;
+      Re = re;
    }
 
 
-   /// <summary>We have to initialize secondary tensors with zeros due to the nature of the optimized algorithm in AdvanceDynamics. It presupposes the tensors being assigned to already exist.</summary>
-   private (Tnr initA, Tnr initFs) InitializeSecondaries() {                                // TODO: Fix Tensor so that this is unnecessary.
-      var a_bqsik = new Tnr(new Lst{NPos,3,3,NVar,NVar}, NfPos);            // Initialize a_bqsik. 5th rank tensor. It will be returned.
-      for(int b = 0; b < NPos; ++b) {
-         var a_qsik = new Tnr(a_bqsik, 3);
-         a_bqsik[V.Tnr, b] = a_qsik;
-         for(int q = 0; q < 3; ++q) {
-            var a_sik = new Tnr(a_qsik, 3);
-            a_qsik[V.Tnr, q] = a_sik;
-            for(int s = 0; s < 3; ++s) {
-               var a_ik = new Tnr(a_sik, 3);
-               a_sik[V.Tnr, s] = a_ik; } } }
-      var fs_hsi = new Tnr(new Lst{NPos,3,NVar}, NPos);                   // Initialize fs_hsi, 3rd rank tensor.
-      for(int h = 0; h < NPos; ++h) {
-         var fs_si = new Tnr(fs_hsi, 3);
-         fs_hsi[V.Tnr, h] = fs_si;
-         for(int s = 0; s < 3; ++s) {
-            var fs_i = new Vec(fs_si, 2);
-            fs_si[V.Vec, s] = fs_i; } }
-      return (a_bqsik, fs_hsi);
-   }
-   /// <summary>Construct new A and Fs for the next time step. Assuming no external volume forces.</summary>
-   protected override void UpdateDynamicsAndForcing() {
+   
+   /// <summary>Modify A and Fs values for the next time step. Assuming no external volume forces.</summary>
+   protected override (Tnr modA, Tnr modFs) AdvanceSecondaries(Tnr a, Tnr fs) {
       var positions = Pos;
       dbl dt = Dt;
       dbl re = Re;
@@ -61,7 +38,7 @@ public abstract class NavStokesFlow : Sim {
                p = u_j[2],
                ω = u_j[3],
                invDt = 1/dt;
-         Tnr a_qsik = A[V.Tnr, b];
+         Tnr a_qsik = a[V.Tnr, b];
          Tnr a_0sik = a_qsik[V.Tnr, 0];                                // A0
          Tnr a_00ik = a_0sik[V.Tnr, 0];                                   // A00
          a_00ik[1,0] = invDt;  a_00ik[2,1] = invDt;  a_00ik[3,3] = 1;
@@ -78,7 +55,7 @@ public abstract class NavStokesFlow : Sim {
          Tnr a_20ik = a_2sik[V.Tnr, 0];                                   // A20
          a_20ik[0,1] = 1;  a_20ik[1,0] = v;  a_20ik[1,3] = 0.5*re;
          a_20ik[2,1] = v;  a_20ik[2,2] = 1;  a_20ik[3,0] = 1;
-         Tnr fs_si = Fs[V.Tnr, b];
+         Tnr fs_si = fs[V.Tnr, b];
          Vec fs_0i = fs_si[V.Vec, 0];
          fs_0i[1] = u/dt;
          fs_0i[2] = v/dt;
@@ -89,6 +66,7 @@ public abstract class NavStokesFlow : Sim {
          fs_2i[1] = -0.5*ω/re;
          fs_2i[2] = -0.5*p;
       }
+      return (a, fs);
    }
 }
 }

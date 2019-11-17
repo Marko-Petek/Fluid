@@ -12,7 +12,11 @@ namespace Fluid.Internals.Lsfem {
    using VecLst = My.List<Vec2>;
    using PE = PseudoElement;
 
-public interface ISimInit {
-   (Tnr initA, Tnr initFs) InitializeSecondaries(int nPos, int nfPos, int nVar);
+public interface INavStokesSim {
+   /// <summary>Time step.</summary>
+   dbl Dt { get; protected set; }
+   /// <summary>Reynolds number.</summary>
+   dbl Re { get; protected set; }
 }
+   
 }
