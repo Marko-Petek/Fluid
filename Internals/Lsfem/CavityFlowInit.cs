@@ -9,6 +9,7 @@ using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 using Supercluster.KDTree;
+using System.IO;
 
 namespace Fluid.Internals.Lsfem {
 using SymTnr = SymTensor<dbl,DA>;
@@ -18,7 +19,27 @@ using V = Voids<dbl,DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
-public class CavityFlowInit : NavStokesFlowInit {
+public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
+   public dbl[][][] OrdPos { get; }
+
+   public CavityFlowInit() : base() {
+      OrdPos = ReadPos();
+   }
+
+   dbl[][][] ReadPos() {
+      string dir = @"Seminar/Mathematica";
+      string name = @"nodesC";
+      string ext = @".txt";
+     T.FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
+      var hierarchy =T.FileReader.ReadHierarchy<dbl>();
+      var convRes = hierarchy.ConvertToArray();
+      return convRes.success switch {
+         true => convRes.array switch {
+            dbl[][][] pos => pos,
+            _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
+         _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
+   }
+
    public (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches() {
       int currGInx = 0;
       var pEmts = new PE[3][];                                                               // Main patch.

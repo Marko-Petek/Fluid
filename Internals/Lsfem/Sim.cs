@@ -23,6 +23,8 @@ using PE = PseudoElement;
 
 /// <summary>Most general aspects of LSFEM.</summary>
 public abstract class Sim {
+   /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
+   dbl [][][] OrdPos { get; }
    /// <summary>An unordered (listed in sequence) array of positions.</summary>
    public Vec2[] Pos { get; protected set;}
    /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
@@ -74,10 +76,6 @@ public abstract class Sim {
    protected ConjGradsSolver Solver { get; }
 
 
-   // protected Simulation() {
-   //    Sim = this;
-   // }
-
    /// <summary>Create a Simulation ready to run.</summary>
    /// <param name="patches"></param>
    /// <param name="joints">1D lists of nodes shared across blocks.</param>
@@ -87,6 +85,7 @@ public abstract class Sim {
    /// <param name="nfPos">Number of positions with free variables.</param>
    public Sim(ISimGeometryInit simInit) {                               R("Started Sim Initialization.");
       int currGInx = 0;
+      OrdPos = simInit.CreateOrdPos();                                  R("Created an ordered list of positions.");
       (currGInx, Patches) = simInit.CreatePatches();                    R("Created Patches.");
       Joints = simInit.CreateJoints(currGInx);                          R("Created Joints.");
       (NPos, Pos) = CreatePositions();                                  R("Created Positions.");

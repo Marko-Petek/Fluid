@@ -20,13 +20,6 @@ using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
 public class NavStokesFlowInit : ISimInit {
-   /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
-   dbl [][][] OrdPos { get; set; }
-
-   public NavStokesFlowInit() {
-      OrdPos = ReadPos();              R("Read element corner positions from file.");
-   }
-
 
    /// <summary>We have to initialize secondary tensors with zeros due to the nature of the optimized algorithm in AdvanceDynamics. It presupposes the tensors being assigned to already exist.</summary>
    public (Tnr initA, Tnr initFs) InitializeSecondaries(int nPos, int nfPos, int nVar) {                                // TODO: Fix Tensor so that this is unnecessary.
@@ -48,20 +41,6 @@ public class NavStokesFlowInit : ISimInit {
             var fs_i = new Vec(fs_si, 2);
             fs_si[V.Vec, s] = fs_i; } }
       return (a_bqsik, fs_hsi);
-   }
-
-   dbl[][][] ReadPos() {
-      string dir = @"Seminar/Mathematica";
-      string name = @"nodesC";
-      string ext = @".txt";
-     T.FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
-      var hierarchy =T.FileReader.ReadHierarchy<dbl>();
-      var convRes = hierarchy.ConvertToArray();
-      return convRes.success switch {
-         true => convRes.array switch {
-            dbl[][][] pos => pos,
-            _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
-         _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
    }
 }
 }

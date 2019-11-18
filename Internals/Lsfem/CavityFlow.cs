@@ -11,7 +11,7 @@ using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 
 
-namespace Fluid.Runnables.CavityFlow {
+namespace Fluid.Internals.Lsfem {
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
@@ -26,8 +26,10 @@ public class CavityFlow : NavStokesFlow {
    public dbl V { get; }
    
 
-   CavityFlow(ISimGeometryInit simInit, ISimGeometryInit navStokesFlowInit, dbl dt, dbl re, dbl v) :
+   
+   CavityFlow(ISimGeometryInit sim, dbl dt, dbl re, dbl v) :
    base(simInit, navStokesFlowInit) {
+      
       V = v;
    }
 

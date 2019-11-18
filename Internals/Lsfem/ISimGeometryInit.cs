@@ -13,6 +13,10 @@ namespace Fluid.Internals.Lsfem {
    using PE = PseudoElement;
 
 public interface ISimGeometryInit : ISimInit {
+   /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
+   dbl[][][] OrdPos { get; }
+
+
    /// <summary>2D lists of nodes lying inside a block. Return the "one after last" node index.</summary>
    (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches();
    /// <summary>1D lists of nodes shared across blocks.</summary>
