@@ -19,9 +19,9 @@ public abstract class NavStokesFlow : Sim {
    public dbl Re { get; protected set; }
 
 
-   protected NavStokesFlow(ISimGeometryInit simInit, dbl dt, dbl re) : base(simInit) {
-      Dt = dt;
-      Re = re;
+   protected NavStokesFlow(NavStokesFlowInit nsi) : base(nsi) {
+      Dt = nsi.Dt;
+      Re = nsi.Re;
    }
 
 

@@ -23,8 +23,6 @@ using PE = PseudoElement;
 
 /// <summary>Most general aspects of LSFEM.</summary>
 public abstract class Sim {
-   /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
-   dbl [][][] OrdPos { get; }
    /// <summary>An unordered (listed in sequence) array of positions.</summary>
    public Vec2[] Pos { get; protected set;}
    /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
@@ -42,7 +40,6 @@ public abstract class Sim {
    /// <summary>Secondary dynamics tensor, 5th rank. Includes both, free and constrained variables.
    /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
    public Tnr A { get; internal set; }
-   
    /// <summary>Free variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
    public Tnr UF { get; internal set; }
    /// <summary>Constrained variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
@@ -68,10 +65,6 @@ public abstract class Sim {
    }
    /// <summary>Secondary F. Third rank participant in the assembly process of F.</summary>
    public Tnr Fs { get; internal set; }
-   /// <summary>2D lists of nodes lying inside a block.</summary>
-   protected Dictionary<string,PseudoElement[][]> Patches { get; set; }
-   /// <summary>1D lists of nodes shared across blocks.</summary>
-   protected Dictionary<string,PseudoElement[]> Joints { get; set; }
    /// <summary>Solver that solves the linear system using Conjugate Gradients.</summary>
    protected ConjGradsSolver Solver { get; }
 
@@ -83,19 +76,20 @@ public abstract class Sim {
    /// <param name="emtTree">A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</param>
    /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
    /// <param name="nfPos">Number of positions with free variables.</param>
-   public Sim(ISimGeometryInit simInit) {                               R("Started Sim Initialization.");
-      int currGInx = 0;
-      OrdPos = simInit.CreateOrdPos();                                  R("Created an ordered list of positions.");
-      (currGInx, Patches) = simInit.CreatePatches();                    R("Created Patches.");
-      Joints = simInit.CreateJoints(currGInx);                          R("Created Joints.");
-      (NPos, Pos) = CreatePositions();                                  R("Created Positions.");
-      var emts = simInit.CreateElements();                              R("Created Elements and calculated overlap integrals.");
+   public Sim(ISimInit si) {                                         R("Started Sim Initialization.");
+      var ordPos = si.CreateOrdPos();                                   R("Created an ordered list of positions.");
+      var (newCurrGInx, patches) = si.CreatePatches(ordPos);            R("Created Patches.");
+      var joints = si.CreateJoints(newCurrGInx, ordPos);                R("Created Joints.");
+      (NPos, Pos) = CreatePositions(patches, joints);                   R("Created Positions.");
+      var emts = si.CreateElements(patches, joints);                    R("Created Elements and calculated overlap integrals.");
       var coms = CreateCOMs(emts);                                      R("Created a list of Centers of Mass.");
       EmtTree = CreateElementTree(coms, emts);                          R("Created the ElementTree.");
-      UC = simInit.CreateConstraints();                                 R("Created constraints.");
+      (UC, C) = si.CreateConstraints(patches, joints);                  R("Created constraints.");
       NfPos = CountFreePositions(NPos, NVar);                           R("Counted free positions.");
-      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);                  R("Created the free variables tensor.");      // Creates free vars as zeroes.
-      (A, Fs) = simInit.InitializeSecondaries(NPos, NfPos, NVar);       R("Initialized secondary tensors.");
+      UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);                  R("Created the free variables tensor as zeroes.");
+      (A, Fs) = si.InitializeSecondaries(NPos, NfPos, NVar);            R("Initialized secondary tensors.");
+
+      //Solver = new ConjGradsSolver()
    }
 
 
@@ -103,21 +97,20 @@ public abstract class Sim {
    /// <param name="i">Position index.</param>
    /// <param name="j">Variable index.</param>
    public bool Constr(int i, int j) => C[NVar*i + j];
-   protected void SetConstr(int i, int j) => C[NVar*i + j] = true;
    
-   (int nPos, Vec2[]) CreatePositions() {
-      int approxNPos = Patches.Sum( patch => patch.Value.Length ) * 5 +
-         Joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
+   (int nPos, Vec2[]) CreatePositions(Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints) {
+      int approxNPos = patches.Sum( patch => patch.Value.Length ) * 5 +
+         joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
       var posList = new My.List<Vec2>(approxNPos);
       int gInx = 0;                                                        R("Adding positions to Mesh.");
-      foreach(var patch in Patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
+      foreach(var patch in patches.Values) {                               // Global indices on PseudoElements are not yet set. We set them now and add positions to Mesh.
          foreach(var pseudoRow in patch) {
             foreach(var pseudoEmt in pseudoRow) {
                for(int i = 0; i < pseudoEmt.PEInxs.Length; ++i) {
                   pseudoEmt.GInxs[i] = gInx;
                   posList.Add(pseudoEmt.Poss[i]);
                   ++gInx; } } } }
-      foreach(var joint in Joints.Values) {                                // We also set global indices on Joints and add their positions to Mesh.
+      foreach(var joint in joints.Values) {                                // We also set global indices on Joints and add their positions to Mesh.
             foreach(var pseudoEmt in joint) {
                for(int i = 0; i < pseudoEmt.PEInxs.Length; ++i) {
                   pseudoEmt.GInxs[i] = gInx;
@@ -209,6 +202,7 @@ public abstract class Sim {
    }
    /// <summary>Update secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>
    protected abstract (Tnr modA, Tnr modFs) AdvanceSecondaries(Tnr a, Tnr fs);
+
 }
 }
 #nullable restore

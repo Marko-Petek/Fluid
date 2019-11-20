@@ -1,32 +1,39 @@
 #nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
-using Supercluster.KDTree;
 using System.IO;
+using static System.Math;
 
 namespace Fluid.Internals.Lsfem {
-using SymTnr = SymTensor<dbl,DA>;
+using static Fluid.Internals.Lsfem.SimManager;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
 using V = Voids<dbl,DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
-public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
-   public dbl[][][] OrdPos { get; }
+public class CavityFlowInit : NavStokesFlowInit {
+   /// <summary>Boundary velocity.</summary>
+   dbl V { get; }
 
-   public CavityFlowInit() : base() {
-      OrdPos = ReadPos();
+
+   /// <summary>A means of initializing a CavityFlow.</summary>
+   /// <param name="dt">Time step.</param>
+   /// <param name="re">Reynolds number.</param>
+   /// <param name="v">Inlet velocity.</param>
+   public CavityFlowInit(dbl dt, dbl re, dbl v) : base(dt, re) {
+      V = v;
    }
 
-   dbl[][][] ReadPos() {
+
+   public override dbl[][][] CreateOrdPos() {
       string dir = @"Seminar/Mathematica";
       string name = @"nodesC";
       string ext = @".txt";
@@ -39,24 +46,23 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
             _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
          _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
    }
-
-   public (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches() {
+   public override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(dbl[][][] ordPos) {
       int currGInx = 0;
       var pEmts = new PE[3][];                                                               // Main patch.
       for(int i = 0; i < 3; ++i) {                                                           // Create the 9 PseudoElements.
          pEmts[i] = new PE[3];
          for(int j = 0; j < 3; ++j)
             (currGInx, pEmts[i][j]) = PE.CreatePatchElement(
-               currGInx, OrdPos[i][j], OrdPos[i][j+1], OrdPos[i+1][j]); }
+               currGInx, ordPos[i][j], ordPos[i][j+1], ordPos[i+1][j]); }
       var pEmts2 = new PE[1][];                                                              // Upper right patch containing a single element with a single position.
       pEmts2[0] = new PE[1];
-      (currGInx, pEmts2[0][0]) = PE.CreateCustom(currGInx, (2, OrdPos[3][3]));
+      (currGInx, pEmts2[0][0]) = PE.CreateCustom(currGInx, (2, ordPos[3][3]));
       var patches = new Dictionary<string,PE[][]>(1) {
          {"Patch", pEmts},
          {"UpperRightPatch", pEmts2} };
       return (currGInx, patches);
    }
-   public Dictionary<string,PseudoElement[]> CreateJoints(int currGInx) {
+   public override Dictionary<string,PseudoElement[]> CreateJoints(int currGInx, dbl[][][] ordPos) {
       var rPEmts = new PE[3];
       for(int i = 0; i < 3; ++i)
          (currGInx, rPEmts[i]) = CreateVertPE(i,3);
@@ -67,45 +73,47 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
       joints.Add("UpperJoint", uPEmts);
       return joints;
 
-      (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, OrdPos[i][j], OrdPos[i+1][j]);
-      (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, OrdPos[i][j], OrdPos[i][j+1]);
+      (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, ordPos[i][j], ordPos[i+1][j]);
+      (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, ordPos[i][j], ordPos[i][j+1]);
    }
-   public Element[] CreateElements() {
-      var patch = Patches["Patch"];
-      var rJoint = Joints["RightJoint"];
-      var uJoint = Joints["UpperJoint"];
-      var uRJoint = Joints["UpperRightJoint"];
+   public override Element[] CreateElements(Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints) {
+      var patch = patches["Patch"];
+      var rJoint = joints["RightJoint"];
+      var uJoint = joints["UpperJoint"];
+      var uRJoint = joints["UpperRightJoint"];
       var emts = new Element[9];
       for(int i = 0, n = 0; i < 2; ++i)
          for(int j = 0; j < 2; ++j, ++n)
-            emts[n] = Emt.CreatePatchElement(patch, i, j);
+            emts[n] = Element.CreatePatchElement(patch, i, j);
       for(int j = 4; j < 6; ++j)
-         emts[j] = Emt.CreateUpperJointElement(patch, uJoint, j);
+         emts[j] = Element.CreateUpperJointElement(patch, uJoint, j);
       for(int i = 6; i < 8; ++i)
-         emts[i] = Emt.CreateRightJointElement(patch, rJoint, i);
-      emts[8] = Emt.CreateUpperRightJointElement(patch, rJoint, uJoint, uRJoint);
+         emts[i] = Element.CreateRightJointElement(patch, rJoint, i);
+      emts[8] = Element.CreateUpperRightJointElement(patch, rJoint, uJoint, uRJoint);
       return emts;
    }
-   public Tnr CreateConstraints() {
+   public override (Tnr uc, Constraints bits) CreateConstraints(
+   Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints, int nPos, int nVar) {
+      var bits = new Constraints(nPos, nVar);
       var uc = new Tnr(new Lst {12, 4}, 12);                                      // There will be 12 boundary positions.
-      var patch = Patches["Patch"];
-      var rightJoint = Joints["RightJoint"];
-      var upperJoint = Joints["UpperJoint"];
-      var upperRightPatch = Patches["UpperRightPatch"];                          // TODO: Screw Joints, only use Patches. This should simpify boundary creating methods.
+      var patch = patches["Patch"];
+      var rightJoint = joints["RightJoint"];
+      var upperJoint = joints["UpperJoint"];
+      var upperRightPatch = patches["UpperRightPatch"];                          // TODO: Screw Joints, only use Patches. This should simpify boundary creating methods.
       F2Db fLow = (in Vec2 p) => V - (V/9)*Pow(p.X, 2);                          // Parabola that goes through p0 and p3 and has appex in the middle.
       F2Db fHigh = (in Vec2 p) => -V + (V/9)*Pow(p.X, 2);
       F2Db fRight = (in Vec2 p) => V - (V/9)*Pow(p.Y, 2);
       F2Db fLeft = (in Vec2 p) => -V + (V/9)*Pow(p.Y, 2);
       F2Db zero = (in Vec2 p) => 0.0;
-      CreateLowerBoundaryVars(patch, rightJoint, uc, 0, fLow);                   // Constrain X.
-      CreateLowerBoundaryVars(patch, rightJoint, uc, 1, zero);                   // Constrain Y.
-      CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, zero);         // etc.
-      CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, fRight);
-      CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 0, fHigh);
-      CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 1, zero);
-      CreateLeftBoundaryVars(patch, upperJoint, uc, 0, zero);
-      CreateLeftBoundaryVars(patch, upperJoint, uc, 1, fLeft);
-      return uc;
+      CreateLowerBoundaryVars(patch, rightJoint, uc, 0, fLow, bits);                   // Constrain X.
+      CreateLowerBoundaryVars(patch, rightJoint, uc, 1, zero, bits);                   // Constrain Y.
+      CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, zero, bits);         // etc.
+      CreateRightBoundaryVars(rightJoint, upperRightPatch, uc, 0, fRight, bits);
+      CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 0, fHigh, bits);
+      CreateUpperBoundaryVars(upperJoint, upperRightPatch, uc, 1, zero, bits);
+      CreateLeftBoundaryVars(patch, upperJoint, uc, 0, zero, bits);
+      CreateLeftBoundaryVars(patch, upperJoint, uc, 1, fLeft, bits);
+      return (uc, bits);
    }
    /// <summary>Take the constraints tensor by reference and create values on the left boundary of a patch. Specify the variable index and the variable field.</summary>
    /// <param name="leftPatch">A left boundary patch (not connected to anything on its left).</param>
@@ -113,7 +121,8 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
    /// <param name="uC">Contraints tensor.</param>
    /// <param name="varInx">Variable index of the variable that will take on the field values.</param>
    /// <param name="f">Field to assign to the variable.</param>
-   protected void CreateLeftBoundaryVars(PE[][] leftPatch, PE[] upperJoint, Tnr uC, int varInx, F2Db f) {
+   protected void CreateLeftBoundaryVars(PE[][] leftPatch, PE[] upperJoint, Tnr uC,
+   int varInx, F2Db f, Constraints bits) {
       int m = leftPatch.Length;                                                     // Number of rows.
       int iL = m - 1;                                                               // Last index.
       PE pEmtLow, pEmtHigh;
@@ -152,11 +161,11 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
       void Apply(int startNode, int endNode) {
          for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
             uC[g[p], varInx] = u[p];
-            SetConstr(g[p], varInx); }
+            bits[g[p], varInx] = true; }
       }
    }
    protected void CreateRightBoundaryVars(PE[] rightJoint, PE[][] upperRightPatch,
-   Tnr uC, int varInx, F2Db f) {
+   Tnr uC, int varInx, F2Db f, Constraints bits) {
       int m = rightJoint.Length;                                                     // Number of rows.
       int iL = m - 1;                                                               // Last index.
       PE pEmtLow, pEmtHigh;
@@ -196,11 +205,11 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
       void Apply(int startNode, int endNode) {
          for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
             uC[g[p], varInx] = u[p];
-            SetConstr(g[p], varInx); }
+            bits[g[p], varInx] = true; }
       }
    }
    protected void CreateLowerBoundaryVars(PE[][] lowerPatch, PE[] rightJoint,
-      Tnr uC, int varInx, F2Db f) {
+      Tnr uC, int varInx, F2Db f, Constraints bits) {
       int n = lowerPatch[0].Length;                                           // Number of cols.
       int jL = n - 1;
       PE pEmtLeft, pEmtRight;
@@ -237,12 +246,12 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
       void Apply(int startNode, int endNode) {
          for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
             uC[g[p], varInx] = u[p];
-            SetConstr(g[p], varInx); }
+            bits[g[p], varInx] = true; }
       }
    }
 
    protected void CreateUpperBoundaryVars(PE[] upperJoint, PE[][] upperRightPatch,
-   Tnr uC, int varInx, F2Db f) {
+   Tnr uC, int varInx, F2Db f, Constraints bits) {
       int n = upperJoint.Length;
       int jL = n - 1;
       PE pEmtLeft, pEmtRight;
@@ -282,7 +291,7 @@ public class CavityFlowInit : NavStokesFlowInit, ISimGeometryInit {
       void Apply(int startNode, int endNode) {
          for(int p = startNode; p <= endNode; ++p) {                                              // Over first three points in a PE.
             uC[g[p], varInx] = u[p];
-            SetConstr(g[p], varInx); }
+            bits[g[p], varInx] = true; }
       }
    }
 }

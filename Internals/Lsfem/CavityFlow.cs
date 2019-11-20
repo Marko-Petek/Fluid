@@ -21,14 +21,11 @@ using Emt = Element;
 
 /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
 public class CavityFlow : NavStokesFlow {
-   
    /// <summary>Boundary velocity.</summary>
    public dbl V { get; }
    
-
    
-   CavityFlow(ISimGeometryInit sim, dbl dt, dbl re, dbl v) :
-   base(simInit, navStokesFlowInit) {
+   CavityFlow(CavityFlowInit ci) : base(simInit, navStokesFlowInit) {
       
       V = v;
    }
