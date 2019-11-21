@@ -23,7 +23,7 @@ using PE = PseudoElement;
 
 /// <summary>Most general aspects of LSFEM.</summary>
 public abstract class Sim {
-   /// <summary>An unordered (listed in sequence) array of positions.</summary>
+   /// <summary>An array of positions.</summary>
    public Vec2[] Pos { get; protected set;}
    /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
    public KDTree<double,Element> EmtTree { get; set; }
@@ -33,10 +33,10 @@ public abstract class Sim {
    public int NPos { get; protected set; }
    /// <summary>Number of positions with free variables. Used to determine solution tensor capacity.</summary>
    public int NfPos { get; protected set; }
-   /// <summary>Primary Dynamics tensor, 4th rank. Includes only free variables.</summary>
-   public Tnr K { get; internal set; }
-   /// <summary>Forcing tensor, 2nd rank.</summary>
-   public Tnr F { get; internal set; }
+   // /// <summary>Primary Dynamics tensor, 4th rank. Includes only free variables.</summary>
+   // public Tnr K { get; internal set; }
+   // /// <summary>Forcing tensor, 2nd rank.</summary>
+   // public Tnr F { get; internal set; }
    /// <summary>Secondary dynamics tensor, 5th rank. Includes both, free and constrained variables.
    /// Node (1), Derivative (2), 1st index of element matrix (3), 2nd index of element matrix (4).</summary>
    public Tnr A { get; internal set; }
@@ -45,7 +45,7 @@ public abstract class Sim {
    /// <summary>Constrained variables tensor, 2nd rank. There can be free and constrained variables at a single position.</summary>
    public Tnr UC { get; internal set; }
    /// <summary>A sequence of bits that indicate constrainedness of each variable: (i,j) => NVar*i + j. Therefore the BitArray holds NPos*NVar bits.</summary>
-   protected BitArray C { get; set; }
+   protected Constraints Cnstr { get; set; }
    /// <summary>Fetches a vector of variables</summary>
    /// <param name="dummy"></param>
    /// <param name="inx"></param>
@@ -65,8 +65,6 @@ public abstract class Sim {
    }
    /// <summary>Secondary F. Third rank participant in the assembly process of F.</summary>
    public Tnr Fs { get; internal set; }
-   /// <summary>Solver that solves the linear system using Conjugate Gradients.</summary>
-   protected ConjGradsSolver Solver { get; }
 
 
    /// <summary>Create a Simulation ready to run.</summary>
@@ -76,7 +74,7 @@ public abstract class Sim {
    /// <param name="emtTree">A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</param>
    /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
    /// <param name="nfPos">Number of positions with free variables.</param>
-   public Sim(ISimInit si) {                                         R("Started Sim Initialization.");
+   public Sim(ISimInit si) {                                            R("Started Sim Initialization.");
       var ordPos = si.CreateOrdPos();                                   R("Created an ordered list of positions.");
       var (newCurrGInx, patches) = si.CreatePatches(ordPos);            R("Created Patches.");
       var joints = si.CreateJoints(newCurrGInx, ordPos);                R("Created Joints.");
@@ -84,20 +82,13 @@ public abstract class Sim {
       var emts = si.CreateElements(patches, joints);                    R("Created Elements and calculated overlap integrals.");
       var coms = CreateCOMs(emts);                                      R("Created a list of Centers of Mass.");
       EmtTree = CreateElementTree(coms, emts);                          R("Created the ElementTree.");
-      (UC, C) = si.CreateConstraints(patches, joints);                  R("Created constraints.");
+      (UC, Cnstr) = si.CreateConstraints(patches, joints, NPos, NVar);  R("Created constraints.");
       NfPos = CountFreePositions(NPos, NVar);                           R("Counted free positions.");
       UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);                  R("Created the free variables tensor as zeroes.");
-      (A, Fs) = si.InitializeSecondaries(NPos, NfPos, NVar);            R("Initialized secondary tensors.");
+      (A, Fs) = si.InitializeSecondaries(NPos, NfPos);                  R("Initialized secondary tensors.");
 
       //Solver = new ConjGradsSolver()
    }
-
-
-   /// <summary>Constrainednes of a variable (i,j). True = constrained </summary>
-   /// <param name="i">Position index.</param>
-   /// <param name="j">Variable index.</param>
-   public bool Constr(int i, int j) => C[NVar*i + j];
-   
    (int nPos, Vec2[]) CreatePositions(Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints) {
       int approxNPos = patches.Sum( patch => patch.Value.Length ) * 5 +
          joints.Sum( joint => joint.Value.Length ) * 3;                    // Estimate for the number of positions so that we can allocate an optimal amount of space for the posList.
@@ -146,12 +137,12 @@ public abstract class Sim {
    /// <param name="nVar">Number of variables at a position.</param>
    int CountFreePositions(int nPos, int nVar) {
       int nFreePos = 0;
-      int n = C.Length;
+      int n = nVar*nPos;
       bool freePos;                          // This will signify whether a position is free after the j-loop.
       for(int i = 0; i < nPos; ++i) {
          freePos = false;
          for(int j = 0; j < nVar; ++j) {
-            if(!Constr(i,j)) {               // If there is a single free position, then the position is free.
+            if(!Cnstr[i,j]) {               // If there is a single free position, then the position is free.
                freePos = true;
                break; } }
          if(freePos) {                       // At least one free variable at position.
@@ -169,7 +160,7 @@ public abstract class Sim {
       foreach(var emt in emts) {
       for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
          Vec vecF_j = tnrF[Voids.Vec, c];
-         var jfs = allJs.Where( j => !Constr(c,j) ).ToArray();                      // Determine which variables (c,j) are free.
+         var jfs = allJs.Where( j => !Cnstr[c,j] ).ToArray();                      // Determine which variables (c,j) are free.
          for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
          for(int p = 0; p < 3; ++p) {
          for(int r = 0; r < 3; ++r) {
@@ -185,7 +176,7 @@ public abstract class Sim {
                      Tnr a_ik = A[Voids.Tnr, b,q,s];                                   // For second term in primary forcing.
                      Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
                      for(int δ = 0, d = emt.P[δ]; δ < 12; ++δ, d = emt.P[δ]) {
-                        var grpsK = allJs.GroupBy( j => Constr(c,j) ).ToArray();
+                        var grpsK = allJs.GroupBy( j => Cnstr[c,j] ).ToArray();
                         var kfs = grpsK.Where( grp => grp.Key == false ).
                            Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
                         var kcs = grpsK.Where( grp => grp.Key == true ).

@@ -10,7 +10,8 @@ namespace Fluid.Internals.Lsfem {
    using PE = PseudoElement;
 
 public interface ISimInit {
-   (Tnr initA, Tnr initFs) InitializeSecondaries(int nPos, int nfPos, int nVar);
+   int NVar { get; }
+   (Tnr initA, Tnr initFs) InitializeSecondaries(int nPos, int nfPos);
    /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
    dbl[][][] CreateOrdPos();
    /// <summary>2D lists of nodes lying inside a block. Return the "one after last" node index.</summary>
