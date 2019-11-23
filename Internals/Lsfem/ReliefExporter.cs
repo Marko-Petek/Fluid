@@ -3,6 +3,7 @@ using dbl = System.Double;
 using Fluid.Internals.Numerics;
 using Supercluster.KDTree;
 using static System.Linq.Enumerable;
+using static Fluid.Internals.Lsfem.SimManager;
 
 namespace Fluid.Internals.Lsfem {
 /// <summary>Takes a rectangle, the resolution specification on it and returns plot data suitable for Mathematica's ReliefPlot.</summary>
@@ -18,8 +19,8 @@ where σ : Sim {
    dbl PW { get; }
    /// <summary>PixelHeight.</summary>
    dbl PH { get; }
-   Vec2[] Pos => SimManager<σ>.I.Sim.Pos;
-   KDTree<dbl,Element> EmtTree => SimManager<σ>.I.Sim.EmtTree;
+   Vec2[] Pos => SM.Sim.Pos;
+   KDTree<dbl,Element> EmtTree => SM.Sim.EmtTree;
 
 
    public ReliefExporter(Vec2 ll, Vec2 ur, dbl pw) {
@@ -37,7 +38,7 @@ where σ : Sim {
    public dbl[][] ExportReliefData() {
       var posTable = Range(0, NW).Select( i =>                                           // Create an Enumerable of positions.
          Range(0, NH).Select( j => new dbl[2] {LL.X + i*PW, LL.Y + j*PH}));
-      foreach(var col in posTable) {
+      foreach(var col in posTable) {                                                      // Enumerate the positions.
          foreach(var pos in col) {
             var emtPairs = EmtTree.NearestNeighbors(pos, 4);
             foreach(var emtPair in emtPairs) {

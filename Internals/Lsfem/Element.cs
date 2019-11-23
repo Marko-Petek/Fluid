@@ -36,10 +36,10 @@ public class Element {
    public Func2D DetJ { get; private set; }
    // Matrices to compute inverse transformation of specified element.
    readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
-   public ref Vec2 Pos(int inx) => ref I.Sim.Pos[inx];
+   public ref Vec2 Pos(int inx) => ref SM.Sim.Pos[inx];
    /// <summary>A vector of values at specified local node index.</summary>
    /// <param name="inx">Local node index.</param>
-   public Vec Vals(int inx) => I.Sim.U(Voids.Vec, P[inx]);
+   public Vec Vals(int inx) => SM.Sim.U(Voids.Vec, P[inx]);
 
 
    /// <summary>Create an instance which holds Element's vertex positions.</summary>
