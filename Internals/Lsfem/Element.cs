@@ -14,6 +14,7 @@ using static Fluid.Internals.Numerics.MatOps;
 using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
+using Lst = List<int>;
 using Tnr = Tensor<dbl,DA>;
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Vector<dbl,DA>;
@@ -36,10 +37,12 @@ public class Element {
    public Func2D DetJ { get; private set; }
    // Matrices to compute inverse transformation of specified element.
    readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
-   public ref Vec2 Pos(int inx) => ref SM.Sim.Pos[inx];
+   /// <summary>Position of node refered to by element index.</summary>
+   /// <param name="inx">Element index.</param>
+   public ref Vec2 Pos(int inx) => ref SM.Sim.Pos[P[inx]];
    /// <summary>A vector of values at specified local node index.</summary>
    /// <param name="inx">Local node index.</param>
-   public Vec Vals(int inx) => SM.Sim.U(Voids.Vec, P[inx]);
+   public Vec Val(int inx) => SM.Sim.U(Voids.Vec, P[inx]);
 
 
    /// <summary>Create an instance which holds Element's vertex positions.</summary>
@@ -229,6 +232,7 @@ public class Element {
    //       for(int node = 0; node < 12; ++node)
    //          vals[i] += Vals(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
    //    return vals;
+   /// <returns></returns>
    // }
    
    /// <summary>Takes the single unique repeating factor (tensor) in a tensor product, multiplies it with itself four times and multiplies that with the element's determinant. Then it integrates the resulting function over the element.</summary>
@@ -237,6 +241,25 @@ public class Element {
       SymTnr.CreateAsQuadProd(tnrFactor, DetJ, Quadrature2D.Integrate);
    internal SymTnr CalcTripOverlaps(FTnr tnrFactor) =>
       SymTnr.CreateAsTripProd(tnrFactor, DetJ, Quadrature2D.Integrate);
+
+   /// <summary>Check's whether this Position is inside a simple polygon defined by vertices specified in CCW direction.</summary>
+   /// <param name="vertices">Positions of vertices in CCW direction.</param>
+   /// <remarks><see cref="TestRefs.PointInsidePolygon"/></remarks>
+   public bool ContainsPos(in Vec2 pos) =>
+      pos.IsInsidePolygon(Pos(0), Pos(3), Pos(6), Pos(9));
+
+   /// <summary>Construct the value at any point by adding node contributions.</summary>
+   /// <param name="pos">The position inside the element.</param>
+   public dbl[]? ValueAt(in Vec2 pos) {
+      if(ContainsPos(in pos)) {
+         var vec = new Vec(new Lst {SM.Sim.NVar}, Voids.Tnr, SM.Sim.NVar);
+         for(int i = 0; i < 12; ++i)
+            vec += Val(i);
+         return 
+      }
+      else
+         return null;
+   }
 }
 }
 #nullable restore

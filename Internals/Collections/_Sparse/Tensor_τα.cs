@@ -81,6 +81,8 @@ where α : IArithmetic<τ>, new() {
    public new int Count => CountInternal;
 
    protected virtual int CountInternal => base.Count;
+   /// <summary>The number of available spots one rank lower.</summary>
+   public int Dim => Structure[ToSlotInx(Rank)];
 
    public Tensor(int cap) : base(cap) { }
    /// <summary>Assigns rank and capacity only.</summary>

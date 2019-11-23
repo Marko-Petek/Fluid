@@ -303,6 +303,10 @@ where α : IArithmetic<τ>, new() {
       sb.Append("}");
       return sb.ToString();
    }
+   /// <summary>Converts a sparse Vector to a regular array.</summary>
+   public τ[] ToArray() {
+      
+   }
 }
 }
 #nullable restore

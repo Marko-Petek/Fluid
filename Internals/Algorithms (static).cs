@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Math;
+using Fluid.Internals.Numerics;
 namespace Fluid.Internals {
 
 public static class Algorithms {
@@ -91,6 +92,10 @@ public static class Algorithms {
       else
          return true;
    }
+   /// <summary>Convert a double array to Vec2.</summary>
+   /// <param name="pos">A 2D array.</param>
+   public static Vec2 ToVec2(this double[] pos) =>
+      new Vec2(in pos);
 }
 }
 #nullable restore
