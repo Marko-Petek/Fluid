@@ -305,7 +305,10 @@ where α : IArithmetic<τ>, new() {
    }
    /// <summary>Converts a sparse Vector to a regular array.</summary>
    public τ[] ToArray() {
-      
+      var arr = new τ[Dim];
+      foreach(var int_val in Vals)
+         arr[int_val.Key] = int_val.Value;
+      return arr;
    }
 }
 }

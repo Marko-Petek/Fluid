@@ -248,16 +248,15 @@ public class Element {
    public bool ContainsPos(in Vec2 pos) =>
       pos.IsInsidePolygon(Pos(0), Pos(3), Pos(6), Pos(9));
 
-   /// <summary>Construct the value at any point by adding node contributions.</summary>
+   /// <summary>Construct the value (all variables) at any point by adding node contributions.</summary>
    /// <param name="pos">The position inside the element.</param>
-   public dbl[]? ValueAt(in Vec2 pos) {
+   public dbl[]? ValueAt(in Vec2 pos) {                                       // TODO: Test Element.ValueAt().
       if(ContainsPos(in pos)) {
          var vec = new Vec(new Lst {SM.Sim.NVar}, Voids.Tnr, SM.Sim.NVar);
          for(int i = 0; i < 12; ++i)
             vec += Val(i);
-         return 
-      }
-      else
+         return vec.ToArray(); }
+      else                                                                    // Position is outside of the element.
          return null;
    }
 }

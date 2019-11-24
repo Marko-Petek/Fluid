@@ -12,8 +12,10 @@ using Fluid.Internals.Text;
 using static Fluid.Internals.Development.Reporter;
 namespace Fluid.Internals {
 public class Toolbox {
+   #nullable disable
    /// <summary>The default toolbox.</summary>
    public static Toolbox T { get; set; }
+   #nullable enable
    /// <summary>Shortcut to Report method.</summary>
    /// <param name="s">Text to report.</param>
    public static void R(string s, VerbositySettings verbosity = VerbositySettings.Moderate)
