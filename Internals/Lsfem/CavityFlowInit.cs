@@ -33,36 +33,41 @@ public class CavityFlowInit : NavStokesFlowInit {
    }
 
 
-   public override dbl[][][] CreateOrdPos() {
+   public override Dictionary<string, dbl[][][]> GetRawOrderedPosData() {
       string dir = @"Seminar/Mathematica";
       string name = @"nodesC";
       string ext = @".txt";
      T.FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
       var hierarchy =T.FileReader.ReadHierarchy<dbl>();
       var convRes = hierarchy.ConvertToArray();
-      return convRes.success switch {
+      var res = convRes.success switch {
          true => convRes.array switch {
             dbl[][][] pos => pos,
             _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
          _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
+      return new Dictionary<string, dbl[][][]> { {"Patch", res} };
    }
-   public override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(dbl[][][] ordPos) {
+   public override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(
+   Dictionary<string, dbl[][][]> ordPos) {
+      var rawPat = ordPos["Patch"];
       int currGInx = 0;
       var pEmts = new PE[3][];                                                               // Main patch.
       for(int i = 0; i < 3; ++i) {                                                           // Create the 9 PseudoElements.
          pEmts[i] = new PE[3];
          for(int j = 0; j < 3; ++j)
             (currGInx, pEmts[i][j]) = PE.CreatePatchElement(
-               currGInx, ordPos[i][j], ordPos[i][j+1], ordPos[i+1][j]); }
+               currGInx, rawPat[i][j], rawPat[i][j+1], rawPat[i+1][j]); }
       var pEmts2 = new PE[1][];                                                              // Upper right patch containing a single element with a single position.
       pEmts2[0] = new PE[1];
-      (currGInx, pEmts2[0][0]) = PE.CreateCustom(currGInx, (2, ordPos[3][3]));
+      (currGInx, pEmts2[0][0]) = PE.CreateCustom(currGInx, (2, rawPat[3][3]));
       var patches = new Dictionary<string,PE[][]>(1) {
          {"Patch", pEmts},
          {"UpperRightPatch", pEmts2} };
       return (currGInx, patches);
    }
-   public override Dictionary<string,PseudoElement[]> CreateJoints(int currGInx, dbl[][][] ordPos) {
+   public override Dictionary<string,PseudoElement[]> CreateJoints(
+   int currGInx, Dictionary<string, dbl[][][]> ordPos) {
+      var rawPat = ordPos["Patch"];
       var rPEmts = new PE[3];
       for(int i = 0; i < 3; ++i)
          (currGInx, rPEmts[i]) = CreateVertPE(i,3);
@@ -73,8 +78,8 @@ public class CavityFlowInit : NavStokesFlowInit {
       joints.Add("UpperJoint", uPEmts);
       return joints;
 
-      (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, ordPos[i][j], ordPos[i+1][j]);
-      (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, ordPos[i][j], ordPos[i][j+1]);
+      (int,PE) CreateVertPE(int i, int j) => PE.CreateJointElement(currGInx, rawPat[i][j], rawPat[i+1][j]);
+      (int,PE) CreateHorzPE(int i, int j) => PE.CreateJointElement(currGInx, rawPat[i][j], rawPat[i][j+1]);
    }
    public override Element[] CreateElements(Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints) {
       var patch = patches["Patch"];

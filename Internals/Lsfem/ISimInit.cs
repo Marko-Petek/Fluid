@@ -12,15 +12,15 @@ namespace Fluid.Internals.Lsfem {
 public interface ISimInit {
    int NVar { get; }
    (Tnr initA, Tnr initFs) InitializeSecondaries(int nPos, int nfPos);
-   /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
-   dbl[][][] CreateOrdPos();
+   /// <summary>Cartesian arrays of positions. [patch name][row index][col index][{x,y}]</summary>
+   (Vec2 ll, Vec2 ur, Dictionary<string, dbl[][][]>) GetRawOrderedPosData();
    /// <summary>2D lists of nodes lying inside a block. Return the "one after last" node index.</summary>
    /// <param name="ordPos">A cartesian array of positions. [i][j][{x,y}]</param>
-   (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(dbl[][][] ordPos);
+   (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(Dictionary<string, dbl[][][]> ordPos);
    /// <summary>1D lists of nodes shared across blocks.</summary>
    /// <param name="currGInx">The "one after last" index returned by CreatePatches method.</param>
    /// <param name="ordPos">A cartesian array of positions. [i][j][{x,y}]</param>
-   Dictionary<string,PE[]> CreateJoints(int currGInx, dbl[][][] ordPos);
+   Dictionary<string,PE[]> CreateJoints(int currGInx, Dictionary<string, dbl[][][]> ordPos);
    /// <summary>Custom logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
    Element[] CreateElements(
    Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints);

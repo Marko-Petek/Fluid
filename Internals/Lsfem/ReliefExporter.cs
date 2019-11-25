@@ -38,7 +38,7 @@ public class ReliefExporter {
    }
 
    /// <summary>Create the data ready to be plotted in Mathematica's ReliefPlot.</summary>
-   public dbl[][][] CreateReliefData() {                                               // [variable index][y index][val at x] // TODO: Test ExportReliefData.
+   dbl[][][] CreateReliefData() {                                               // [variable index][y index][val at x] // TODO: Test ExportReliefData.
       var posTable = Range(0, NH + 1).Select( i =>                                     // Create an Enumerable of positions.
          Range(0, NW + 1).Select( j => new dbl[2] {LL.X + j*PW, LL.Y + i*PH}));        // This does not take bulk memory.
       var valArrays = Range(0, SM.Sim.NVar).Select( i =>

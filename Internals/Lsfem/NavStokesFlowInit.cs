@@ -46,14 +46,14 @@ public abstract class NavStokesFlowInit : ISimInit {
       return (a_bqsik, fs_hsi);
    }
    /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
-   public abstract dbl[][][] CreateOrdPos();
+   public abstract Dictionary<string, dbl[][][]> GetRawOrderedPosData();
    /// <summary>2D lists of nodes lying inside a block. Return the "one after last" node index.</summary>
    /// <param name="ordPos">A cartesian array of positions. [i][j][{x,y}]</param>
-   public abstract (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(dbl[][][] ordPos);
+   public abstract (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(Dictionary<string, dbl[][][]> ordPos);
    /// <summary>1D lists of nodes shared across blocks.</summary>
    /// <param name="currGInx">The "one after last" index returned by CreatePatches method.</param>
    /// <param name="ordPos">A cartesian array of positions. [i][j][{x,y}]</param>
-   public abstract Dictionary<string,PE[]> CreateJoints(int currGInx, dbl[][][] ordPos);
+   public abstract Dictionary<string,PE[]> CreateJoints(int currGInx, Dictionary<string, dbl[][][]> ordPos);
    /// <summary>Custom logic here depends on the way the blocks are joined together. Do not forget to trim excess space.</summary>
    public abstract Element[] CreateElements(
    Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints);

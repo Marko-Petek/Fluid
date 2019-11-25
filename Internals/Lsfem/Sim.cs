@@ -23,7 +23,11 @@ using PE = PseudoElement;
 
 /// <summary>Most general aspects of LSFEM.</summary>
 public abstract class Sim {
-   /// <summary>An array of positions.</summary>
+   /// <summary>Location of lowest left point.</summary>
+   public Vec2 LL { get; }
+   /// <summary>Location of upper-most right point.</summary>
+   public Vec2 UR { get; }
+   /// <summary>An array of all positions.</summary>
    public Vec2[] Pos { get; protected set;}
    /// <summary>A mapping that takes an element (center of mass) into indices of nodes that belong to an element.</summary>
    public KDTree<double,Element> EmtTree { get; set; }
@@ -75,7 +79,8 @@ public abstract class Sim {
    /// <param name="uC">Constrained variables tensor, 2nd rank.</param>
    /// <param name="nfPos">Number of positions with free variables.</param>
    public Sim(ISimInit si) {                                            R("Started Sim Initialization.");
-      var ordPos = si.CreateOrdPos();                                   R("Created an ordered list of positions.");
+      Dictionary<string, dbl[][][]> ordPos;
+      (LL, UR, ordPos) = si.GetRawOrderedPosData();                     R("Read ordered lists of positions.");
       var (newCurrGInx, patches) = si.CreatePatches(ordPos);            R("Created Patches.");
       var joints = si.CreateJoints(newCurrGInx, ordPos);                R("Created Joints.");
       (NPos, Pos) = CreatePositions(patches, joints);                   R("Created Positions.");
@@ -86,8 +91,6 @@ public abstract class Sim {
       NfPos = CountFreePositions(NPos, NVar);                           R("Counted free positions.");
       UF = new Tnr(new List<int> {NfPos,NVar}, NfPos);                  R("Created the free variables tensor as zeroes.");
       (A, Fs) = si.InitializeSecondaries(NPos, NfPos);                  R("Initialized secondary tensors.");
-
-      //Solver = new ConjGradsSolver()
    }
    (int nPos, Vec2[]) CreatePositions(Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints) {
       int approxNPos = patches.Sum( patch => patch.Value.Length ) * 5 +

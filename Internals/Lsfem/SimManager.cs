@@ -42,8 +42,13 @@ public abstract class SimManager {
    public Tnr AdvanceDynamics(Tnr u0) =>
       Solver.Solve(u0, Epsilon);
 
-   public void ExportCurrentFrame() {
-      var exporter = new ReliefExporter(Sim)
+   /// <summary>Export data of the current solution frame for plotting with Mathematica.</summary>
+   /// <param name="pw">Pixel width.</param>
+   /// <param name="relDirPath">Relative directory path.</param>
+   /// <param name="fileNameNoExt">File name without the extension.</param>
+   public void ExportCurrentFrame(dbl pw, string relDirPath, string fileNameNoExt) {
+      var exporter = new ReliefExporter(SM.Sim.LL, SM.Sim.UR, pw);
+      exporter.ExportReliefData(relDirPath, fileNameNoExt);
    }
    
 }
