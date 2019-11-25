@@ -8,8 +8,7 @@ using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Lsfem {
 /// <summary>Takes a rectangle, the resolution specification on it and returns plot data suitable for Mathematica's ReliefPlot.</summary>
-public class ReliefExporter<σ>
-where σ : Sim {
+public class ReliefExporter {
    /// <summary>Lower left.</summary>
    Vec2 LL { get; }
    /// <summary>Upper right.</summary>

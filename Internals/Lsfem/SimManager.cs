@@ -41,6 +41,10 @@ public abstract class SimManager {
    /// <param name="u0"></param>
    public Tnr AdvanceDynamics(Tnr u0) =>
       Solver.Solve(u0, Epsilon);
+
+   public void ExportCurrentFrame() {
+      var exporter = new ReliefExporter(Sim)
+   }
    
 }
 }
