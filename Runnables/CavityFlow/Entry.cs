@@ -7,7 +7,7 @@ namespace Fluid.Runnables.CavityFlow {
    /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
 public static class Entry {
    public static int Point() {
-      var cavFlow = CavityFlow.Create(0.1, 0.1, 3) ;
+      //var cavFlow = CavityFlow.Create(0.1, 0.1, 3) ;
       return 0;
    }
 

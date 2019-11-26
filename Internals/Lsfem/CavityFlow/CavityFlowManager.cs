@@ -6,7 +6,7 @@ namespace Fluid.Internals.Lsfem.CavityFlow {
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
 
 /// <summary>Factory that manages the Sim.</summary>
-public class CavityFlowManager : SimManager {
+// public class CavityFlowManager : SimManager {
 
-}
+// }
 }

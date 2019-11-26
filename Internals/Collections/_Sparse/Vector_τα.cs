@@ -33,14 +33,13 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
    public Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
 
-   #nullable restore       // The warning we get is moot.
+   #nullable disable       // The warning we get is moot.
    /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
    /// <param name="src"></param>
    public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
       Copy(src, this, cs);
    }
    #nullable enable
-
    public Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
    /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
    /// <param name="src">Copy source.</param>

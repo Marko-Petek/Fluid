@@ -31,8 +31,8 @@ public class ReliefExporter {
       UR = ur;
       dbl wdth = ur.X - ll.X;
       dbl hght = ur.Y - ll.Y;
-      int NW = (int) (wdth / pw);                     // Width multiplier.
-      int NH = (int) (hght / pw);                     // Heigth multiplier.
+      NW = (int) (wdth / pw);                     // Width multiplier.
+      NH = (int) (hght / pw);                     // Heigth multiplier.
       PW = wdth / NW;                                 // Adjusted pixel width.
       PH = hght / NH;                                 // Adjusted pixel height;
    }
