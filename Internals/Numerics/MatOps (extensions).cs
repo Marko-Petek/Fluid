@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using static System.Math;
 using dbl = System.Double;
 using dA = Fluid.Internals.Numerics.DblArithmetic;
@@ -215,4 +214,3 @@ namespace Fluid.Internals.Numerics {
          Equals<τ,α>(mat1, mat2, O<τ,α>.A.Zero());
    }
 }
-#nullable restore

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
@@ -30,4 +29,3 @@ public class DebugTextWriter : StreamWriter {
    };
 }
 }
-#nullable restore

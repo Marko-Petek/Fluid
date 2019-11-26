@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
-
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals;

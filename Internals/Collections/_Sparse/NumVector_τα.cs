@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Linq;
 using Fluid.Internals.Numerics;
@@ -18,4 +17,3 @@ namespace Fluid.Internals.Collections {
       }
    }
 }
-#nullable restore

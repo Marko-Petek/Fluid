@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections;
 using System.IO;
@@ -47,4 +46,3 @@ public class FileReader : FileRWBase, IDisposable {
    ~FileReader() => Dispose();
 }
 }
-#nullable restore

@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Reflection;
 using Fluid.Internals;
@@ -80,5 +79,3 @@ where τ : IEquatable<τ>, new() {
    }
 }
 }
-
-#nullable restore

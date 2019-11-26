@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.IO;
 using System.Text;
@@ -53,4 +52,3 @@ public class Console {
    public void WriteLine<T>(T input) => TW.WriteLine(input?.ToString());
 }
 }
-#nullable restore

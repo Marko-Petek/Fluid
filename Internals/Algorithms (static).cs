@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,4 +97,3 @@ public static class Algorithms {
       new Vec2(in pos);
 }
 }
-#nullable restore

@@ -1,4 +1,3 @@
-#nullable enable
 using dbl = System.Double;
 using System;
 using Fluid.Internals.Numerics;
@@ -6,7 +5,7 @@ using DA = Fluid.Internals.Numerics.DblArithmetic;
 namespace Fluid.Internals.Lsfem {
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
 
-/// <summary>Singleton than manages the Sim.</summary>
+/// <summary>Factory that manages the Sim.</summary>
 public abstract class SimManager {
    #nullable disable
    public static SimManager SM { get; }                              // These two are never going to be null while in use due to the design.
@@ -53,4 +52,3 @@ public abstract class SimManager {
    
 }
 }
-#nullable restore

@@ -1,4 +1,3 @@
-#nullable enable
 using System.Text;
 namespace Fluid.Internals.Text {
 
@@ -26,4 +25,3 @@ public class Stringer {
    }
 }
 }
-#nullable restore

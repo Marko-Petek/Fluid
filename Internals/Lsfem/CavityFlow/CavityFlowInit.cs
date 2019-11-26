@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using DA = Fluid.Internals.Numerics.DblArithmetic;
 using System.IO;
 using static System.Math;
 
-namespace Fluid.Internals.Lsfem {
+namespace Fluid.Internals.Lsfem.CavityFlow {
 using static Fluid.Internals.Lsfem.SimManager;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
@@ -21,7 +20,7 @@ using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
 public class CavityFlowInit : NavStokesFlowInit {
    /// <summary>Boundary velocity.</summary>
-   dbl V { get; }
+   public dbl V { get; }
 
 
    /// <summary>A means of initializing a CavityFlow.</summary>
@@ -33,7 +32,7 @@ public class CavityFlowInit : NavStokesFlowInit {
    }
 
 
-   public override Dictionary<string, dbl[][][]> GetRawOrderedPosData() {
+   public override (Vec2, Vec2, Dictionary<string, dbl[][][]>) GetRawOrderedPosData() {
       string dir = @"Seminar/Mathematica";
       string name = @"nodesC";
       string ext = @".txt";
@@ -45,7 +44,10 @@ public class CavityFlowInit : NavStokesFlowInit {
             dbl[][][] pos => pos,
             _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
          _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
-      return new Dictionary<string, dbl[][][]> { {"Patch", res} };
+      var ll = new Vec2(-3.0, -3.0);
+      var ur = new Vec2(3.0, 3.0);
+      var ordPos = new Dictionary<string, dbl[][][]> { {"Patch", res} };
+      return (ll, ur, ordPos);
    }
    public override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(
    Dictionary<string, dbl[][][]> ordPos) {
@@ -301,4 +303,3 @@ public class CavityFlowInit : NavStokesFlowInit {
    }
 }
 }
-#nullable restore

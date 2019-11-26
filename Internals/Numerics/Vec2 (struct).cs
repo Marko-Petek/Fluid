@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -106,4 +105,3 @@ public readonly struct Vec2 : IEquatable<Vec2> {
    public override string ToString() => $"{{{X.ToString(CultureInfo.InvariantCulture)}, {Y.ToString(CultureInfo.InvariantCulture)}}}";
 }
 }
-#nullable restore

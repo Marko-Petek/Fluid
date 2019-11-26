@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 namespace Fluid.Internals.Development {
 
@@ -27,4 +26,3 @@ public class Message {
    }
 }
 }
-#nullable restore

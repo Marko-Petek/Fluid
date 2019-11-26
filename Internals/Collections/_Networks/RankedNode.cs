@@ -1,5 +1,3 @@
-#nullable enable
-
 using System;
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
@@ -38,5 +36,3 @@ namespace Fluid.Internals.Collections {
       }
    }
 }
-
-#nullable restore

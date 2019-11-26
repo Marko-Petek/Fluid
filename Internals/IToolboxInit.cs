@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -16,4 +15,3 @@ public interface IToolboxInit {
    (IO.Console, IO.FileReader, IO.FileWriter, Reporter, RNG, Stringer) Initialize();
 }
 }
-#nullable restore

@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 namespace Fluid.Internals.Collections.Custom {
 
@@ -23,4 +22,3 @@ public class EquatableList<T> : List<T>, IEquatable<EquatableList<T>>
       }
 }
 }
-#nullable restore

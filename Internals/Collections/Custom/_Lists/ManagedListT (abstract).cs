@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using SCG = System.Collections.Generic;
 using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Internals.Collections.Custom {
@@ -106,4 +105,3 @@ where T : struct {
    }
 }
 }
-#nullable restore

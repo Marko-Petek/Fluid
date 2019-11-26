@@ -1,7 +1,7 @@
-#nullable enable
 using System.Collections.Generic;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
+using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Lsfem {
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
@@ -46,7 +46,7 @@ public abstract class NavStokesFlowInit : ISimInit {
       return (a_bqsik, fs_hsi);
    }
    /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>
-   public abstract Dictionary<string, dbl[][][]> GetRawOrderedPosData();
+   public abstract (Vec2, Vec2, Dictionary<string, dbl[][][]>) GetRawOrderedPosData();
    /// <summary>2D lists of nodes lying inside a block. Return the "one after last" node index.</summary>
    /// <param name="ordPos">A cartesian array of positions. [i][j][{x,y}]</param>
    public abstract (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(Dictionary<string, dbl[][][]> ordPos);
@@ -62,4 +62,3 @@ public abstract class NavStokesFlowInit : ISimInit {
    Dictionary<string,PE[][]> patches, Dictionary<string,PE[]> joints, int nPos, int nVar);
 }
 }
-#nullable restore

@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using dbl = System.Double;
 using F2D = System.Func<double,double,double>;
 
@@ -72,4 +71,3 @@ namespace Fluid.Internals.Numerics {
       public static α A { get; } = new α();
    }
 }
-#nullable restore

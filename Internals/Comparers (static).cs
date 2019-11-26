@@ -1,4 +1,3 @@
-#nullable enable
 using System.Collections.Generic;
 
 namespace Fluid.Internals {
@@ -7,4 +6,3 @@ public static class Comparers {
    public static EqualityComparer<double> Double = EqualityComparer<double>.Default;
 }
 }
-#nullable restore

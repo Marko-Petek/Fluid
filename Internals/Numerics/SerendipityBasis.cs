@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using static System.Math;
@@ -129,4 +128,3 @@ public static class SerendipityBasis {
    // };
 }
 }
-#nullable restore

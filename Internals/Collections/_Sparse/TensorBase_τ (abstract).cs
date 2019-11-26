@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 namespace Fluid.Internals.Collections {
 
@@ -9,4 +8,3 @@ public abstract class TensorBase<τ> : Dictionary<int,τ> where τ : TensorBase<
    public TensorBase() : base(6) {}
 }
 }
-#nullable restore

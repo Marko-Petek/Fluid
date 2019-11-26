@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using Fluid.Internals;
 using Fluid.Internals.Collections;
@@ -135,4 +134,3 @@ public class ConjGradsSolver {
    //return x0;
 }
 }
-#nullable restore

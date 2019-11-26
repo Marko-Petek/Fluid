@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using static System.Math;
 using Fluid.Internals.Lsfem;
@@ -134,4 +133,3 @@ public struct Tetragon {
    }
 }
 }
-#nullable restore

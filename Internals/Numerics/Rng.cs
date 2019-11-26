@@ -1,4 +1,3 @@
-#nullable enable
 namespace Fluid.Internals.Numerics {
 
 public class RNG {
@@ -20,4 +19,3 @@ public class RNG {
    }
 }
 }
-#nullable restore

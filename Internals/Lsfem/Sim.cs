@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ using DA = Fluid.Internals.Numerics.DblArithmetic;
 using Supercluster.KDTree;
 namespace Fluid.Internals.Lsfem {
 
-using SymTnr = SymTensor<dbl,DA>;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
 using Voids = Voids<dbl,DA>;
@@ -199,4 +197,3 @@ public abstract class Sim {
 
 }
 }
-#nullable restore

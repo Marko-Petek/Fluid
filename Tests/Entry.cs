@@ -20,7 +20,7 @@ public class Entry {
          runner.OnTestFailed = OnTestFailed;
          runner.OnTestSkipped = OnTestSkipped;
          R("Discovering...");
-         Start(null);
+         Start("");
          _Finished.WaitOne(-1);
          Thread.Sleep(10);
          _Finished.Dispose();  

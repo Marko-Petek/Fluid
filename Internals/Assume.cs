@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Runtime.CompilerServices;
 using SCG = System.Collections.Generic;
@@ -47,4 +46,3 @@ public static class Assume {
 }
 
 }
-#nullable restore

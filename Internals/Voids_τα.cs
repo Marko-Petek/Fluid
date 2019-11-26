@@ -22,5 +22,4 @@ where α : IArithmetic<τ>, new() {
    public static readonly Vector<τ,α> Vec = new Vector<τ,α>(0);
    
 }
-
 }

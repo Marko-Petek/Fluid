@@ -48,7 +48,6 @@
       - void methods modify caller and preserve its superstructure. They therefore return non-top rank tensors if the caller is a non-top tensor,
       - return value methods create a new tensor with identical substructure, but no superstructure. They return top rank tensors only. If the caller is a non-top tensor, it is treated as a top rank tensor.
 */
-#nullable enable
 using System;
 using System.Text;
 using System.Linq;
@@ -1199,4 +1198,3 @@ where α : IArithmetic<τ>, new() {
 }
 
 }
-#nullable restore

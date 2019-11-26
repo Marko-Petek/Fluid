@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 namespace Fluid.Internals.Collections.Custom {
 
@@ -24,4 +23,3 @@ where T : struct, IEquatable<T> {
       }
 }
 }
-#nullable restore

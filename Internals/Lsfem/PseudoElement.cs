@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Linq;
 using dbl = System.Double;
@@ -113,4 +112,3 @@ public class PseudoElement {
    }
 }
 }
-#nullable restore

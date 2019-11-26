@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections;
 using System.IO;
@@ -23,4 +22,3 @@ public partial class FileWriter : FileRWBase, IDisposable {
    }
 }
 }
-#nullable restore

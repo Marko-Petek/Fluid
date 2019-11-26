@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -25,4 +24,3 @@ public class ToolboxInit : IToolboxInit {
    }
 }
 }
-#nullable restore

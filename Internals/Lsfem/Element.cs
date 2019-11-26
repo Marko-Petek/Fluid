@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using static System.Math;
@@ -261,4 +260,3 @@ public class Element {
    }
 }
 }
-#nullable restore

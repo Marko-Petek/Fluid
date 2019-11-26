@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
 namespace Fluid.Internals.Collections.Custom {
@@ -81,4 +80,3 @@ public abstract class ListBase<T> : SCG.IList<T> {
    SC.IEnumerator SC.IEnumerable.GetEnumerator() => GetEnumerator();
 }
 }
-#nullable restore

@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using dbl = System.Double;
@@ -70,4 +69,3 @@ public abstract class NavStokesFlow : Sim {
    }
 }
 }
-#nullable restore

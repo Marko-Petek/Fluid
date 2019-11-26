@@ -1,4 +1,3 @@
-#nullable enable
 using System;
 using dbl = System.Double;
 
@@ -54,4 +53,3 @@ namespace Fluid.Internals.Numerics {
       }
    }
 }
-#nullable restore
