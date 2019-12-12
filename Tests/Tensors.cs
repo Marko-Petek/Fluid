@@ -336,17 +336,16 @@ public class Tensors {
       1,    3,
       3,    44, 32, 37)]
    /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
-   [Theory] public void TensorContract(params int[] data) {
-      int read = 0, pos = 0;                                      Read(data, ref pos, ref read);
-      var ctrInxs = new Span<int>(data, pos, read);               Read(data, ref pos, ref read);
-      var struc1 = new Span<int>(data, pos, read).ToArray();      Read(data, ref pos, ref read);
+   [Theory] public void TensorContract(params int[] data) {       var (pos, read) = Read(data);
+      var ctrInxs = new Span<int>(data, pos, read);               (pos, read) = Read(data, pos, read);
+      var struc1 = new Span<int>(data, pos, read).ToArray();      (pos, read) = Read(data, pos, read);
       var tnr1 = TnrInt.FromFlatSpec(
-         new Span<int>(data, pos, read), struc1);                 Read(data, ref pos, ref read);
-      var struc2 = new Span<int>(data, pos, read).ToArray();      Read(data, ref pos, ref read);
+         new Span<int>(data, pos, read), struc1);                 (pos, read) = Read(data, pos, read);
+      var struc2 = new Span<int>(data, pos, read).ToArray();      (pos, read) = Read(data, pos, read);
       var tnr2 = TnrInt.FromFlatSpec(
-         new Span<int>(data, pos, read), struc2);                 Read(data, ref pos, ref read);
+         new Span<int>(data, pos, read), struc2);                 (pos, read) = Read(data, pos, read);
       var strucExpRes = new Span<int>(data, pos, read)
-         .ToArray();                                              Read(data, ref pos, ref read);
+         .ToArray();                                              (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec( 
          new Span<int>(data, pos, read), strucExpRes);
       var res = TnrInt.Contract(tnr1, tnr2, ctrInxs[0], ctrInxs[1]);
@@ -396,15 +395,14 @@ public class Tensors {
       3,    2, 2, 2,
       8,    9,8,5,6, 8,9,0,3)]
    /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
-   [Theory] public void TensorReduceRank(params int[] data) {
-      int read = 0, pos = 0;                                      Read(data, ref pos, ref read);
-      var redRank = data[pos];                                    Read(data, ref pos, ref read);
-      var emtInx = data[pos];                                     Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();    Read(data, ref pos, ref read);
+   [Theory] public void TensorReduceRank(params int[] data) {     var (pos, read) = Read(data);
+      var redRank = data[pos];                                    (pos, read) = Read(data, pos, read);
+      var emtInx = data[pos];                                     (pos, read) = Read(data, pos, read);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();    (pos, read) = Read(data, pos, read);
       var tnr = TnrInt.FromFlatSpec(
-         new Span<int>(data, pos, read), tnrStruc);               Read(data, ref pos, ref read);
+         new Span<int>(data, pos, read), tnrStruc);               (pos, read) = Read(data, pos, read);
       var expResStruc = new Span<int>(data, pos, read)
-         .ToArray();                                              Read(data, ref pos, ref read);
+         .ToArray();                                              (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec(
          new Span<int>(data, pos, read), expResStruc);
       var res = tnr.ReduceRank(redRank, emtInx);
@@ -503,15 +501,14 @@ public class Tensors {
       2,    2, 2,                                                       // expResStruc
       4,    7,12, 5,13 )]
    /// <remarks> <see cref="TestRefs.TensorSelfContract"/> </remarks>
-   [Theory] public void TensorSelfContract(params int[] data) {
-      int read = 0, pos = 0;                                         Read(data, ref pos, ref read);
-      var slotInx1 = data[pos];                                      Read(data, ref pos, ref read);
-      var slotInx2 = data[pos];                                      Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();       Read(data, ref pos, ref read);
+   [Theory] public void TensorSelfContract(params int[] data) {      var (pos, read) = Read(data);
+      var slotInx1 = data[pos];                                      (pos, read) = Read(data, pos, read);
+      var slotInx2 = data[pos];                                      (pos, read) = Read(data, pos, read);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();       (pos, read) = Read(data, pos, read);
       var tnr = TnrInt.FromFlatSpec(
-         new Span<int>(data, pos, read), tnrStruc);                  Read(data, ref pos, ref read);
+         new Span<int>(data, pos, read), tnrStruc);                  (pos, read) = Read(data, pos, read);
       var expResStruc = new Span<int>(data, pos, read)
-         .ToArray();                                                 Read(data, ref pos, ref read);
+         .ToArray();                                                 (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec(
          new Span<int>(data, pos, read), expResStruc);
       var res = tnr.SelfContract(slotInx1, slotInx2);
@@ -566,15 +563,14 @@ public class Tensors {
       //    expRes: (9,9, 3,2,  7,4, 6,8) x (7,1, 3,6)               // Below: expected result.
       32,   63,9, 27,54,  63,9, 27,54,   21,3, 9,18,  14,2, 6,12,    49,7, 21,42,  28,4, 12,24,   42,6, 18,36,  56,8, 24,48
    )]
-   [Theory] public void NonTopTnrProduct(params int[] data) {
-      int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
-      var struc1 = new Span<int>(data, pos, read).ToArray();                        Read(data, ref pos, ref read);
-      var tnr1 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc1);       Read(data, ref pos, ref read);
-      var struc2 = new Span<int>(data, pos, read).ToArray();                        Read(data, ref pos, ref read);
-      var tnr2 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc2);       Read(data, ref pos, ref read);
-      var inxs1 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
-      var inxs2 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
-      var expStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+   [Theory] public void NonTopTnrProduct(params int[] data) {                       var (pos, read) = Read(data);
+      var struc1 = new Span<int>(data, pos, read).ToArray();                        (pos, read) = Read(data, pos, read);
+      var tnr1 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc1);       (pos, read) = Read(data, pos, read);
+      var struc2 = new Span<int>(data, pos, read).ToArray();                        (pos, read) = Read(data, pos, read);
+      var tnr2 = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), struc2);       (pos, read) = Read(data, pos, read);
+      var inxs1 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
+      var inxs2 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
+      var expStruc = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec(new Span<int>(data, pos, read), expStruc);
       var subTnr1 = tnr1[VoidsInt.Tnr, inxs1];
       var subTnr2 = tnr2[VoidsInt.Tnr, inxs2];
@@ -811,13 +807,12 @@ public class Tensors {
       2,    2, 2,
       4,    16,8, 24,21)]                                         // R2: 2,2
    /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
-   [Theory] public void TensorEnumerateRank(params int[] data) {
-      int read = 0, pos = 0;                                                  Read(data, ref pos, ref read);
-      int enumRank = data[pos];                                               Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
-      var tnr = TnrInt.FromFlatSpec(data.AsSpan(pos, read), tnrStruc);     Read(data, ref pos, ref read);
+   [Theory] public void TensorEnumerateRank(params int[] data) {              var (pos, read) = Read(data);
+      int enumRank = data[pos];                                               (pos, read) = Read(data, pos, read);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();                (pos, read) = Read(data, pos, read);
+      var tnr = TnrInt.FromFlatSpec(data.AsSpan(pos, read), tnrStruc);        (pos, read) = Read(data, pos, read);
       var expResStrucArr = new Span<int>(data, pos, read).ToArray();
-      var expResStruc = expResStrucArr.ToList();                              Read(data, ref pos, ref read);
+      var expResStruc = expResStrucArr.ToList();                              (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec(data.AsSpan(pos, read),
          expResStrucArr);
       var res = new TnrInt(expResStruc);
@@ -853,15 +848,14 @@ public class Tensors {
       2,    3,0                  // wrt3
    )]
    /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
-   [Theory] public void VectorIndexer(params int[] data) {
-      int read = 0, pos = 0;                                      Read(data, ref pos, ref read);
-      var vec = VecInt.FromFlatSpec(data.AsSpan(pos, read));   Read(data, ref pos, ref read);
-      var read1 = new Span<int>(data, pos, read).ToArray();       Read(data, ref pos, ref read);
-      var read2 = new Span<int>(data, pos, read).ToArray();       Read(data, ref pos, ref read);
-      var read3 = new Span<int>(data, pos, read).ToArray();       Read(data, ref pos, ref read);
-      var read4 = new Span<int>(data, pos, read).ToArray();       Read(data, ref pos, ref read);
-      var wrt1 = new Span<int>(data, pos, read).ToArray();        Read(data, ref pos, ref read);
-      var wrt2 = new Span<int>(data, pos, read).ToArray();        Read(data, ref pos, ref read);
+   [Theory] public void VectorIndexer(params int[] data) {        var (pos, read) = Read(data);
+      var vec = VecInt.FromFlatSpec(data.AsSpan(pos, read));      (pos, read) = Read(data, pos, read);
+      var read1 = new Span<int>(data, pos, read).ToArray();       (pos, read) = Read(data, pos, read);
+      var read2 = new Span<int>(data, pos, read).ToArray();       (pos, read) = Read(data, pos, read);
+      var read3 = new Span<int>(data, pos, read).ToArray();       (pos, read) = Read(data, pos, read);
+      var read4 = new Span<int>(data, pos, read).ToArray();       (pos, read) = Read(data, pos, read);
+      var wrt1 = new Span<int>(data, pos, read).ToArray();        (pos, read) = Read(data, pos, read);
+      var wrt2 = new Span<int>(data, pos, read).ToArray();        (pos, read) = Read(data, pos, read);
       var wrt3 = new Span<int>(data, pos, read).ToArray();
       Assert.True(vec[read1[0]].Equals(read1[1]));
       Assert.True(vec[read2[0]].Equals(read2[1]));
@@ -892,28 +886,27 @@ public class Tensors {
       1,    4                                                      // expResW2
    )]
    /// <remarks> <see cref="TestRefs.TensorTauIndexer"/> </remarks>
-   [Theory] public void TensorTauIndexer(params int[] data) {
-      int read = 0, pos = 0;  Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();          Read(data, ref pos, ref read);
+   [Theory] public void TensorTauIndexer(params int[] data) {           var (pos, read) = Read(data);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();          (pos, read) = Read(data, pos, read);
       var tnr = TnrInt.FromFlatSpec(data.AsSpan(pos, read),
-         tnrStruc);                                                     Read(data, ref pos, ref read);
-      var inxs1 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
-      int expRes1 = data[pos];                                          Read(data, ref pos, ref read);
-      var inxs2 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
-      int expRes2 = data[pos];                                          Read(data, ref pos, ref read);
-      var inxs3 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
-      int expRes3 = data[pos];                                          Read(data, ref pos, ref read);
-      var inxs4 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
+         tnrStruc);                                                     (pos, read) = Read(data, pos, read);
+      var inxs1 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
+      int expRes1 = data[pos];                                          (pos, read) = Read(data, pos, read);
+      var inxs2 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
+      int expRes2 = data[pos];                                          (pos, read) = Read(data, pos, read);
+      var inxs3 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
+      int expRes3 = data[pos];                                          (pos, read) = Read(data, pos, read);
+      var inxs4 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
       int expRes4 = data[pos];
       Assert.True(tnr[inxs1].Equals(expRes1));
       Assert.True(tnr[inxs2].Equals(expRes2));
       Assert.True(tnr[inxs3].Equals(expRes3));
-      Assert.True(tnr[inxs4].Equals(expRes4));                          Read(data, ref pos, ref read);
-      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();          Read(data, ref pos, ref read);
+      Assert.True(tnr[inxs4].Equals(expRes4));                          (pos, read) = Read(data, pos, read);
+      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();          (pos, read) = Read(data, pos, read);
       int expResW1 = data[pos];
       tnr[wrtInxs1] = expResW1;
-      Assert.True(tnr[wrtInxs1].Equals(expResW1));                      Read(data, ref pos, ref read);
-      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();          Read(data, ref pos, ref read);
+      Assert.True(tnr[wrtInxs1].Equals(expResW1));                      (pos, read) = Read(data, pos, read);
+      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();          (pos, read) = Read(data, pos, read);
       int expResW2 = data[pos];
       tnr[wrtInxs2] = expResW2;
       Assert.True(tnr[wrtInxs2].Equals(expResW2));
@@ -935,28 +928,27 @@ public class Tensors {
       3,    1,1,1,                                                // wrtInxs2
       2,    0,5     )]                                              // wrtVec2
    /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
-   [Theory] public void TensorVectorIndexer(params int[] data) {
-      int read = 0, pos = 0;                                               Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
+   [Theory] public void TensorVectorIndexer(params int[] data) {           var (pos, read) = Read(data);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
       var tnr = TnrInt.FromFlatSpec(
-         data.AsSpan(pos, read), tnrStruc);                                Read(data, ref pos, ref read);
-      var inxs1 = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
-      var expRes1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));         Read(data, ref pos, ref read);
-      var inxs2 = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
-      var expRes2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));         Read(data, ref pos, ref read);
-      var inxs3 = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
-      var expRes3 = VecInt.FromFlatSpec(data.AsSpan(pos,read));         Read(data, ref pos, ref read);
-      var inxs4 = new Span<int>(data, pos, read).ToArray();                Read(data, ref pos, ref read);
+         data.AsSpan(pos, read), tnrStruc);                                (pos, read) = Read(data, pos, read);
+      var inxs1 = new Span<int>(data, pos, read).ToArray();                (pos, read) = Read(data, pos, read);
+      var expRes1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));            (pos, read) = Read(data, pos, read);
+      var inxs2 = new Span<int>(data, pos, read).ToArray();                (pos, read) = Read(data, pos, read);
+      var expRes2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));            (pos, read) = Read(data, pos, read);
+      var inxs3 = new Span<int>(data, pos, read).ToArray();                (pos, read) = Read(data, pos, read);
+      var expRes3 = VecInt.FromFlatSpec(data.AsSpan(pos,read));            (pos, read) = Read(data, pos, read);
+      var inxs4 = new Span<int>(data, pos, read).ToArray();                (pos, read) = Read(data, pos, read);
       var expRes4 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
       Assert.True(tnr[VoidsInt.Vec, inxs1].Equals(expRes1));
       Assert.True(tnr[VoidsInt.Vec, inxs2].Equals(expRes2));
       Assert.True(tnr[VoidsInt.Vec, inxs3].Equals(expRes3));
-      Assert.True(tnr[VoidsInt.Vec, inxs4].Equals(expRes4));               Read(data, ref pos, ref read);
-      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
+      Assert.True(tnr[VoidsInt.Vec, inxs4].Equals(expRes4));               (pos, read) = Read(data, pos, read);
+      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
       var wrtVec1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
       tnr[VoidsInt.Vec, wrtInxs1] = wrtVec1;
-      Assert.True(tnr[VoidsInt.Vec, wrtInxs1].Equals(wrtVec1));            Read(data, ref pos, ref read);
-      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();             Read(data, ref pos, ref read);
+      Assert.True(tnr[VoidsInt.Vec, wrtInxs1].Equals(wrtVec1));            (pos, read) = Read(data, pos, read);
+      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();             (pos, read) = Read(data, pos, read);
       var wrtVec2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));
       tnr[VoidsInt.Vec, wrtInxs2] = wrtVec2;
       Assert.True(tnr[VoidsInt.Vec, wrtInxs2].Equals(wrtVec2));
@@ -979,29 +971,28 @@ public class Tensors {
       2,    1,1,                                                  // wrtInxs2
       4,    8,3, 0,4 )]                                           // wrtTnr2
    /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
-   [Theory] public void TensorTensorIndexer(params int[] data) {
-      int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
-      var tnrStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
-      var expResStruc = new Span<int>(data, pos, read).ToArray();                   Read(data, ref pos, ref read);
-      var tnr = TnrInt.FromFlatSpec(data.AsSpan(pos, read), tnrStruc);           Read(data, ref pos, ref read);
-      var inxs1 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
-      var expRes1 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);     Read(data, ref pos, ref read);
-      var inxs2 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
-      var expRes2 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);     Read(data, ref pos, ref read);
-      var inxs3 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
-      var expRes3 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);     Read(data, ref pos, ref read);
-      var inxs4 = new Span<int>(data, pos, read).ToArray();                         Read(data, ref pos, ref read);
+   [Theory] public void TensorTensorIndexer(params int[] data) {                    var (pos, read) = Read(data);
+      var tnrStruc = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
+      var expResStruc = new Span<int>(data, pos, read).ToArray();                   (pos, read) = Read(data, pos, read);
+      var tnr = TnrInt.FromFlatSpec(data.AsSpan(pos, read), tnrStruc);              (pos, read) = Read(data, pos, read);
+      var inxs1 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
+      var expRes1 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);        (pos, read) = Read(data, pos, read);
+      var inxs2 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
+      var expRes2 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);        (pos, read) = Read(data, pos, read);
+      var inxs3 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
+      var expRes3 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);        (pos, read) = Read(data, pos, read);
+      var inxs4 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
       var expRes4 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
       var res1 = tnr[VoidsInt.Tnr, inxs1];
       Assert.True(res1.Equals(expRes1));
       Assert.True(tnr[VoidsInt.Tnr, inxs2].Equals(expRes2));
       Assert.True(tnr[VoidsInt.Tnr, inxs3].Equals(expRes3));
-      Assert.True(tnr[VoidsInt.Tnr, inxs4].Equals(expRes4));                        Read(data, ref pos, ref read);
-      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+      Assert.True(tnr[VoidsInt.Tnr, inxs4].Equals(expRes4));                        (pos, read) = Read(data, pos, read);
+      var wrtInxs1 = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var wrtTnr1 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
       tnr[VoidsInt.Tnr, wrtInxs1] = wrtTnr1;
-      Assert.True(tnr[VoidsInt.Tnr, wrtInxs1].Equals(wrtTnr1));                     Read(data, ref pos, ref read);
-      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+      Assert.True(tnr[VoidsInt.Tnr, wrtInxs1].Equals(wrtTnr1));                     (pos, read) = Read(data, pos, read);
+      var wrtInxs2 = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var wrtTnr2 = TnrInt.FromFlatSpec(data.AsSpan(pos,read), expResStruc);
       tnr[VoidsInt.Tnr, wrtInxs2] = wrtTnr2;
       Assert.True(tnr[VoidsInt.Tnr, wrtInxs2].Equals(wrtTnr2));
@@ -1023,11 +1014,10 @@ public class Tensors {
       2,    3,3,                          // expStruc
       9,    0,0,0, 0,0,0, 0,0,0  )]       // expRes
    /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
-   [Theory] public void VectorTnrProductVector(params int[] data) {
-      int read = 0, pos = 0;                                                        Read(data, ref pos, ref read);
-      var vec1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));                     Read(data, ref pos, ref read);
-      var vec2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));                     Read(data, ref pos, ref read);
-      var expStruc = new Span<int>(data, pos, read).ToArray();                      Read(data, ref pos, ref read);
+   [Theory] public void VectorTnrProductVector(params int[] data) {              var (pos, read) = Read(data);
+      var vec1 = VecInt.FromFlatSpec(data.AsSpan(pos,read));                     (pos, read) = Read(data, pos, read);
+      var vec2 = VecInt.FromFlatSpec(data.AsSpan(pos,read));                     (pos, read) = Read(data, pos, read);
+      var expStruc = new Span<int>(data, pos, read).ToArray();                   (pos, read) = Read(data, pos, read);
       var expRes = TnrInt.FromFlatSpec(data.AsSpan(pos, read), expStruc);
       var res = vec1.TnrProduct(vec2);
       Assert.True(res.Equals(expRes));

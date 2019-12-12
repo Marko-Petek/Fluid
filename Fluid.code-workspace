@@ -19,14 +19,6 @@
       "latex-workshop.latex.autoBuild.run": "onFileChange",
 		"terminal.integrated.fontWeight": "bold",
 		"terminal.integrated.fontWeightBold": "bold",
-		"todo-tree.defaultHighlight": {
-			"foreground": "green",
-			"type": "none"
-		},
-		"todo-tree.customHighlight": {
-			"TODO": {},
-			"FIXME": {}
-		},
 		//"window.titleBarStyle": "custom",
 		"workbench.colorTheme": "Visual Studio Light",
 		"workbench.colorCustomizations": {
@@ -102,9 +94,6 @@
 		"zenMode.hideActivityBar": true,
 		"[latex]": {
 			"editor.lineNumbers": "off"
-      },
-      "markdownlint.config": {
-         "default": false
       },
       "todo-tree.highlights.customHighlight": {
          "TODO": {},
