@@ -634,6 +634,18 @@ public class Tensors {
       var expMat = TnrInt.FromFlatSpec(data.AsSpan<int>(18,9), 3,3);
       Assert.True(tnr3.Equals(expMat));
    }
+
+   [InlineData(                                 // Perform three additions: T[0]+T[1], TT[0]+T[3], T[1]+T[2]
+      3,    3,2,2,                              // First structure.
+      12,   6,5, 2,1,  8,5, 1,9,  4,3, 6,6,     // First values.
+      2,    2,2,                                // Expected result structure.
+      4,    14,10, 3,10,                        // ExpRes1
+      4,    10,8, 8,7,                          // ExpRes2
+      4,    12,8, 7,15                          // ExpRes3
+   )]
+   [Theory] public void Op_TensorAddition2(params int[] data) {
+
+   }
    
    [InlineData(
       1, 2, 3,

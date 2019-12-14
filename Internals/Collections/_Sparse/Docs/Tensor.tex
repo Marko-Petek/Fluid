@@ -17,11 +17,11 @@
 
 \section{Operator +}
 
-Takes two tensors of equal rank and returns a new tensor that is a sum of the two. Definition:
 \begin{lstlisting}
    public static Tnr operator +(Tnr tnr1, Tnr tnr2)
 \end{lstlisting}
-Usage:
+
+Takes two tensors of equal rank and returns a new tensor that is a sum of the two. The resulting tensor has no superior, it must be set manually after the operation. Usage:
 \begin{lstlisting}
    var tnr1Vals = new int[] {5,4, 9,7,  0,8, 2,1};
    var tnr1Struc = new int[] {2,2,2};
