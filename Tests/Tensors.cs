@@ -635,16 +635,39 @@ public class Tensors {
       Assert.True(tnr3.Equals(expMat));
    }
 
-   [InlineData(                                 // Perform three additions: T[0]+T[1], TT[0]+T[3], T[1]+T[2]
+   [InlineData(                                 // Perform three additions: T[0]+T[1], TT[0]+T[2], T[1]+T[2]
       3,    3,2,2,                              // First structure.
       12,   6,5, 2,1,  8,5, 1,9,  4,3, 6,6,     // First values.
       2,    2,2,                                // Expected result structure.
-      4,    14,10, 3,10,                        // ExpRes1
-      4,    10,8, 8,7,                          // ExpRes2
-      4,    12,8, 7,15                          // ExpRes3
+      4,    14,10, 3,10,                        // ExpRes1 add
+      4,    10,8, 8,7,                          // ExpRes2 add
+      4,    12,8, 7,15,                         // ExpRes3 add
+      4,    -2,0, 1,-8,                         // ExpRes4 sub
+      4,    2,2, -4,-5,                         // ExpRes5 sub
+      4,    4,2, -5,3                           // ExpRes6 sub
    )]
-   [Theory] public void Op_TensorAddition2(params int[] data) {
-
+   [Theory] public void Op_NonTopTensorAdditionSubtraction(params int[] data) {  var (pos, read) = Read(data);
+      var struc1 = data.AsSpan<int>(pos, read).ToArray();                        (pos, read) = Read(data, pos, read);
+      var tnr1 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), struc1);       (pos, read) = Read(data, pos, read);
+      var strucRes = data.AsSpan<int>(pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
+      var tnrRes1 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
+      var tnrRes2 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
+      var tnrRes3 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
+      var tnrRes4 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
+      var tnrRes5 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
+      var tnrRes6 = TnrInt.FromFlatSpec(data.AsSpan<int>(pos, read), strucRes);
+      var res1 = tnr1[VoidsInt.Tnr, 0] + tnr1[VoidsInt.Tnr, 1];
+      var res2 = tnr1[VoidsInt.Tnr, 0] + tnr1[VoidsInt.Tnr, 2];
+      var res3 = tnr1[VoidsInt.Tnr, 1] + tnr1[VoidsInt.Tnr, 2];
+      var res4 = tnr1[VoidsInt.Tnr, 0] - tnr1[VoidsInt.Tnr, 1];
+      var res5 = tnr1[VoidsInt.Tnr, 0] - tnr1[VoidsInt.Tnr, 2];
+      var res6 = tnr1[VoidsInt.Tnr, 1] - tnr1[VoidsInt.Tnr, 2];
+      Assert.True(res1.Equals(tnrRes1));
+      Assert.True(res2.Equals(tnrRes2));
+      Assert.True(res3.Equals(tnrRes3));
+      Assert.True(res4.Equals(tnrRes4));
+      Assert.True(res5.Equals(tnrRes5));
+      Assert.True(res6.Equals(tnrRes6));
    }
    
    [InlineData(

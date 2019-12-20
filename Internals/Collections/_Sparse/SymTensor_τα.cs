@@ -16,8 +16,10 @@ namespace Fluid.Internals.Collections {
    public class SymTensor<τ,α> : Tensor<τ,α>, IEquatable<Tensor<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IArithmetic<τ>, new() {
+#nullable disable
       /// <summary>Pairs of symmetric indices.</summary>
       public (int Inx1,int Inx2)[] Symmetries { get; }
+#nullable enable
       public SymTensor(List<int> structure, (int,int)[] syms, int cap = 6) : base(structure, cap) { }
 
       public SymTensor(Tensor<τ,α> sup, (int,int)[] syms, int cap) : base(sup, cap) { }

@@ -28,9 +28,8 @@ where α : IArithmetic<τ>, new() {
    }
 
    internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
-   /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-   public Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
-   /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
+   
+   /// <summary>Creates a type τ vector with arithmetic α, with specified dimensionality and initial capacity.</summary>
    public Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
 
    #nullable disable       // The warning we get is moot.

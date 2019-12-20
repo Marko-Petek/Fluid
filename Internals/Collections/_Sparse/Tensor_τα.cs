@@ -398,143 +398,18 @@ where α : IArithmetic<τ>, new() {
             vec.Negate(); }
       }
    }
-   /// <summary></summary>
-   /// <param name="inclStopDepth">Tensors of this rank are provided to the onStopRank delegate.</param>
-   /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-   public static void Recursion(Tensor<τ,α> leader, Tensor<τ,α> follower,
-   Action<int,Tensor<τ,α>,Tensor<τ,α>, int,Tensor<τ,α>,Tensor<τ,α>> descending,
-   Action<int,Tensor<τ,α>,Tensor<τ,α>, int,Tensor<τ,α>,Tensor<τ,α>> ascending,            // take in from current level, put out from current level
-   Func<int,Tensor<τ,α>,int,Tensor<τ,α>, (Tensor<τ,α>,bool)> onNoSubFolw,                   // Take in lead sub from current body and folw sup from above. Return sub folw and bool: whether to descend further.
-   int inclStopRank,
-   Func<int, Tensor<τ,α>, Tensor<τ,α>, (int, Tensor<τ,α>, Tensor<τ,α>)> onStopRank) {     // take from current, return from below.
-      Assume.True(inclStopRank > 1, () => {
-         T.S.A("InclusiveStopRank has to be at least 2, ");
-         return T.S.Y("because method deals exclusively with tensors."); } );
-      throw new NotImplementedException();
-      //Descend(leader.Rank, 0, leader, follower);                                          // TODO: Continue Recursion.
-
-   //    /// <summary>Returned values are from the corresponding body (from below). Input values are from above.</summary>
-   //    (int, Tensor<τ,α>, Tensor<τ,α>) Descend(int rank, int inx,
-   //    Tensor<τ,α> lead, Tensor<τ,α> folw) {                                               // Takes in inDat from above, returns outDat from its depth.
-   //       if(rank > inclStopRank) {
-   //          foreach(var inx_subLead in lead) {
-   //             int subInx = inx_subLead.Key;
-   //             var subLead = inx_subLead.Value;
-   //             Tensor<τ,α> subFolw;
-   //             if(folw.TryGetValue(subInx, out subFolw)) {
-   //                descending?.Invoke(inx, lead, folw, subInx, subLead, subFolw);
-   //                (int ssubInx, var ssubLead, var ssubFolw) =
-   //                   Descend(rank - 1, subInx, subLead, subFolw);
-   //                ascending?.Invoke(subInx, subLead, subFolw,
-   //                   ssubInx, ssubLead, ssubFolw); }
-   //             else {
-   //                bool descend = false;                                    // Whether to continue descent.
-   //                (subFolw, descend) =
-   //                   onNoSubFolw(subInx, subLead, inx, folw);
-   //                if(descend) {
-   //                   descending?.Invoke(inx, lead, folw, subInx, subLead, subFolw);
-   //                   (int ssubInx, var ssubLead, var ssubFolw) =
-   //                      Descend(rank - 1, subInx, subLead, subFolw); }
-   //                ascending?.Invoke(subInx, subLead, subFolw,
-   //                   ssubInx, ssubLead, ssubFolw);
-   //             } }                                  // Do not descend further. Return subordinate and start ascending.
-   //          throw new ArgumentException("Empty source tensor."); }                                        // empty 
-   //       else                                                                             // inclusive StopRank reached.
-   //          return onStopRank?.Invoke(inx, lead, folw) ??
-   //             throw new InvalidOperationException(
-   //                "Reached StopRank, but no response method defined.");
-   //    }
-   }
-   // /// <summary>RecurseSrc and recurseTgt are recursed simultaneously. RecurseSrc dictates the recursion. If at each step the equivalent tensor does not exist in tgt then onNoEquivalent is called and the recursion ceases afterwards. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
-   // /// <param name="recurseSrc">First tensor.</param>
-   // /// <param name="recurseTgt">Second tensor.</param>
-   // /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
-   // /// <param name="onNoEquivalent">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
-   // /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-   // protected static void SimultaneousRecurse<λ,χ>(                         // λ = lower level data, χ = higher level data
-   // Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
-   // Func<ρ> onEmptySrc,
-   // Func<λ,χ,λ> onResurface,
-   // Func<int, Tensor<τ,α>, Tensor<τ,α>, ρ> onNoEquivalent,
-   // Func<Tensor<τ,α>, Tensor<τ,α>, ρ> onStopRank) {
-   //    Assume.True(inclStopRank > 1, () => {
-   //      T.S.A("InclusiveStopRank has to be at least 2, ");
-   //      T.S.A("because method deals exclusively with tensors.");
-   //       returnT.S.Y(); } );
-   //    Recurse(recurseSrc, recurseTgt);
-
-   //    ρ Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {                        // ρ is type of info passed from the deeper level
-   //       if(src.Rank > inclStopRank) {
-   //          foreach(var int_subSrc in src) {
-   //             int subKey = int_subSrc.Key;
-   //             var subSrc = int_subSrc.Value;
-   //             if(tgt.TryGetValue(subKey, out var subTgt)) {                 // Subtensor exists in aTgt.
-   //                ρ resurfaceInfo = Recurse(subSrc, subTgt);
-   //                return onResurface(resurfaceInfo);
-   //             }
-   //             else                                                        // Equivalent tensor does not exist on tgt.
-   //                return onNoEquivalent(subKey, subSrc, tgt); }
-   //          return onEmptySrc(); }
-   //       else                                                              // inclusive StopRank reached.
-   //          return onStopRank(src, tgt);
-   //    }
-   // }
-
-   // /// <summary>RecurseSrc and recurseTgt are recursed simultaneously, but we know that the tgt is empty so we avoid the check for existence. RecurseSrc dictates the recursion. For each subtensor of src createSubTgt is called. When rank of order inclStopRank is reached onStopRank is called and recursion is stopped.</summary>
-   // /// <param name="recurseSrc">First tensor.</param>
-   // /// <param name="recurseTgt">Second, empty tensor.</param>
-   // /// <param name="inclStopRank">Tensors of this rank are provided to the onStopRank delegate.</param>
-   // /// <param name="createSubTgt">Delegate which creates a subTgt tensor on tgt. It is given the index, the subSrc subtensor and the tgt tensor to which the subTgt will be added.</param>
-   // /// <param name="onStopRank">Delegate is called when the rank of order inclStopRank is reached.</param>
-   // protected static void SimultRecurseEmptyTgt(
-   //    Tensor<τ,α> recurseSrc, Tensor<τ,α> recurseTgt, int inclStopRank,
-   //    Func<int, Tensor<τ,α>, Tensor<τ,α>, Tensor<τ,α>>   createSubTgt,
-   //    Action<Tensor<τ,α>,Tensor<τ,α>>                    onStopRank)
-   // {
-   //    Assume.True(inclStopRank > 1, () => {
-   //      T.S.A("InclusiveStopRank has to be at least 2, ");
-   //      T.S.A("because method deals exclusively with tensors.");
-   //       returnT.S.Y(); } );
-   //    Recurse(recurseSrc, recurseTgt);
-
-   //    void Recurse(Tensor<τ,α> src, Tensor<τ,α> tgt) {
-   //       if(src.Rank > inclStopRank) {
-   //          foreach(var int_subSrc in src) {
-   //             int subSrcKey = int_subSrc.Key;
-   //             var subSrc = int_subSrc.Value;
-   //             var subTgt = createSubTgt(subSrcKey, subSrc, tgt);       // Careful: tgt tensor is 1 rank higher than subSrc.
-   //             Recurse(subSrc, subTgt); } }
-   //       else                                                           // inclusive StopRank reached.
-   //          onStopRank?.Invoke(src, tgt);
-   //    }
-   // }
+   
    /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="tnr1">Operand.</param>
    /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
    public static Tensor<τ,α> operator -(Tensor<τ,α> tnr1) {                      // FIXME: Unary Negate.
       throw new NotImplementedException();
-      //var newStructure = tnr1.CopySubstructure();
-      // var res = new Tensor<τ,α>(newStructure, tnr1.Rank, null, tnr1.Count);
-      // Recursion(tnr1, res,
-      //    descending: (inx,lead,folw, subInx,subLead,subFolw) => ,
-      //    ascending: null,
-
-      // )
-      // SimultRecurseEmptyTgt(tnr1, res, 2,
-      //    createSubTgt: (inx, subSrc, tgt) => {
-      //       var subTgt = new Tensor<τ,α>(subSrc.Rank, subSrc.Count);
-      //       tgt.Add(inx, subTgt);
-      //       return subTgt; },
-      //    onStopRank: (srcR2, tgtR2) => {
-      //       foreach(var int_srcR1 in srcR2) {
-      //          tgtR2.Add(int_srcR1.Key, - ((Vector<τ,α>) int_srcR1.Value)); } });
-      // return res;
    }
    /// <summary>Creates a new tensor which is a sum of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="tnr1">Left operand.</param>
    /// <param name="tnr2">Right operand.</param>
    /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
-   public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {            // FIXME: plus for tensors.
+   public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
       ThrowOnSubstructureMismatch(tnr1, tnr2);
       //var newStructure = tnr1.CopySubstructure();
       var res = new Tensor<τ,α>(tnr2, CopySpecs.S322_04);          // Create a copy of second tensor.
@@ -1093,107 +968,6 @@ where α : IArithmetic<τ>, new() {
       sb.Remove(length - 2, 2);
       sb.Append("}");
       return sb.ToString();
-   }
-
-   public static class CopySpecs {
-      /// <summary>Copies values, rank, structure (brand new structure is created) and superior.</summary>
-      public static readonly CopySpecStruct S342_00 = new CopySpecStruct(
-         WhichFields.ValuesAndNonValueFields,
-         WhichNonValueFields.All,
-         HowToCopyStructure.CreateNewStructure,
-         endRank: 0,
-         extraCapacity: 0);
-      /// <summary>Copies values (adds 4 extra capacity), rank, structure (brand new structure is created) and superior.</summary>
-      public static readonly CopySpecStruct S342_04 = new CopySpecStruct(
-         WhichFields.ValuesAndNonValueFields,
-         WhichNonValueFields.All,
-         HowToCopyStructure.CreateNewStructure,
-         endRank: 0,
-         extraCapacity: 4);
-      /// <summary>Copy values and rank, leave Structure ans Superior unassigned.</summary>
-      public static readonly CopySpecStruct S322_00 = new CopySpecStruct(
-         WhichFields.ValuesAndNonValueFields,
-         WhichNonValueFields.Rank,
-         HowToCopyStructure.DoNotCopy,
-         endRank: 0,
-         extraCapacity: 0);
-      /// <summary>Copy values (adds 4 extra capacity) and rank, leave Structure and Superior unassigned.</summary>
-      public static readonly CopySpecStruct S322_04 = new CopySpecStruct(
-         WhichFields.ValuesAndNonValueFields,
-         WhichNonValueFields.Rank,
-         HowToCopyStructure.DoNotCopy,
-         endRank: 0,
-         extraCapacity: 4);
-      ///<summary>Copy values, rank, and structure (brand new created), but not superior.</summary>
-      public static readonly CopySpecStruct S352_00 = new CopySpecStruct(
-         WhichFields.ValuesAndNonValueFields,                              // 3
-         WhichNonValueFields.AllExceptSuperior,                            // 5
-         HowToCopyStructure.CreateNewStructure,                            // 2
-         endRank: 0,                                                       // 0
-         extraCapacity: 0                                                  // 0
-      );
-   }
-
-   /// <summary>Structure that tells Tensor's Copy method how to copy a tensor.</summary>
-   public readonly struct CopySpecStruct {
-      /// <summary>Specify which types of fields to copy: value, non-value or both.</summary>
-      public readonly WhichFields FieldsSpec;
-      /// <summary>Specify which non-value fields to copy (and conversely, which to omit). Effective only if General.Meta flag is active.</summary>
-      public readonly WhichNonValueFields NonValueFieldsSpec;
-      /// <summary>Structure CopySpec specifies whether  to genuinely copy the Structure int[] array or only copy the reference.  Contains flags: TrueCopy (creates a new Structure array on the heap), RefCopy (copies only a reference to the Structure array on source).</summary>
-      /// <remarks>Effective only if MetaFields.Structure flag is active.</remarks>
-      public readonly HowToCopyStructure StructureSpec;
-      /// <summary>Lowest rank at which copying of values stops.</summary>
-      /// <remarks>Effective only if General.Vals flag is active. EndRank is an inclusive lower bound.</remarks>
-      public readonly int EndRank;
-      public readonly int ExtraCapacity;
-      
-      public CopySpecStruct(
-         WhichFields whichFields = WhichFields.ValuesAndNonValueFields,
-         WhichNonValueFields whichNonValueFields = WhichNonValueFields.All,
-         HowToCopyStructure howToCopyStructure = HowToCopyStructure.CreateNewStructure,
-         int endRank = 0,
-         int extraCapacity = 0)
-      {
-         FieldsSpec = whichFields;
-         NonValueFieldsSpec = whichNonValueFields;
-         StructureSpec = howToCopyStructure;
-         EndRank = endRank;
-         ExtraCapacity = extraCapacity;
-      }
-   }
-   /// <summary>Specify which types of fields to copy: value, non-value or both.</summary>
-   [Flags] public enum WhichFields {
-      /// <summary>(1) Copy only the value field (direct subtensors).</summary>
-      OnlyValues  = 1,                                               // 1
-      /// <summary>(2) Copy only the non-value fields (Structure, Rank, Superior).</summary>
-      OnlyNonValueFields  = 1 << 1,                                  // 2
-      /// <summary>(3) - Copy both the value field (direct subtensors) and non-value fields (Structure, Rank, Superior).</summary>
-      ValuesAndNonValueFields = OnlyNonValueFields | OnlyValues      // 3
-   }
-   /// <summary>Specify which non-value fields to copy (and conversely, which to omit).</summary>
-   [Flags] public enum WhichNonValueFields {
-      /// <summary>0 - Copy no non-value fields.</summary>
-      None               = 0,                               // 0
-      /// <summary>(1) Copy only the Struture field, leaving Rank and Superior uninitialized.</summary>
-      Structure          = 1,                               // 1
-      /// <summary>(2) Copy only the Rank field, leaving Structure and Superior uninitialized..</summary>
-      Rank               = 1 << 1,                          // 2
-      /// <summary>(3) Copy only the Superior field, levaing Rank and Structure uninitialized.</summary>
-      Superior           = 1 << 2,                          // 3
-      /// <summary>(4) Copy all non-value fields: Structure, Rank and Superior.</summary>
-      All                = Structure | Rank | Superior,     // 4
-      /// <summary>(5) Copy the Rank and Structure fields, but leave Superior uninitialized.</summary>
-      AllExceptSuperior  = All & ~Superior                  // 5
-   }
-   /// <summary>Specifies whether to make.</summary>
-   [Flags] public enum HowToCopyStructure {
-      /// <summary>(0) Do not copy structure.</summary>
-      DoNotCopy = 0,
-      /// <summary>(1) Copy only the reference to the existing structure on the original tensor.</summary>
-      ReferToOriginalStructure  = 1,            // 1
-      /// <summary>(2) Create a fresh copy of the structure on the original tensor and assign its reference to the field.</summary>
-      CreateNewStructure = 1 << 1,              // 2
    }
 }
 
