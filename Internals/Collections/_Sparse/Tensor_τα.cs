@@ -542,7 +542,7 @@ where α : IArithmetic<τ>, new() {
                newTnr.Structure = newStructure;
                return newTnr;}
             else
-               return TensorFactory<τ,α>.CreateEmpty(0, newStructure.Count, newStructure); }                                // Return empty tensor.
+               return TensorFactory<τ,α>.CreateEmptyTensor(0, newStructure.Count, newStructure); }                                // Return empty tensor.
          else                                                                                      // Rank <= 1: impossible.
             throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
       else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
@@ -675,7 +675,7 @@ where α : IArithmetic<τ>, new() {
                if(sum.Vals.Count != 0)
                   return sum;
                else
-                  return TensorFactory<τ,α>.CreateEmpty(0, 1, struc3); }
+                  return TensorFactory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
             else {                                             // Result will be tensor.
                Tensor<τ,α> elimTnr1, sumand, sum;
                sum = new Tensor<τ,α>(struc3);
@@ -687,7 +687,7 @@ where α : IArithmetic<τ>, new() {
                if(sum.Count != 0)
                   return sum;
                else
-                  return TensorFactory<τ,α>.CreateEmpty(0, struc3.Count, struc3); } } }
+                  return TensorFactory<τ,α>.CreateEmptyTensor(0, struc3.Count, struc3); } } }
       else {                                                   // First tensor is rank 1 (a vector).
          var vec1 = (Vector<τ,α>) tnr1;
          return Vector<τ,α>.ContractPart2(vec1, tnr2, rankInx2, struc3, conDim);}

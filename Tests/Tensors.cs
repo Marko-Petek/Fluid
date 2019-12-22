@@ -852,7 +852,7 @@ public class Tensors {
       var expResStruc = expResStrucArr.ToList();                              (pos, read) = Read(data, pos, read);
       var expRes = TnrIntFac.TensorFromFlatSpec(data.AsSpan(pos, read),
          expResStrucArr);
-      var res = new TnrInt(expResStruc);
+      var res = TnrIntFac.CreateTopTensor(expResStruc);
       var rankCollection = tnr.EnumerateRank(enumRank);
       foreach(var tnr2 in rankCollection)
          res = res + tnr2;

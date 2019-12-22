@@ -16,23 +16,29 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
    /// <param name="cap">Capacity.</param>
    /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank,
+   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank,
    List<int> structure, Tensor<τ,α> sup) =>
       rank switch {
          1 => Vector<τ,α>.CreateEmpty(cap, structure, sup),
          _ => new Tensor<τ,α>(structure, rank, sup, cap) };
    
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank, List<int> structure) =>
-      CreateEmpty(cap, rank, structure, Voids<τ,α>.Vec);
+   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank, List<int> structure) =>
+      CreateEmptyTensor(cap, rank, structure, Voids<τ,α>.Vec);
 
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank) =>
-      CreateEmpty(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
+   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank) =>
+      CreateEmptyTensor(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
 
    /// <summary>Creates a vector with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension.</param>
    /// <param name="cap">Initial capacity.</param>
-   public static Vector<τ,α> CreateVector(int dim, int cap) =>
+   public static Vector<τ,α> CreateTopVector(int dim, int cap) =>
       new Vector<τ,α>(new List<int> {dim}, Voids<τ,α>.Vec, cap);
+
+   /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
+   /// <param name="structure">Specifies dimension of each rank.</param>
+   /// <param name="cap">Initially assigned memory.</param>
+   public static Tensor<τ,α> CreateTopTensor(List<int> structure, int cap = 6) =>
+      new Tensor<τ,α>(structure, cap);
 
    /// <summary>Creates a new vector from an array slice.</summary>
    /// <param name="slc">Array slice.</param>
