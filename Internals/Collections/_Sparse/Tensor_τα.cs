@@ -71,11 +71,11 @@ where α : IArithmetic<τ>, new() {
    
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
-   public List<int> Structure { get; protected set; } = Voids.ListInt;
+   public List<int> Structure { get; internal set; } = Voids.ListInt;
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
-   public int Rank { get; protected set; }
+   public int Rank { get; internal set; }
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
-   public Tensor<τ,α> Superior { get; protected set; } = Voids<τ,α>.Vec;
+   public Tensor<τ,α> Superior { get; internal set; } = Voids<τ,α>.Vec;
 
    public new int Count => CountInternal;
 
@@ -103,21 +103,21 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
    /// <param name="structure">Specifies dimension of each rank.</param>
    /// <param name="cap">Initially assigned memory.</param>
-   public Tensor(List<int> structure, int cap = 6) : this(structure, structure.Count, Voids<τ,α>.Vec, cap) { }
+   internal Tensor(List<int> structure, int cap = 6) : this(structure, structure.Count, Voids<τ,α>.Vec, cap) { }
    /// <summary>Creates a non-top tensor with specified superior and initial capacity. Rank is assigned as one less that superior.</summary>
    /// <param name="sup">Tensor directly above in hierarchy.</param>
    /// <param name="cap">Initially assigned memory.</param>
-   public Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) { }
+   internal Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) { }
    /// <summary>Creates a deep copy of specified tensor. You can optionally specify which meta-fields (Structure, Rank, Superior) to copy.</summary>
    /// <param name="src">Source tensor to copy.</param>
    /// <param name="cs">Exact specification of fields to copy.</param>
-   public Tensor(in Tensor<τ,α> src, in CopySpecStruct cs) :
+   internal Tensor(in Tensor<τ,α> src, in CopySpecStruct cs) :
       base(src.Count + cs.ExtraCapacity) {
-      Copy(src, this, in cs);
+      TensorFactory<τ,α>.Copy(src, this, in cs);
    }
    /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
    /// <param name="src">Tensor to copy.</param>
-   public Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S322_00) { }
+   internal Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S322_00) { }
    /// <summary>Adds tnr to caller and assigns the caller's superstructure to tnr.</summary>
    /// <param name="key">Index.</param>
    /// <param name="tnr">Tensor.</param>
@@ -129,7 +129,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr.</summary>
    /// <param name="key">Index.</param>
    /// <param name="tnr">Tensor.</param>
-   protected void AddOnly(int key, Tensor<τ,α> tnr) =>
+   internal void AddOnly(int key, Tensor<τ,α> tnr) =>
       base.Add(key, tnr);
 
    /// <summary>Adds tnr to caller only if it is not empty. Assigns the caller's superstructure to tnr.</summary>
@@ -145,62 +145,14 @@ where α : IArithmetic<τ>, new() {
       if (Rank == 1) {
          var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
          var thisVector = (Vector<τ,α>)this;
-         Vector<τ,α>.Copy(thisVector, res, in cs);
+         TensorFactory<τ,α>.Copy(thisVector, res, in cs);
          return res; }
       else {
          var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-         Copy(this, res, in cs);
+         TensorFactory<τ,α>.Copy(this, res, in cs);
          return res; }
    }
-   /// <summary>Make a shallow or deep copy of a tensor. Set CopySpec field for fine tunning, ensure proper capacity of the target tensor.</summary>
-   /// <param name="aSrc">Copy source.</param>
-   /// <param name="aTgt">Copy target.</param>
-   /// <param name="cs">Exact specification of what fields to copy. Default is all.</param>
-   public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct cs) {
-      Assume.True(aSrc.Rank > 1, () =>
-         "Tensors's rank has to be at least 2 to be copied via this method.");
-      CopyMetaFields(aSrc, aTgt, in cs.NonValueFieldsSpec, in cs.StructureSpec);
-      if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues) {
-         var newStruc = aTgt.Structure;                                             // At this point top tensor tgt has a structure created by CopyMetaFields. It will be assigned to all subsequent subtensors.
-         int endRank = cs.EndRank;
-         Recursion(aSrc, aTgt);
-
-         void Recursion(Tensor<τ,α> src, Tensor<τ,α> tgt) {
-         if(src.Rank > 2) {                                       // Subordinates are tensors.
-            foreach (var int_subSrc in src) {
-               int subKey = int_subSrc.Key;
-               var subSrc = int_subSrc.Value;
-               var subTgt = new Tensor<τ,α>(newStruc, subSrc.Rank, tgt, subSrc.Count);
-               tgt.AddOnly(subKey, subTgt);
-               if(src.Rank > endRank)
-                  Recursion(subSrc, subTgt); } }
-         else if(src.Rank == 2) {                                 // Subordinates are vectors.
-            foreach(var int_subSrc in src) {
-               int subKey = int_subSrc.Key;
-               var subVec = (Vector<τ,α>) int_subSrc.Value;
-               var subTgt = new Vector<τ,α>(newStruc, tgt, subVec.Count);
-               tgt.AddOnly(subKey, subTgt);
-               subTgt.Vals = new Dictionary<int,τ>(subVec.Vals);
-            } }
-         else
-            throw new InvalidOperationException(
-               "Tensors's rank has to be at least 2 to be copied via this method."); }
-      }
-   }
-   public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in WhichNonValueFields mcs,
-   in HowToCopyStructure scs) {
-      if((mcs & WhichNonValueFields.Structure) == WhichNonValueFields.Structure) {
-         if((scs & HowToCopyStructure.ReferToOriginalStructure) == HowToCopyStructure.ReferToOriginalStructure)
-            tgt.Structure = src.Structure;
-         else
-            tgt.Structure = new List<int>(src.Structure); }
-      else {                                                                        // Create empty Structure, don't just assign VoidStructure. This way we can change it and impact all subtensors.
-         tgt.Structure = new List<int>(4); }
-      if((mcs & WhichNonValueFields.Rank) == WhichNonValueFields.Rank)
-         tgt.Rank = src.Rank;
-      if((mcs & WhichNonValueFields.Superior) == WhichNonValueFields.Superior)
-         tgt.Superior = src.Superior;
-   }
+   
    /// <summary>Packs only the part of the Structure below this tensor into a new Structure.</summary>
    internal List<int> CopySubstructure() {
       int structInx = Structure.Count - Rank;           // TopRank - Rank --> Index where substructure begins.
@@ -214,54 +166,6 @@ where α : IArithmetic<τ>, new() {
       foreach(var emt in subStruct) {
          Structure.Add(emt); }
    }
-   /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
-   /// <param name="slice">Span of values.</param>
-   /// <param name="structure">Structure of new tensor.</param>
-   public static Tensor<τ,α> FromFlatSpec(Span<τ> slice, params int[] structure) {
-      int tnrRank = structure.Length;
-      if(tnrRank == 1)
-         return Vector<τ,α>.FromFlatSpec(slice);
-      else {
-         var res = new Tensor<τ,α>(structure.ToList(), tnrRank, Voids<τ,α>.Vec, structure[0]);
-         Recursion(slice, 0, res);
-         return res;
-      }
-
-      void Recursion(Span<τ> slc, int slot, Tensor<τ,α> tgt) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
-         //int tgtRank = //ChangeRankNotation(structure.Length, dim);
-         int nIter = structure[slot];                              // As many iterations as it is the size of the dimension.
-         int nEmtsInSlice = slc.Length / nIter;
-         if(tgt.Rank > 2) {
-            //var res = new Tensor<τ,α>(structure.ToList(), trueRank, null, structure[dim]);
-            for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
-               var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-               var subTnr = new Tensor<τ,α>(tgt.Structure, tgt.Rank - 1, tgt, structure[slot]);
-               Recursion(newSlc, slot + 1, subTnr);
-               if(subTnr.Count != 0)
-                  tgt.AddOnly(i, subTnr); } }
-         else {                                                 // We are at rank 2, subrank = vector rank.
-            for(int i = 0; i < nIter; ++i) {
-               var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-               var subVec = Vector<τ,α>.FromFlatSpec(newSlc, tgt.Structure, tgt);
-               if(subVec.Count != 0)
-                  tgt.AddOnly(i, subVec); } }
-      }
-   }
-   /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
-   /// <param name="cap">Capacity.</param>
-   /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank,
-   List<int> structure, Tensor<τ,α> sup) =>
-      rank switch {
-         1 => Vector<τ,α>.CreateEmpty(cap, structure, sup),
-         _ => new Tensor<τ,α>(structure, rank, sup, cap) };
-
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank, List<int> structure) =>
-      CreateEmpty(cap, rank, structure, Voids<τ,α>.Vec);
-
-   public static Tensor<τ,α> CreateEmpty(int cap, int rank) =>
-      CreateEmpty(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
-
    /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
    /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
    int ToSlotInx(int rankInx) =>
@@ -638,7 +542,7 @@ where α : IArithmetic<τ>, new() {
                newTnr.Structure = newStructure;
                return newTnr;}
             else
-               return CreateEmpty(0, newStructure.Count, newStructure); }                                // Return empty tensor.
+               return TensorFactory<τ,α>.CreateEmpty(0, newStructure.Count, newStructure); }                                // Return empty tensor.
          else                                                                                      // Rank <= 1: impossible.
             throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
       else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
@@ -771,7 +675,7 @@ where α : IArithmetic<τ>, new() {
                if(sum.Vals.Count != 0)
                   return sum;
                else
-                  return CreateEmpty(0, 1, struc3); }
+                  return TensorFactory<τ,α>.CreateEmpty(0, 1, struc3); }
             else {                                             // Result will be tensor.
                Tensor<τ,α> elimTnr1, sumand, sum;
                sum = new Tensor<τ,α>(struc3);
@@ -783,7 +687,7 @@ where α : IArithmetic<τ>, new() {
                if(sum.Count != 0)
                   return sum;
                else
-                  return CreateEmpty(0, struc3.Count, struc3); } } }
+                  return TensorFactory<τ,α>.CreateEmpty(0, struc3.Count, struc3); } } }
       else {                                                   // First tensor is rank 1 (a vector).
          var vec1 = (Vector<τ,α>) tnr1;
          return Vector<τ,α>.ContractPart2(vec1, tnr2, rankInx2, struc3, conDim);}

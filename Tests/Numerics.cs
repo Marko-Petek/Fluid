@@ -15,6 +15,7 @@ namespace Fluid.Tests {
 using dbl = Double;
 using Tensor = Tensor<double,DblArithmetic>;
 using Vector = Vector<double,DblArithmetic>;
+using TnrFac = TensorFactory<double,DblArithmetic>;
 using TensorInt = Tensor<int,IntArithmetic>;
 using VectorInt = Vector<int,IntArithmetic>;
 using Emt = Element;
@@ -31,13 +32,13 @@ public class Numerics {
       8.0, 12.0, 9.0 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
    [Theory] public void ConjGrads3By3(params double[] input) {
-      var A = Tensor.FromFlatSpec(input.AsSpan<double>(0,9), 3,3);
+      var A = TnrFac.TensorFromFlatSpec(input.AsSpan<double>(0,9), 3,3);
       //.CreateFromArray(input, 6, 0, 3, 0, 3);
-      var b = Vector.FromFlatSpec(input.AsSpan<dbl>(9,3));
+      var b = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(9,3));
       //CreateFromArray(input, 9, 3);
-      var expSol = Vector.FromFlatSpec(input.AsSpan<dbl>(15,3));
+      var expSol = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(15,3));
       //CreateFromArray(input, 15, 3);
-      var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(12,3));
+      var initPoint = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(12,3));
       //Vector.CreateFromArray(input, 12, 3);
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
@@ -55,10 +56,10 @@ public class Numerics {
       1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads4By4"/></remarks>
    [Theory] public void ConjGrads4By4(params double[] input) {
-      var A = Tensor.FromFlatSpec(input.AsSpan<dbl>(0,16), 4,4);
-      var b = Vector.FromFlatSpec(input.AsSpan<dbl>(16,4));
-      var initPoint = Vector.FromFlatSpec(input.AsSpan<dbl>(20,4));
-      var expSol = Vector.FromFlatSpec(input.AsSpan<dbl>(24,4));
+      var A = TnrFac.TensorFromFlatSpec(input.AsSpan<dbl>(0,16), 4,4);
+      var b = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(16,4));
+      var initPoint = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(20,4));
+      var expSol = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(24,4));
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
       Assert.True(sol.Equals(expSol, 0.01));
@@ -90,14 +91,14 @@ public class Numerics {
       int nElmsInU = strucU.Aggregate(1, (int total, int val) => total*val);
       int nElmsInF = strucF.Aggregate(1, (int total, int val) => total*val);
       var spanK = data.Skip(arrPos).Take(nElmsInK).Select(a => (double) a).ToArray().AsSpan();
-      var K = Tensor.FromFlatSpec(spanK, strucK);
+      var K = TnrFac.TensorFromFlatSpec(spanK, strucK);
       arrPos += nElmsInK;
       var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (double) a).ToArray().AsSpan();
-      var F = Tensor.FromFlatSpec(spanF, strucF);
+      var F = TnrFac.TensorFromFlatSpec(spanF, strucF);
       var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
       var solver = new ConjGradsSolver(K, F);
       DebugTag = "x0Creation";
-      var x0 = Tensor.FromFlatSpec(spanX0, strucF);
+      var x0 = TnrFac.TensorFromFlatSpec(spanX0, strucF);
       var solution = solver.Solve(x0, 0.001);
       Assert.True(true);
    }

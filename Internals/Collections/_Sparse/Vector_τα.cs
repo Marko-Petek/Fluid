@@ -20,50 +20,32 @@ where α : IArithmetic<τ>, new() {
    public new int Count => CountInternal;
    protected override int CountInternal => Vals.Count;
    public Dictionary<int,τ> Vals { get; internal set; }         // An extra wrapped Dictionary which holds values.
+
+
+   #nullable disable
    internal Vector() : base(0) {
       Vals = new Dictionary<int, τ>();
-      Rank = 1; }
+      Rank = 1;
+   }
+   /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
+   internal Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
+
    internal Vector(List<int> structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
       Vals = new Dictionary<int, τ>(cap);
    }
-
    internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
    
    /// <summary>Creates a type τ vector with arithmetic α, with specified dimensionality and initial capacity.</summary>
-   public Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
-
-   #nullable disable       // The warning we get is moot.
+   internal Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
+   
    /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
    /// <param name="src"></param>
-   public Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
-      Copy(src, this, cs);
+   internal Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
+      TensorFactory<τ,α>.Copy(src, this, cs);
    }
+   internal Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
+   
    #nullable enable
-   public Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
-   /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
-   /// <param name="src">Copy source.</param>
-   /// <param name="tgt">Copy target.</param>
-   public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
-      CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);               // Structure created here.
-      switch (cs.FieldsSpec & WhichFields.OnlyValues) {
-         case WhichFields.OnlyValues:
-            tgt.Vals = new Dictionary<int,τ>(src.Count + cs.ExtraCapacity);
-            foreach(var int_val in src.Vals) {
-               tgt.Vals.Add(int_val.Key, int_val.Value); } break;
-         default:
-            tgt.Vals = new Dictionary<int,τ>(); break; }
-   }
-   /// <summary>Creates a new vector from an array slice.</summary>
-   /// <param name="slc">Array slice.</param>
-   public static Vector<τ,α> FromFlatSpec(Span<τ> slc , List<int> structure, Tensor<τ,α> sup) {
-      var vec = new Vector<τ,α>(structure, sup, slc.Length);
-      for(int i = 0; i < slc.Length; ++i) {
-         if(!slc[i].Equals(O<τ,α>.A.Zero()))
-            vec.Vals.Add(i, slc[i]); }
-      return vec;
-   }
-   public static Vector<τ,α> FromFlatSpec(Span<τ> slc) =>
-      FromFlatSpec(slc, new List<int>(1) { slc.Length }, Voids<τ,α>.Vec);
 
    public static Vector<τ,α> CreateEmpty(int cap, List<int> structure, Tensor<τ,α> sup) {
       var vec = new Vector<τ,α>(structure, sup, cap);
