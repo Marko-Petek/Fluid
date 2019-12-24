@@ -574,8 +574,8 @@ public class Tensors {
       var inxs2 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
       var expStruc = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var expRes = TnrIntFac.TensorFromFlatSpec(new Span<int>(data, pos, read), expStruc);
-      var subTnr1 = tnr1[VoidsInt.Tnr, inxs1];
-      var subTnr2 = tnr2[VoidsInt.Tnr, inxs2];
+      var subTnr1 = tnr1[TnrInt.V, inxs1];
+      var subTnr2 = tnr2[TnrInt.V, inxs2];
       var res = subTnr1.TnrProduct(subTnr2);
       Assert.True(res.Equals(expRes));
    }
@@ -658,12 +658,12 @@ public class Tensors {
       var tnrRes4 = TnrIntFac.TensorFromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
       var tnrRes5 = TnrIntFac.TensorFromFlatSpec(data.AsSpan<int>(pos, read), strucRes);  (pos, read) = Read(data, pos, read);
       var tnrRes6 = TnrIntFac.TensorFromFlatSpec(data.AsSpan<int>(pos, read), strucRes);
-      var res1 = tnr1[VoidsInt.Tnr, 0] + tnr1[VoidsInt.Tnr, 1];
-      var res2 = tnr1[VoidsInt.Tnr, 0] + tnr1[VoidsInt.Tnr, 2];
-      var res3 = tnr1[VoidsInt.Tnr, 1] + tnr1[VoidsInt.Tnr, 2];
-      var res4 = tnr1[VoidsInt.Tnr, 0] - tnr1[VoidsInt.Tnr, 1];
-      var res5 = tnr1[VoidsInt.Tnr, 0] - tnr1[VoidsInt.Tnr, 2];
-      var res6 = tnr1[VoidsInt.Tnr, 1] - tnr1[VoidsInt.Tnr, 2];
+      var res1 = tnr1[TnrInt.V, 0] + tnr1[TnrInt.V, 1];
+      var res2 = tnr1[TnrInt.V, 0] + tnr1[TnrInt.V, 2];
+      var res3 = tnr1[TnrInt.V, 1] + tnr1[TnrInt.V, 2];
+      var res4 = tnr1[TnrInt.V, 0] - tnr1[TnrInt.V, 1];
+      var res5 = tnr1[TnrInt.V, 0] - tnr1[TnrInt.V, 2];
+      var res6 = tnr1[TnrInt.V, 1] - tnr1[TnrInt.V, 2];
       Assert.True(res1.Equals(tnrRes1));
       Assert.True(res2.Equals(tnrRes2));
       Assert.True(res3.Equals(tnrRes3));
@@ -1020,19 +1020,19 @@ public class Tensors {
       var expRes3 = TnrIntFac.TensorFromFlatSpec(data.AsSpan(pos,read), expResStruc);        (pos, read) = Read(data, pos, read);
       var inxs4 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
       var expRes4 = TnrIntFac.TensorFromFlatSpec(data.AsSpan(pos,read), expResStruc);
-      var res1 = tnr[VoidsInt.Tnr, inxs1];
+      var res1 = tnr[TnrInt.V, inxs1];
       Assert.True(res1.Equals(expRes1));
-      Assert.True(tnr[VoidsInt.Tnr, inxs2].Equals(expRes2));
-      Assert.True(tnr[VoidsInt.Tnr, inxs3].Equals(expRes3));
-      Assert.True(tnr[VoidsInt.Tnr, inxs4].Equals(expRes4));                        (pos, read) = Read(data, pos, read);
+      Assert.True(tnr[TnrInt.V, inxs2].Equals(expRes2));
+      Assert.True(tnr[TnrInt.V, inxs3].Equals(expRes3));
+      Assert.True(tnr[TnrInt.V, inxs4].Equals(expRes4));                        (pos, read) = Read(data, pos, read);
       var wrtInxs1 = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var wrtTnr1 = TnrIntFac.TensorFromFlatSpec(data.AsSpan(pos,read), expResStruc);
-      tnr[VoidsInt.Tnr, wrtInxs1] = wrtTnr1;
-      Assert.True(tnr[VoidsInt.Tnr, wrtInxs1].Equals(wrtTnr1));                     (pos, read) = Read(data, pos, read);
+      tnr[TnrInt.V, wrtInxs1] = wrtTnr1;
+      Assert.True(tnr[TnrInt.V, wrtInxs1].Equals(wrtTnr1));                     (pos, read) = Read(data, pos, read);
       var wrtInxs2 = new Span<int>(data, pos, read).ToArray();                      (pos, read) = Read(data, pos, read);
       var wrtTnr2 = TnrIntFac.TensorFromFlatSpec(data.AsSpan(pos,read), expResStruc);
-      tnr[VoidsInt.Tnr, wrtInxs2] = wrtTnr2;
-      Assert.True(tnr[VoidsInt.Tnr, wrtInxs2].Equals(wrtTnr2));
+      tnr[TnrInt.V, wrtInxs2] = wrtTnr2;
+      Assert.True(tnr[TnrInt.V, wrtInxs2].Equals(wrtTnr2));
    }
 
    [InlineData(

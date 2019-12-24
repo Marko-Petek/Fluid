@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Collections {
+   using static Fluid.Internals.Collections.HowToCopyStructure;
+   using static Fluid.Internals.Collections.WhichNonValueFields;
+   using static Fluid.Internals.Collections.WhichFields;
 
 /// <summary>A type responsible for Tensor and Vector creation.</summary>
 /// <typeparam name="τ">Value types contained inside the tensor or vector.</typeparam>
@@ -12,18 +15,28 @@ where τ : IEquatable<τ>, new()
 where α : IArithmetic<τ>, new() {
 
    //public static Tensor<τ,α> CreateTopTensor()
+
+   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure, Tensor<τ,α> sup) {
+      var vec = new Vector<τ,α>(structure, sup, cap);
+      return vec;
+   }
+   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure) =>
+      CreateEmpty(cap, structure, Voids<τ,α>.Vec);
+   
+   public static Vector<τ,α> CreateEmpty(int cap) =>
+      CreateEmpty(cap, Voids.ListInt, Voids<τ,α>.Vec);
    
    /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
    /// <param name="cap">Capacity.</param>
    /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank,
-   List<int> structure, Tensor<τ,α> sup) =>
+   List<int> structure, Tensor<τ,α>? sup) =>
       rank switch {
          1 => Vector<τ,α>.CreateEmpty(cap, structure, sup),
          _ => new Tensor<τ,α>(structure, rank, sup, cap) };
    
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank, List<int> structure) =>
-      CreateEmptyTensor(cap, rank, structure, Voids<τ,α>.Vec);
+      CreateEmptyTensor(cap, rank, structure, sup: null);
 
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank) =>
       CreateEmptyTensor(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
@@ -40,10 +53,12 @@ where α : IArithmetic<τ>, new() {
    public static Tensor<τ,α> CreateTopTensor(List<int> structure, int cap = 6) =>
       new Tensor<τ,α>(structure, cap);
 
-   /// <summary>Creates a new vector from an array slice.</summary>
+   /// <summary>Creates a non-top vector from an array slice.</summary>
    /// <param name="slc">Array slice.</param>
-   public static Vector<τ,α> VectorFromFlatSpec(Span<τ> slc , List<int> structure, Tensor<τ,α> sup) {
-      var vec = new Vector<τ,α>(structure, sup, slc.Length);
+   /// <param name="strc">The existing structure that the vector should atain.</param>
+   /// <param name="sup">Direct superior.</param>
+   public static Vector<τ,α> VectorFromFlatSpec(Span<τ> slc , List<int> strc, Tensor<τ,α> sup) {
+      var vec = new Vector<τ,α>(strc, sup, slc.Length);
       for(int i = 0; i < slc.Length; ++i) {
          if(!slc[i].Equals(O<τ,α>.A.Zero()))
             vec.Vals.Add(i, slc[i]); }
@@ -91,25 +106,24 @@ where α : IArithmetic<τ>, new() {
    /// <param name="tgt">Copy target.</param>
    public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
       CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);               // Structure created here.
-      switch (cs.FieldsSpec & WhichFields.OnlyValues) {
-         case WhichFields.OnlyValues:
-            tgt.Vals = new Dictionary<int,τ>(src.Count + cs.ExtraCapacity);
+      if(cs.FieldsSpec.HasFlag(OnlyValues)) {
+         tgt.Vals = new Dictionary<int,τ>(src.Count + cs.ExtraCapacity);
             foreach(var int_val in src.Vals) {
-               tgt.Vals.Add(int_val.Key, int_val.Value); } break;
-         default:
-            tgt.Vals = new Dictionary<int,τ>(); break; }
+               tgt.Vals.Add(int_val.Key, int_val.Value); } }
+      else {
+         tgt.Vals = new Dictionary<int,τ>(); }
    }
    /// <summary>Make a shallow or deep copy of a tensor. Set CopySpec field for fine tunning, ensure proper capacity of the target tensor.</summary>
    /// <param name="aSrc">Copy source.</param>
    /// <param name="aTgt">Copy target.</param>
-   /// <param name="cs">Exact specification of what fields to copy. Default is all.</param>
-   public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct cs) {
+   /// <param name="css">Exact specification of what fields to copy. Default is all.</param>
+   public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css) {
       Assume.True(aSrc.Rank > 1, () =>
          "Tensors's rank has to be at least 2 to be copied via this method.");
-      CopyMetaFields(aSrc, aTgt, in cs.NonValueFieldsSpec, in cs.StructureSpec);
-      if((cs.FieldsSpec & WhichFields.OnlyValues) == WhichFields.OnlyValues) {
+      CopyMetaFields(aSrc, aTgt, in css.NonValueFieldsSpec, in css.StructureSpec);
+      if(css.FieldsSpec.HasFlag(OnlyValues)) {
          var newStruc = aTgt.Structure;                                             // At this point top tensor tgt has a structure created by CopyMetaFields. It will be assigned to all subsequent subtensors.
-         int endRank = cs.EndRank;
+         int endRank = css.EndRank;
          Recursion(aSrc, aTgt);
 
          void Recursion(Tensor<τ,α> src, Tensor<τ,α> tgt) {
@@ -134,20 +148,21 @@ where α : IArithmetic<τ>, new() {
                "Tensors's rank has to be at least 2 to be copied via this method."); }
       }
    }
-   public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in WhichNonValueFields mcs,
-   in HowToCopyStructure scs) {
-      if((mcs & WhichNonValueFields.Structure) == WhichNonValueFields.Structure) {
-         if((scs & HowToCopyStructure.ReferToOriginalStructure) == HowToCopyStructure.ReferToOriginalStructure)
+   public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in WhichNonValueFields wnvf,
+   in HowToCopyStructure htcs) {
+      if( wnvf.HasFlag(Structure)) {
+         if(htcs.HasFlag(ReferToOriginalStructure))
             tgt.Structure = src.Structure;
          else
             tgt.Structure = new List<int>(src.Structure); }
       else {                                                                        // Create empty Structure, don't just assign VoidStructure. This way we can change it and impact all subtensors.
          tgt.Structure = new List<int>(4); }
-      if((mcs & WhichNonValueFields.Rank) == WhichNonValueFields.Rank)
+      if(wnvf.HasFlag(Rank))
          tgt.Rank = src.Rank;
-      if((mcs & WhichNonValueFields.Superior) == WhichNonValueFields.Superior)
+      if(wnvf.HasFlag(Superior))
          tgt.Superior = src.Superior;
    }
+
 }
 
 }

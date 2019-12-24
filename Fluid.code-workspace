@@ -7,7 +7,7 @@
 	"settings": {
 		"editor.codeLens": true,
 		"editor.useTabStops": true,
-		"editor.minimap.enabled": false,
+		"editor.minimap.enabled": true,
 		"editor.detectIndentation": false,
 		"editor.fontFamily": "DejaVu Sans Mono",
 		"editor.fontSize": 13,

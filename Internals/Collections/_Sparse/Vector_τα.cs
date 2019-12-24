@@ -30,12 +30,15 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
    internal Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
 
+
+   private Vector(List<int> structure, int cap)
+
    internal Vector(List<int> structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
       Vals = new Dictionary<int, τ>(cap);
    }
    internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
    
-   /// <summary>Creates a type τ vector with arithmetic α, with specified dimensionality and initial capacity.</summary>
+   /// <summary>Creates a top vector with specified dimension and initial capacity.</summary>
    internal Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
    
    /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
@@ -45,17 +48,7 @@ where α : IArithmetic<τ>, new() {
    }
    internal Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
    
-   #nullable enable
-
-   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure, Tensor<τ,α> sup) {
-      var vec = new Vector<τ,α>(structure, sup, cap);
-      return vec;
-   }
-   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure) =>
-      CreateEmpty(cap, structure, Voids<τ,α>.Vec);
-   
-   public static Vector<τ,α> CreateEmpty(int cap) =>
-      CreateEmpty(cap, Voids.ListInt, Voids<τ,α>.Vec);
+   #nullable enableeE
 
    /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
    /// <param name="key">Index.</param>
@@ -289,5 +282,7 @@ where α : IArithmetic<τ>, new() {
          arr[int_val.Key] = int_val.Value;
       return arr;
    }
+   /// <summary>Void vector.</summary>
+   new public static readonly Vector<τ,α> V = new Vector<τ,α>(0);
 }
 }
