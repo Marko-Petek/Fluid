@@ -14,8 +14,8 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
-where τ : IEquatable<τ>, new()
-where α : IArithmetic<τ>, new() {
+where τ : struct, IEquatable<τ>
+where α : IArithmetic<τ> {
    //public static Vector<τ,α> VoidVec { get; } = new Vector<τ,α>();
    public new int Count => CountInternal;
    protected override int CountInternal => Vals.Count;

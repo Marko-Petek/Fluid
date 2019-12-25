@@ -11,8 +11,8 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Value types contained inside the tensor or vector.</typeparam>
 /// <typeparam name="α">Arithmetic type.</typeparam>
 public static class TensorFactory<τ,α>
-where τ : IEquatable<τ>, new()
-where α : IArithmetic<τ>, new() {
+where τ : struct, IEquatable<τ>
+where α : IArithmetic<τ> {
 
    //public static Tensor<τ,α> CreateTopTensor()
 
@@ -122,7 +122,7 @@ where α : IArithmetic<τ>, new() {
          "Tensors's rank has to be at least 2 to be copied via this method.");
       CopyMetaFields(aSrc, aTgt, in css.NonValueFieldsSpec, in css.StructureSpec);
       if(css.FieldsSpec.HasFlag(OnlyValues)) {
-         var newStruc = aTgt.Structure;                                             // At this point top tensor tgt has a structure created by CopyMetaFields. It will be assigned to all subsequent subtensors.
+         var newStrc = aTgt.Structure;                                             // At this point top tensor tgt has a structure created by CopyMetaFields. It will be assigned to all subsequent subtensors.
          int endRank = css.EndRank;
          Recursion(aSrc, aTgt);
 
@@ -131,7 +131,7 @@ where α : IArithmetic<τ>, new() {
             foreach (var int_subSrc in src) {
                int subKey = int_subSrc.Key;
                var subSrc = int_subSrc.Value;
-               var subTgt = new Tensor<τ,α>(newStruc, subSrc.Rank, tgt, subSrc.Count);
+               var subTgt = new Tensor<τ,α>(newStrc, subSrc.Rank, tgt, subSrc.Count);
                tgt.AddOnly(subKey, subTgt);
                if(src.Rank > endRank)
                   Recursion(subSrc, subTgt); } }
@@ -139,7 +139,7 @@ where α : IArithmetic<τ>, new() {
             foreach(var int_subSrc in src) {
                int subKey = int_subSrc.Key;
                var subVec = (Vector<τ,α>) int_subSrc.Value;
-               var subTgt = new Vector<τ,α>(newStruc, tgt, subVec.Count);
+               var subTgt = new Vector<τ,α>(newStrc, tgt, subVec.Count);
                tgt.AddOnly(subKey, subTgt);
                subTgt.Vals = new Dictionary<int,τ>(subVec.Vals);
             } }

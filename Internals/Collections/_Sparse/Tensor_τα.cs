@@ -65,8 +65,8 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : IEquatable<τ>, new()
-where α : IArithmetic<τ>, new() {
+where τ : struct, IEquatable<τ>
+where α : IArithmetic<τ> {
    
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
@@ -87,21 +87,21 @@ where α : IArithmetic<τ>, new() {
    /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
    /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
    /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
-   public Tensor<τ,α> this[Tensor<τ,α> overloadDummy, params int[] inxs] {
+   public Tensor<τ,α>? this[Tensor<τ,α> overloadDummy, params int[] inxs] {
       get {
          Tensor<τ,α>? tnr = this;
          for(int i = 0; i < inxs.Length; ++i) {
             if(!tnr.TryGetValue(inxs[i], out tnr))
-               return Voids<τ,α>.Vec; }
+               return null; }
          return tnr; }                                // No problem with tnr being null. We return above.
       set {
          Tensor<τ,α>? tnr = this;
-         if(value != Voids<τ,α>.Vec) {
+         if(value != null) {       
             int n = inxs.Length - 1;
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created
-                  tnr = new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
-                  tnr.Superior.Add(inxs[i], tnr); } }
+                  tnr = new Tensor<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
+                  tnr.Superior!.Add(inxs[i], tnr); } }
             var dict = (TensorBase<Tensor<τ,α>>) tnr;                            // tnr is now the proper subtensor.
             value.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
             value.Structure = Structure;
@@ -110,33 +110,33 @@ where α : IArithmetic<τ>, new() {
             for(int i = 0; i < inxs.Length; ++i) {
                if(!tnr.TryGetValue(inxs[i], out tnr))
                   return; }
-            tnr.Superior.Remove(inxs[inxs.Length - 1]); } }
+            tnr.Superior!.Remove(inxs[inxs.Length - 1]); } }
    }
    /// <summary>Vector getting/setting indexer. Use tnr[1f, 3] = null to remove an entry, should it exist.</summary>
    /// <param name="overloadDummy">Type float of first dummy argument specifies that we know we will be getting/setting a Vector.</param>
    /// <param name="inxs">A set of indices specifiying which Vector we want to set/get. The set length must reach exactly to Vector rank.</param>
    /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
-   public Vector<τ,α> this[Vector<τ,α> overloadDummy, params int[] inx] {
+   public Vector<τ,α>? this[Vector<τ,α> overloadDummy, params int[] inx] {
       get {
          Tensor<τ,α>? tnr = this;
          int n = inx.Length - 1;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return Voids<τ,α>.Vec; }
+               return null; }
          if(tnr.TryGetValue(inx[n], out tnr))                                 // No problem with null.
             return (Vector<τ,α>)tnr;                                          // Same.
          else
-            return Voids<τ,α>.Vec; }
+            return null; }
       set {
          Tensor<τ,α>? tnr = this;
-         if(value != Voids<τ,α>.Vec) {
+         if(value != null) {
             int n = inx.Length - 1;                                           // Entry one before last chooses tensor, last chooses vector.
             for(int i = 0; i < n; ++i) {
                if(tnr.TryGetValue(inx[i], out Tensor<τ,α>? tnr2)) {
                   tnr = tnr2; }
                else {                                                         // Tensor does not exist in an intermediate rank.
-                  tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
-                  tnr.Superior.AddOnly(inx[i], tnr); } }
+                  tnr = new Tensor<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
+                  tnr.Superior!.AddOnly(inx[i], tnr); } }
             var dict = (TensorBase<Tensor<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
             value.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
             value.Structure = Structure;
@@ -146,7 +146,7 @@ where α : IArithmetic<τ>, new() {
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inx[i], out tnr))
                   return; }
-            tnr.Superior.Remove(inx[n - 1]); } }     // Vector.Superior.Remove
+            tnr.Superior!.Remove(inx[n - 1]); } }     // Vector.Superior.Remove
    }
    /// <summary>Scalar getting/setting indexer.</summary>
    /// <param name="inxs">A set of indices specifiying which scalar we want to set/get. The set length must reach exactly to scalar rank.</param>
@@ -157,25 +157,25 @@ where α : IArithmetic<τ>, new() {
          int n = inx.Length - 2;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return Voids<τ>.Tau; }
+               return default(τ); }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
             var vec = (Vector<τ,α>)tnr;                                          // Same.
             if(vec.Vals.TryGetValue(inx[n + 1], out τ val))
                return val; }
-         return Voids<τ>.Tau; }
+         return default(τ); }
       set {
          Tensor<τ,α>? tnr = this;
          Tensor<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
          Vector<τ,α> vec;
-         if(!value.Equals(Voids<τ>.Tau)) {
+         if(!value.Equals(default(τ))) {
             if(inx.Length > 1) {                                                 // At least a 2nd rank tensor.
                int n = inx.Length - 2;
                for(int i = 0; i < n; ++i) {                                      // This loop is entered only for a 3rd rank tensor or above.
                   if(tnr.TryGetValue(inx[i], out tnr2)) {
                      tnr = tnr2; }
                   else {
-                     tnr = new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
-                     tnr.Superior.AddOnly(inx[i], tnr); }}
+                     tnr = new Tensor<τ,α>(tnr, 6);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
+                     tnr.Superior!.AddOnly(inx[i], tnr); }}
                if(tnr.TryGetValue(inx[n], out tnr2)) {                           // Does vector exist?
                   vec = (Vector<τ,α>) tnr2; }
                else {
@@ -373,7 +373,7 @@ where α : IArithmetic<τ>, new() {
       return Recursion(aTnr);
 
       Tensor<τ,α> Recursion(in Tensor<τ,α> tnr) {
-         var res = new Tensor<τ,α>(newStructure, aTnr.Rank, Voids<τ,α>.Vec, aTnr.Count);
+         var res = new Tensor<τ,α>(newStructure, aTnr.Count);        //new Tensor<τ,α>(newStructure, aTnr.Rank, Voids<τ,α>.Vec, aTnr.Count);
          if(tnr.Rank > 2) {                                       // Subordinates are tensors.
             foreach (var int_subTnr in tnr) {
                int subKey = int_subTnr.Key;
@@ -404,17 +404,17 @@ where α : IArithmetic<τ>, new() {
       return Recursion(this, newRank);
 
       Tensor<τ,α> Recursion(Tensor<τ,α> tnr1, int resRank) {
-         var res = new Tensor<τ,α>(newStructure, resRank, Voids<τ,α>.Vec, tnr1.Count);
+         var res = new Tensor<τ,α>(newStructure, resRank, tnr1.Superior, tnr1.Count);
          if(tnr1.Rank > 2) {                                                    // Only copy. Adjust ranks.
             foreach(var int_subTnr1 in tnr1) {
                int subKey = int_subTnr1.Key;
                var subTnr1 = int_subTnr1.Value;
                res.Add(subKey, Recursion(subTnr1, resRank - 1)); } }
-         else {                              // We are now at tensor which contains vectors.
-            foreach(var int_subTnr1R1 in tnr1) {    // Substitute each vector wiht a new tensor.
+         else {                                                            // We are now at tensor which contains vectors.
+            foreach(var int_subTnr1R1 in tnr1) {                           // Substitute each vector with a new tensor.
                int subKeyR1 = int_subTnr1R1.Key;
                var subVec1 = (Vector<τ,α>) int_subTnr1R1.Value;
-               var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, Voids<τ,α>.Vec, tnr1.Count);
+               var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, tnr1, subVec1.Count);
                foreach(var int_subVal1 in subVec1.Vals) {
                   int subKeyR0 = int_subVal1.Key;
                   var subVal1 = int_subVal1.Value;
@@ -423,51 +423,48 @@ where α : IArithmetic<τ>, new() {
          return res;
       }
    }
-   /// <summary>Eliminates a single rank out of a tensor by choosing a single subtensor at that rank and making it take the place of its direct superior (thus discarding all other subtensors at that rank). The resulting tensor has therefore its rank reduced by one.</summary>
-   /// <param name="elimRank"> True, zero-based rank index of rank to be eliminated.</param>
-   /// <param name="emtInx">Zero-based element index in that rank in favor of which the elimination will take place.</param>
-   /// <remarks><see cref="TestRefs.TensorReduceRank"/></remarks>
-   public Tensor<τ,α> ReduceRank(int elimRank, int emtInx) {
-      Assume.True(elimRank < Rank && elimRank > -1, () => {
-         T.S.A("You can only eliminate a non-negative ");
-        T.S.A("rank greater than or equal to top rank.");
-         return T.S.Y(); } );
-      var newStructureL = Structure.Take(elimRank);
-      var newStructureR = Structure.Skip(elimRank + 1);
-      var newStructure = newStructureL.Concat(newStructureR).ToList();    // Created a new structure. Assign it to new host tensor.
-
-      if(elimRank == Rank - 1) {                                                    // 1 rank exists above elimRank == Pick one from elimRank and return it.
-         if(Rank > 1) {                                                             // Result is Tensor, top tensor at least rank 2.
-            if(TryGetValue(emtInx, out var subTnr)) {                                   // Sought after subordinate exists.
-               var newTnr = subTnr.Copy(in CopySpecs.S322_04);                          // Works properly even for Vector.
-               newTnr.Structure = newStructure;
+   /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
+   /// <param name="n"> Rank index (zero-based) of the rank to eliminate.</param>
+   /// <param name="i">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
+   /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
+   public Tensor<τ,α> ReduceRank(int n, int i) {               // FIXME: Method must properly reassign superiors.
+      Assume.True(n < Rank && n > -1, () =>
+         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );
+      var newStrcL = Structure.Take(n);
+      var newStrcR = Structure.Skip(n + 1);
+      var newStrc = newStrcL.Concat(newStrcR).ToList();                       // Created a new structure. Assign it to new host tensor.
+      if(n == Rank - 1) {                                                        // 1 rank exists above rank n. Pick one tensor from rank n and return it.
+         if(Rank > 1) {                                                        // Result is Tensor (or Vector), top tensor at least rank 2.
+            if(TryGetValue(i, out var subTnr)) {                               // Sought after subordinate exists.
+               var newTnr = subTnr.Copy(in CopySpecs.S322_04);                 // We don't copy superior because result is top tensor.
+               newTnr.Structure = newStrc;
                return newTnr;}
             else
-               return TensorFactory<τ,α>.CreateEmptyTensor(0, newStructure.Count, newStructure); }                                // Return empty tensor.
+               return TensorFactory<τ,α>.CreateEmptyTensor(0, newStrc.Count, newStrc); }                                // Return empty tensor.
          else                                                                                      // Rank <= 1: impossible.
             throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
-      else if(elimRank > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
-         var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
+      else if(n > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
+         var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 3) {                                                              // No special treatment due to Vector needed.
-            RecursiveCopyAndElim(this, res, emtInx, elimRank + 2);
+            RecursiveCopyAndElim(this, res, i, n + 2);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1,2,3 tensor with this branch."); }
-      else if(elimRank == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
-         var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
+      else if(n == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
+         var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 2) {                                                             // Result is tensor.
-            RecursiveCopyAndElim(this, res, emtInx, 1);
+            RecursiveCopyAndElim(this, res, i, 1);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
       else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
          if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
-            var res = new Tensor<τ,α>(newStructure, Rank - 1, Voids<τ,α>.Vec, Count);
-            ElimR0_R3Plus(this, res, emtInx);
+            var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
+            ElimR0_R3Plus(this, res, i);
             return res; }
          else if(Rank == 2) {
-            var res = new Vector<τ,α>(newStructure, Voids<τ,α>.Vec, 4);
-            ElimR0_R2(this, res, emtInx);
+            var res = new Vector<τ,α>(newStrc, Voids<τ,α>.Vec, 4);
+            ElimR0_R2(this, res, i);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }

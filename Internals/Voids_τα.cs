@@ -15,11 +15,11 @@ where τ : IEquatable<τ>, new() {
    public static readonly τ[] Arr = new τ[0];
    public static readonly Hierarchy<τ> Hier = new Hierarchy<τ>(Voids.RNode);
 }
-public static class Voids<τ,α>
-where τ : IEquatable<τ>, new()
-where α : IArithmetic<τ>, new() {
-   public static readonly Tensor<τ,α> Tnr = new Tensor<τ,α>(0);
-   public static readonly Vector<τ,α> Vec = new Vector<τ,α>(0);
+// public static class Voids<τ,α>
+// where τ : IEquatable<τ>, new()
+// where α : IArithmetic<τ>, new() {
+//    public static readonly Tensor<τ,α> Tnr = new Tensor<τ,α>(0);
+//    public static readonly Vector<τ,α> Vec = new Vector<τ,α>(0);
    
-}
+// }
 }
