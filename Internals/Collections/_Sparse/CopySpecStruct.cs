@@ -16,12 +16,11 @@ public readonly struct CopySpecStruct {
    public readonly int ExtraCapacity;
    
    public CopySpecStruct(
-      WhichFields whichFields = WhichFields.ValuesAndNonValueFields,
-      WhichNonValueFields whichNonValueFields = WhichNonValueFields.All,
-      HowToCopyStructure howToCopyStructure = HowToCopyStructure.CreateNewStructure,
-      int endRank = 0,
-      int extraCapacity = 0)
-   {
+   WhichFields whichFields = WhichFields.Both,
+   WhichNonValueFields whichNonValueFields = WhichNonValueFields.All,
+   HowToCopyStructure howToCopyStructure = HowToCopyStructure.CreateNewStructure,
+   int endRank = 0,
+   int extraCapacity = 0) {
       FieldsSpec = whichFields;
       NonValueFieldsSpec = whichNonValueFields;
       StructureSpec = howToCopyStructure;
@@ -37,7 +36,7 @@ public readonly struct CopySpecStruct {
       /// <summary>(2) Copy only the non-value fields (Structure, Rank, Superior).</summary>
       OnlyNonValueFields  = 1 << 1,                                  // 2
       /// <summary>(3) - Copy both the value field (direct subtensors) and non-value fields (Structure, Rank, Superior).</summary>
-      ValuesAndNonValueFields = OnlyNonValueFields | OnlyValues      // 3
+      Both = OnlyNonValueFields | OnlyValues      // 3
    }
    /// <summary>Specify which non-value fields to copy (and conversely, which to omit).</summary>
    [Flags] public enum WhichNonValueFields {
