@@ -15,9 +15,9 @@ using DA = Fluid.Internals.Numerics.DblArithmetic;
 namespace Fluid.Tests {
 using Tnr = Tensor<double,DblArithmetic>;
 using Vec = Vector<double,DblArithmetic>;
-using TnrFac = TnrFactory<double,DblArithmetic>;
+using TnrFac = Factory<double,DblArithmetic>;
 using TnrInt = Tensor<int,IntArithmetic>;
-using TnrIntFac = TnrFactory<int,IntArithmetic>;
+using TnrIntFac = Factory<int,IntArithmetic>;
 using VecInt = Vector<int,IntArithmetic>;
 using VoidsInt = Voids<int,IA>;
 using VoidsDbl = Voids<dbl,DA>;

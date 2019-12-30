@@ -46,7 +46,7 @@ where α : IArithmetic<τ> {
    /// <param name="cs">Exact specification of fields to copy.</param>
    internal Tensor(in Tensor<τ,α> src, in CopySpecStruct cs) :
       base(src.Count + cs.ExtraCapacity) {
-      TnrFactory<τ,α>.Copy(src, this, in cs);
+      Factory<τ,α>.Copy(src, this, in cs);
    }
    /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
    /// <param name="src">Tensor to copy.</param>
@@ -78,11 +78,11 @@ where α : IArithmetic<τ> {
       if (Rank == 1) {
          var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
          var thisVector = (Vector<τ,α>)this;
-         TnrFactory<τ,α>.Copy(thisVector, res, in cs);
+         Factory<τ,α>.Copy(thisVector, res, in cs);
          return res; }
       else {
          var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-         TnrFactory<τ,α>.Copy(this, res, in cs);
+         Factory<τ,α>.Copy(this, res, in cs);
          return res; }
    }
    

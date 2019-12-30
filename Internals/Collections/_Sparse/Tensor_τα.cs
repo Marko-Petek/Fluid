@@ -432,15 +432,15 @@ where α : IArithmetic<τ> {
          T.S.Y("You can only eliminate a rank in range [0, TopRank).") );           // TODO: Check superiors and structures for all methods.
       var strcL = Structure.Take(r);
       var strcR = Structure.Skip(r + 1);
-      var strc = strcL.Concat(strcR).ToList();                                      // Created a new structure. Assign it to new host tensor.
-      if(r == Rank - 1) {                                                           // 1 rank exists above rank n. Pick one tensor from rank n and return it.
-         if(Rank > 1) {                                                             // Result is Tensor (or Vector), top tensor at least rank 2.
-            if(TryGetValue(e, out var subTnr)) {                                    // Sought after subordinate exists.
+      var strc = strcL.Concat(strcR).ToList();                                      // Structure is rebuilt. We won't copy it.
+      if(r == Rank - 1) {                                                           // Only one rank exists above rank n. Pick one tensor from rank n and return it.
+         if(Rank > 1) {                                                             // Tensor to be reduced is at least rank two.
+            if(TryGetValue(e, out var subTnr)) {                                    // Element exists.
                var newTnr = subTnr.Copy(in CopySpecs.S320_04);                      // We don't copy superior because result is top tensor.
                newTnr.Structure = strc;
-               return newTnr;}
+               return newTnr; }
             else
-               return TnrFactory<τ,α>.CreateEmptyTensor(0, strc.Count, strc); }  // Return empty tensor.
+               return Factory<τ,α>.CreateEmptyTensor(0, strc.Count, strc); }  // Return empty tensor.
          else                                                                       // Rank <= 1: impossible.
             throw new ArgumentException(
                "Cannot eliminate rank 1 or lower on rank 1 tensor."); }
@@ -575,7 +575,7 @@ where α : IArithmetic<τ> {
                if(sum.Vals.Count != 0)
                   return sum;
                else
-                  return TnrFactory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
+                  return Factory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
             else {                                             // Result will be tensor.
                Tensor<τ,α> elimTnr1, sumand, sum;
                sum = new Tensor<τ,α>(struc3);
@@ -587,7 +587,7 @@ where α : IArithmetic<τ> {
                if(sum.Count != 0)
                   return sum;
                else
-                  return TnrFactory<τ,α>.CreateEmptyTensor(0, struc3.Count, struc3); } } }
+                  return Factory<τ,α>.CreateEmptyTensor(0, struc3.Count, struc3); } } }
       else {                                                   // First tensor is rank 1 (a vector).
          var vec1 = (Vector<τ,α>) tnr1;
          return Vector<τ,α>.ContractPart2(vec1, tnr2, rankInx2, struc3, conDim);}
