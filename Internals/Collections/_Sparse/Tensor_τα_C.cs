@@ -9,7 +9,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : struct, IEquatable<τ>
+where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
    /// <summary>Incomplete constructor. Initializes: internal dictionary with specified capacity. Does not initialize: structure, rank, superior.</summary>
    /// <param name="cap">Capacity of internal dictionary.</param>
@@ -50,7 +50,7 @@ where α : IArithmetic<τ> {
    }
    /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
    /// <param name="src">Tensor to copy.</param>
-   internal Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S322_00) { }
+   internal Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S320_00) { }
    /// <summary>Adds tnr to caller and assigns the caller's superstructure to tnr.</summary>
    /// <param name="key">Index.</param>
    /// <param name="tnr">Tensor.</param>

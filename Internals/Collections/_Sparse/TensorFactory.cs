@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Value types contained inside the tensor or vector.</typeparam>
 /// <typeparam name="α">Arithmetic type.</typeparam>
 public static class TensorFactory<τ,α>
-where τ : struct, IEquatable<τ>
+where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
 
    //public static Tensor<τ,α> CreateTopTensor()

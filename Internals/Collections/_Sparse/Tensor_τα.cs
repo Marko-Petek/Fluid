@@ -65,7 +65,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : struct, IEquatable<τ>
+where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
    
    
@@ -217,7 +217,7 @@ where α : IArithmetic<τ> {
    public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
       ThrowOnSubstructureMismatch(tnr1, tnr2);
       //var newStructure = tnr1.CopySubstructure();
-      var res = new Tensor<τ,α>(tnr2, CopySpecs.S322_04);          // Create a copy of second tensor.
+      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.
       res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
       // SimultaneousRecurse(tnr1, res, 2,
       //    onNoEquivalent: (key, subTnr1, supTnr2) => {    // Simply copy and add.
@@ -243,7 +243,7 @@ where α : IArithmetic<τ> {
    /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
    public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {      // FIXME: Minus for tensors.
       ThrowOnSubstructureMismatch(tnr1, tnr2);
-      var res = new Tensor<τ,α>(tnr1, CopySpecs.S322_04);                           // Result tnr starts as a copy of tnr1.
+      var res = new Tensor<τ,α>(tnr1, CopySpecs.S320_04);                           // Result tnr starts as a copy of tnr1.
       res.AssignStructFromSubStruct(tnr1);
       // SimultaneousRecurse<(bool,int,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
       //    onEmptySrc: () => (true, 0, null, 0, null),
@@ -427,16 +427,16 @@ where α : IArithmetic<τ> {
    /// <param name="n"> Rank index (zero-based) of the rank to eliminate.</param>
    /// <param name="i">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
    /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
-   public Tensor<τ,α> ReduceRank(int n, int i) {               // FIXME: Method must properly reassign superiors.
+   public Tensor<τ,α> ReduceRank(int n, int i) {                                 // FIXME: Method must properly reassign superiors.
       Assume.True(n < Rank && n > -1, () =>
-         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );
+         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );        // TODO: Check superiors and structures for all methods.
       var newStrcL = Structure.Take(n);
       var newStrcR = Structure.Skip(n + 1);
-      var newStrc = newStrcL.Concat(newStrcR).ToList();                       // Created a new structure. Assign it to new host tensor.
+      var newStrc = newStrcL.Concat(newStrcR).ToList();                          // Created a new structure. Assign it to new host tensor.
       if(n == Rank - 1) {                                                        // 1 rank exists above rank n. Pick one tensor from rank n and return it.
-         if(Rank > 1) {                                                        // Result is Tensor (or Vector), top tensor at least rank 2.
-            if(TryGetValue(i, out var subTnr)) {                               // Sought after subordinate exists.
-               var newTnr = subTnr.Copy(in CopySpecs.S322_04);                 // We don't copy superior because result is top tensor.
+         if(Rank > 1) {                                                          // Result is Tensor (or Vector), top tensor at least rank 2.
+            if(TryGetValue(i, out var subTnr)) {                                 // Sought after subordinate exists.
+               var newTnr = subTnr.Copy(in CopySpecs.S320_04);                   // We don't copy superior because result is top tensor.
                newTnr.Structure = newStrc;
                return newTnr;}
             else
@@ -488,7 +488,7 @@ where α : IArithmetic<τ> {
       else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
          foreach(var int_tnr in src) {
             if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
-               var subTnrCopy = subTnr.Copy(in CopySpecs.S322_04);
+               var subTnrCopy = subTnr.Copy(in CopySpecs.S320_04);
                tgt.Add(int_tnr.Key, subTnrCopy); } } }
    }
 
@@ -543,7 +543,8 @@ where α : IArithmetic<τ> {
       return (struc3, rankInx1, rankInx2, conDim);
    }
    
-   public static Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int rankInx1, int rankInx2, List<int> struc3, int conDim) {
+   public static Tensor<τ,α> ContractPart2(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2,
+   int rankInx1, int rankInx2, List<int> struc3, int conDim) {
       // 1) First eliminate, creating new tensors. Then add them together using tensor product.
       if(tnr1.Rank > 1) {
          if(tnr2.Rank > 1) {                                // First tensor is rank 2 or more.

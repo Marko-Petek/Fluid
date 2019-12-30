@@ -14,7 +14,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
-where τ : struct, IEquatable<τ>
+where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
    //public static Vector<τ,α> VoidVec { get; } = new Vector<τ,α>();
    public new int Count => CountInternal;
@@ -142,7 +142,7 @@ where α : IArithmetic<τ> {
    /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
    public static Vector<τ,α> operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) {
       //var newStruc = vec2.CopySubstructure();
-      var res = new Vector<τ,α>(vec2, in CopySpecs.S322_04);
+      var res = new Vector<τ,α>(vec2, in CopySpecs.S320_04);
       res.AssignStructFromSubStruct(vec2);
       foreach(var int_val1 in vec1.Vals) {
          int key = int_val1.Key;
@@ -159,7 +159,7 @@ where α : IArithmetic<τ> {
    /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
    public static Vector<τ,α> operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) {
       //var newStruc = vec1.CopySubstructure();
-      var res = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
+      var res = new Vector<τ,α>(vec1, in CopySpecs.S320_04);
       res.AssignStructFromSubStruct(vec1);
       foreach(var int_val2 in vec2.Vals) {
          int key = int_val2.Key;

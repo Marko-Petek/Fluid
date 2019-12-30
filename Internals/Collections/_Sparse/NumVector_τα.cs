@@ -4,7 +4,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
    public class NumVector<τ,α> : Vector<τ,α>
-   where τ : IEquatable<τ>, IComparable<τ>, new()
+   where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       public bool Equals(Vector<τ,α> vec2, τ eps) {
          if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
