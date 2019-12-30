@@ -15,7 +15,7 @@ namespace Fluid.Tests {
 using dbl = Double;
 using Tensor = Tensor<double,DblArithmetic>;
 using Vector = Vector<double,DblArithmetic>;
-using TnrFac = TensorFactory<double,DblArithmetic>;
+using TnrFac = TnrFactory<double,DblArithmetic>;
 using TensorInt = Tensor<int,IntArithmetic>;
 using VectorInt = Vector<int,IntArithmetic>;
 using Emt = Element;

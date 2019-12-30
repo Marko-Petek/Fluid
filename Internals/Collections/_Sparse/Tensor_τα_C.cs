@@ -21,7 +21,7 @@ where α : IArithmetic<τ> {
    internal Tensor(int rank, int cap) : this(cap) {
       Rank = rank;
    }
-   /// <summary>Complete, redundant constructor, used internally. Initializes: internal dictionary with specified capacity, structure, rank, superior.</summary>
+   /// <summary>Complete constructor with redundancy, used internally. Initializes: internal dictionary with specified capacity, structure, rank, superior.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
    /// <param name="sup">Direct superior.</param>
@@ -31,12 +31,12 @@ where α : IArithmetic<τ> {
       Rank = rank;
       Superior = sup;
    }
-   /// <summary>Complete constructor for a top tensor.</summary>
+   /// <summary>Complete constructor for a top tensor (null superior).</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) {
    }
-   /// <summary>Complete constructor for a non-top tensor.</summary>
+   /// <summary>Complete constructor for a non-top tensor (non-null superior).</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) {
@@ -46,7 +46,7 @@ where α : IArithmetic<τ> {
    /// <param name="cs">Exact specification of fields to copy.</param>
    internal Tensor(in Tensor<τ,α> src, in CopySpecStruct cs) :
       base(src.Count + cs.ExtraCapacity) {
-      TensorFactory<τ,α>.Copy(src, this, in cs);
+      TnrFactory<τ,α>.Copy(src, this, in cs);
    }
    /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
    /// <param name="src">Tensor to copy.</param>
@@ -78,11 +78,11 @@ where α : IArithmetic<τ> {
       if (Rank == 1) {
          var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
          var thisVector = (Vector<τ,α>)this;
-         TensorFactory<τ,α>.Copy(thisVector, res, in cs);
+         TnrFactory<τ,α>.Copy(thisVector, res, in cs);
          return res; }
       else {
          var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-         TensorFactory<τ,α>.Copy(this, res, in cs);
+         TnrFactory<τ,α>.Copy(this, res, in cs);
          return res; }
    }
    

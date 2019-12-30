@@ -10,33 +10,33 @@ namespace Fluid.Internals.Collections {
 /// <summary>A type responsible for Tensor and Vector creation.</summary>
 /// <typeparam name="τ">Value types contained inside the tensor or vector.</typeparam>
 /// <typeparam name="α">Arithmetic type.</typeparam>
-public static class TensorFactory<τ,α>
+public static class TnrFactory<τ,α>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
 
    //public static Tensor<τ,α> CreateTopTensor()
 
-   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure, Tensor<τ,α> sup) {
+   public static Vector<τ,α> EmptyVec(int cap, List<int> structure, Tensor<τ,α> sup) {
       var vec = new Vector<τ,α>(structure, sup, cap);
       return vec;
    }
-   public static Vector<τ,α> CreateEmpty(int cap, List<int> structure) =>
+   public static Vector<τ,α> EmptyVec(int cap, List<int> structure) =>
       CreateEmpty(cap, structure, Voids<τ,α>.Vec);
    
-   public static Vector<τ,α> CreateEmpty(int cap) =>
+   public static Vector<τ,α> EmptyVec(int cap) =>
       CreateEmpty(cap, Voids.ListInt, Voids<τ,α>.Vec);
    
    /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
    /// <param name="cap">Capacity.</param>
    /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
-   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank,
+   public static Tensor<τ,α> EmptyTnr(int cap, int rank,
    List<int> structure, Tensor<τ,α>? sup) =>
       rank switch {
-         1 => Vector<τ,α>.CreateEmpty(cap, structure, sup),
+         1 => EmptyVec(cap, structure, sup),
          _ => new Tensor<τ,α>(structure, rank, sup, cap) };
    
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank, List<int> structure) =>
-      CreateEmptyTensor(cap, rank, structure, sup: null);
+      EmptyTnr(cap, rank, structure, sup: null);
 
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank) =>
       CreateEmptyTensor(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
@@ -73,7 +73,7 @@ where α : IArithmetic<τ> {
    public static Tensor<τ,α> TensorFromFlatSpec(Span<τ> slice, params int[] structure) {
       int tnrRank = structure.Length;
       if(tnrRank == 1)
-         return TensorFactory<τ,α>.VectorFromFlatSpec(slice);
+         return TnrFactory<τ,α>.VectorFromFlatSpec(slice);
       else {
          var res = new Tensor<τ,α>(structure.ToList(), tnrRank, Voids<τ,α>.Vec, structure[0]);
          Recursion(slice, 0, res);
@@ -95,7 +95,7 @@ where α : IArithmetic<τ> {
          else {                                                 // We are at rank 2, subrank = vector rank.
             for(int i = 0; i < nIter; ++i) {
                var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-               var subVec = TensorFactory<τ,α>.VectorFromFlatSpec(newSlc, tgt.Structure, tgt);
+               var subVec = TnrFactory<τ,α>.VectorFromFlatSpec(newSlc, tgt.Structure, tgt);
                if(subVec.Count != 0)
                   tgt.AddOnly(i, subVec); } }
       }

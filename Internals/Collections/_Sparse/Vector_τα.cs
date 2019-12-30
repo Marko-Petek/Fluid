@@ -44,7 +44,7 @@ where α : IArithmetic<τ> {
    /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
    /// <param name="src"></param>
    internal Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
-      TensorFactory<τ,α>.Copy(src, this, cs);
+      TnrFactory<τ,α>.Copy(src, this, cs);
    }
    internal Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
    

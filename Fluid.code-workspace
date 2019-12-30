@@ -22,6 +22,8 @@
 		//"window.titleBarStyle": "custom",
 		"workbench.colorTheme": "Visual Studio Light",
 		"workbench.colorCustomizations": {
+         "editorError.foreground": "#880000",
+         "editorError.border": "#cc0101",
 			"activityBar.background": "#272424",
 			"activityBar.inactiveForeground": "#888888",
 			"activityBar.foreground": "#ffffff",
@@ -91,9 +93,11 @@
 			"welcomePage.buttonHoverBackground": "#8ebbfe"
 		},
 		"workbench.settings.editor": "json",
-		"zenMode.hideActivityBar": true,
+      "zenMode.hideActivityBar": true,
+      "[csharp]": {
+      },
 		"[latex]": {
-			"editor.lineNumbers": "off"
+         "editor.lineNumbers": "off",
       },
       "todo-tree.highlights.customHighlight": {
          "TODO": {},

@@ -424,47 +424,48 @@ where α : IArithmetic<τ> {
       }
    }
    /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
-   /// <param name="n"> Rank index (zero-based) of the rank to eliminate.</param>
-   /// <param name="i">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
+   /// <param name="r"> Rank index (zero-based) of the rank to eliminate.</param>
+   /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
    /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
-   public Tensor<τ,α> ReduceRank(int n, int i) {                                 // FIXME: Method must properly reassign superiors.
-      Assume.True(n < Rank && n > -1, () =>
-         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );        // TODO: Check superiors and structures for all methods.
-      var newStrcL = Structure.Take(n);
-      var newStrcR = Structure.Skip(n + 1);
-      var newStrc = newStrcL.Concat(newStrcR).ToList();                          // Created a new structure. Assign it to new host tensor.
-      if(n == Rank - 1) {                                                        // 1 rank exists above rank n. Pick one tensor from rank n and return it.
-         if(Rank > 1) {                                                          // Result is Tensor (or Vector), top tensor at least rank 2.
-            if(TryGetValue(i, out var subTnr)) {                                 // Sought after subordinate exists.
-               var newTnr = subTnr.Copy(in CopySpecs.S320_04);                   // We don't copy superior because result is top tensor.
-               newTnr.Structure = newStrc;
+   public Tensor<τ,α> ReduceRank(int r, int e) {                                    // FIXME: Method must properly reassign superiors.
+      Assume.True(r < Rank && r > -1, () =>
+         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );           // TODO: Check superiors and structures for all methods.
+      var strcL = Structure.Take(r);
+      var strcR = Structure.Skip(r + 1);
+      var strc = strcL.Concat(strcR).ToList();                                      // Created a new structure. Assign it to new host tensor.
+      if(r == Rank - 1) {                                                           // 1 rank exists above rank n. Pick one tensor from rank n and return it.
+         if(Rank > 1) {                                                             // Result is Tensor (or Vector), top tensor at least rank 2.
+            if(TryGetValue(e, out var subTnr)) {                                    // Sought after subordinate exists.
+               var newTnr = subTnr.Copy(in CopySpecs.S320_04);                      // We don't copy superior because result is top tensor.
+               newTnr.Structure = strc;
                return newTnr;}
             else
-               return TensorFactory<τ,α>.CreateEmptyTensor(0, newStrc.Count, newStrc); }                                // Return empty tensor.
-         else                                                                                      // Rank <= 1: impossible.
-            throw new ArgumentException("Cannot eliminate rank 1 or lower on rank 1 tensor."); }
-      else if(n > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
-         var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
+               return TnrFactory<τ,α>.CreateEmptyTensor(0, strc.Count, strc); }  // Return empty tensor.
+         else                                                                       // Rank <= 1: impossible.
+            throw new ArgumentException(
+               "Cannot eliminate rank 1 or lower on rank 1 tensor."); }
+      else if(r > 1) {                                                       // At least two ranks exist above elimRank & elimRank is at least 2. Obviously applicable only to Rank 4 or higher tensors.
+         var res = new Tensor<τ,α>(strc, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 3) {                                                              // No special treatment due to Vector needed.
-            RecursiveCopyAndElim(this, res, i, n + 2);
+            RecursiveCopyAndElim(this, res, e, r + 2);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 2 or above on rank 1,2,3 tensor with this branch."); }
-      else if(n == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
-         var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
+      else if(r == 1) {                                                      // At least two ranks exist above elimRank & elimRank is 1. Obviously applicable only to rank 3 or higher tensors.
+         var res = new Tensor<τ,α>(strc, Rank - 1, Voids<τ,α>.Vec, Count);
          if(Rank > 2) {                                                             // Result is tensor.
-            RecursiveCopyAndElim(this, res, i, 1);
+            RecursiveCopyAndElim(this, res, e, 1);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 1 on rank 1,2 tensor with this branch."); }
       else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
          if(Rank > 2) {                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
-            var res = new Tensor<τ,α>(newStrc, Rank - 1, Voids<τ,α>.Vec, Count);
-            ElimR0_R3Plus(this, res, i);
+            var res = new Tensor<τ,α>(strc, Rank - 1, Voids<τ,α>.Vec, Count);
+            ElimR0_R3Plus(this, res, e);
             return res; }
          else if(Rank == 2) {
-            var res = new Vector<τ,α>(newStrc, Voids<τ,α>.Vec, 4);
-            ElimR0_R2(this, res, i);
+            var res = new Vector<τ,α>(strc, Voids<τ,α>.Vec, 4);
+            ElimR0_R2(this, res, e);
             return res; }
          else
             throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
@@ -574,7 +575,7 @@ where α : IArithmetic<τ> {
                if(sum.Vals.Count != 0)
                   return sum;
                else
-                  return TensorFactory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
+                  return TnrFactory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
             else {                                             // Result will be tensor.
                Tensor<τ,α> elimTnr1, sumand, sum;
                sum = new Tensor<τ,α>(struc3);
@@ -586,7 +587,7 @@ where α : IArithmetic<τ> {
                if(sum.Count != 0)
                   return sum;
                else
-                  return TensorFactory<τ,α>.CreateEmptyTensor(0, struc3.Count, struc3); } } }
+                  return TnrFactory<τ,α>.CreateEmptyTensor(0, struc3.Count, struc3); } } }
       else {                                                   // First tensor is rank 1 (a vector).
          var vec1 = (Vector<τ,α>) tnr1;
          return Vector<τ,α>.ContractPart2(vec1, tnr2, rankInx2, struc3, conDim);}
