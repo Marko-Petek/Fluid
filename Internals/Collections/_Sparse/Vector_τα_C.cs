@@ -16,7 +16,8 @@ namespace Fluid.Internals.Collections {
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
-   internal Vector() : base(0) {
+   /// <summary>Incomplete constructor. Init: internal dictionary, rank. NonInit: structure, superior.</summary>
+   internal Vector() : base(0) {             // base(0) ensures that minimal memory is wasted for inherited dictionary.
       Vals = new Dictionary<int, τ>();
       Rank = 1;
    }
@@ -24,7 +25,9 @@ where α : IArithmetic<τ> {
    internal Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
 
 
-   private Vector(List<int> structure, int cap)
+   internal Vector(List<int> structure, int cap) {
+
+   }
 
    internal Vector(List<int> structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
       Vals = new Dictionary<int, τ>(cap);

@@ -81,6 +81,8 @@ where α : IArithmetic<τ> {
    protected virtual int CountInternal => base.Count;
    /// <summary>The number of available spots one rank lower.</summary>
    public int Dim => Structure[ToSlotInx(Rank)];
+   /// <summary>Index of Structure list where substructure begins (the structure a non-top tensor would have if it was top).</summary>
+   public int StructInx => Count - Rank;
 
 
    /// <summary>Tensor getting/setting indexer.</summary>
@@ -217,7 +219,7 @@ where α : IArithmetic<τ> {
    public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
       ThrowOnSubstructureMismatch(tnr1, tnr2);
       //var newStructure = tnr1.CopySubstructure();
-      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.
+      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.       // FIXME: Join the two lines into one by creating a Substructure copy spec.
       res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
       // SimultaneousRecurse(tnr1, res, 2,
       //    onNoEquivalent: (key, subTnr1, supTnr2) => {    // Simply copy and add.

@@ -29,7 +29,7 @@ where α : IArithmetic<τ> {
          Vals.TryGetValue(i, out τ val);
          return val; }
       set {
-         if(!value.Equals(O<τ,α>.A.Zero())) {
+         if(!value.Equals(default(τ))) {
             Vals[i] = value; }
          else
             Vals.Remove(i); }

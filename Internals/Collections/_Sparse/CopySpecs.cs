@@ -1,13 +1,13 @@
 namespace Fluid.Internals.Collections {
    public static class CopySpecs {
-      /// <summary>Copies values, rank, structure (brand new structure is created) and superior.</summary>
-      public static readonly CopySpecStruct S342_00 = new CopySpecStruct(
+      /// <summary>Copies everything as is. Non-sensical. Copies superior, but the structure is created anew - ensuring errors. Structure should always refer to top-most tensor's structure.</summary>
+      public static readonly CopySpecStruct S342_00 = new CopySpecStruct(        // FIXME: Is this needed?
          WhichFields.Both,
          WhichNonValueFields.All,
          HowToCopyStructure.CreateNewStructure,
          endRank: 0,
          extraCapacity: 0);
-      /// <summary>Copies values (adds 4 extra capacity), rank, structure (brand new structure is created) and superior.</summary>
+      /// <summary>Copies everything as is, adds 4 extra spaces to internal dictionary. Non-sensical. Copies superior, but the structure is created anew - ensuring errors. Structure should always refer to top-most tensor's structure.</summary>
       public static readonly CopySpecStruct S342_04 = new CopySpecStruct(
          WhichFields.Both,
          WhichNonValueFields.All,

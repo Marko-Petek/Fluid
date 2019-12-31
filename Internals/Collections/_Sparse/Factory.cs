@@ -19,7 +19,7 @@ public static partial class Factory {
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ> =>
       new Vector<τ,α>(structure, sup, cap);
-   public static Vector<τ,α> EmptyVec<τ,α>(int cap, List<int> structure)
+   public static Vector<τ,α> EmptyVec<τ,α>(List<int> structure, int cap)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ> =>
       new Vector<τ,α>(structure, cap);
@@ -118,7 +118,19 @@ public static partial class Factory {
    /// <param name="aSrc">Copy source.</param>
    /// <param name="aTgt">Copy target.</param>
    /// <param name="css">Exact specification of what fields to copy. Default is all.</param>
-   public static void Copy(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css) {
+   public static void Copy<τ,α>(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+      if (aSrc.Rank == 1) {
+         var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
+         var thisVector = (Vector<τ,α>)this;
+         Factory<τ,α>.Copy(thisVector, res, in cs);
+         return res; }
+      else {
+         var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
+         Factory<τ,α>.Copy(this, res, in cs);
+         return res; }
+
       Assume.True(aSrc.Rank > 1, () =>
          "Tensors's rank has to be at least 2 to be copied via this method.");
       CopyMetaFields(aSrc, aTgt, in css.NonValueFieldsSpec, in css.StructureSpec);
