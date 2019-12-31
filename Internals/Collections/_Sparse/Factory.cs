@@ -161,10 +161,17 @@ public static partial class Factory {
                "Tensors's rank has to be at least 2 to be copied via this method."); }
       }
    }
-   public static void CopyMetaFields(Tensor<τ,α> src, Tensor<τ,α> tgt, in WhichNonValueFields wnvf,
-   in HowToCopyStructure htcs) {
-      if( wnvf.HasFlag(Structure)) {
-         if(htcs.HasFlag(ReferToOriginalStructure))
+   internal static void CopyTnr<τ,α>(this Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+
+   }
+   public static void CopyMetaFields<τ,α>(Tensor<τ,α> src, Tensor<τ,α> tgt,
+   in WhichNonValueFields wnvf, in HowToCopyStructure htcs)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+      if(wnvf.HasFlag(Structure)) {
+         if(htcs.HasFlag(ReferToOriginalStructure))            // FIXME: Problem: structure assignment.
             tgt.Structure = src.Structure;
          else
             tgt.Structure = new List<int>(src.Structure); }
