@@ -15,7 +15,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
-where α : IArithmetic<τ> {
+where α : IArithmetic<τ>, new() {
    public new int Count => CountInternal;
    protected override int CountInternal => Vals.Count;
    public Dictionary<int,τ> Vals { get; internal set; }         // An extra wrapped Dictionary which holds values.
@@ -65,36 +65,41 @@ where α : IArithmetic<τ> {
          res.AddPlusIfNotEmpty(subKey, newVec); }
       return res;
    }
-   /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <summary>Destructively sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <param name="vec1">Sumand 1.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
-   public void Sum(Vector<τ,α> vec2) {
+   public static Vector<τ,α>? SumM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       foreach(var int_subVal2 in vec2.Vals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
-         if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
-            τ sum = O<τ,α>.A.Sum(subVal1, subVal2);
-            if(!sum.Equals(O<τ,α>.A.Zero()))                                             // Sum is not zero.
-               Vals[subKey] = sum;
-            else
-               Vals.Remove(subKey); }
-         else
-            Vals.Add(subKey, subVal2); }
+         var subVal1 = vec1[subKey];
+         var sum = O<τ,α>.A.Sum(subVal1, subVal2);
+         vec1[subKey] = sum; }
+      if(vec1.Count != 0)
+         return vec1;
+      else
+         return null;
    }
+   /// <summary>Destructively subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <param name="vec1">Minuend.</param>
+   /// <param name="vec2">Subtrahend. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
-   public void Sub(Vector<τ,α> vec2) {
+   public static Vector<τ,α>? SubM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       foreach(var int_subVal2 in vec2.Vals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
-         if(Vals.TryGetValue(subKey, out τ subVal1)) {                  // Value exists in Vec1.
-            τ dif = O<τ,α>.A.Sub(subVal1, subVal2);
-            if(!dif.Equals(O<τ,α>.A.Zero()))                                             // Sum is not zero.
-               Vals[subKey] = dif;
-            else
-               Vals.Remove(subKey); }
-         else
-            Vals.Add(subKey, O<τ,α>.A.Neg(subVal2)); }
+         var subVal1 = vec1[subKey];
+         var dif = O<τ,α>.A.Sub(subVal1, subVal2);
+         vec1[subKey] = dif; }
+      if(vec1.Count != 0)
+         return vec1;
+      else
+         return null;
    }
+
+
+   
    /// <summary>Multiplies caller with a scalar.</summary>
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
@@ -250,6 +255,6 @@ where α : IArithmetic<τ> {
       return arr;
    }
    /// <summary>Void vector.</summary>
-   new public static readonly Vector<τ,α> V = new Vector<τ,α>(0);
+   new public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
 }
 }

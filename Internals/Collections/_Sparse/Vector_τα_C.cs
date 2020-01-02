@@ -15,7 +15,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
-where α : IArithmetic<τ> {
+where α : IArithmetic<τ>, new() {
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="sup">Direct superior.</param>
@@ -34,21 +34,14 @@ where α : IArithmetic<τ> {
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Vector(int dim, int cap) : this(new List<int> {dim}, null, cap) { }
 
-
-
-   
-   /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
-   /// <param name="src"></param>
-   internal Vector(Vector<τ,α> src, in CopySpecStruct cs) : base(0) {                 // Capacity of base tensor should be 0.
-      Factory<τ,α>.Copy(src, this, cs);
-   }
-   internal Vector(Vector<τ,α> src) : this(src, CopySpecs.S342_00) { }
-
    /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
    /// <param name="key">Index.</param>
    /// <param name="val">Value.</param>
    internal void Add(int key, τ val) =>
       Vals.Add(key, val);
+
+   internal bool TryGetValue(int key, out τ val) =>
+      Vals.TryGetValue(key, out val);
 }
 
 }

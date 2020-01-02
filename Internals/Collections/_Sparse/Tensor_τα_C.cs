@@ -10,7 +10,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
-where α : IArithmetic<τ> {
+where α : IArithmetic<τ>, new() {
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
@@ -31,19 +31,6 @@ where α : IArithmetic<τ> {
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
    sup.Rank - 1, sup, cap) { }
-
-
-
-   
-   /// <summary>Creates a deep copy of specified tensor. You can optionally specify which meta-fields (Structure, Rank, Superior) to copy.</summary>
-   /// <param name="src">Source tensor to copy.</param>
-   /// <param name="cs">Exact specification of fields to copy.</param>
-   internal Tensor(in Tensor<τ,α> src, in CopySpecStruct cs) {
-      Factory<τ,α>.Copy(src, this, in cs);
-   }
-   /// <summary>Creates a new tensor from src by copying values and rank, leaving structure and superior unassigned.</summary>
-   /// <param name="src">Tensor to copy.</param>
-   internal Tensor(in Tensor<τ,α> src) : this(in src, in CopySpecs.S320_00) { }
 
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
@@ -66,19 +53,6 @@ where α : IArithmetic<τ> {
       if(tnr.Count != 0)
          AddPlus(key, tnr);
    }
-   // /// <summary>Creates tnr2 as a copy of tnr1. Specify what to copy with CopySpecs.</summary>
-   // /// <remarks><see cref="TestRefs.TensorCopy"/></remarks>
-   // public virtual Tensor<τ,α> Copy(in CopySpecStruct cs) {
-   //    if (Rank == 1) {
-   //       var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
-   //       var thisVector = (Vector<τ,α>)this;
-   //       Factory<τ,α>.Copy(thisVector, res, in cs);
-   //       return res; }
-   //    else {
-   //       var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-   //       Factory<τ,α>.Copy(this, res, in cs);
-   //       return res; }
-   // }
    
    /// <summary>A substructure as unevaluated instructions ready for enumeration.</summary>
    internal IEnumerable<int> GetSubstructure() =>
@@ -95,10 +69,12 @@ where α : IArithmetic<τ> {
       foreach(var emt in subStruct) {
          Structure.Add(emt); }
    }
+
    /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
    /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
    int ToSlotInx(int rankInx) =>
       ChangeRankNotation(Structure.Count, rankInx);
+
    /// <summary>Transforms from rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0) to slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3).</summary>
    /// <param name="slotInx">Slot index.</param>
    /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>

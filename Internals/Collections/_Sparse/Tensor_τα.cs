@@ -66,7 +66,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
-where α : IArithmetic<τ> {
+where α : IArithmetic<τ>, new() {
    
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
@@ -273,11 +273,11 @@ where α : IArithmetic<τ> {
       //    } );
       return res;
    }
-   /// <summary>Sums tnr2 into the caller. Don't use the tnr2 reference afterwards.</summary>
-   /// <param name="tnr2">Sumand whose elements will be absorbed into the caller and shouldn't be used afterwards.</param>
+   /// <summary>Destructively sums tnr1 and tnr2. Don't use references afterwards. Returns a top tensor (null superior).</summary>
+   /// <param name="tnr2">Sumand 1.</param>
+   /// <param name="tnr2">Sumand 2 whose elements will be absorbed into sumand 1.</param>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
-   public void Sum(Tensor<τ,α> tnr2) {
-      Tensor<τ,α> tnr1 = this;
+   public static Tensor<τ,α>? SumM(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
       ThrowOnSubstructureMismatch(tnr1, tnr2);
       Recursion(tnr1, tnr2);
 
@@ -286,27 +286,28 @@ where α : IArithmetic<τ> {
             foreach(var int_subTnr2 in t2) {
                int subKey = int_subTnr2.Key;
                var subTnr2 = int_subTnr2.Value;
-               if(t1.TryGetValue(subKey, out var subTnr1))            // Equivalent subtensor exists in T1.
+               if(t1.TryGetValue(subKey, out var subTnr1)) {                        // Equivalent subtensor exists in T1.
                   Recursion(subTnr1, subTnr2);
-               else                                                      // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
+                  if(subTnr1.Count == 0)
+                     t1.Remove(subKey); }
+               else                                                                 // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
                   t1.AddPlus(subKey, subTnr2); } }
          else if(t2.Rank == 2) {
             foreach(var int_subTnr2 in t2) {
-               //var vec2 = (Vector<τ,α>) int_subTnr2.Value;
                int subKey = int_subTnr2.Key;
                var subTnr2 = int_subTnr2.Value;
-               if(t1.TryGetValue(subKey, out var subTnr1)) {      // Entry exists in t1, we must sum.
+               if(t1.TryGetValue(subKey, out var subTnr1)) {                        // Entry exists in t1, we must sum.
                   var subVec1 = (Vector<τ,α>) subTnr1;
                   var subVec2 = (Vector<τ,α>) subTnr2;
                   subVec1.Sum(subVec2);
                   if(subVec1.Count == 0)
-                     t1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
+                     t1.Remove(subKey); }                                           // Crucial to remove if subvector has been anihilated.
                else {
-                  t1.AddPlus(subKey, subTnr2); } } }          // Entry does not exist in t2, simply Add.
-         else {                                                            // We have a vector.
+                  t1.AddPlus(subKey, subTnr2); } } }                                // Entry does not exist in t1, simply Add.
+         else {                                                                     // We have a vector.
             var vec1 = (Vector<τ,α>) t1;
             var vec2 = (Vector<τ,α>) t2;
-            t1.Sum(t2);
+            Vector<τ,α>.SumM(vec1, vec2);
          }
       }
    }
