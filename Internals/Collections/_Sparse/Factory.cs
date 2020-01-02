@@ -42,17 +42,32 @@ public static partial class Factory {
    public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank) =>
       CreateEmptyTensor(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
 
-   /// <summary>Creates a vector with specified dimension and initial capacity.</summary>
+   /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension.</param>
    /// <param name="cap">Initial capacity.</param>
-   public static Vector<τ,α> CreateTopVector(int dim, int cap) =>
+   public static Vector<τ,α> TopVector<τ,α>(int dim, int cap)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> =>
       new Vector<τ,α>(new List<int> {dim}, Voids<τ,α>.Vec, cap);
 
-   /// <summary>Creates a top tensor with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
+
+   /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
    /// <param name="structure">Specifies dimension of each rank.</param>
    /// <param name="cap">Initially assigned memory.</param>
-   public static Tensor<τ,α> CreateTopTensor(List<int> structure, int cap = 6) =>
+   public static Tensor<τ,α> TopTensor<τ,α>(List<int> structure, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> =>
       new Tensor<τ,α>(structure, cap);
+
+   /// <summary>Creates a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   public static Tensor<τ,α> NonTopTensor<τ,α>(Tensor<τ,α> sup, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> =>
+      new Tensor<τ,α>(sup, cap);
+
+
 
    /// <summary>Creates a non-top vector from an array slice.</summary>
    /// <param name="slc">Array slice.</param>

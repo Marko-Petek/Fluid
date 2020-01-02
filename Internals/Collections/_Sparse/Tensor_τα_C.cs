@@ -11,16 +11,6 @@ namespace Fluid.Internals.Collections {
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
-   /// <summary>Incomplete constructor. Initializes: internal dictionary with specified capacity. Does not initialize: structure, rank, superior.</summary>
-   /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(int cap) : base(cap) {
-   }
-   /// <summary>Incomplete constructor. Initializes: internal dictionary, rank. Does not initialize: structure, superior.</summary>
-   /// <param name="rank">Rank.</param>
-   /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(int rank, int cap) : this(cap) {
-      Rank = rank;
-   }
    /// <summary>Complete constructor with redundancy, used internally. Initializes: internal dictionary with specified capacity, structure, rank, superior.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
@@ -31,24 +21,19 @@ where α : IArithmetic<τ> {
       Rank = rank;
       Superior = sup;
    }
-   /// <summary>Incomplete constructor. Initializes: internal dictionary, rank. Does not initialize: superior.</summary>
-   /// <param name="strc">Structure (absorbed).</param>
-   /// <param name="rank">Rank.</param>
-   /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(List<int> strc, int rank, int cap) : base(cap) {
-      Structure = strc;
-      Rank = rank;
-   }
    /// <summary>Complete constructor for a top tensor (null superior).</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) {
    }
-   /// <summary>Complete constructor for a non-top tensor (non-null superior).</summary>
+   /// <summary>Complete constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup.Rank - 1, sup, cap) {
-   }
+   internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
+   sup.Rank - 1, sup, cap) { }
+
+
+
    
    /// <summary>Creates a deep copy of specified tensor. You can optionally specify which meta-fields (Structure, Rank, Superior) to copy.</summary>
    /// <param name="src">Source tensor to copy.</param>

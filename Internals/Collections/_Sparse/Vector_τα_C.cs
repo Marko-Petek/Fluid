@@ -16,26 +16,23 @@ namespace Fluid.Internals.Collections {
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
-   /// <summary>Incomplete constructor. Init: internal dictionary, rank. NonInit: structure, superior.</summary>
-   internal Vector() : base(0) {             // base(0) ensures that minimal memory is wasted for inherited dictionary.
-      Vals = new Dictionary<int, τ>();
-      Rank = 1;
-   }
-   /// <summary>Creates a type τ vector with arithmetic α, with specified initial capacity.</summary>
-   internal Vector(int cap) : this(Voids.ListInt, Voids<τ,α>.Vec, cap) { }
 
-
-   internal Vector(List<int> structure, int cap) {
-
-   }
-
-   internal Vector(List<int> structure, Tensor<τ,α> sup, int cap) : base(structure, 1, sup, 0) {
+   internal Vector(List<int> structure, Tensor<τ,α>? sup, int cap) :
+   base(structure, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
       Vals = new Dictionary<int, τ>(cap);
    }
+   /// <summary>Creates a non-top vector with specified superior and initial capacity.</summary>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
    internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
    
-   /// <summary>Creates a top vector with specified dimension and initial capacity.</summary>
-   internal Vector(int dim, int cap) : this(new List<int> {dim}, Voids<τ,α>.Vec, cap) { }
+   /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
+   /// <param name="dim">Dimension. Number of spots available for values.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   internal Vector(int dim, int cap) : this(new List<int> {dim}, null, cap) { }
+
+
+
    
    /// <summary>Creates a vector as a deep copy of another. You can optionally specify which meta-fields to copy. Default is AllExceptSup.</summary>
    /// <param name="src"></param>
