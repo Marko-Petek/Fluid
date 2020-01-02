@@ -103,7 +103,7 @@ where α : IArithmetic<τ> {
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created
                   tnr = new Tensor<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
-                  tnr.Superior!.Add(inxs[i], tnr); } }
+                  tnr.Superior!.AddPlus(inxs[i], tnr); } }
             var dict = (TensorBase<Tensor<τ,α>>) tnr;                            // tnr is now the proper subtensor.
             value.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
             value.Structure = Structure;
@@ -138,7 +138,7 @@ where α : IArithmetic<τ> {
                   tnr = tnr2; }
                else {                                                         // Tensor does not exist in an intermediate rank.
                   tnr = new Tensor<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
-                  tnr.Superior!.AddOnly(inx[i], tnr); } }
+                  tnr.Superior!.Add(inx[i], tnr); } }
             var dict = (TensorBase<Tensor<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
             value.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
             value.Structure = Structure;
@@ -177,12 +177,12 @@ where α : IArithmetic<τ> {
                      tnr = tnr2; }
                   else {
                      tnr = new Tensor<τ,α>(tnr, 6);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
-                     tnr.Superior!.AddOnly(inx[i], tnr); }}
+                     tnr.Superior!.Add(inx[i], tnr); }}
                if(tnr.TryGetValue(inx[n], out tnr2)) {                           // Does vector exist?
                   vec = (Vector<τ,α>) tnr2; }
                else {
                   vec = new Vector<τ,α>(Structure, tnr, 4); 
-                  tnr.AddOnly(inx[n], vec); }
+                  tnr.Add(inx[n], vec); }
                vec.Vals[inx[n + 1]] = value; } }
          else {
             int n = inx.Length - 1;
@@ -289,7 +289,7 @@ where α : IArithmetic<τ> {
                if(t1.TryGetValue(subKey, out var subTnr1))            // Equivalent subtensor exists in T1.
                   Recursion(subTnr1, subTnr2);
                else                                                      // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
-                  t1.Add(subKey, subTnr2); } }
+                  t1.AddPlus(subKey, subTnr2); } }
          else if(t2.Rank == 2) {
             foreach(var int_subTnr2 in t2) {
                //var vec2 = (Vector<τ,α>) int_subTnr2.Value;
@@ -302,7 +302,7 @@ where α : IArithmetic<τ> {
                   if(subVec1.Count == 0)
                      t1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
                else {
-                  t1.Add(subKey, subTnr2); } } }          // Entry does not exist in t2, simply Add.
+                  t1.AddPlus(subKey, subTnr2); } } }          // Entry does not exist in t2, simply Add.
          else {                                                            // We have a vector.
             var vec1 = (Vector<τ,α>) t1;
             var vec2 = (Vector<τ,α>) t2;
@@ -326,7 +326,7 @@ where α : IArithmetic<τ> {
                if(tnr1.TryGetValue(subKey, out var subTnr1))            // Equivalent subtensor exists in T1.
                   Recursion(subTnr1, subTnr2);
                else                                                      // Equivalent subtensor does not exist in T1. Negate the subtensor from T2 and add it.
-                  tnr1.Add(subKey,-subTnr2); } }
+                  tnr1.AddPlus(subKey,-subTnr2); } }
          else if(tnr2.Rank == 2) {
             foreach(var int_subTnr2 in tnr2) {
                int subKey = int_subTnr2.Key;
@@ -337,7 +337,7 @@ where α : IArithmetic<τ> {
                   if(subVec1.Count == 0)
                      tnr1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
                else {
-                  tnr1.Add(subKey, -subVec2); } } }          // Entry does not exist in t2, simply Add.
+                  tnr1.AddPlus(subKey, -subVec2); } } }          // Entry does not exist in t2, simply Add.
          else {                                                            // We have a vector.
             var vec1 = (Vector<τ,α>) tnr1;
             var vec2 = (Vector<τ,α>) tnr2;
@@ -381,12 +381,12 @@ where α : IArithmetic<τ> {
                int subKey = int_subTnr.Key;
                var subTnr = int_subTnr.Value;
                var subRes = Recursion(subTnr);
-               res.Add(subKey, subRes); } }
+               res.AddPlus(subKey, subRes); } }
          else if(tnr.Rank == 2) {                                 // Subordinates are vectors.
             foreach (var int_subTnr in tnr) {
                int subKey = int_subTnr.Key;
                var subVec = (Vector<τ,α>) int_subTnr.Value;
-               res.Add(subKey, scal*subVec); } }
+               res.AddPlus(subKey, scal*subVec); } }
          else
             return scal*((Vector<τ,α>) tnr);
          return res;
@@ -411,7 +411,7 @@ where α : IArithmetic<τ> {
             foreach(var int_subTnr1 in tnr1) {
                int subKey = int_subTnr1.Key;
                var subTnr1 = int_subTnr1.Value;
-               res.Add(subKey, Recursion(subTnr1, resRank - 1)); } }
+               res.AddPlus(subKey, Recursion(subTnr1, resRank - 1)); } }
          else {                                                            // We are now at tensor which contains vectors.
             foreach(var int_subTnr1R1 in tnr1) {                           // Substitute each vector with a new tensor.
                int subKeyR1 = int_subTnr1R1.Key;
@@ -420,8 +420,8 @@ where α : IArithmetic<τ> {
                foreach(var int_subVal1 in subVec1.Vals) {
                   int subKeyR0 = int_subVal1.Key;
                   var subVal1 = int_subVal1.Value;
-                  newSubTnr.Add(subKeyR0, subVal1*aTnr2); }
-               res.Add(subKeyR1, newSubTnr); } }
+                  newSubTnr.AddPlus(subKeyR0, subVal1*aTnr2); }
+               res.AddPlus(subKeyR1, newSubTnr); } }
          return res;
       }
    }
@@ -487,7 +487,7 @@ where α : IArithmetic<τ> {
             var subTnr = new Tensor<τ,α>(tgt, src.Count);
             RecursiveCopyAndElim(int_tnr.Value, subTnr, emtInx, elimRank);
             if(subTnr.Count != 0)
-               tgt.Add(int_tnr.Key, subTnr); } }
+               tgt.AddPlus(int_tnr.Key, subTnr); } }
       else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
          foreach(var int_tnr in src) {
             if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
@@ -519,12 +519,12 @@ where α : IArithmetic<τ> {
             var subTnr = new Tensor<τ,α>(tgt, src.Count);
             ElimR0_R3Plus(int_tnr.Value, subTnr, emtInx);
             if(subTnr.Count != 0)
-               tgt.Add(int_tnr.Key, subTnr); } }
+               tgt.AddPlus(int_tnr.Key, subTnr); } }
       else {                                                                  // src.Rank == 3.
          foreach(var int_tnr in src) {
             var newVec = new Vector<τ,α>(tgt, 4);
             ElimR0_R2(int_tnr.Value, newVec, emtInx);
-            tgt.Add(int_tnr.Key, newVec); } } }
+            tgt.AddPlus(int_tnr.Key, newVec); } } }
 
    protected static (List<int> struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
    Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {

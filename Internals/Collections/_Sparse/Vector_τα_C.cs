@@ -16,9 +16,12 @@ namespace Fluid.Internals.Collections {
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
-
-   internal Vector(List<int> structure, Tensor<τ,α>? sup, int cap) :
-   base(structure, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
+   /// <summary>Constructor with redundancy, used internally.</summary>
+   /// <param name="strc">Structure (absorbed).</param>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   internal Vector(List<int> strc, Tensor<τ,α>? sup, int cap) :
+   base(strc, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
       Vals = new Dictionary<int, τ>(cap);
    }
    /// <summary>Creates a non-top vector with specified superior and initial capacity.</summary>

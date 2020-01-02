@@ -11,7 +11,7 @@ namespace Fluid.Internals.Collections {
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ> {
-   /// <summary>Complete constructor with redundancy, used internally. Initializes: internal dictionary with specified capacity, structure, rank, superior.</summary>
+   /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
    /// <param name="sup">Direct superior.</param>
@@ -21,12 +21,12 @@ where α : IArithmetic<τ> {
       Rank = rank;
       Superior = sup;
    }
-   /// <summary>Complete constructor for a top tensor (null superior).</summary>
+   /// <summary>Constructor for a top tensor (null superior).</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) {
    }
-   /// <summary>Complete constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
+   /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
@@ -48,23 +48,23 @@ where α : IArithmetic<τ> {
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
    /// <param name="tnr">Tensor to add.</param>
-   new internal void Add(int inx, Tensor<τ,α> tnr) {
+   internal void AddPlus(int inx, Tensor<τ,α> tnr) {
       tnr.Superior = this;
       tnr.Structure = Structure;
       base.Add(inx, tnr);
    }
-   /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr.</summary>
+   /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr or check if the added tensor is empty.</summary>
    /// <param name="key">Index.</param>
    /// <param name="tnr">Tensor.</param>
-   internal void AddOnly(int key, Tensor<τ,α> tnr) =>
+   new internal void Add(int key, Tensor<τ,α> tnr) =>
       base.Add(key, tnr);
 
    /// <summary>Adds tnr to caller only if it is not empty. Assigns the caller's superstructure to tnr.</summary>
    /// <param name="key">Index.</param>
    /// <param name="tnr">Tensor.</param>
-   internal void AddOnlyNonEmpty(int key, Tensor<τ,α> tnr) {
+   internal void AddPlusIfNotEmpty(int key, Tensor<τ,α> tnr) {
       if(tnr.Count != 0)
-         Add(key, tnr);
+         AddPlus(key, tnr);
    }
    // /// <summary>Creates tnr2 as a copy of tnr1. Specify what to copy with CopySpecs.</summary>
    // /// <remarks><see cref="TestRefs.TensorCopy"/></remarks>

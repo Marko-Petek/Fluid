@@ -46,7 +46,7 @@ where α : IArithmetic<τ> {
          foreach(var int_subVal in Vals) {
             int subKey = int_subVal.Key;
             var subVal = int_subVal.Value;
-            res.Add(subKey, subVal*tnr2); }
+            res.AddPlus(subKey, subVal*tnr2); }
          return res; }
       else {
          var vec2 = (Vector<τ,α>) tnr2;
@@ -62,7 +62,7 @@ where α : IArithmetic<τ> {
          int subKey = int_subVal1.Key;
          var subVal1 = int_subVal1.Value;
          var newVec = subVal1*vec2;
-         res.AddOnlyNonEmpty(subKey, newVec); }
+         res.AddPlusIfNotEmpty(subKey, newVec); }
       return res;
    }
    /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>

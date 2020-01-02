@@ -9,51 +9,21 @@ namespace Fluid.Internals.Collections {
 
 /// <summary>A type responsible for construction.</summary>
 public static partial class Factory {
-   /// <summary></summary>
-   /// <param name="cap"></param>
-   /// <param name="structure"></param>
-   /// <param name="sup"></param>
-   /// <typeparam name="τ">Value types contained inside the tensor or vector.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> EmptyVec<τ,α>(int cap, List<int> structure, Tensor<τ,α> sup)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> =>
-      new Vector<τ,α>(structure, sup, cap);
-   public static Vector<τ,α> EmptyVec<τ,α>(List<int> structure, int cap)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> =>
-      new Vector<τ,α>(structure, cap);
-   
-   public static Vector<τ,α> EmptyVec(int cap) =>
-      CreateEmpty(cap, Voids.ListInt, Voids<τ,α>.Vec);
-   
-   /// <summary>Create an empty tensor with optionally specified structure and superior.</summary>
-   /// <param name="cap">Capacity.</param>
-   /// <param name="structure">Structure whose reference will be absorbed into the new tensor.</param>
-   public static Tensor<τ,α> EmptyTnr(int cap, int rank,
-   List<int> structure, Tensor<τ,α>? sup) =>
-      rank switch {
-         1 => EmptyVec(cap, structure, sup),
-         _ => new Tensor<τ,α>(structure, rank, sup, cap) };
-   
-   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank, List<int> structure) =>
-      EmptyTnr(cap, rank, structure, sup: null);
-
-   public static Tensor<τ,α> CreateEmptyTensor(int cap, int rank) =>
-      CreateEmptyTensor(cap, rank, Voids.ListInt, Voids<τ,α>.Vec);
-
    /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension.</param>
    /// <param name="cap">Initial capacity.</param>
-   public static Vector<τ,α> TopVector<τ,α>(int dim, int cap)
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> TopVector<τ,α>(int dim, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ> =>
-      new Vector<τ,α>(new List<int> {dim}, Voids<τ,α>.Vec, cap);
-
+      new Vector<τ,α>(new List<int> {dim}, null, cap);
 
    /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
    /// <param name="structure">Specifies dimension of each rank.</param>
    /// <param name="cap">Initially assigned memory.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> TopTensor<τ,α>(List<int> structure, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ> =>
@@ -62,58 +32,74 @@ public static partial class Factory {
    /// <summary>Creates a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> NonTopTensor<τ,α>(Tensor<τ,α> sup, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ> =>
       new Tensor<τ,α>(sup, cap);
 
-
-
-   /// <summary>Creates a non-top vector from an array slice.</summary>
-   /// <param name="slc">Array slice.</param>
-   /// <param name="strc">The existing structure that the vector should atain.</param>
-   /// <param name="sup">Direct superior.</param>
-   public static Vector<τ,α> VectorFromFlatSpec(Span<τ> slc , List<int> strc, Tensor<τ,α> sup) {
-      var vec = new Vector<τ,α>(strc, sup, slc.Length);
-      for(int i = 0; i < slc.Length; ++i) {
-         if(!slc[i].Equals(O<τ,α>.A.Zero()))
-            vec.Vals.Add(i, slc[i]); }
+   /// <summary>Creates a non-top vector from an array span.</summary>
+   /// <param name="span">Array span of values.</param>
+   /// <param name="strc">Structure (absorbed).</param>
+   /// <param name="sup">Direct superior with an existing structure.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> NonTopVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+      var vec = new Vector<τ,α>(sup.Structure, sup, span.Length);
+      for(int i = 0; i < span.Length; ++i) {
+         if(!span[i].Equals(default(τ)))
+            vec.Add(i, span[i]); }
       return vec;
    }
-   public static Vector<τ,α> VectorFromFlatSpec(Span<τ> slc) =>
-      VectorFromFlatSpec(slc, new List<int>(1) { slc.Length }, Voids<τ,α>.Vec);
-
-   /// <summary>Creates a tensor with specified structure from values provided within a Span.</summary>
-   /// <param name="slice">Span of values.</param>
-   /// <param name="structure">Structure of new tensor.</param>
-   public static Tensor<τ,α> TensorFromFlatSpec(Span<τ> slice, params int[] structure) {
-      int tnrRank = structure.Length;
-      if(tnrRank == 1)
-         return Factory<τ,α>.VectorFromFlatSpec(slice);
+   /// <summary>Creates a top vector from an array span.</summary>
+   /// <param name="span">Array span of values.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> TopVecFromSpan<τ,α>(Span<τ> span)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+      var vec = new Vector<τ,α>(new List<int>(1) {span.Length}, null, span.Length);
+      for(int i = 0; i < span.Length; ++i) {
+         if(!span[i].Equals(default(τ)))
+            vec.Add(i, span[i]); }
+      return vec;
+   }
+   /// <summary>Creates a top tensor from an array span.</summary>
+   /// <param name="span">Array span of values.</param>
+   /// <param name="strc">Structure.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Tensor<τ,α> TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ> {
+      int rank = strc.Length;
+      if(rank == 1)
+         return TopVecFromSpan<τ,α>(span);
       else {
-         var res = new Tensor<τ,α>(structure.ToList(), tnrRank, Voids<τ,α>.Vec, structure[0]);
-         Recursion(slice, 0, res);
+         var res = new Tensor<τ,α>(strc.ToList(), rank, null, strc[0]);             // Empty tensor that enters recursion.
+         Recursion(span, 0, res);
          return res;
       }
 
-      void Recursion(Span<τ> slc, int slot, Tensor<τ,α> tgt) {       // Specifiy slice and the structure dimension (natural rank index) to which it belongs.
-         //int tgtRank = //ChangeRankNotation(structure.Length, dim);
-         int nIter = structure[slot];                              // As many iterations as it is the size of the dimension.
-         int nEmtsInSlice = slc.Length / nIter;
+      void Recursion(Span<τ> spn, int slot, Tensor<τ,α> tgt) {                      // Span and natural rank index to which it belongs.
+         int nIter = strc[slot];                                                    // As many iterations as slot dimension.
+         int nEmtsInSpan = spn.Length / nIter;
          if(tgt.Rank > 2) {
-            //var res = new Tensor<τ,α>(structure.ToList(), trueRank, null, structure[dim]);
-            for(int i = 0; i < nIter; ++i) {                      // Over each tensor. Create new slices and run recursion on them.
-               var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-               var subTnr = new Tensor<τ,α>(tgt.Structure, tgt.Rank - 1, tgt, structure[slot]);
-               Recursion(newSlc, slot + 1, subTnr);
+            for(int i = 0; i < nIter; ++i) {                                        // Over each tensor. Create new spans and run recursion on them.
+               var newSpn = spn.Slice(i*nEmtsInSpan, nEmtsInSpan);
+               var subTnr = new Tensor<τ,α>(tgt, strc[slot]);
+               Recursion(newSpn, slot + 1, subTnr);
                if(subTnr.Count != 0)
-                  tgt.AddOnly(i, subTnr); } }
-         else {                                                 // We are at rank 2, subrank = vector rank.
+                  tgt.Add(i, subTnr); } }
+         else {                                                                     // We are at rank 2, subrank = vector rank.
             for(int i = 0; i < nIter; ++i) {
-               var newSlc = slc.Slice(i*nEmtsInSlice, nEmtsInSlice);
-               var subVec = Factory<τ,α>.VectorFromFlatSpec(newSlc, tgt.Structure, tgt);
+               var newSlc = spn.Slice(i*nEmtsInSpan, nEmtsInSpan);
+               var subVec = NonTopVecFromSpan<τ,α>(newSlc, tgt);
                if(subVec.Count != 0)
-                  tgt.AddOnly(i, subVec); } }
+                  tgt.Add(i, subVec); } }
       }
    }
 
@@ -160,7 +146,7 @@ public static partial class Factory {
                int subKey = int_subSrc.Key;
                var subSrc = int_subSrc.Value;
                var subTgt = new Tensor<τ,α>(newStrc, subSrc.Rank, tgt, subSrc.Count);
-               tgt.AddOnly(subKey, subTgt);
+               tgt.Add(subKey, subTgt);
                if(src.Rank > endRank)
                   Recursion(subSrc, subTgt); } }
          else if(src.Rank == 2) {                                 // Subordinates are vectors.
@@ -168,7 +154,7 @@ public static partial class Factory {
                int subKey = int_subSrc.Key;
                var subVec = (Vector<τ,α>) int_subSrc.Value;
                var subTgt = new Vector<τ,α>(newStrc, tgt, subVec.Count);
-               tgt.AddOnly(subKey, subTgt);
+               tgt.Add(subKey, subTgt);
                subTgt.Vals = new Dictionary<int,τ>(subVec.Vals);
             } }
          else
