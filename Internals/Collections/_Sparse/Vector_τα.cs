@@ -65,7 +65,7 @@ where α : IArithmetic<τ>, new() {
          res.AddPlusIfNotEmpty(subKey, newVec); }
       return res;
    }
-   /// <summary>Destructively sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
    /// <param name="vec1">Sumand 1.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
@@ -81,7 +81,7 @@ where α : IArithmetic<τ>, new() {
       else
          return null;
    }
-   /// <summary>Destructively subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <summary>Subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
    /// <param name="vec1">Minuend.</param>
    /// <param name="vec2">Subtrahend. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSub"/></remarks>

@@ -16,42 +16,20 @@ public static partial class Factory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> TopVector<τ,α>(int dim, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> =>
+   where α : IArithmetic<τ>, new() =>
       new Vector<τ,α>(new List<int> {dim}, null, cap);
-
-   /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
-   /// <param name="structure">Specifies dimension of each rank.</param>
-   /// <param name="cap">Initially assigned memory.</param>
-   /// <typeparam name="τ">Numeric type.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> TopTensor<τ,α>(List<int> structure, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> =>
-      new Tensor<τ,α>(structure, cap);
-
-   /// <summary>Creates a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
+   /// <summary>Creates a non-top vector (non-null superior) with specified dimension and initial capacity. Adds it to its specified superior at the specified index.</summary>
    /// <param name="sup">Direct superior.</param>
-   /// <param name="cap">Capacity of internal dictionary.</param>
+   /// <param name="inx">Index inside superior.</param>
+   /// <param name="dim">Dimension.</param>
+   /// <param name="cap">Initial capacity.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> NonTopTensor<τ,α>(Tensor<τ,α> sup, int cap = 6)
+   public static Vector<τ,α> SubVector<τ,α>(Tensor<τ,α> sup, int inx, int dim, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> =>
-      new Tensor<τ,α>(sup, cap);
-
-   /// <summary>Creates a non-top vector from an array span.</summary>
-   /// <param name="span">Array span of values.</param>
-   /// <param name="strc">Structure (absorbed).</param>
-   /// <param name="sup">Direct superior with an existing structure.</param>
-   /// <typeparam name="τ">Numeric type.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> NonTopVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
-      var vec = new Vector<τ,α>(sup.Structure, sup, span.Length);
-      for(int i = 0; i < span.Length; ++i) {
-         if(!span[i].Equals(default(τ)))
-            vec.Add(i, span[i]); }
+   where α : IArithmetic<τ>, new() {
+      var vec = new Vector<τ,α>(new List<int> {dim}, sup, cap);
+      sup[Vector<τ,α>.V, inx] = vec;
       return vec;
    }
    /// <summary>Creates a top vector from an array span.</summary>
@@ -60,13 +38,54 @@ public static partial class Factory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> TopVecFromSpan<τ,α>(Span<τ> span)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
+   where α : IArithmetic<τ>, new() {
       var vec = new Vector<τ,α>(new List<int>(1) {span.Length}, null, span.Length);
       for(int i = 0; i < span.Length; ++i) {
          if(!span[i].Equals(default(τ)))
             vec.Add(i, span[i]); }
       return vec;
    }
+   /// <summary>Creates a non-top vector from an array span. Adds it to its specified superior at the specified index.</summary>
+   /// <param name="span">Array span of values.</param>
+   /// <param name="sup">Direct superior with an existing structure.</param>
+   /// <param name="inx">Index inside superior.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> SubVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup, int inx)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      var vec = new Vector<τ,α>(sup.Structure, sup, span.Length);
+      for(int i = 0; i < span.Length; ++i) {
+         if(!span[i].Equals(default(τ)))
+            vec.Add(i, span[i]); }
+      sup[Vector<τ,α>.V, inx] = vec;
+      return vec;
+   }
+   /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
+   /// <param name="structure">Specifies dimension of each rank.</param>
+   /// <param name="cap">Initially assigned memory.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Tensor<τ,α> TopTensor<τ,α>(List<int> structure, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() =>
+      new Tensor<τ,α>(structure, cap);
+
+   /// <summary>Creates a non-top tensor (non-null superior) and adds it to its specified superior at the specified index. Assumes superior's structure is initialized.</summary>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="inx">Index inside superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Tensor<τ,α> SubTensor<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      var tnr = new Tensor<τ,α>(sup, cap);
+      sup[Tensor<τ,α>.V, inx] = tnr;
+      return tnr;
+   }
+   
+   
    /// <summary>Creates a top tensor from an array span.</summary>
    /// <param name="span">Array span of values.</param>
    /// <param name="strc">Structure.</param>
@@ -74,7 +93,7 @@ public static partial class Factory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
+   where α : IArithmetic<τ>, new() {
       int rank = strc.Length;
       if(rank == 1)
          return TopVecFromSpan<τ,α>(span);
@@ -97,11 +116,40 @@ public static partial class Factory {
          else {                                                                     // We are at rank 2, subrank = vector rank.
             for(int i = 0; i < nIter; ++i) {
                var newSlc = spn.Slice(i*nEmtsInSpan, nEmtsInSpan);
-               var subVec = NonTopVecFromSpan<τ,α>(newSlc, tgt);
+               var subVec = SubVecFromSpan<τ,α>(newSlc, tgt);
                if(subVec.Count != 0)
                   tgt.Add(i, subVec); } }
       }
    }
+   /// <summary>Creates a deep copy of a vector as a top vector (null superior).</summary>
+   /// <param name="src">Copy source.</param>
+   /// <param name="extraCap">Extra capacity of copied vector (beyond the number of elements).</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> CopyAsTopVec<τ,α>(Vector<τ,α> src, int extraCap)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      var vec = TopVector<τ,α>(src.Dim, src.Count + extraCap);
+      foreach(var int_val in src.Vals)
+         vec.Add(int_val.Key, int_val.Value);
+      return vec;
+   }
+   /// <summary>Creates a deep copy of a vector as a non-top vector (non-null superior).</summary>
+   /// <param name="src">Copy source.</param>
+   /// <param name="newSup">The copied vector's superior.</param>
+   /// <param name="extraCap">Extra capacity of copied vector (beyond the number of elements).</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> CopyAsSubVec<τ,α>(Vector<τ,α> src, Tensor<τ,α> newSup, int extraCap)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      var vec = SubVector<τ,α>(newSup, src.Dim, src.Count + extraCap);
+      foreach(var int_val in src.Vals)
+         vec.Add(int_val.Key, int_val.Value);
+      return vec;
+   }
+
+
 
    /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
    /// <param name="src">Copy source.</param>
@@ -121,7 +169,7 @@ public static partial class Factory {
    /// <param name="css">Exact specification of what fields to copy. Default is all.</param>
    public static void Copy<τ,α>(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
+   where α : IArithmetic<τ>, new() {
       if (aSrc.Rank == 1) {
          var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
          var thisVector = (Vector<τ,α>)this;
@@ -164,7 +212,7 @@ public static partial class Factory {
    }
    internal static void CopyTnr<τ,α>(this Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
+   where α : IArithmetic<τ>, new() {
 
    }
    public static void CopyMetaFields<τ,α>(Tensor<τ,α> src, Tensor<τ,α> tgt,

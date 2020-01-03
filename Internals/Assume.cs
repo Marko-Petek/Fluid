@@ -5,6 +5,9 @@ namespace Fluid.Internals {
 
 /// <summary>A class which simplifies exception coding.</summary>
 public static class Assume {
+   /// <summary>Checks condition and throws an exception if it does not hold.</summary>
+   /// <param name="cond">Condition.</param>
+   /// <param name="msg">Message of the exception.</param>
    public static void True(bool cond, Func<string> msg) {               // msg is a method so that we can use Stringer from toolbox.
       if(!cond)
          throw new Exception(msg());

@@ -16,21 +16,26 @@ where α : IArithmetic<τ>, new() {
    /// <param name="rank">Rank.</param>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(List<int> strc, int rank, Tensor<τ,α>? sup, int cap) : base(cap) {
+   protected Tensor(List<int> strc, int rank, Tensor<τ,α>? sup, int cap) : base(cap) {
       Structure = strc;
       Rank = rank;
       Superior = sup;
    }
-   /// <summary>Constructor for a top tensor (null superior).</summary>
+   /// <summary>Constructor for a top tensor (null superior). Does not add the new tensor to its superior.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) {
+      Assume.True(strc.Count > 1, () =>
+         "For creating tensors of rank 1 use Vector's constructor.");
    }
    /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
-   sup.Rank - 1, sup, cap) { }
+   sup.Rank - 1, sup, cap) {
+      Assume.True(sup.Rank > 2, () =>
+         "Superior's rank too low. For creating tensors of rank 1 use Vector's constructor.");
+   }
 
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
