@@ -51,15 +51,18 @@ public static partial class Factory {
    /// <param name="inx">Index inside superior.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> SubVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup, int inx)
+   public static Vector<τ,α>? SubVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup, int inx)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       var vec = new Vector<τ,α>(sup.Structure, sup, span.Length);
       for(int i = 0; i < span.Length; ++i) {
          if(!span[i].Equals(default(τ)))
             vec.Add(i, span[i]); }
-      sup[Vector<τ,α>.V, inx] = vec;
-      return vec;
+      if(vec.Count > 0) {                                                           // Created vector is not empty.
+         sup[Vector<τ,α>.V, inx] = vec;
+         return vec; }
+      else
+         return null;
    }
    /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
    /// <param name="structure">Specifies dimension of each rank.</param>
@@ -116,9 +119,7 @@ public static partial class Factory {
          else {                                                                     // We are at rank 2, subrank = vector rank.
             for(int i = 0; i < nIter; ++i) {
                var newSlc = spn.Slice(i*nEmtsInSpan, nEmtsInSpan);
-               var subVec = SubVecFromSpan<τ,α>(newSlc, tgt);
-               if(subVec.Count != 0)
-                  tgt.Add(i, subVec); } }
+               var subVec = SubVecFromSpan<τ,α>(newSlc, tgt, i); } }
       }
    }
    /// <summary>Creates a deep copy of a vector as a top vector (null superior).</summary>
