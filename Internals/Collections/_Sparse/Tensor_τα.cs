@@ -71,8 +71,11 @@ where α : IArithmetic<τ>, new() {
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
    public List<int> Structure { get; internal set; } = Voids.ListInt;
-   /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level.</summary>
+   /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level. Rank notation: [0, N-1] where the value corresponds to the rank of tensors held by that slot.</summary>
    public int Rank { get; internal set; }
+   /// <summary>Slot notation: [1, N] which is how mathematicians would assign ordering to tensor's slots.</summary>
+   public int Slot =>
+      ChangeRankNotation(Structure.Count, Rank);
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
    public Tensor<τ,α>? Superior { get; internal set; }
    /// <summary>Number of entries (non-zeros) in Tensor. Works even if the reference points to a Vector.</summary>
@@ -80,9 +83,9 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Virtual Count override so that it works also on Vectors when looking at them as Tensors.</summary>
    protected virtual int CountInternal => base.Count;
    /// <summary>The number of available spots one rank lower.</summary>
-   public int Dim => Structure[ToSlotInx(Rank)];
+   public int Dim => Structure[Slot];
    /// <summary>Index of Structure list where substructure begins (the structure a non-top tensor would have if it was top).</summary>
-   public int StructInx => Count - Rank;
+   public int StructInx => Structure.Count - Rank;
 
 
    /// <summary>Tensor getting/setting indexer.</summary>
@@ -672,6 +675,24 @@ where α : IArithmetic<τ>, new() {
       else
          return SelfContractR3(slotInx1, slotInx2);
    }
+
+   /// <summary>Checks whether all subordinates down the line have at least one value down their line. Returns a sequence of indices that lead to the problem if there is one, otherwise returns null.</summary>
+   public int[]? CheckIntegrity() {
+      var errLog = new int[Rank];                           // There can be at most &Rank indicies.
+
+      bool Recursion(int inx, Tensor<τ,α> tnr) {
+         if(tnr.Rank > 1) {
+            foreach(var sInx_sTnr in tnr) {
+               int sInx = sInx_sTnr.Key;
+               var sTnr = sInx_sTnr.Value;
+               errLog[tnr.Slot - 1] = sInx;
+               Recursion(sInx, sTnr);
+            }
+         }
+         
+      }
+   }
+
    /// <summary>Compares substructures of two equal rank tensors and throws an exception if they mismatch.</summary>
    /// <param name="tnr1">First tensor.</param>
    /// <param name="tnr2">Second tensor.</param>

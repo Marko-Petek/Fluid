@@ -75,16 +75,16 @@ where α : IArithmetic<τ>, new() {
          Structure.Add(emt); }
    }
 
-   /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
-   /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
-   int ToSlotInx(int rankInx) =>
-      ChangeRankNotation(Structure.Count, rankInx);
+   // /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>
+   // /// <param name="rankInx">Rank index as situated in the hierarchy. Higher number equates to being higher in the hierarchy.</param>
+   // int ToSlotInx(int rankInx) =>
+   //    ChangeRankNotation(Structure.Count, rankInx);
 
-   /// <summary>Transforms from rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0) to slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3).</summary>
-   /// <param name="slotInx">Slot index.</param>
-   /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
-   int ToRankInx(int slotInx) =>
-      ChangeRankNotation(Structure.Count, slotInx);
+   // /// <summary>Transforms from rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0) to slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3).</summary>
+   // /// <param name="slotInx">Slot index.</param>
+   // /// <remarks>Implementation is actually identical to the one in the ToNaturalInx method.</remarks>
+   // int ToRankInx(int slotInx) =>
+   //    ChangeRankNotation(Structure.Count, slotInx);
    
    /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
    /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
