@@ -65,7 +65,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : struct, IEquatable<τ>, IComparable<τ>
+where τ : IEquatable<τ>, new()
 where α : IArithmetic<τ>, new() {
    
    
@@ -162,12 +162,12 @@ where α : IArithmetic<τ>, new() {
          int n = inx.Length - 2;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
-               return default(τ); }
+               return O<τ,α>.A.Zero(); }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
             var vec = (Vector<τ,α>)tnr;                                          // Same.
             if(vec.Vals.TryGetValue(inx[n + 1], out τ val))
                return val; }
-         return default(τ); }
+         return O<τ,α>.A.Zero(); }
       set {
          Tensor<τ,α>? tnr = this;
          Tensor<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.

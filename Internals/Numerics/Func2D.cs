@@ -3,7 +3,7 @@ using dbl = System.Double;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>A custom function of 2 arguments-</summary>
-   public class Func2D : IEquatable<Func2D> {
+   public class Func2D : IEquatable<Func2D>, IComparable<Func2D> {
       /// <summary>The Func delegate backup field.</summary>
       Func<dbl,dbl,dbl> _F;
       /// <summary>A (highly-likely) unique ID based on Func return value.</summary>
@@ -50,6 +50,9 @@ namespace Fluid.Internals.Numerics {
             return true;
          else
             return false;
+      }
+      public int CompareTo(Func2D f) {
+         throw new NotImplementedException("Cannot (yet) directly compare two functions.");
       }
    }
 }

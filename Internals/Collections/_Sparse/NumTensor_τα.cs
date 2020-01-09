@@ -6,7 +6,7 @@ namespace Fluid.Internals.Collections {
    /// <summary>Further implements IComparable.</summary>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Artihmetic type.</typeparam>
-   public class NumVector<τ,α> : Vector<τ,α>
+   public class NumTensor<τ,α> : Tensor<τ,α>
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       public bool Equals(Vector<τ,α> vec2, τ eps) {

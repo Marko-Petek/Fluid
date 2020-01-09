@@ -17,7 +17,6 @@ using Lst = List<int>;
 using Tnr = Tensor<dbl,DA>;
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Vector<dbl,DA>;
-using Voids = Voids<dbl,DA>;
 using FTnr = Tensor<Func2D,F2DA>;
 using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
 using PE = PseudoElement;
@@ -41,7 +40,7 @@ public class Element {
    public ref Vec2 Pos(int inx) => ref SM.Sim.Pos[P[inx]];
    /// <summary>A vector of values at specified local node index.</summary>
    /// <param name="inx">Local node index.</param>
-   public Vec Val(int inx) => SM.Sim.U(Voids.Vec, P[inx]);
+   public Vec Val(int inx) => SM.Sim.U(Vec.V, P[inx]);
 
 
    /// <summary>Create an instance which holds Element's vertex positions.</summary>

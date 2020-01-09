@@ -6,7 +6,7 @@ namespace Fluid.Internals.Collections {
 
 public class Hierarchy<τ>
 where τ : IEquatable<τ>, new() {
-   public RankedNode TopNode { get; protected set; } = Voids.RNode;
+   public RankedNode? TopNode { get; protected set; }
 
    public Hierarchy(RankedNode topNode) {
       TopNode = topNode;
@@ -28,18 +28,14 @@ where τ : IEquatable<τ>, new() {
                Recursion(node); } }
       }
    }
-      /// <summary>Tries to convert hierarchy to jagged array.</summary>
-   public (bool success, Array array) ConvertToArray() {
+   /// <summary>Tries to convert hierarchy to jagged array. Returns null when not able to do so.</summary>
+   public Array? ConvertToArray() {
       int valDepth = 0;
       bool valDepthNotYetReached = true;
       // Fail: When value node is reached at depth above value depth.
       // Fail: When non value nodes coexist with value nodes.
       // Fail: When value node is reached at any other depth than any previous value node.
-      Array? array = Recursion(TopNode, 0);
-      if(array != null)
-         return (true, array);
-      else
-         return (false, Voids<τ>.Arr);
+      return Recursion(TopNode, 0);
 
       Array? Recursion(RankedNode? startNode, int currDepth) {
          if(startNode == null)

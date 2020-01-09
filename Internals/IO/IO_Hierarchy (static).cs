@@ -42,7 +42,7 @@ public static partial class IO {
    }
    
    /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
-   public static Hierarchy<τ> ReadHierarchy<τ>(TextReader tr)
+   public static Hierarchy<τ>? ReadHierarchy<τ>(TextReader tr)
    where τ : IEquatable<τ>, new() {
       var nFI = new NumberFormatInfo();
       nFI.NumberDecimalSeparator = ".";
@@ -75,7 +75,7 @@ public static partial class IO {
          Recursion(firstMatch.Value, topNode);
          return hier; }
       else
-         return Voids<τ>.Hier;
+         return null;
 
       void Recursion(string prevMatched, RankedNode nodeAbove) {                    
          var sb2 = new StringBuilder(prevMatched, 300);

@@ -14,7 +14,6 @@ namespace Fluid.Internals.Lsfem.CavityFlow {
 using static Fluid.Internals.Lsfem.SimManager;
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
-using V = Voids<dbl,DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;

@@ -5,7 +5,6 @@ using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Lsfem {
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
-using V = Voids<dbl,DA>;
 using Lst = List<int>;
 using PE = PseudoElement;
 
@@ -42,7 +41,7 @@ public abstract class NavStokesFlowInit : ISimInit {
          fs_hsi[Tnr.V, h] = fs_si;
          for(int s = 0; s < 3; ++s) {
             var fs_i = new Vec(fs_si, 2);
-            fs_si[V.Vec, s] = fs_i; } }
+            fs_si[Vec.V, s] = fs_i; } }
       return (a_bqsik, fs_hsi);
    }
    /// <summary>A cartesian array of positions. [i][j][{x,y}]</summary>

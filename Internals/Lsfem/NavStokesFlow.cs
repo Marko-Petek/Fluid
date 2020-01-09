@@ -7,7 +7,6 @@ using static Fluid.Internals.Toolbox;
 namespace Fluid.Internals.Lsfem {
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
-using V = Fluid.Internals.Voids<dbl,DA>;
 using Lst = List<int>;
 
 public abstract class NavStokesFlow : Sim {
@@ -31,12 +30,13 @@ public abstract class NavStokesFlow : Sim {
       dbl dt = Dt;
       dbl re = Re;
       for(int b = 0; b < NPos; ++b) {                                   // For each position.
-         Vec u_j = U(V.Vec, b);                                        // Pick a values vector at position a.
+         Vec u_j = U(Vec.V, b);                                        // Pick a values vector at position a.
          dbl u = u_j[0],
                v = u_j[1],
                p = u_j[2],
                ω = u_j[3],
                invDt = 1/dt;
+#nullable disable                                                                   // All should be non-null at this point.
          Tnr a_qsik = a[Tnr.V, b];
          Tnr a_0sik = a_qsik[Tnr.V, 0];                                // A0
          Tnr a_00ik = a_0sik[Tnr.V, 0];                                   // A00
@@ -55,17 +55,18 @@ public abstract class NavStokesFlow : Sim {
          a_20ik[0,1] = 1;  a_20ik[1,0] = v;  a_20ik[1,3] = 0.5*re;
          a_20ik[2,1] = v;  a_20ik[2,2] = 1;  a_20ik[3,0] = 1;
          Tnr fs_si = fs[Tnr.V, b];
-         Vec fs_0i = fs_si[V.Vec, 0];
+         Vec fs_0i = fs_si[Vec.V, 0];
          fs_0i[1] = u/dt;
          fs_0i[2] = v/dt;
-         Vec fs_1i = fs_si[V.Vec, 1];
+         Vec fs_1i = fs_si[Vec.V, 1];
          fs_1i[1] = -0.5*p;
          fs_1i[2] = -0.5*ω/re;
-         Vec fs_2i = fs_si[V.Vec, 2];
+         Vec fs_2i = fs_si[Vec.V, 2];
          fs_2i[1] = -0.5*ω/re;
          fs_2i[2] = -0.5*p;
       }
       return (a, fs);
    }
+#nullable enable
 }
 }

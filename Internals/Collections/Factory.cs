@@ -12,7 +12,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> TopVector<τ,α>(int dim, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() =>
       new Vector<τ,α>(dim, cap);
    /// <summary>Creates a non-top vector (non-null superior) with specified initial capacity. Adds it to its specified superior at the specified index. Dimension is inferred from superior's structure.</summary>
@@ -22,7 +22,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> SubVector<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
       var vec = new Vector<τ,α>(sup, cap);
@@ -34,7 +34,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> TopVecFromSpan<τ,α>(Span<τ> span)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       var vec = new Vector<τ,α>(span.Length, span.Length);
       for(int i = 0; i < span.Length; ++i) {
@@ -49,7 +49,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α>? SubVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup, int inx)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
       var vec = new Vector<τ,α>(sup, span.Length);
@@ -68,7 +68,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> TopTensor<τ,α>(List<int> strc, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(strc.Count > 1, () =>
          "For creating tensors of rank 1 use Vector's constructor.");
@@ -81,7 +81,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> SubTensor<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank > 2, () =>
          "Superior's rank too low. For creating tensors of rank 1 use Factory.SubVector.");
@@ -95,7 +95,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       int rank = strc.Length;
       if(rank == 1)
@@ -126,7 +126,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> CopyAsTopVec<τ,α>(Vector<τ,α> src, int extraCap = 0)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       var vec = TopVector<τ,α>(src.Dim, src.Count + extraCap);
       foreach(var int_val in src.Vals)
@@ -142,7 +142,7 @@ public static class Factory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Vector<τ,α> CopyAsSubVec<τ,α>(Vector<τ,α> src, Tensor<τ,α> newSup,
    int inx, int xCap = 0)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       var vec = SubVector<τ,α>(newSup, inx, src.Count + xCap);
       Assume.True(src.Dim == vec.Dim, () => "The dimension as specified by the superior does not equal the original vector's dimension.");
@@ -156,7 +156,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> CopyAsTopTnr<τ,α>(Tensor<τ,α> src, int xCap = 0)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       if (src is Vector<τ,α> vec) {
          return CopyAsTopVec<τ,α>(vec, xCap); }
@@ -177,7 +177,7 @@ public static class Factory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static Tensor<τ,α> CopyAsSubTnr<τ,α>(Tensor<τ,α> src, Tensor<τ,α> newSup, int inx, int xCap)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       if (src is Vector<τ,α> vec) {
          return CopyAsSubVec<τ,α>(vec, newSup, inx, xCap); }
