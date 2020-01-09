@@ -254,7 +254,5 @@ where α : IArithmetic<τ>, new() {
          arr[int_val.Key] = int_val.Value;
       return arr;
    }
-   /// <summary>Void vector.</summary>
-   new public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
 }
 }

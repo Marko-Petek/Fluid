@@ -14,6 +14,8 @@ namespace Fluid.Internals.Collections {
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
+   /// <summary>Void vector.</summary>
+   new public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="sup">Direct superior.</param>
@@ -22,13 +24,10 @@ where α : IArithmetic<τ>, new() {
    base(strc, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
       Vals = new Dictionary<int, τ>(cap);
    }
-   /// <summary>Creates a non-top vector with specified superior and initial capacity. Does not add the new vector to its superior.</summary>
+   /// <summary>Creates a non-top vector with specified superior and initial capacity. Does not add the new vector to its superior or check whether the superior is rank 2.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) {
-      Assume.True(sup.Rank == 2, () => 
-         "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
-   }
+   internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
    
    /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension. Number of spots available for values.</param>

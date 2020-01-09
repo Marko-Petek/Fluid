@@ -200,13 +200,12 @@ where α : IArithmetic<τ>, new() {
       Recursion(this);
 
       void Recursion(Tensor<τ,α> t1) {
-         if(t1.Rank > 1) {
-            foreach(var int_subT in t1)
-               Recursion(int_subT.Value); }
-         else {                                 // We are at the vector level.
-            var vec = (Vector<τ,α>) t1;
-            vec.Negate(); }
-      }
+      if(t1.Rank > 1) {
+         foreach(var int_subT in t1)
+            Recursion(int_subT.Value); }
+      else {                                 // We are at the vector level.
+         var vec = (Vector<τ,α>) t1;
+         vec.Negate(); } }
    }
    
    /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
@@ -677,20 +676,31 @@ where α : IArithmetic<τ>, new() {
    }
 
    /// <summary>Checks whether all subordinates down the line have at least one value down their line. Returns a sequence of indices that lead to the problem if there is one, otherwise returns null.</summary>
-   public int[]? CheckIntegrity() {
-      var errLog = new int[Rank];                           // There can be at most &Rank indicies.
+   public List<int>? CheckIntegrity() {                           // TODO: Test CheckIntegrity.
+      var errLog = new List<int>(Rank);                           // There can be at most &Rank indicies.
+      if(Recursion(this))
+         return null;
+      else
+         return errLog;
 
-      bool Recursion(int inx, Tensor<τ,α> tnr) {
+      bool Recursion(Tensor<τ,α> tnr) {
          if(tnr.Rank > 1) {
-            foreach(var sInx_sTnr in tnr) {
-               int sInx = sInx_sTnr.Key;
-               var sTnr = sInx_sTnr.Value;
-               errLog[tnr.Slot - 1] = sInx;
-               Recursion(sInx, sTnr);
-            }
-         }
-         
-      }
+            if(tnr.Count > 0) {
+               errLog.Add(-1);
+               foreach(var sInx_sTnr in tnr) {
+                  int sInx = sInx_sTnr.Key;
+                  var sTnr = sInx_sTnr.Value;
+                  errLog[tnr.Slot - 1] = sInx;
+                  var result = Recursion(sTnr);
+                  if(!result)
+                     return false;
+                  else
+                     return true; }
+               throw new Exception("Count returned more than 0, but the enumerator could not enumerate anything."); }
+            else
+               return false; }
+         else
+            return (tnr.Count > 0 ? true : false); }
    }
 
    /// <summary>Compares substructures of two equal rank tensors and throws an exception if they mismatch.</summary>
@@ -725,8 +735,7 @@ where α : IArithmetic<τ>, new() {
                   yield return subTnr; }
             else {
                foreach(var int_subTnr in int_tnr.Value)
-                  yield return int_subTnr.Value; } }
-      }
+                  yield return int_subTnr.Value; } } }
    }
 
    /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
@@ -743,8 +752,7 @@ where α : IArithmetic<τ>, new() {
                return TnrRecursion(inx_sub1.Value, sub2); }
             return true; }                                                                   // Both are empty.
          else
-            return VecRecursion(sup1, sup2);
-      }
+            return VecRecursion(sup1, sup2); }
 
       bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
          if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
@@ -754,8 +762,7 @@ where α : IArithmetic<τ>, new() {
             var vec2 = sup2R2[Voids<τ,α>.Vec, inx_sub1R1.Key];
             if(!vec1.Equals(vec2))
                return false; }
-         return true;
-      }
+         return true; }
    }
 
    /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
@@ -797,8 +804,6 @@ where α : IArithmetic<τ>, new() {
       sb.Append("}");
       return sb.ToString();
    }
-   /// <summary>Void tensor.</summary>
-   public static readonly Tensor<τ,α> V = new Tensor<τ,α>(0);
 }
 
 }

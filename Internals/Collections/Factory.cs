@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Collections {
-   using static Fluid.Internals.Collections.HowToCopyStructure;
-   using static Fluid.Internals.Collections.WhichNonValueFields;
-   using static Fluid.Internals.Collections.WhichFields;
 
 /// <summary>A type responsible for construction.</summary>
-public static partial class Factory {
+public static class Factory {
    /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension.</param>
    /// <param name="cap">Initial capacity.</param>
@@ -17,18 +14,18 @@ public static partial class Factory {
    public static Vector<τ,α> TopVector<τ,α>(int dim, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() =>
-      new Vector<τ,α>(new List<int> {dim}, null, cap);
-   /// <summary>Creates a non-top vector (non-null superior) with specified dimension and initial capacity. Adds it to its specified superior at the specified index.</summary>
+      new Vector<τ,α>(dim, cap);
+   /// <summary>Creates a non-top vector (non-null superior) with specified initial capacity. Adds it to its specified superior at the specified index. Dimension is inferred from superior's structure.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="inx">Index inside superior.</param>
-   /// <param name="dim">Dimension.</param>
    /// <param name="cap">Initial capacity.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> SubVector<τ,α>(Tensor<τ,α> sup, int inx, int dim, int cap = 6)
+   public static Vector<τ,α> SubVector<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = new Vector<τ,α>(new List<int> {dim}, sup, cap);
+      Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
+      var vec = new Vector<τ,α>(sup, cap);
       sup[Vector<τ,α>.V, inx] = vec;
       return vec;
    }
@@ -39,7 +36,7 @@ public static partial class Factory {
    public static Vector<τ,α> TopVecFromSpan<τ,α>(Span<τ> span)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = new Vector<τ,α>(new List<int>(1) {span.Length}, null, span.Length);
+      var vec = new Vector<τ,α>(span.Length, span.Length);
       for(int i = 0; i < span.Length; ++i) {
          if(!span[i].Equals(default(τ)))
             vec.Add(i, span[i]); }
@@ -54,7 +51,8 @@ public static partial class Factory {
    public static Vector<τ,α>? SubVecFromSpan<τ,α>(Span<τ> span, Tensor<τ,α> sup, int inx)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = new Vector<τ,α>(sup.Structure, sup, span.Length);
+      Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
+      var vec = new Vector<τ,α>(sup, span.Length);
       for(int i = 0; i < span.Length; ++i) {
          if(!span[i].Equals(default(τ)))
             vec.Add(i, span[i]); }
@@ -65,15 +63,17 @@ public static partial class Factory {
          return null;
    }
    /// <summary>Creates a top tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
-   /// <param name="structure">Specifies dimension of each rank.</param>
+   /// <param name="strc">Specifies dimension of each rank.</param>
    /// <param name="cap">Initially assigned memory.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> TopTensor<τ,α>(List<int> structure, int cap = 6)
+   public static Tensor<τ,α> TopTensor<τ,α>(List<int> strc, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ>, new() =>
-      new Tensor<τ,α>(structure, cap);
-
+   where α : IArithmetic<τ>, new() {
+      Assume.True(strc.Count > 1, () =>
+         "For creating tensors of rank 1 use Vector's constructor.");
+      return new Tensor<τ,α>(strc, cap);
+   }
    /// <summary>Creates a non-top tensor (non-null superior) and adds it to its specified superior at the specified index. Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="inx">Index inside superior.</param>
@@ -83,12 +83,12 @@ public static partial class Factory {
    public static Tensor<τ,α> SubTensor<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
+      Assume.True(sup.Rank > 2, () =>
+         "Superior's rank too low. For creating tensors of rank 1 use Factory.SubVector.");
       var tnr = new Tensor<τ,α>(sup, cap);
       sup[Tensor<τ,α>.V, inx] = tnr;
       return tnr;
    }
-   
-   
    /// <summary>Creates a top tensor from an array span.</summary>
    /// <param name="span">Array span of values.</param>
    /// <param name="strc">Structure.</param>
@@ -101,12 +101,11 @@ public static partial class Factory {
       if(rank == 1)
          return TopVecFromSpan<τ,α>(span);
       else {
-         var res = new Tensor<τ,α>(strc.ToList(), rank, null, strc[0]);             // Empty tensor that enters recursion.
+         var res = new Tensor<τ,α>(strc.ToList(), strc[0]);                         // Empty tensor that enters recursion.
          Recursion(span, 0, res);
-         return res;
-      }
+         return res; }
 
-      void Recursion(Span<τ> spn, int slot, Tensor<τ,α> tgt) {                      // Span and natural rank index to which it belongs.
+      void Recursion(Span<τ> spn, int slot, Tensor<τ,α> tgt) {                      // Span and natural slot index to which it belongs.
          int nIter = strc[slot];                                                    // As many iterations as slot dimension.
          int nEmtsInSpan = spn.Length / nIter;
          if(tgt.Rank > 2) {
@@ -119,15 +118,14 @@ public static partial class Factory {
          else {                                                                     // We are at rank 2, subrank = vector rank.
             for(int i = 0; i < nIter; ++i) {
                var newSlc = spn.Slice(i*nEmtsInSpan, nEmtsInSpan);
-               var subVec = SubVecFromSpan<τ,α>(newSlc, tgt, i); } }
-      }
+               var subVec = SubVecFromSpan<τ,α>(newSlc, tgt, i); } } }
    }
    /// <summary>Creates a deep copy of a vector as a top vector (null superior).</summary>
    /// <param name="src">Copy source.</param>
-   /// <param name="extraCap">Extra capacity of copied vector (beyond the number of elements).</param>
+   /// <param name="extraCap">Extra capacity of copied vector (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> CopyAsTopVec<τ,α>(Vector<τ,α> src, int extraCap)
+   public static Vector<τ,α> CopyAsTopVec<τ,α>(Vector<τ,α> src, int extraCap = 0)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       var vec = TopVector<τ,α>(src.Dim, src.Count + extraCap);
@@ -138,101 +136,68 @@ public static partial class Factory {
    /// <summary>Creates a deep copy of a vector as a non-top vector (non-null superior).</summary>
    /// <param name="src">Copy source.</param>
    /// <param name="newSup">The copied vector's superior.</param>
-   /// <param name="extraCap">Extra capacity of copied vector (beyond the number of elements).</param>
+   /// <param name="inx">New index inside superior.</param>
+   /// <param name="xCap">Extra capacity of copied vector (beyond the number of elements).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> CopyAsSubVec<τ,α>(Vector<τ,α> src, Tensor<τ,α> newSup, int extraCap)
+   public static Vector<τ,α> CopyAsSubVec<τ,α>(Vector<τ,α> src, Tensor<τ,α> newSup,
+   int inx, int xCap = 0)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = SubVector<τ,α>(newSup, src.Dim, src.Count + extraCap);
-      foreach(var int_val in src.Vals)
-         vec.Add(int_val.Key, int_val.Value);
+      var vec = SubVector<τ,α>(newSup, inx, src.Count + xCap);
+      Assume.True(src.Dim == vec.Dim, () => "The dimension as specified by the superior does not equal the original vector's dimension.");
+      foreach(var sInx_sVal in src.Vals)
+         vec.Add(sInx_sVal.Key, sInx_sVal.Value);
       return vec;
    }
-
-
-
-   /// <summary>Creates a deep copy of a vector. You have to provide the already instantiated target.</summary>
+   /// <summary>Creates a deep copy of a tensor as a top tensor (null superior).</summary>
    /// <param name="src">Copy source.</param>
-   /// <param name="tgt">Copy target.</param>
-   public static void Copy(Vector<τ,α> src, Vector<τ,α> tgt, in CopySpecStruct cs) {
-      CopyMetaFields(src, tgt, cs.NonValueFieldsSpec, cs.StructureSpec);               // Structure created here.
-      if(cs.FieldsSpec.HasFlag(OnlyValues)) {
-         tgt.Vals = new Dictionary<int,τ>(src.Count + cs.ExtraCapacity);
-            foreach(var int_val in src.Vals) {
-               tgt.Vals.Add(int_val.Key, int_val.Value); } }
-      else {
-         tgt.Vals = new Dictionary<int,τ>(); }
-   }
-   /// <summary>Make a shallow or deep copy of a tensor. Set CopySpec field for fine tunning, ensure proper capacity of the target tensor.</summary>
-   /// <param name="aSrc">Copy source.</param>
-   /// <param name="aTgt">Copy target.</param>
-   /// <param name="css">Exact specification of what fields to copy. Default is all.</param>
-   public static void Copy<τ,α>(in Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
+   /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Tensor<τ,α> CopyAsTopTnr<τ,α>(Tensor<τ,α> src, int xCap = 0)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      if (aSrc.Rank == 1) {
-         var res = new Vector<τ,α>(Count + cs.ExtraCapacity);
-         var thisVector = (Vector<τ,α>)this;
-         Factory<τ,α>.Copy(thisVector, res, in cs);
-         return res; }
+      if (src is Vector<τ,α> vec) {
+         return CopyAsTopVec<τ,α>(vec, xCap); }
       else {
-         var res = new Tensor<τ,α>(Count + cs.ExtraCapacity);
-         Factory<τ,α>.Copy(this, res, in cs);
-         return res; }
-
-      Assume.True(aSrc.Rank > 1, () =>
-         "Tensors's rank has to be at least 2 to be copied via this method.");
-      CopyMetaFields(aSrc, aTgt, in css.NonValueFieldsSpec, in css.StructureSpec);
-      if(css.FieldsSpec.HasFlag(OnlyValues)) {
-         var newStrc = aTgt.Structure;                                             // At this point top tensor tgt has a structure created by CopyMetaFields. It will be assigned to all subsequent subtensors.
-         int endRank = css.EndRank;
-         Recursion(aSrc, aTgt);
-
-         void Recursion(Tensor<τ,α> src, Tensor<τ,α> tgt) {
-         if(src.Rank > 2) {                                       // Subordinates are tensors.
-            foreach (var int_subSrc in src) {
-               int subKey = int_subSrc.Key;
-               var subSrc = int_subSrc.Value;
-               var subTgt = new Tensor<τ,α>(newStrc, subSrc.Rank, tgt, subSrc.Count);
-               tgt.Add(subKey, subTgt);
-               if(src.Rank > endRank)
-                  Recursion(subSrc, subTgt); } }
-         else if(src.Rank == 2) {                                 // Subordinates are vectors.
-            foreach(var int_subSrc in src) {
-               int subKey = int_subSrc.Key;
-               var subVec = (Vector<τ,α>) int_subSrc.Value;
-               var subTgt = new Vector<τ,α>(newStrc, tgt, subVec.Count);
-               tgt.Add(subKey, subTgt);
-               subTgt.Vals = new Dictionary<int,τ>(subVec.Vals);
-            } }
-         else
-            throw new InvalidOperationException(
-               "Tensors's rank has to be at least 2 to be copied via this method."); }
-      }
+         var newStrc = new List<int>(src.Structure);
+         var tgt = TopTensor<τ,α>(newStrc, src.Count + xCap);
+         foreach(var sInx_sSrc in src) {
+            int sInx = sInx_sSrc.Key;
+            var sSrc = sInx_sSrc.Value;
+            CopyAsSubTnr<τ,α>(sSrc, tgt, sInx, xCap); }
+         return tgt; }
    }
-   internal static void CopyTnr<τ,α>(this Tensor<τ,α> aSrc, Tensor<τ,α> aTgt, in CopySpecStruct css)
+   /// <summary>Creates a deep copy of a tensor as a non-top tensor (non-null superior).</summary>
+   /// <param name="src">Copy source.</param>
+   /// <param name="newSup">The copied tensor's superior.</param>
+   /// <param name="inx">New index inside superior.</param>
+   /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Tensor<τ,α> CopyAsSubTnr<τ,α>(Tensor<τ,α> src, Tensor<τ,α> newSup, int inx, int xCap)
    where τ : struct, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
+      if (src is Vector<τ,α> vec) {
+         return CopyAsSubVec<τ,α>(vec, newSup, inx, xCap); }
+      else {
+         return Recursion(src, newSup, inx); }
 
+      Tensor<τ,α> Recursion(Tensor<τ,α> srcR, Tensor<τ,α> newSupR, int inxR) {
+         var tgtR = SubTensor<τ,α>(newSupR, inxR, srcR.Count + xCap);               // TODO: Check that count is not 0 anywhere.
+         if(srcR.Rank > 2) {                                                        // Subordinates are tensors.
+            foreach (var inxR_sSrcR in srcR) {
+               int sInxR = inxR_sSrcR.Key;
+               var sSrcR = inxR_sSrcR.Value;
+               Recursion(sSrcR, tgtR, sInxR); } }
+         else {                                                                     // Subordinates are vectors.
+            foreach(var inxR_sSrcR in srcR) {
+               int sInxR = inxR_sSrcR.Key;
+               var sSrcR = (Vector<τ,α>) inxR_sSrcR.Value;
+               CopyAsSubVec<τ,α>(sSrcR, tgtR, sInxR, xCap); } }
+         return tgtR; }
    }
-   public static void CopyMetaFields<τ,α>(Tensor<τ,α> src, Tensor<τ,α> tgt,
-   in WhichNonValueFields wnvf, in HowToCopyStructure htcs)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ> {
-      if(wnvf.HasFlag(Structure)) {
-         if(htcs.HasFlag(ReferToOriginalStructure))            // FIXME: Problem: structure assignment.
-            tgt.Structure = src.Structure;
-         else
-            tgt.Structure = new List<int>(src.Structure); }
-      else {                                                                        // Create empty Structure, don't just assign VoidStructure. This way we can change it and impact all subtensors.
-         tgt.Structure = new List<int>(4); }
-      if(wnvf.HasFlag(Rank))
-         tgt.Rank = src.Rank;
-      if(wnvf.HasFlag(Superior))
-         tgt.Superior = src.Superior;
-   }
-
 }
 
 }

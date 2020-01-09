@@ -11,6 +11,8 @@ namespace Fluid.Internals.Collections {
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
+   /// <summary>Void tensor.</summary>
+   public static readonly Tensor<τ,α> V = Factory.TopTensor<τ,α>(new List<int>{0,0}, 0);
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
@@ -21,21 +23,15 @@ where α : IArithmetic<τ>, new() {
       Rank = rank;
       Superior = sup;
    }
-   /// <summary>Constructor for a top tensor (null superior). Does not add the new tensor to its superior.</summary>
+   /// <summary>Constructor for a top tensor (null superior). For creating tensors of rank 1 use Vector's constructor.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) {
-      Assume.True(strc.Count > 1, () =>
-         "For creating tensors of rank 1 use Vector's constructor.");
-   }
+   internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) { }
    /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
-   sup.Rank - 1, sup, cap) {
-      Assume.True(sup.Rank > 2, () =>
-         "Superior's rank too low. For creating tensors of rank 1 use Vector's constructor.");
-   }
+   sup.Rank - 1, sup, cap) { }
 
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
@@ -88,7 +84,7 @@ where α : IArithmetic<τ>, new() {
    
    /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
    /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
-   /// <param name="slotOrRankInx">Slot or rank index.</param>
+   /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
    static int ChangeRankNotation(int topRankInx, int slotOrRankInx) =>
       topRankInx - slotOrRankInx;
 
