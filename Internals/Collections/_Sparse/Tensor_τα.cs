@@ -70,7 +70,7 @@ where α : IArithmetic<τ>, new() {
    
    
    /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
-   public List<int> Structure { get; internal set; } = Voids.ListInt;
+   public List<int> Structure { get; internal set; }
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level. Rank notation: [0, N-1] where the value corresponds to the rank of tensors held by that slot.</summary>
    public int Rank { get; internal set; }
    /// <summary>Slot notation: [1, N] which is how mathematicians would assign ordering to tensor's slots.</summary>
@@ -85,7 +85,9 @@ where α : IArithmetic<τ>, new() {
    /// <summary>The number of available spots one rank lower.</summary>
    public int Dim => Structure[Slot];
    /// <summary>Index of Structure list where substructure begins (the structure a non-top tensor would have if it was top).</summary>
-   public int StructInx => Structure.Count - Rank;
+   public int SubStrcInx => Structure.Count - Rank;
+   /// <summary>Substructure (the structure a non-top tensor would have if it was top) as a traversal rule.</summary>
+   public IEnumerable<int> SubStructure => Structure.Skip(SubStrcInx);
 
 
    /// <summary>Tensor getting/setting indexer.</summary>
@@ -219,7 +221,8 @@ where α : IArithmetic<τ>, new() {
    /// <param name="tnr2">Right operand.</param>
    /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
    public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      ThrowOnSubstructureMismatch(tnr1, tnr2);
+      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
+         () => "Tensor substructures do not match on addition.");
       //var newStructure = tnr1.CopySubstructure();
       var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.       // FIXME: Join the two lines into one by creating a Substructure copy spec.
       res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
@@ -246,7 +249,8 @@ where α : IArithmetic<τ>, new() {
    /// <remarks>First, we create our result tensor as a copy of tnr1. Then we take tnr2 as recursion dictator (yielding subtensors subTnr2) and we look for equivalent subtensors on tnr1 (call them subTnr1). If no equivalent is found, we negate subTnr2 and add it to a proper place in the result tensor, otherwise we subtract subTnr2 from subTnr1 and add that to result. Such a subtraction can yield a zero tensor (without entries) in which case we make sure we remove it (the empty tensor) from the result.
    /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
    public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {      // FIXME: Minus for tensors.
-      ThrowOnSubstructureMismatch(tnr1, tnr2);
+      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
+         () => "Tensor substructures do not match on subtraction.");
       var res = new Tensor<τ,α>(tnr1, CopySpecs.S320_04);                           // Result tnr starts as a copy of tnr1.
       res.AssignStructFromSubStruct(tnr1);
       // SimultaneousRecurse<(bool,int,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
@@ -280,7 +284,8 @@ where α : IArithmetic<τ>, new() {
    /// <param name="tnr2">Sumand 2 whose elements will be absorbed into sumand 1.</param>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
    public static Tensor<τ,α>? SumM(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      ThrowOnSubstructureMismatch(tnr1, tnr2);
+      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
+         () => "Tensor substructures do not match on Sum.");
       Recursion(tnr1, tnr2);
 
       void Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
@@ -318,7 +323,8 @@ where α : IArithmetic<τ>, new() {
    /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
    public void Sub(Tensor<τ,α> aTnr2) {
       Tensor<τ,α> aTnr1 = this;
-      ThrowOnSubstructureMismatch(aTnr1, aTnr2);
+      Assume.True(DoSubstructuresMatch(aTnr1, aTnr2),
+         () => "Tensor substructures do not match on Sub.");
       Recursion(aTnr1, aTnr2);
 
       void Recursion(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
@@ -433,8 +439,8 @@ where α : IArithmetic<τ>, new() {
    /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
    /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
    public Tensor<τ,α> ReduceRank(int r, int e) {                                    // FIXME: Method must properly reassign superiors.
-      Assume.True(r < Rank && r > -1, () =>
-         T.S.Y("You can only eliminate a rank in range [0, TopRank).") );           // TODO: Check superiors and structures for all methods.
+         Assume.True(r < Rank && r > -1, () =>
+         Toolbox.T.S.Y("You can only eliminate a rank in range [0, TopRank).") );           // TODO: Check superiors and structures for all methods.
       var strcL = Structure.Take(r);
       var strcR = Structure.Skip(r + 1);
       var strc = strcL.Concat(strcR).ToList();                                      // Structure is rebuilt. We won't copy it.
@@ -529,8 +535,8 @@ where α : IArithmetic<τ>, new() {
             ElimR0_R2(int_tnr.Value, newVec, emtInx);
             tgt.AddPlus(int_tnr.Key, newVec); } } }
 
-   protected static (List<int> struc, int rankInx1, int rankInx2, int conDim) ContractPart1(
-   Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
+   protected static (List<int> struc, int rank1, int rank2, int conDim) ContractPart1(
+   Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slot1, int slot2) {
       // 1) First eliminate, creating new tensors. Then add them together using tensor product.
       List<int>   struc1 = tnr1.Structure, 
                   struc2 = tnr2.Structure;
@@ -538,13 +544,13 @@ where α : IArithmetic<τ>, new() {
             rank2 = struc2.Count;
       Assume.True(rank1 == tnr1.Rank && rank2 == tnr2.Rank,
          () => "One of the tensors is not top rank.");
-      Assume.AreEqual(struc1[slotInx1 - 1], struc2[slotInx2 - 1],              // Check that the dimensions of contracted ranks are equal.
+      Assume.AreEqual(struc1[slot1 - 1], struc2[slot2 - 1],              // Check that the dimensions of contracted ranks are equal.
          "Rank dimensions at specified indices must be equal.");
-      int   conDim = tnr1.Structure[slotInx1 - 1],                                // Dimension of rank we're contracting.
-            rankInx1 = tnr1.ToRankInx(slotInx1),
-            rankInx2 = tnr2.ToRankInx(slotInx2);
-      var struc3_1 = struc1.Where((emt, i) => i != (slotInx1 - 1));
-      var struc3_2 = struc2.Where((emt, i) => i != (slotInx2 - 1));
+      int   conDim = tnr1.Structure[slot1 - 1],                                // Dimension of rank we're contracting.
+            rankInx1 = ChangeRankNotation(tnr1, slot1),
+            rankInx2 = ChangeRankNotation(tnr2, slot2);
+      var struc3_1 = struc1.Where((emt, i) => i != (slot1 - 1));
+      var struc3_2 = struc2.Where((emt, i) => i != (slot2 - 1));
       var struc3 = struc3_1.Concat(struc3_2).ToList();                 // New structure.
       return (struc3, rankInx1, rankInx2, conDim);
    }
@@ -604,8 +610,8 @@ where α : IArithmetic<τ>, new() {
    /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
    /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
    public static Tensor<τ,α> Contract(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2, int slotInx1, int slotInx2) {
-      (List<int> struc3, int rankInx1, int rankInx2, int conDim) = ContractPart1(tnr1, tnr2, slotInx1, slotInx2);
-      return ContractPart2(tnr1, tnr2, rankInx1, rankInx2, struc3, conDim);
+      (List<int> struc3, int rank1, int rank2, int conDim) = ContractPart1(tnr1, tnr2, slotInx1, slotInx2);
+      return ContractPart2(tnr1, tnr2, rank1, rank2, struc3, conDim);
    }
    /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
    /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
@@ -621,26 +627,26 @@ where α : IArithmetic<τ>, new() {
       return result;
    }
 
-   public Vector<τ,α> SelfContractR3(int natInx1, int natInx2) {
+   public Vector<τ,α> SelfContractR3(int slot1, int slot2) {
       Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
-      Assume.True(Structure[natInx1 - 1] == Structure[natInx2 - 1], () =>
+      Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
          "Corresponding dimensions have to be equal.");
       Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, Voids<τ,α>.Vec, 4);
-      int truInx1 = ToRankInx(natInx1);
-      int truInx2 = ToRankInx(natInx2);
-      if(natInx1 == 1) {
-         if(natInx2 == 2) {
+      int rank1 = ChangeRankNotation(this, slot1);
+      int rank2 = ChangeRankNotation(this, slot2);
+      if(slot1 == 1) {
+         if(slot2 == 2) {
             foreach(var int_tnr in this) {
                if(int_tnr.Value.TryGetValue(int_tnr.Key, out var subTnr)) {
                   var vec = (Vector<τ,α>) subTnr;
                   res.Sum(vec); } } }
-         if(natInx2 == 3) {
+         if(slot2 == 3) {
             foreach(var int_tnr in this) {
                foreach(var int_subTnr in int_tnr.Value) {
                   var subVec = (Vector<τ,α>) int_subTnr.Value;
                   if(subVec.Vals.TryGetValue(int_tnr.Key, out τ val))
                      res.Vals[int_subTnr.Key] = O<τ,α>.A.Sum(res[int_subTnr.Key], val); } } } }
-      else if(natInx1 == 2) {                   // natInx2 == 3
+      else if(slot1 == 2) {                   // natInx2 == 3
          foreach(var int_tnr in this) {
             foreach(var int_subTnr in int_tnr.Value) {
                var subVec = (Vector<τ,α>) int_subTnr.Value;
@@ -649,30 +655,30 @@ where α : IArithmetic<τ>, new() {
       return res;
    }
    /// <summary>Contracts across two slot indices on a single tensor of at least rank 3.</summary>
-   /// <param name="slotInx1">Slot index 1.</param>
-   /// <param name="slotInx2">Slot index 2.</param>
+   /// <param name="slot1">Slot index 1.</param>
+   /// <param name="slot2">Slot index 2.</param>
    /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
-   public Tensor<τ,α> SelfContract(int slotInx1, int slotInx2) {
+   public Tensor<τ,α> SelfContract(int slot1, int slot2) {
       Assume.True(Rank > 2, () =>
          "This method is not applicable to rank 2 tensors.");
-      Assume.True(Structure[slotInx1 - 1] == Structure[slotInx2 - 1], () =>
+      Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
          "Dimensions of contracted slots have to be equal.");
       if(Rank > 3) {
-         var newStruct1 = Structure.Take(slotInx1 - 1);
-         var newStruct2 = Structure.Take(slotInx2 - 1).Skip(slotInx1);
-         var newStruct3 = Structure.Skip(slotInx2);
+         var newStruct1 = Structure.Take(slot1 - 1);
+         var newStruct2 = Structure.Take(slot2 - 1).Skip(slot1);
+         var newStruct3 = Structure.Skip(slot2);
          var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToList();
          var res = new Tensor<τ,α>(newStruct, Rank - 2, Voids<τ,α>.Vec, Count);
-         var rankInx1 = ToRankInx(slotInx1);
-         var rankInx2 = ToRankInx(slotInx2);
-         int dimRank = Structure[slotInx1 - 1];                // Dimension of contracted rank.
+         int rank1 = ChangeRankNotation(this, slot1);
+         int rank2 = ChangeRankNotation(this, slot2);
+         int dimRank = Structure[slot1 - 1];                // Dimension of contracted rank.
          for(int i = 0; i < dimRank; ++i) {                    // Over each element inside contracted ranks.
-            var step1Tnr = ReduceRank(rankInx2, i);
-            var sumand = step1Tnr.ReduceRank(rankInx1 - 1, i);
+            var step1Tnr = ReduceRank(rank2, i);
+            var sumand = step1Tnr.ReduceRank(rank1 - 1, i);
             res.Sum(sumand); }
          return res; }
       else
-         return SelfContractR3(slotInx1, slotInx2);
+         return SelfContractR3(slot1, slot2);
    }
 
    /// <summary>Checks whether all subordinates down the line have at least one value down their line. Returns a sequence of indices that lead to the problem if there is one, otherwise returns null.</summary>
@@ -717,6 +723,14 @@ where α : IArithmetic<τ>, new() {
             throw new InvalidOperationException("Tensor addition: structures do not match."); }
    }
 
+   /// <summary>Compares substructures of two equal rank tensors.</summary>
+   /// <param name="tnr1">First tensor.</param>
+   /// <param name="tnr2">Second tensor.</param>
+   public static bool DoSubstructuresMatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
+      Assume.True(tnr1.Rank == tnr2.Rank, () => "Tensor ranks do not match.");                                    // First, ranks must match.
+      return tnr1.SubStructure.SequenceEqual(tnr2.SubStructure);
+   }
+
    /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
    public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
       Assume.True(rankInx > 1, () =>
@@ -738,17 +752,27 @@ where α : IArithmetic<τ>, new() {
                   yield return int_subTnr.Value; } } }
    }
 
-   /// <summary>Check two tensors for equality.</summary><param name="tnr2">Other tensor.</param>
-   public bool Equals(Tensor<τ,α> tnr2) {
-      ThrowOnSubstructureMismatch(this, tnr2);
-      return TnrRecursion(this, tnr2);
+   /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
+   /// <param name="tnr1">Tensor 1.</param>
+   /// <param name="tnr2">Tensor 2.</param>
+   public static bool AreEqual(Tensor<τ,α>? tnr1, Tensor<τ,α>? tnr2) {
+      if(tnr1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
+         if(tnr2 == null)
+            return true;
+         else
+            return false; }
+      else if(tnr2 == null)
+         return false;
+      if(!DoSubstructuresMatch(tnr1, tnr2))                                         // If substructures mismatch, they are not equal.
+         return false;
+      return TnrRecursion(tnr1, tnr2);
 
-      bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+      bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {                       // Recursion must be entered with non-null tensors.
          if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
             return false;                                                                    // Keys have to match. This is crucial.
          if(sup1.Rank > 2) {
             foreach(var inx_sub1 in sup1) {
-               var sub2 = sup2[V, inx_sub1.Key];
+               var sub2 = sup2[T, inx_sub1.Key];
                return TnrRecursion(inx_sub1.Value, sub2); }
             return true; }                                                                   // Both are empty.
          else
@@ -765,9 +789,15 @@ where α : IArithmetic<τ>, new() {
          return true; }
    }
 
+   /// <summary>Check two tensors for equality.</summary>
+   /// <param name="tnr2">Other tensor.</param>
+   public bool Equals(Tensor<τ,α> tnr2) =>
+      AreEqual(this, tnr2);
+
    /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
    public bool Equals(Tensor<τ,α> tnr2, τ eps) {
-      ThrowOnSubstructureMismatch(this, tnr2);
+      Assume.True(DoSubstructuresMatch(this, tnr2),
+         () => "Tensor substructures do not match on equality comparison.");
       return TnrRecursion(this, tnr2);
 
       bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {

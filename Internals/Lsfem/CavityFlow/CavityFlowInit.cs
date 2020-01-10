@@ -37,15 +37,12 @@ public class CavityFlowInit : NavStokesFlowInit {
       string ext = @".txt";
      T.FileReader.SetDirAndFile(dir, name, ext);                      // Read the points to an array.
       var hierarchy =T.FileReader.ReadHierarchy<dbl>();
-      var convRes = hierarchy.ConvertToArray();
-      var res = convRes.success switch {
-         true => convRes.array switch {
-            dbl[][][] pos => pos,
-            _ => throw new InvalidCastException("Positions array could not be cast to a rank 3 double array.") },
-         _ => throw new FileNotFoundException("Could not locate nodes' position data.", $"{dir}/{name}{ext}") };
+      var pos = hierarchy.ConvertToArray() switch {
+            dbl[][][] arr => arr,
+            _ => throw new Exception($"Could not locate nodes' position data {dir}/{name}{ext} or the positions array could not be cast to a rank 3 double array.") };
       var ll = new Vec2(-3.0, -3.0);
       var ur = new Vec2(3.0, 3.0);
-      var ordPos = new Dictionary<string, dbl[][][]> { {"Patch", res} };
+      var ordPos = new Dictionary<string, dbl[][][]> { {"Patch", pos} };
       return (ll, ur, ordPos);
    }
    public override (int newCurrGInx, Dictionary<string,PE[][]>) CreatePatches(

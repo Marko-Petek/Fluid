@@ -6,7 +6,7 @@ namespace Fluid.Internals.Collections {
 
 public class Hierarchy<τ>
 where τ : IEquatable<τ>, new() {
-   public RankedNode? TopNode { get; protected set; }
+   public RankedNode TopNode { get; protected set; }
 
    public Hierarchy(RankedNode topNode) {
       TopNode = topNode;

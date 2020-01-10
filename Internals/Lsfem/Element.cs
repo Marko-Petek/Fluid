@@ -250,7 +250,7 @@ public class Element {
    /// <param name="pos">The position inside the element.</param>
    public dbl[]? ValueAt(in Vec2 pos) {                                       // TODO: Test Element.ValueAt().
       if(ContainsPos(in pos)) {
-         var vec = new Vec(new Lst {SM.Sim.NVar}, Tnr.V, SM.Sim.NVar);
+         var vec = new Vec(new Lst {SM.Sim.NVar}, Tnr.T, SM.Sim.NVar);
          for(int i = 0; i < 12; ++i)
             vec += Val(i);
          return vec.ToArray(); }

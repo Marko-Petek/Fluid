@@ -51,7 +51,7 @@ namespace Fluid.Internals.Numerics {
       public Func2D Neg(Func2D f) =>
          new Func2D( (x,y) => -f.F(x,y) );
       public Func2D Unit() =>
-         new Func2D( (x,y) => 1.0 );
+         new Func2D( Func2D.One );
       public Func2D Zero() =>
          new Func2D( (x,y) => 0.0 );
    }

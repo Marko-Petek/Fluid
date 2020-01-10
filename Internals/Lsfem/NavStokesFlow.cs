@@ -37,24 +37,24 @@ public abstract class NavStokesFlow : Sim {
                ω = u_j[3],
                invDt = 1/dt;
 #nullable disable                                                                   // All should be non-null at this point.
-         Tnr a_qsik = a[Tnr.V, b];
-         Tnr a_0sik = a_qsik[Tnr.V, 0];                                // A0
-         Tnr a_00ik = a_0sik[Tnr.V, 0];                                   // A00
+         Tnr a_qsik = a[Tnr.T, b];
+         Tnr a_0sik = a_qsik[Tnr.T, 0];                                // A0
+         Tnr a_00ik = a_0sik[Tnr.T, 0];                                   // A00
          a_00ik[1,0] = invDt;  a_00ik[2,1] = invDt;  a_00ik[3,3] = 1;
-         Tnr a_01ik = a_0sik[Tnr.V, 1];                                   // A01
+         Tnr a_01ik = a_0sik[Tnr.T, 1];                                   // A01
          a_01ik[1,0] = 0.5*u;  a_01ik[2,0] = 0.5*v;
-         Tnr a_02ik = a_0sik[Tnr.V, 2];                                   // A02
+         Tnr a_02ik = a_0sik[Tnr.T, 2];                                   // A02
          a_02ik[1,1] = 0.5*u;
          a_02ik[2,1] = 0.5*v;
-         Tnr a_1sik = a_qsik[Tnr.V, 1];                                // A1
-         Tnr a_10ik = a_1sik[Tnr.V, 0];                                   // A10
+         Tnr a_1sik = a_qsik[Tnr.T, 1];                                // A1
+         Tnr a_10ik = a_1sik[Tnr.T, 0];                                   // A10
          a_10ik[0,0] = 1;  a_10ik[1,0] = 0.5*u;  a_10ik[2,1] = 0.5*u;
          a_10ik[2,3] = -0.5*re; a_10ik[3,1] = -1;
-         Tnr a_2sik = a_qsik[Tnr.V, 2];                                // A2
-         Tnr a_20ik = a_2sik[Tnr.V, 0];                                   // A20
+         Tnr a_2sik = a_qsik[Tnr.T, 2];                                // A2
+         Tnr a_20ik = a_2sik[Tnr.T, 0];                                   // A20
          a_20ik[0,1] = 1;  a_20ik[1,0] = v;  a_20ik[1,3] = 0.5*re;
          a_20ik[2,1] = v;  a_20ik[2,2] = 1;  a_20ik[3,0] = 1;
-         Tnr fs_si = fs[Tnr.V, b];
+         Tnr fs_si = fs[Tnr.T, b];
          Vec fs_0i = fs_si[Vec.V, 0];
          fs_0i[1] = u/dt;
          fs_0i[2] = v/dt;

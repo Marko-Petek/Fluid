@@ -15,7 +15,7 @@ public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : IEquatable<τ>, new()
 where α : IArithmetic<τ>, new() {
    /// <summary>Void vector.</summary>
-   new public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
+   public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="sup">Direct superior.</param>

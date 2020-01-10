@@ -28,16 +28,17 @@ public class FileReader : FileRWBase, IDisposable {
    public Hierarchy<τ> ReadHierarchy<τ>()
    where τ : IEquatable<τ>, new() {
       OnSettingsChanged();
-      return IO.ReadHierarchy<τ>(Reader);
+      return IO.ReadHierarchy<τ>(Reader) switch {
+         Hierarchy<τ> hier => hier,
+         _ => throw new Exception("Could not read hierarchy from file.") };
    }
    public Array ReadArray<τ>()
    where τ : IEquatable<τ>, new() {
-      OnSettingsChanged();
-      (bool succ, Array arr) = IO.ReadHierarchy<τ>(Reader).ConvertToArray();
-      if(succ)
+      Array? arr = ReadHierarchy<τ>().ConvertToArray();
+      if(arr != null)
          return arr;
       else
-         throw new IOException("Failure when reading array.");
+         throw new IOException("Failure converting hierarchy to array.");
    }
    public void Dispose() {
       Reader.Dispose();

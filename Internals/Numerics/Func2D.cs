@@ -1,9 +1,12 @@
 using System;
 using dbl = System.Double;
+using f2da = Fluid.Internals.Numerics.Func2DArithmetic;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>A custom function of 2 arguments-</summary>
    public class Func2D : IEquatable<Func2D>, IComparable<Func2D> {
+      public static Func2D One { get; } = new Func2D((x,y) => 1.0);
+      public static Func2D Zero { get; } = new Func2D((x,y) => 0.0);
       /// <summary>The Func delegate backup field.</summary>
       Func<dbl,dbl,dbl> _F;
       /// <summary>A (highly-likely) unique ID based on Func return value.</summary>
@@ -31,7 +34,10 @@ namespace Fluid.Internals.Numerics {
          get => F(x,y);
       }
 
-      public static Func2D operator *(Func2D f1, Func2D f2) {
+      public static Func2D operator *(Func2D f1, Func2D f2) {                          // FIXME: Streamline Func2D
+         if(f1.Equals(One)) {
+
+         }
          return new Func2D( (x,y) => f1[x,y] * f2[x,y] );
       }
       public static Func2D TripProd(Func2D f1, Func2D f2, Func2D f3) =>

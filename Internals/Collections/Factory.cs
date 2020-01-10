@@ -86,7 +86,7 @@ public static class Factory {
       Assume.True(sup.Rank > 2, () =>
          "Superior's rank too low. For creating tensors of rank 1 use Factory.SubVector.");
       var tnr = new Tensor<τ,α>(sup, cap);
-      sup[Tensor<τ,α>.V, inx] = tnr;
+      sup[Tensor<τ,α>.T, inx] = tnr;
       return tnr;
    }
    /// <summary>Creates a top tensor from an array span.</summary>
