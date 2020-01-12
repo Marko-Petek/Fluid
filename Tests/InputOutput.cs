@@ -55,24 +55,25 @@ public class InputOutput {
       var strw = new StringWriter();
       IO.Write(hierWriteBack, strw);
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
-      (var success, var array) = hierWriteBack.ConvertToArray();
-      Assert.True(success);
-      if(success) {
+      var array = hierWriteBack.ConvertToArray();
+      if(array != null) {
          var result = (double[][]) array;
          var expected = new double[][] {
             new double[] {9,7},
             new double[] {6,3},
             new double[] {5,2} };
-         Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
+         Assert.True(result.Equals<dbl,DA>(expected, 0.000001));
+      }
+      else
+         Assert.True(false, "Could not convert hierarchy to array.");
    }
 
    /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
    [Fact] public void HierarchyInput2() {
       T.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
       var hierWriteBack = T.FileReader.ReadHierarchy<double>();
-      (var success, var array) = hierWriteBack.ConvertToArray();
-      Assert.True(success);
-      if(success) {
+      var array = hierWriteBack.ConvertToArray();
+      if(array != null) {
          var result = (double[][][]) array;
          var expected = new double[][][] {
             new double[][] {
@@ -88,6 +89,8 @@ public class InputOutput {
                new double[] {96,28},
                new double[] {28,51} } };
          Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
+      else
+         Assert.True(false, "Could not convert hierarchy to array.");
    }
 }
 }

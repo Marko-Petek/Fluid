@@ -48,7 +48,7 @@ namespace Fluid.Internals.Numerics {
          new Func2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y]*f5[x,y] );
       /// <summary>Generates a (highly-likely) unique ID based on Func return value.</summary>
       public override int GetHashCode() =>
-         (int) (F(1,2) + F(2,3) + F(3,5) + F(5,7) + F(Math.E, Math.PI));
+         (int) (F(1,2) + F(2,3) + F(3,5) + F(5,7) + F(Math.E, Math.PI));                        // FIXME: Account for the domain!!!
       /// <summary>Compares identities of two functions.</summary>
       /// <param name="f">The other function.</param>
       public bool Equals(Func2D f) {
