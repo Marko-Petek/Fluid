@@ -1,0 +1,22 @@
+/// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
+   /// <param name="dim">Dimension.</param>
+   /// <param name="cap">Initial capacity.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static NVector<τ,α> TopNVector<τ,α>(int dim, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() =>
+      new NVector<τ,α>(dim, cap);
+
+/// <summary>Creates a top value tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
+   /// <param name="strc">Specifies dimension of each rank.</param>
+   /// <param name="cap">Initially assigned memory.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static NTensor<τ,α> TopNTensor<τ,α>(List<int> strc, int cap = 6)
+   where τ : struct, IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      Assume.True(strc.Count > 1, () =>
+         "For creating tensors of rank 1 use Vector's constructor.");
+      return new NTensor<τ,α>(strc, cap);
+   }

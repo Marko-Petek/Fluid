@@ -117,12 +117,11 @@ public static partial class IO {
 
    public static Array Read<τ>(TextReader tr)
    where τ : IEquatable<τ>, new() {
-      var hier = ReadHierarchy<τ>(tr);
-      (bool succ, Array res) = hier.ConvertToArray();
-      if(succ)
-         return res;
-      else
-         throw new InvalidOperationException("Read data cannot be converted to array.");
+      return ReadHierarchy<τ>(tr) switch {
+         Hierarchy<τ> res => res.ConvertToArray() switch {
+            Array arr => arr,
+            _ => throw new InvalidOperationException("Read data cannot be converted to array.") },
+         _ => throw new IOException("Could not read data from file into a Hierarchy.") };
    }
 }
 }

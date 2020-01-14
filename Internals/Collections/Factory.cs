@@ -15,15 +15,7 @@ public static class Factory {
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() =>
       new Vector<τ,α>(dim, cap);
-   /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
-   /// <param name="dim">Dimension.</param>
-   /// <param name="cap">Initial capacity.</param>
-   /// <typeparam name="τ">Numeric type.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static NVector<τ,α> TopNVector<τ,α>(int dim, int cap = 6)
-   where τ : struct, IEquatable<τ>, IComparable<τ>
-   where α : IArithmetic<τ>, new() =>
-      new NVector<τ,α>(dim, cap);
+   
    /// <summary>Creates a non-top vector (non-null superior) with specified initial capacity. Adds it to its specified superior at the specified index. Dimension is inferred from superior's structure.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="inx">Index inside superior.</param>
@@ -83,18 +75,7 @@ public static class Factory {
          "For creating tensors of rank 1 use Vector's constructor.");
       return new Tensor<τ,α>(strc, cap);
    }
-   /// <summary>Creates a top value tensor (null superior) with specified structure and initial capacity. Rank is assigned as the length of structure array.</summary>
-   /// <param name="strc">Specifies dimension of each rank.</param>
-   /// <param name="cap">Initially assigned memory.</param>
-   /// <typeparam name="τ">Numeric type.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> TopNTensor<τ,α>(List<int> strc, int cap = 6)
-   where τ : IEquatable<τ>, new()
-   where α : IArithmetic<τ>, new() {
-      Assume.True(strc.Count > 1, () =>
-         "For creating tensors of rank 1 use Vector's constructor.");
-      return new Tensor<τ,α>(strc, cap);
-   }
+   
    /// <summary>Creates a non-top tensor (non-null superior) and adds it to its specified superior at the specified index. Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="inx">Index inside superior.</param>

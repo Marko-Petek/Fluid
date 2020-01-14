@@ -12,13 +12,13 @@ public class NTensor<τ,α> : Tensor<τ,α>
 where τ : struct, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    /// <summary>Void value tensor.</summary>
-   public static readonly Tensor<τ,α> NT = Factory.TopNTensor<τ,α>(new List<int>{0,0}, 0);
+   public static readonly NTensor<τ,α> NT = Factory.TopNTensor<τ,α>(new List<int>{0,0}, 0);
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   protected NTensor(List<int> strc, int rank, Tensor<τ,α>? sup, int cap) :
+   protected NTensor(List<int> strc, int rank, NTensor<τ,α>? sup, int cap) :
    base(strc, rank, sup, cap) {
       Structure = strc;
       Rank = rank;
@@ -31,7 +31,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal NTensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
+   internal NTensor(NTensor<τ,α> sup, int cap = 6) : this(sup.Structure,
    sup.Rank - 1, sup, cap) { }
 
 

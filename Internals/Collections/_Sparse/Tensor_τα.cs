@@ -224,7 +224,7 @@ where α : IArithmetic<τ>, new() {
       Assume.True(DoSubstructuresMatch(tnr1, tnr2),
          () => "Tensor substructures do not match on addition.");
       //var newStructure = tnr1.CopySubstructure();
-      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.       // FIXME: Join the two lines into one by creating a Substructure copy spec.
+      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.
       res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
       // SimultaneousRecurse(tnr1, res, 2,
       //    onNoEquivalent: (key, subTnr1, supTnr2) => {    // Simply copy and add.
@@ -280,37 +280,36 @@ where α : IArithmetic<τ>, new() {
       return res;
    }
    /// <summary>Destructively sums tnr1 and tnr2. Don't use references afterwards. Returns a top tensor (null superior).</summary>
-   /// <param name="tnr2">Sumand 1.</param>
-   /// <param name="tnr2">Sumand 2 whose elements will be absorbed into sumand 1.</param>
+   /// <param name="tnr">&this tensor will be absorbed into tnr.</param>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
-   public static Tensor<τ,α>? SumM(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
+   public Tensor<τ,α>? SumInto(Tensor<τ,α> tnr) {
+      Assume.True(DoSubstructuresMatch(tnr, this),
          () => "Tensor substructures do not match on Sum.");
-      Recursion(tnr1, tnr2);
+      Recursion(tnr, this);
 
       void Recursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {
          if(t2.Rank > 2) {
-            foreach(var int_subTnr2 in t2) {
-               int subKey = int_subTnr2.Key;
-               var subTnr2 = int_subTnr2.Value;
-               if(t1.TryGetValue(subKey, out var subTnr1)) {                        // Equivalent subtensor exists in T1.
-                  Recursion(subTnr1, subTnr2);
-                  if(subTnr1.Count == 0)
-                     t1.Remove(subKey); }
+            foreach(var int_st2 in t2) {
+               int sInx = int_st2.Key;
+               var st2 = int_st2.Value;
+               if(t1.TryGetValue(sInx, out var st1)) {                        // Equivalent subtensor exists in T1.
+                  Recursion(st1, st2);
+                  if(st1.Count == 0)
+                     t1.Remove(sInx); }
                else                                                                 // Equivalent subtensor does not exist in T1. Absorb the subtensor from T2 and add it.
-                  t1.AddPlus(subKey, subTnr2); } }
+                  t1.AddPlus(sInx, st2); } }
          else if(t2.Rank == 2) {
-            foreach(var int_subTnr2 in t2) {
-               int subKey = int_subTnr2.Key;
-               var subTnr2 = int_subTnr2.Value;
-               if(t1.TryGetValue(subKey, out var subTnr1)) {                        // Entry exists in t1, we must sum.
-                  var subVec1 = (Vector<τ,α>) subTnr1;
-                  var subVec2 = (Vector<τ,α>) subTnr2;
-                  subVec1.Sum(subVec2);
-                  if(subVec1.Count == 0)
-                     t1.Remove(subKey); }                                           // Crucial to remove if subvector has been anihilated.
+            foreach(var int_st2 in t2) {
+               int sInx = int_st2.Key;
+               var st2 = int_st2.Value;
+               if(t1.TryGetValue(sInx, out var subTnr1)) {                        // Entry exists in t1, we must sum.
+                  var sv1 = (Vector<τ,α>) subTnr1;
+                  var sv2 = (Vector<τ,α>) st2;
+                  sv1.Sum(sv2);
+                  if(sv1.Count == 0)
+                     t1.Remove(sInx); }                                           // Crucial to remove if subvector has been anihilated.
                else {
-                  t1.AddPlus(subKey, subTnr2); } } }                                // Entry does not exist in t1, simply Add.
+                  t1.AddPlus(sInx, st2); } } }                                // Entry does not exist in t1, simply Add.
          else {                                                                     // We have a vector.
             var vec1 = (Vector<τ,α>) t1;
             var vec2 = (Vector<τ,α>) t2;
