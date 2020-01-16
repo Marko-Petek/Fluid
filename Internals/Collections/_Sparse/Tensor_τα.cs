@@ -65,7 +65,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : IEquatable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>, new()
 where α : IArithmetic<τ>, new() {
    
    
@@ -793,6 +793,35 @@ where α : IArithmetic<τ>, new() {
    public bool Equals(Tensor<τ,α> tnr2) =>
       AreEqual(this, tnr2);
 
+   /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
+   public bool Equals(Tensor<τ,α> tnr2, τ eps) {
+      Assume.True(DoSubstructuresMatch(this, tnr2),
+         () => "Tensor substructures do not match on equality comparison.");
+      return TnrRecursion(this, tnr2);
+
+      bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
+         if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         if(sup1.Rank > 2) {
+            foreach(var inx_sub1 in sup1) {
+               int inx = inx_sub1.Key;
+               var sub1 = inx_sub1.Value;
+               var sub2 = sup2[Tensor<τ,α>.T, inx];
+               return TnrRecursion(inx_sub1.Value, sub2); }
+            return true; }                                                                   // Both are empty.
+         else
+            return VecRecursion(sup1, sup2); }
+
+      bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
+         if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         foreach(var inx_sub1R1 in sup1R2) {
+            var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
+            var vec2 = sup2R2[Vector<τ,α>.V, inx_sub1R1.Key];
+            if(!vec1.Equals(vec2, eps))
+               return false; }
+         return true; }                                                         // All values agree within tolerance.
+   }
    
    /// <summary>Create a string of all non-zero elements in form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}.</summary>
    public override string ToString() {

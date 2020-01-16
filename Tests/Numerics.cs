@@ -6,8 +6,11 @@ using static System.Math;
 
 using Fluid.Internals;
 using Fluid.Internals.Collections;
+using static Fluid.Internals.Collections.Factory;
 using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
+using da = Fluid.Internals.Numerics.DblArithmetic;
+using ia = Fluid.Internals.Numerics.IntArithmetic;
 using Fluid.TestRef;
 using static Fluid.Internals.Toolbox;
 using Supercluster.KDTree;
@@ -15,7 +18,6 @@ namespace Fluid.Tests {
 using dbl = Double;
 using Tensor = Tensor<double,DblArithmetic>;
 using Vector = Vector<double,DblArithmetic>;
-using TnrFac = Factory<double,DblArithmetic>;
 using TensorInt = Tensor<int,IntArithmetic>;
 using VectorInt = Vector<int,IntArithmetic>;
 using Emt = Element;
@@ -32,14 +34,10 @@ public class Numerics {
       8.0, 12.0, 9.0 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
    [Theory] public void ConjGrads3By3(params double[] input) {
-      var A = TnrFac.TensorFromFlatSpec(input.AsSpan<double>(0,9), 3,3);
-      //.CreateFromArray(input, 6, 0, 3, 0, 3);
-      var b = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(9,3));
-      //CreateFromArray(input, 9, 3);
-      var expSol = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(15,3));
-      //CreateFromArray(input, 15, 3);
-      var initPoint = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(12,3));
-      //Vector.CreateFromArray(input, 12, 3);
+      var A = TopTnrFromSpan<dbl,da>(input.AsSpan<double>(0,9), 3,3);
+      var b = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(9,3));
+      var expSol = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(15,3));
+      var initPoint = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(12,3));
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
       Assert.True(sol.Equals(expSol, 0.01));

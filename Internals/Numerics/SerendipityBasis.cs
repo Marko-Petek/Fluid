@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
 using dA = Fluid.Internals.Numerics.DblArithmetic;
-using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
+using f2d = Fluid.Internals.Numerics.F2D;
+using f2da = Fluid.Internals.Numerics.Func2DArithmetic;
 using Fluid.Internals.Collections;
+using Fluid.Internals.Collections.Factory;
 namespace Fluid.Internals.Numerics {
 
-using FTnr = Tensor<Func2D,F2DA>;
-using FVec = Vector<Func2D,F2DA>;
+using FTnr = Tensor<f2d,f2da>;
+using FVec = Vector<f2d,f2da>;
 public static class SerendipityBasis {
+   static SerendipityBasis() {
+      
+   }
    /// <summary>12 Serendipity basis functions [0][i from 0 to 11] and their partials over ξ [1][i from 0 to 11] and η[2][i from 0 to 11]. All defined on reference square</summary>
-   public static FTnr ϕ { get; } = new FTnr(new List<int>(2) {12,3}, 12) {
-      [FVec.V, 0] = new FVec {
+   public static FTnr ϕ { get; } = new FTnr(new List<int>(2) {12,3}, 12); {
+      [FVec.V, 0] = new FVec(3,3) {
          [0] = new Func2D( (ξ,η) => ((-1 + η)*(1 - ξ)*(-2 + η + η*η + ξ + ξ*ξ))/8.0 ),
-         [1] = new Func2D( (ξ,η) => -((-1 + η)*(-3 + η + η*η + 3*ξ*ξ))/8.0 ),
-         [2] = new Func2D( (ξ,η) => -((-1 + ξ)*(-3 + 3*η*η + ξ + ξ*ξ))/8.0 ) },
+         [1] = new F2D( (ξ,η) => -((-1 + η)*(-3 + η + η*η + 3*ξ*ξ))/8.0 ),
+         [2] = new F2D( (ξ,η) => -((-1 + ξ)*(-3 + 3*η*η + ξ + ξ*ξ))/8.0 ) },
       [Voids.Vec, 1] = new FVec {
          [0] = new Func2D( (ξ,η) => -((-1 + η)*Pow(-1 + ξ,2)*(1 + ξ))/8.0 ),
          [1] = new Func2D( (ξ,η) => -((-1 + η)*(-1 - 2*ξ + 3*ξ*ξ))/8.0 ),

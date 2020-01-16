@@ -17,8 +17,8 @@ using Lst = List<int>;
 using Tnr = Tensor<dbl,DA>;
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Vector<dbl,DA>;
-using FTnr = Tensor<Func2D,F2DA>;
-using static Fluid.Internals.Numerics.O<Func2D,F2DA>;
+using FTnr = Tensor<F2D,F2DA>;
+using static Fluid.Internals.Numerics.O<F2D,F2DA>;
 using PE = PseudoElement;
 
 /// <summary>A quadrilateral element.</summary>
@@ -32,7 +32,7 @@ public class Element {
    /// <summary>A 3x3 inverse of Jacobian of transformation which takes us from reference square to element.</summary>
    public FTnr InvJ { get; private set; }
    /// <summary>Determinant of Jacobian of transformation which takes us from reference square to element.</summary>
-   public Func2D DetJ { get; private set; }
+   public F2D DetJ { get; private set; }
    // Matrices to compute inverse transformation of specified element.
    readonly dbl[][] MA, MB, MC, MD, MF, MG, MH, MJ, NA, NB;
    /// <summary>Position of node refered to by element index.</summary>
@@ -118,18 +118,18 @@ public class Element {
    }
 
    /// <summary>Calculate the extended inverse Jacobian for this element.</summary>
-   protected FTnr CalcInvJ( (Func2D detJ, Func2D J11,
-   Func2D J12, Func2D J21, Func2D J22) tuple) {
+   protected FTnr CalcInvJ( (F2D detJ, F2D J11,
+   F2D J12, F2D J21, F2D J22) tuple) {
       var invJ = new FTnr(new List<int>(2) {3,3}, 3);
       (var detJ, var J11, var J12, var J21, var J22) = tuple;
-      invJ[0,0] = new Func2D();
-      invJ[1,1] = new Func2D( (x,y) => J22.F(x,y) / detJ.F(x,y) );
-      invJ[1,2] = new Func2D( (x,y) => -J12.F(x,y) / detJ.F(x,y) );
-      invJ[2,1] = new Func2D( (x,y) => -J21.F(x,y) / detJ.F(x,y) );
-      invJ[2,2] = new Func2D( (x,y) => J11.F(x,y) / detJ.F(x,y) );
+      invJ[0,0] = new F2D();
+      invJ[1,1] = new F2D( (x,y) => J22.F(x,y) / detJ.F(x,y) );
+      invJ[1,2] = new F2D( (x,y) => -J12.F(x,y) / detJ.F(x,y) );
+      invJ[2,1] = new F2D( (x,y) => -J21.F(x,y) / detJ.F(x,y) );
+      invJ[2,2] = new F2D( (x,y) => J11.F(x,y) / detJ.F(x,y) );
       return invJ;
    }
-   protected (Func2D detJ, Func2D J11, Func2D J12, Func2D J21, Func2D J22)
+   protected (F2D detJ, F2D J11, F2D J12, F2D J21, F2D J22)
    CalcDetJ() {
       dbl Δxd = Pos(3).X - Pos(0).X;
       dbl Δxu = Pos(6).X - Pos(9).X;
@@ -139,10 +139,10 @@ public class Element {
       dbl Δyu = Pos(6).Y - Pos(9).Y;
       dbl Δyl = Pos(9).Y - Pos(0).Y;
       dbl Δyr = Pos(6).Y - Pos(3).Y;
-      var J11 = new Func2D( (ξ,η) => 0.25*(Δxd*(1-η) + Δxu*(1+η)) );
-      var J12 = new Func2D( (ξ,η) => 0.25*(Δxl*(1-ξ) + Δxr*(1+ξ)) );
-      var J21 = new Func2D( (ξ,η) => 0.25*(Δyd*(1-η) + Δyu*(1+η)) );
-      var J22 = new Func2D( (ξ,η) => 0.25*(Δyl*(1-ξ) + Δyr*(1+ξ)) );
+      var J11 = new F2D( (ξ,η) => 0.25*(Δxd*(1-η) + Δxu*(1+η)) );
+      var J12 = new F2D( (ξ,η) => 0.25*(Δxl*(1-ξ) + Δxr*(1+ξ)) );
+      var J21 = new F2D( (ξ,η) => 0.25*(Δyd*(1-η) + Δyu*(1+η)) );
+      var J22 = new F2D( (ξ,η) => 0.25*(Δyl*(1-ξ) + Δyr*(1+ξ)) );
       var detJ = A.Sub(A.Mul(J11,J22), A.Mul(J12,J21));
       return (detJ, J11, J12, J21, J22);
    }

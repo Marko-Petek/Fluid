@@ -22,7 +22,7 @@ public static class Factory {
    /// <param name="cap">Initial capacity.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> SubVector<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
+   public static Vector<τ,α> SubVector<τ,α>(this Tensor<τ,α> sup, int inx, int cap = 6)
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
@@ -39,7 +39,7 @@ public static class Factory {
    where α : IArithmetic<τ>, new() {
       var vec = new Vector<τ,α>(span.Length, span.Length);
       for(int i = 0; i < span.Length; ++i) {
-         if(!span[i].Equals(default(τ)))
+         if(!span[i].Equals(O<τ,α>.A.Zero()))
             vec.Add(i, span[i]); }
       return vec;
    }
@@ -55,7 +55,7 @@ public static class Factory {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
       var vec = new Vector<τ,α>(sup, span.Length);
       for(int i = 0; i < span.Length; ++i) {
-         if(!span[i].Equals(default(τ)))
+         if(!span[i].Equals(O<τ,α>.A.Zero()))
             vec.Add(i, span[i]); }
       if(vec.Count > 0) {                                                           // Created vector is not empty.
          sup[Vector<τ,α>.V, inx] = vec;
@@ -82,7 +82,7 @@ public static class Factory {
    /// <param name="cap">Capacity of internal dictionary.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> SubTensor<τ,α>(Tensor<τ,α> sup, int inx, int cap = 6)
+   public static Tensor<τ,α> SubTensor<τ,α>(this Tensor<τ,α> sup, int inx, int cap = 6)
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank > 2, () =>
@@ -142,7 +142,7 @@ public static class Factory {
    /// <param name="xCap">Extra capacity of copied vector (beyond the number of elements).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> CopyAsSubVec<τ,α>(Vector<τ,α> src, Tensor<τ,α> newSup,
+   public static Vector<τ,α> CopyAsSubVec<τ,α>(this Vector<τ,α> src, Tensor<τ,α> newSup,
    int inx, int xCap = 0)
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
@@ -157,7 +157,7 @@ public static class Factory {
    /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> CopyAsTopTnr<τ,α>(Tensor<τ,α> src, int xCap = 0)
+   public static Tensor<τ,α> CopyAsTopTnr<τ,α>(this Tensor<τ,α> src, int xCap = 0)
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       if (src is Vector<τ,α> vec) {
@@ -178,7 +178,7 @@ public static class Factory {
    /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> CopyAsSubTnr<τ,α>(Tensor<τ,α> src, Tensor<τ,α> newSup, int inx, int xCap)
+   public static Tensor<τ,α> CopyAsSubTnr<τ,α>(this Tensor<τ,α> src, Tensor<τ,α> newSup, int inx, int xCap)
    where τ : IEquatable<τ>, new()
    where α : IArithmetic<τ>, new() {
       if (src is Vector<τ,α> vec) {

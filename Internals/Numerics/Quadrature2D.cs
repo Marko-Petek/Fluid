@@ -2,7 +2,6 @@
 using System;
 using dbl = System.Double;
 namespace Fluid.Internals.Numerics {
-using F2D = Func<dbl,dbl,dbl>;
 
 /// <summary>Guass-Legendre quadrature (integrator). Works for hyper-cubes with sides [-1,1].</summary>
 public class Quadrature2D {
@@ -50,10 +49,10 @@ public class Quadrature2D {
    public F2D F { get; set; }
 
 
-   public Quadrature2D(F2D func) {
-      F = func;
+   public Quadrature2D(F2D f2d) {
+      F = f2d;
    }
-   public Quadrature2D(int order, F2D func) : this(func) {
+   public Quadrature2D(int order, F2D f2d) : this(f2d) {
       Order = order;
    }
 
@@ -70,12 +69,12 @@ public class Quadrature2D {
          dbl newWgh = wgh*WA[Order - 2][i][0];
          for(int j = 0; j < Order; ++j) {
             y = WA[Order - 2][i][1];
-            result += newWgh*WA[Order - 2][i][0]*F(x,y); } }
+            result += newWgh*WA[Order - 2][i][0]*F[x,y]; } }
       return result;
    }
    /// <summary>Order 7 Gaussian Quadrature in 2D.</summary>
    /// <param name="f">Function to integrate over reference square.</param>
-   public static double Integrate(Func2D f) {
+   public static double Integrate(F2D f) {
       double result = 0.0;
       dbl x = 0.0;
       dbl y = 0.0;

@@ -14,7 +14,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
-where τ : IEquatable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>, new()
 where α : IArithmetic<τ>, new() {
    public new int Count => CountInternal;
    protected override int CountInternal => Vals.Count;
@@ -230,6 +230,16 @@ where α : IArithmetic<τ>, new() {
          if(!int_val.Value.Equals(val2))        // Fetch did not suceed or values are not equal.
             return false; }
       return true;
+   }
+
+   public bool Equals(Vector<τ,α> vec2, τ eps) {
+      if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
+         return false;
+      foreach(var int_val1 in Vals) {
+         τ val2 = vec2[int_val1.Key];
+         if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(int_val1.Value, val2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
+            return false; }
+      return true;                                                              // All values agree within tolerance.
    }
    /// <summary>So that foreach statements work properly.</summary>
    new public IEnumerator<KeyValuePair<int,τ>> GetEnumerator() {

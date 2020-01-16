@@ -37,23 +37,23 @@ namespace Fluid.Internals.Numerics {
       public double Zero()  => 0.0;
    }
 
-   public struct Func2DArithmetic : IArithmetic<Func2D> {
-      public Func2D Sum(Func2D f1, Func2D f2) =>
-         new Func2D( (x,y) => f1.F(x,y) + f2.F(x,y) );
-      public Func2D Sub(Func2D f1, Func2D f2) =>
-         new Func2D( (x,y) => f1.F(x,y) - f2.F(x,y) );
-      public Func2D Mul(Func2D f1, Func2D f2) =>
-         new Func2D( (x,y) => f1.F(x,y) * f2.F(x,y) );
-      public Func2D Div(Func2D f1, Func2D f2) =>
-         new Func2D( (x,y) => f1.F(x,y) / f2.F(x,y) );
-      public Func2D Abs(Func2D f) =>
-         new Func2D( (x,y) => Math.Abs(f.F(x,y)) );
-      public Func2D Neg(Func2D f) =>
-         new Func2D( (x,y) => -f.F(x,y) );
-      public Func2D Unit() =>
-         new Func2D( Func2D.One );
-      public Func2D Zero() =>
-         new Func2D( (x,y) => 0.0 );
+   public struct Func2DArithmetic : IArithmetic<F2D> {
+      public F2D Sum(F2D f1, F2D f2) =>
+         new F2D( (x,y) => f1.F(x,y) + f2.F(x,y) );
+      public F2D Sub(F2D f1, F2D f2) =>
+         new F2D( (x,y) => f1.F(x,y) - f2.F(x,y) );
+      public F2D Mul(F2D f1, F2D f2) =>
+         new F2D( (x,y) => f1.F(x,y) * f2.F(x,y) );
+      public F2D Div(F2D f1, F2D f2) =>
+         new F2D( (x,y) => f1.F(x,y) / f2.F(x,y) );
+      public F2D Abs(F2D f) =>
+         new F2D( (x,y) => Math.Abs(f.F(x,y)) );
+      public F2D Neg(F2D f) =>
+         new F2D( (x,y) => -f.F(x,y) );
+      public F2D Unit() =>
+         new F2D( F2D.One );
+      public F2D Zero() =>
+         new F2D( (x,y) => 0.0 );
    }
 
    public struct NoArithmetic : IArithmetic<int> {
