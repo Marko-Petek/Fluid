@@ -8,8 +8,8 @@ namespace Fluid.Internals.Numerics {
    public class F2D : IEquatable<F2D>, IComparable<F2D> {
       public static F2D One { get; } = new F2D((x,y) => 1.0);
       public static F2D Zero { get; } = new F2D((x,y) => 0.0);
-      /// <summary>A 7th order Gauss quadrature integrator.</summary>
-      public static Quadrature2D Integrator { get; } = new Quadrature2D(One);
+      /// <summary>A 3rd order Gauss quadrature integrator.</summary>
+      public static Quadrature2D Integrator { get; } = new Quadrature2D(3, One);
       bool _FChanged = true;
       dbl _Norm;
       public dbl Norm {
@@ -18,7 +18,6 @@ namespace Fluid.Internals.Numerics {
                _Norm = CalcNorm();
             return _Norm; }
       }
-
       int _Id;
       /// <summary>A (highly-likely) unique ID based on Func return value.</summary>
       int Id { 
@@ -27,7 +26,6 @@ namespace Fluid.Internals.Numerics {
                _Id = GetHashCode();
             return _Id; }
       }
-     
       /// <summary>The Func delegate.</summary>
       public Func<dbl,dbl,dbl> F { get; }
 
@@ -36,7 +34,6 @@ namespace Fluid.Internals.Numerics {
       public F2D(Func<dbl,dbl,dbl> func) {
          F = func;
       }
-      /// <summary>Create an identity.</summary>
       public F2D() : this((x,y) => 1.0) {
 
       }
@@ -45,19 +42,62 @@ namespace Fluid.Internals.Numerics {
       public dbl this[dbl x, dbl y] {
          get => F(x,y);
       }
-
       public static F2D operator *(F2D f1, F2D f2) {                          // FIXME: Streamline Func2D
-         if(f1.Equals(One)) {
-
-         }
-         return new F2D( (x,y) => f1[x,y] * f2[x,y] );
+         if(f1.Equals(One))
+            return f2;
+         else if(f2.Equals(One)) 
+            return f1;
+         else if(f1.Equals(Zero) || f2.Equals(Zero))
+            return Zero;
+         else
+            return new F2D( (x,y) => f1[x,y] * f2[x,y] );
       }
-      public static F2D TripProd(F2D f1, F2D f2, F2D f3) =>
-         new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y] );
-      public static F2D QuadProd(F2D f1, F2D f2, F2D f3, F2D f4) =>
-         new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y] );
-      public static F2D QuintProd(F2D f1, F2D f2, F2D f3, F2D f4, F2D f5) =>
-         new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y]*f5[x,y] );
+      public static F2D TripProd(F2D f1, F2D f2, F2D f3) {
+         if(f1.Equals(One))
+            return f2 * f3;
+         else if(f2.Equals(One))
+            return f1 * f3;
+         else if(f3.Equals(One))
+            return f1 * f2;
+         else if(f1.Equals(Zero) || f2.Equals(Zero) || f2.Equals(Zero))
+            return Zero;
+         else
+            return new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y] );
+      }
+
+      public static F2D QuadProd(F2D f1, F2D f2, F2D f3, F2D f4) {
+         if(f1.Equals(One))
+            return TripProd(f2, f3, f4);
+         else if(f2.Equals(One))
+           return TripProd(f1, f3, f4);
+         else if(f3.Equals(One))
+            return TripProd(f1, f2, f4);
+         else if(f4.Equals(One))
+            return TripProd(f1, f2, f3);
+         else if(f1.Equals(Zero) || f2.Equals(Zero) || f3.Equals(Zero) || f4.Equals(Zero))
+            return Zero;
+         else
+            return new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y] );
+      }
+         
+
+      public static F2D QuintProd(F2D f1, F2D f2, F2D f3, F2D f4, F2D f5) {
+         if(f1.Equals(One))
+            return QuadProd(f2, f3, f4, f5);
+         else if(f2.Equals(One))
+           return QuadProd(f1, f3, f4, f5);
+         else if(f3.Equals(One))
+            return QuadProd(f1, f2, f4, f5);
+         else if(f4.Equals(One))
+            return QuadProd(f1, f2, f3, f5);
+         else if(f5.Equals(One))
+            return QuadProd(f1, f2, f3, f4);
+         else if(f1.Equals(Zero) || f2.Equals(Zero) || f3.Equals(Zero) || f4.Equals(Zero) || f5.Equals(Zero))
+            return Zero;
+         else
+            return new F2D( (x,y) => f1[x,y]*f2[x,y]*f3[x,y]*f4[x,y]*f5[x,y] );
+      }
+         
 
       double CalcNorm() {
          Integrator.F = this * this;                  // Integrate square.
