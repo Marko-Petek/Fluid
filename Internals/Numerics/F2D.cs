@@ -117,7 +117,12 @@ namespace Fluid.Internals.Numerics {
             return false;
       }
       public int CompareTo(F2D f) {
-         throw new NotImplementedException("Cannot (yet) directly compare two functions.");
+         if(Norm > f.Norm)
+            return 1;
+         if(Norm == f.Norm)
+            return 0;
+         else
+            return -1;
       }
    }
 }
