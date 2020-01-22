@@ -29,13 +29,10 @@ namespace Fluid.Internals.Numerics {
       /// <summary>The Func delegate.</summary>
       public Func<dbl,dbl,dbl> F { get; }
 
-      /// <summary>Create a custom function of 2 arguments-</summary>
+      /// <summary>Create a custom function of 2 arguments on the domain [-1,1]x[-1,1].</summary>
       /// <param name="func">Delegate instance.</param>
       public F2D(Func<dbl,dbl,dbl> func) {
          F = func;
-      }
-      public F2D() : this((x,y) => 1.0) {
-
       }
 
 

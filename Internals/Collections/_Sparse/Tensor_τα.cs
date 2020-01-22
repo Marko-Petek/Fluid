@@ -65,7 +65,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : IEquatable<τ>, IComparable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    
    
@@ -167,7 +167,7 @@ where α : IArithmetic<τ>, new() {
                return O<τ,α>.A.Zero(); }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
             var vec = (Vector<τ,α>)tnr;                                          // Same.
-            if(vec.Vals.TryGetValue(inx[n + 1], out τ val))
+            if(vec.Scals.TryGetValue(inx[n + 1], out τ val))
                return val; }
          return O<τ,α>.A.Zero(); }
       set {
@@ -188,14 +188,14 @@ where α : IArithmetic<τ>, new() {
                else {
                   vec = new Vector<τ,α>(Structure, tnr, 4); 
                   tnr.Add(inx[n], vec); }
-               vec.Vals[inx[n + 1]] = value; } }
+               vec.Scals[inx[n + 1]] = value; } }
          else {
             int n = inx.Length - 1;
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inx[i], out tnr))
                   return; }
             vec = (Vector<τ,α>) tnr;
-            vec.Vals.Remove(inx[n]); } }
+            vec.Scals.Remove(inx[n]); } }
    }
    /// <summary>Modifies this tensor by negating each element.</summary>
    public virtual void Negate() {
@@ -403,7 +403,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
    /// <param name="aTnr2">Right-hand operand.</param>
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public virtual Tensor<τ,α> TnrProduct(Tensor<τ,α> aTnr2) {
+   public virtual Tensor<τ,α> TnrProdTop(Tensor<τ,α> aTnr2) {
       // Overriden on vector when first operand is a vector.
       // 1) Descend to rank 1 through a recursion and then delete that vector.
       // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
@@ -425,7 +425,7 @@ where α : IArithmetic<τ>, new() {
                int subKeyR1 = int_subTnr1R1.Key;
                var subVec1 = (Vector<τ,α>) int_subTnr1R1.Value;
                var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, tnr1, subVec1.Count);
-               foreach(var int_subVal1 in subVec1.Vals) {
+               foreach(var int_subVal1 in subVec1.Scals) {
                   int subKeyR0 = int_subVal1.Key;
                   var subVal1 = int_subVal1.Value;
                   newSubTnr.AddPlus(subKeyR0, subVal1*aTnr2); }
@@ -512,7 +512,7 @@ where α : IArithmetic<τ>, new() {
          "This method is intended for rank 2 tensors only.");
       foreach(var int_tnrR1 in src) {
          var subVec = (Vector<τ,α>) int_tnrR1.Value;
-         if(subVec.Vals.TryGetValue(emtInx, out var val))
+         if(subVec.Scals.TryGetValue(emtInx, out var val))
             tgt.Add(int_tnrR1.Key, val); }
    }
    /// <summary>Eliminate rank 0 on a rank 3 or higher tensor.</summary>
@@ -579,10 +579,10 @@ where α : IArithmetic<τ>, new() {
                sum = new Vector<τ,α>(struc3, Voids<τ,α>.Vec, 4);
                for(int i = 0; i < conDim; ++i) {
                   elimVec = (Vector<τ,α>) tnr1.ReduceRank(rankInx1, i);
-                  if(elimVec.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
+                  if(elimVec.Count != 0 && vec.Scals.TryGetValue(i, out var val)) {
                      sumand = val*elimVec;
                      sum.Sum(sumand); } }
-               if(sum.Vals.Count != 0)
+               if(sum.Scals.Count != 0)
                   return sum;
                else
                   return Factory<τ,α>.CreateEmptyTensor(0, 1, struc3); }
@@ -591,7 +591,7 @@ where α : IArithmetic<τ>, new() {
                sum = new Tensor<τ,α>(struc3);
                for(int i = 0; i < conDim; ++i) {
                   elimTnr1 = tnr1.ReduceRank(rankInx1, i);
-                  if(elimTnr1.Count != 0 && vec.Vals.TryGetValue(i, out var val)) {
+                  if(elimTnr1.Count != 0 && vec.Scals.TryGetValue(i, out var val)) {
                      sumand = val*elimTnr1;
                      sum.Sum(sumand); } }
                if(sum.Count != 0)
@@ -618,10 +618,10 @@ where α : IArithmetic<τ>, new() {
       Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
       Assume.True(Structure[0] == Structure[1], () =>
          "Corresponding dimensions have to be equal.");
-      τ result = new τ();
+      τ result = O<τ,α>.A.Zero();
       foreach(var int_vec in this) {
          var vec = (Vector<τ,α>) int_vec.Value;
-         if(vec.Vals.TryGetValue(int_vec.Key, out τ val))
+         if(vec.Scals.TryGetValue(int_vec.Key, out τ val))
             result = O<τ,α>.A.Sum(result, val); }
       return result;
    }
@@ -643,14 +643,14 @@ where α : IArithmetic<τ>, new() {
             foreach(var int_tnr in this) {
                foreach(var int_subTnr in int_tnr.Value) {
                   var subVec = (Vector<τ,α>) int_subTnr.Value;
-                  if(subVec.Vals.TryGetValue(int_tnr.Key, out τ val))
-                     res.Vals[int_subTnr.Key] = O<τ,α>.A.Sum(res[int_subTnr.Key], val); } } } }
+                  if(subVec.Scals.TryGetValue(int_tnr.Key, out τ val))
+                     res.Scals[int_subTnr.Key] = O<τ,α>.A.Sum(res[int_subTnr.Key], val); } } } }
       else if(slot1 == 2) {                   // natInx2 == 3
          foreach(var int_tnr in this) {
             foreach(var int_subTnr in int_tnr.Value) {
                var subVec = (Vector<τ,α>) int_subTnr.Value;
-               if(subVec.Vals.TryGetValue(int_subTnr.Key, out τ val))
-                  res.Vals[int_tnr.Key] = O<τ,α>.A.Sum(res[int_tnr.Key], val); } } }
+               if(subVec.Scals.TryGetValue(int_subTnr.Key, out τ val))
+                  res.Scals[int_tnr.Key] = O<τ,α>.A.Sum(res[int_tnr.Key], val); } } }
       return res;
    }
    /// <summary>Contracts across two slot indices on a single tensor of at least rank 3.</summary>

@@ -9,16 +9,18 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Toolbox;
 using Fluid.TestRef;
 namespace Fluid.Internals.Collections {
+using static Factory;
    
 /// <summary>A vector with specified dimension which holds values of type τ. Those can use arithmetic defined inside type α.</summary>
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
-where τ : IEquatable<τ>, IComparable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    public new int Count => CountInternal;
-   protected override int CountInternal => Vals.Count;
-   public Dictionary<int,τ> Vals { get; internal set; }         // An extra wrapped Dictionary which holds values.
+   protected override int CountInternal => Scals.Count;
+   /// <summary>Scalars. An extra wrapped Dictionary which holds vector elements.</summary>
+   public Dictionary<int,τ> Scals { get; internal set; }
 
 
    
@@ -26,27 +28,30 @@ where α : IArithmetic<τ>, new() {
    /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
    new public τ this[int i] {
       get {
-         Vals.TryGetValue(i, out τ val);
+         Scals.TryGetValue(i, out τ val);
          return val; }
       set {
          if(!value.Equals(default(τ))) {
-            Vals[i] = value; }
+            Scals[i] = value; }
          else
-            Vals.Remove(i); }
+            Scals.Remove(i); }
    }
+
+   /// <summary>Tensor product of a vector with another tensor. Returns top tensor (null superior) as result.</summary>
+   /// <param name="tnr2">Right hand operand.</param>
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public override Tensor<τ,α> TnrProduct(Tensor<τ,α> tnr2) {
+   public override Tensor<τ,α> TnrProdTop(Tensor<τ,α> tnr2) {
       if(tnr2.Rank > 1) {
          int newRank = Rank + tnr2.Rank;
          var struct1 = CopySubstructure();
          var struct2 = tnr2.CopySubstructure();
          var newStructure = struct1.Concat(struct2).ToList();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
-         var res = new Tensor<τ,α>(newStructure, newRank, Voids<τ,α>.Vec, Vals.Count);
-         foreach(var int_subVal in Vals) {
+         var res = TopTensor<τ,α>(newStructure, Scals.Count);
+         foreach(var int_subVal in Scals) {
             int subKey = int_subVal.Key;
             var subVal = int_subVal.Value;
-            res.AddPlus(subKey, subVal*tnr2); }
+            res.AddPlus(subKey, subVal*tnr2); }                   // TODO: Check multiply for top/sub.
          return res; }
       else {
          var vec2 = (Vector<τ,α>) tnr2;
@@ -57,8 +62,8 @@ where α : IArithmetic<τ>, new() {
       int dim1 = Structure.Last();
       int dim2 = vec2.Structure.Last();
       var newStructure = new List<int> {dim1, dim2};
-      var res = new Tensor<τ,α>(newStructure, rank: 2, sup: Voids<τ,α>.Vec, Vals.Count);
-      foreach(var int_subVal1 in Vals) {
+      var res = new Tensor<τ,α>(newStructure, rank: 2, sup: Voids<τ,α>.Vec, Scals.Count);
+      foreach(var int_subVal1 in Scals) {
          int subKey = int_subVal1.Key;
          var subVal1 = int_subVal1.Value;
          var newVec = subVal1*vec2;
@@ -70,7 +75,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
    public static Vector<τ,α>? SumM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
-      foreach(var int_subVal2 in vec2.Vals) {
+      foreach(var int_subVal2 in vec2.Scals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
          var subVal1 = vec1[subKey];
@@ -86,7 +91,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="vec2">Subtrahend. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
    public static Vector<τ,α>? SubM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
-      foreach(var int_subVal2 in vec2.Vals) {
+      foreach(var int_subVal2 in vec2.Scals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
          var subVal1 = vec1[subKey];
@@ -104,9 +109,9 @@ where α : IArithmetic<τ>, new() {
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
    public override void Mul(τ scal) {
-      var keys = Vals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
+      var keys = Scals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
       foreach(var subKey in keys)
-         Vals[subKey] = O<τ,α>.A.Mul(scal, Vals[subKey]);
+         Scals[subKey] = O<τ,α>.A.Mul(scal, Scals[subKey]);
    }
    /// <summary>Sum two vectors. Does not check substructure match.</summary>
    /// <param name="vec1">Left operand.</param>
@@ -116,10 +121,10 @@ where α : IArithmetic<τ>, new() {
       //var newStruc = vec2.CopySubstructure();
       var res = new Vector<τ,α>(vec2, in CopySpecs.S320_04);
       res.AssignStructFromSubStruct(vec2);
-      foreach(var int_val1 in vec1.Vals) {
+      foreach(var int_val1 in vec1.Scals) {
          int key = int_val1.Key;
          var val1 = int_val1.Value;
-         if(vec2.Vals.TryGetValue(key, out var val2)) {
+         if(vec2.Scals.TryGetValue(key, out var val2)) {
             res[key] = O<τ,α>.A.Sum(val1, val2); }
          else {
             res.Add(key, val1); } }
@@ -133,10 +138,10 @@ where α : IArithmetic<τ>, new() {
       //var newStruc = vec1.CopySubstructure();
       var res = new Vector<τ,α>(vec1, in CopySpecs.S320_04);
       res.AssignStructFromSubStruct(vec1);
-      foreach(var int_val2 in vec2.Vals) {
+      foreach(var int_val2 in vec2.Scals) {
          int key = int_val2.Key;
          var val2 = int_val2.Value;
-         if(vec1.Vals.TryGetValue(key, out var val1)) {
+         if(vec1.Scals.TryGetValue(key, out var val1)) {
             res[key] = O<τ,α>.A.Sub(val1, val2); }
          else {
             res.Add(key, O<τ,α>.A.Neg(val2)); } }
@@ -144,25 +149,32 @@ where α : IArithmetic<τ>, new() {
    }
    /// <summary>Modifies this vector by negating each element.</summary>
    public override void Negate() {
-      var keys = Vals.Keys.ToArray();                    // We have to do this (access via indexer), because we can't change collection during enumeration.
+      var keys = Scals.Keys.ToArray();                    // We have to do this (access via indexer), because we can't change collection during enumeration.
       for(int i = 0; i < keys.Length; ++i)
-         Vals[keys[i]] = O<τ,α>.A.Neg(Vals[keys[i]]);
+         Scals[keys[i]] = O<τ,α>.A.Neg(Scals[keys[i]]);
    }
    /// <summary>Negate operator. Creates a new vector with its own substructure.</summary>
    /// <param name="vec">Vector to negate.</param>
    public static Vector<τ,α> operator - (Vector<τ,α> vec) {
       var newStruc = vec.CopySubstructure();
       var res = new Vector<τ,α>(newStruc, Voids<τ,α>.Vec, vec.Count);
-      foreach(var int_val in vec.Vals)
-         res.Vals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
+      foreach(var int_val in vec.Scals)
+         res.Scals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
       return res;
    }
    /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
    public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
-      var newStruc = vec.CopySubstructure();
-      var res = new Vector<τ,α>(newStruc, Voids<τ,α>.Vec, vec.Count);
-      foreach(var int_val in vec.Vals)
-         res.Vals.Add(int_val.Key, O<τ,α>.A.Mul(scal, vec[int_val.Key]));
+      var newStrc = vec.CopySubstructure();
+      var res = new Vector<τ,α>(newStrc, Voids<τ,α>.Vec, vec.Count);
+      foreach(var int_val in vec.Scals)
+         res.Scals.Add(int_val.Key, O<τ,α>.A.Mul(scal, vec[int_val.Key]));
+      return res;
+   }
+
+   public static Vector<τ,α> ScalVecMulTop(τ scal, Vector<τ,α> vec) {
+      var res = TopVector<τ,α>(vec.Dim, vec.Count);
+      foreach(var inx_scl in vec.Scals)
+         res.Scals.Add(inx_scl.Key, O<τ,α>.A.Mul(scal, vec[inx_scl.Key]));
       return res;
    }
 
@@ -172,7 +184,7 @@ where α : IArithmetic<τ>, new() {
          sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
          for(int i = 0; i < conDim; ++i) {
             elimTnr2 = tnr2.ReduceRank(truInx2, i);
-            if(vec1.Vals.TryGetValue(i, out var val) && elimTnr2 != Voids<τ,α>.Vec) {
+            if(vec1.Scals.TryGetValue(i, out var val) && elimTnr2 != Voids<τ,α>.Vec) {
                sumand = val*elimTnr2;
                sum.Sum(sumand); } }
          if(sum.Count != 0)
@@ -187,10 +199,10 @@ where α : IArithmetic<τ>, new() {
             elimTnr2 = tnr2.ReduceRank(truInx2, i);
             if(elimTnr2 != Voids<τ,α>.Vec) {
                elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
-               if(vec1.Vals.TryGetValue(i, out var val)) {
+               if(vec1.Scals.TryGetValue(i, out var val)) {
                   sumand = val*elimVec2;
                   sum.Sum(sumand); } } }
-         if(sum.Vals.Count != 0)
+         if(sum.Scals.Count != 0)
             return sum;
          else
             return Voids<τ,α>.Vec; }
@@ -204,8 +216,8 @@ where α : IArithmetic<τ>, new() {
    }
    public static τ Contract(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       τ res = O<τ,α>.A.Zero();
-      foreach(var int_val1 in vec1.Vals) {
-         if(vec2.Vals.TryGetValue(int_val1.Key, out var val2))
+      foreach(var int_val1 in vec1.Scals) {
+         if(vec2.Scals.TryGetValue(int_val1.Key, out var val2))
             res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
       return res;
    }
@@ -217,15 +229,15 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Calculates square of Euclidean norm of SparseRow.</summary>
    public τ NormSqr() {
       τ res = O<τ,α>.A.Zero();
-      foreach(var kv in Vals)
+      foreach(var kv in Scals)
          res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
       return res;
    }
 
    public bool Equals(Vector<τ,α> vec2) {
-      if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
+      if(!Scals.Keys.OrderBy(key => key).SequenceEqual(vec2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
-      foreach(var int_val in Vals) {
+      foreach(var int_val in Scals) {
          τ val2 = vec2[int_val.Key];
          if(!int_val.Value.Equals(val2))        // Fetch did not suceed or values are not equal.
             return false; }
@@ -233,9 +245,9 @@ where α : IArithmetic<τ>, new() {
    }
 
    public bool Equals(Vector<τ,α> vec2, τ eps) {
-      if(!Vals.Keys.OrderBy(key => key).SequenceEqual(vec2.Vals.Keys.OrderBy(key => key)))    // Keys have to match.
+      if(!Scals.Keys.OrderBy(key => key).SequenceEqual(vec2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
-      foreach(var int_val1 in Vals) {
+      foreach(var int_val1 in Scals) {
          τ val2 = vec2[int_val1.Key];
          if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(int_val1.Value, val2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
             return false; }
@@ -243,14 +255,14 @@ where α : IArithmetic<τ>, new() {
    }
    /// <summary>So that foreach statements work properly.</summary>
    new public IEnumerator<KeyValuePair<int,τ>> GetEnumerator() {
-      foreach(var kv in Vals)
+      foreach(var kv in Scals)
          yield return kv;
    }
 
    public override string ToString() {
       var sb = new StringBuilder(2*Count);
       sb.Append("{");
-      foreach(var emt in Vals) {
+      foreach(var emt in Scals) {
          sb.Append($"{emt.ToString()}, ");
       }
       sb.Remove(sb.Length - 2, 2);
@@ -260,7 +272,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Converts a sparse Vector to a regular array.</summary>
    public τ[] ToArray() {
       var arr = new τ[Dim];
-      foreach(var int_val in Vals)
+      foreach(var int_val in Scals)
          arr[int_val.Key] = int_val.Value;
       return arr;
    }

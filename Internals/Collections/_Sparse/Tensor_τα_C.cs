@@ -9,7 +9,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
 public partial class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
-where τ : IEquatable<τ>, IComparable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    /// <summary>Void tensor.</summary>
    public static readonly Tensor<τ,α> T = Factory.TopTensor<τ,α>(new List<int>{0,0}, 0);

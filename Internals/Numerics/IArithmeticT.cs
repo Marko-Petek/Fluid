@@ -51,9 +51,9 @@ namespace Fluid.Internals.Numerics {
       public F2D Neg(F2D f) =>
          new F2D( (x,y) => -f.F(x,y) );
       public F2D Unit() =>
-         new F2D( F2D.One );
+         F2D.One;
       public F2D Zero() =>
-         new F2D( (x,y) => 0.0 );
+         F2D.Zero;
    }
 
    public struct NoArithmetic : IArithmetic<int> {

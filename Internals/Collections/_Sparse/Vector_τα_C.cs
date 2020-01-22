@@ -12,7 +12,7 @@ namespace Fluid.Internals.Collections {
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
 public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
-where τ : IEquatable<τ>, IComparable<τ>, new()
+where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    /// <summary>Void vector.</summary>
    public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
@@ -22,7 +22,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="cap">Capacity of internal dictionary.</param>
    internal Vector(List<int> strc, Tensor<τ,α>? sup, int cap) :
    base(strc, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
-      Vals = new Dictionary<int, τ>(cap);
+      Scals = new Dictionary<int, τ>(cap);
    }
    /// <summary>Creates a non-top vector with specified superior and initial capacity. Does not add the new vector to its superior or check whether the superior is rank 2.</summary>
    /// <param name="sup">Direct superior.</param>
@@ -38,10 +38,10 @@ where α : IArithmetic<τ>, new() {
    /// <param name="key">Index.</param>
    /// <param name="val">Value.</param>
    internal void Add(int key, τ val) =>
-      Vals.Add(key, val);
+      Scals.Add(key, val);
 
    internal bool TryGetValue(int key, out τ val) =>
-      Vals.TryGetValue(key, out val);
+      Scals.TryGetValue(key, out val);
 }
 
 }
