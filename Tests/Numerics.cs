@@ -54,10 +54,10 @@ public class Numerics {
       1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads4By4"/></remarks>
    [Theory] public void ConjGrads4By4(params double[] input) {
-      var A = TnrFac.TensorFromFlatSpec(input.AsSpan<dbl>(0,16), 4,4);
-      var b = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(16,4));
-      var initPoint = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(20,4));
-      var expSol = TnrFac.VectorFromFlatSpec(input.AsSpan<dbl>(24,4));
+      var A = TopTnrFromSpan<dbl,da>(input.AsSpan<dbl>(0,16), 4,4);
+      var b = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(16,4));
+      var initPoint = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(20,4));
+      var expSol = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(24,4));
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
       Assert.True(sol.Equals(expSol, 0.01));
@@ -89,14 +89,14 @@ public class Numerics {
       int nElmsInU = strucU.Aggregate(1, (int total, int val) => total*val);
       int nElmsInF = strucF.Aggregate(1, (int total, int val) => total*val);
       var spanK = data.Skip(arrPos).Take(nElmsInK).Select(a => (double) a).ToArray().AsSpan();
-      var K = TnrFac.TensorFromFlatSpec(spanK, strucK);
+      var K = TopTnrFromSpan<dbl,da>(spanK, strucK);
       arrPos += nElmsInK;
       var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (double) a).ToArray().AsSpan();
-      var F = TnrFac.TensorFromFlatSpec(spanF, strucF);
+      var F = TopTnrFromSpan<dbl,da>(spanF, strucF);
       var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
       var solver = new ConjGradsSolver(K, F);
       DebugTag = "x0Creation";
-      var x0 = TnrFac.TensorFromFlatSpec(spanX0, strucF);
+      var x0 = TopTnrFromSpan<dbl,da>(spanX0, strucF);
       var solution = solver.Solve(x0, 0.001);
       Assert.True(true);
    }

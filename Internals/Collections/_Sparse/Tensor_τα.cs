@@ -403,7 +403,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
    /// <param name="aTnr2">Right-hand operand.</param>
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public virtual Tensor<τ,α> TnrProdTop(Tensor<τ,α> aTnr2) {
+   public virtual Tensor<τ,α> TnrProductTop(Tensor<τ,α> aTnr2) {
       // Overriden on vector when first operand is a vector.
       // 1) Descend to rank 1 through a recursion and then delete that vector.
       // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.

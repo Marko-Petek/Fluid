@@ -40,7 +40,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Tensor product of a vector with another tensor. Returns top tensor (null superior) as result.</summary>
    /// <param name="tnr2">Right hand operand.</param>
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public override Tensor<τ,α> TnrProdTop(Tensor<τ,α> tnr2) {
+   public override Tensor<τ,α> TnrProductTop(Tensor<τ,α> tnr2) {
       if(tnr2.Rank > 1) {
          int newRank = Rank + tnr2.Rank;
          var struct1 = CopySubstructure();
@@ -55,14 +55,14 @@ where α : IArithmetic<τ>, new() {
          return res; }
       else {
          var vec2 = (Vector<τ,α>) tnr2;
-         return TnrProduct(vec2); }
+         return TnrProductTop(vec2); }
    }
    /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
-   public Tensor<τ,α> TnrProduct(Vector<τ,α> vec2) {
+   public Tensor<τ,α> TnrProductTop(Vector<τ,α> vec2) {
       int dim1 = Structure.Last();
       int dim2 = vec2.Structure.Last();
       var newStructure = new List<int> {dim1, dim2};
-      var res = new Tensor<τ,α>(newStructure, rank: 2, sup: Voids<τ,α>.Vec, Scals.Count);
+      var res = TopTensor<τ,α>(newStructure, Scals.Count);
       foreach(var int_subVal1 in Scals) {
          int subKey = int_subVal1.Key;
          var subVal1 = int_subVal1.Value;

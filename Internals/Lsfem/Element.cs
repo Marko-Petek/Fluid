@@ -122,7 +122,7 @@ public class Element {
    F2D J12, F2D J21, F2D J22) tuple) {
       var invJ = new FTnr(new List<int>(2) {3,3}, 3);
       (var detJ, var J11, var J12, var J21, var J22) = tuple;
-      invJ[0,0] = new F2D();
+      invJ[0,0] = F2D.One;
       invJ[1,1] = new F2D( (x,y) => J22.F(x,y) / detJ.F(x,y) );
       invJ[1,2] = new F2D( (x,y) => -J12.F(x,y) / detJ.F(x,y) );
       invJ[2,1] = new F2D( (x,y) => -J21.F(x,y) / detJ.F(x,y) );

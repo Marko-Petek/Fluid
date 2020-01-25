@@ -14,7 +14,6 @@ namespace Fluid.Internals.Lsfem {
 
 using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
 using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
-using Voids = Voids<dbl,DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
@@ -160,7 +159,7 @@ public abstract class Sim {
       Lst allJs = Enumerable.Range(0,NVar).ToList();
       foreach(var emt in emts) {
       for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-         Vec vecF_j = tnrF[Voids.Vec, c];
+         Vec vecF_j = tnrF[Vec.V, c];
          var jfs = allJs.Where( j => !Cnstr[c,j] ).ToArray();                      // Determine which variables (c,j) are free.
          for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
          for(int p = 0; p < 3; ++p) {
@@ -169,7 +168,7 @@ public abstract class Sim {
             for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
                Tnr f_si = Fs[Tnr.T, b];
                for(int s = 0; s < 3; ++s) {                                         // Index for A*Fs_j
-                  Vec fs_i = f_si[Voids.Vec, s];
+                  Vec fs_i = f_si[Vec.V, s];
                   Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
                   foreach(var j in allJs)
                      vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
@@ -184,7 +183,7 @@ public abstract class Sim {
                            Single().ToArray();
                         dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
                         foreach(var jf in jfs) {
-                           Vec aa_k = aa_jk[Voids.Vec,jf];
+                           Vec aa_k = aa_jk[Vec.V,jf];
                            foreach(int k in kfs)
                               tnrK[c,jf,d,k] += coefQ * aa_k[k];
                            foreach(int l in kcs)
