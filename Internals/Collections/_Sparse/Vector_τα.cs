@@ -26,6 +26,7 @@ where α : IArithmetic<τ>, new() {
    
 
    /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
+   /// <summary>Indexer. Check for empty parent after operation.</summary>
    new public τ this[int i] {
       get {
          Scals.TryGetValue(i, out τ val);
@@ -58,23 +59,26 @@ where α : IArithmetic<τ>, new() {
          return TnrProductTop(vec2); }
    }
    /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
-   public Tensor<τ,α> TnrProductTop(Vector<τ,α> vec2) {
-      int dim1 = Structure.Last();
-      int dim2 = vec2.Structure.Last();
-      var newStructure = new List<int> {dim1, dim2};
-      var res = TopTensor<τ,α>(newStructure, Scals.Count);
-      foreach(var int_subVal1 in Scals) {
-         int subKey = int_subVal1.Key;
-         var subVal1 = int_subVal1.Value;
-         var newVec = subVal1*vec2;
-         res.AddPlusIfNotEmpty(subKey, newVec); }
-      return res;
+   public Tensor<τ,α>? TnrProductTop(Vector<τ,α>? vec2) {
+      if(vec2 != null) {
+         int dim1 = Structure.Last();
+         int dim2 = vec2.Structure.Last();
+         var newStructure = new List<int> {dim1, dim2};
+         var res = TopTensor<τ,α>(newStructure, Scals.Count);
+         foreach(var int_subVal1 in Scals) {
+            int subKey = int_subVal1.Key;
+            var subVal1 = int_subVal1.Value;
+            var newVec = subVal1*vec2;
+            res.AddPlusIfNotEmpty(subKey, newVec); }
+         return res;
+      }
+      else return null;
    }
    /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
-   /// <param name="vec1">Sumand 1.</param>
+   /// <param name="vec1">Sumand 1 is modified. Use return as result.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
-   public static Vector<τ,α>? SumM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
+   public static Vector<τ,α>? SumInto(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       foreach(var int_subVal2 in vec2.Scals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
@@ -87,10 +91,10 @@ where α : IArithmetic<τ>, new() {
          return null;
    }
    /// <summary>Subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
-   /// <param name="vec1">Minuend.</param>
+   /// <param name="vec1">Minuend. Is modified, use return as result.</param>
    /// <param name="vec2">Subtrahend. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
-   public static Vector<τ,α>? SubM(Vector<τ,α> vec1, Vector<τ,α> vec2) {
+   public static Vector<τ,α>? SubInto(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       foreach(var int_subVal2 in vec2.Scals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
@@ -105,47 +109,41 @@ where α : IArithmetic<τ>, new() {
 
 
    
-   /// <summary>Multiplies caller with a scalar.</summary>
+   /// <summary>Multiplies vector with a scalar. Modifies "this". Use return as result.</summary>
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
-   public override void Mul(τ scal) {
-      var keys = Scals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
-      foreach(var subKey in keys)
-         Scals[subKey] = O<τ,α>.A.Mul(scal, Scals[subKey]);
+   public new Vector<τ,α>? MulInto(τ scal) {
+      if(!scal.Equals(O<τ,α>.A.Zero())) {
+         var inxs = Scals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
+         foreach(var inx in inxs)
+            Scals[inx] = O<τ,α>.A.Mul(scal, Scals[inx]);
+         return this; }
+      else return null;
    }
-   /// <summary>Sum two vectors. Does not check substructure match.</summary>
+   /// <summary>Sum two vectors, return new vector as a result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
    /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
-   public static Vector<τ,α> operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) {
-      //var newStruc = vec2.CopySubstructure();
-      var res = new Vector<τ,α>(vec2, in CopySpecs.S320_04);
-      res.AssignStructFromSubStruct(vec2);
-      foreach(var int_val1 in vec1.Scals) {
-         int key = int_val1.Key;
-         var val1 = int_val1.Value;
-         if(vec2.Scals.TryGetValue(key, out var val2)) {
-            res[key] = O<τ,α>.A.Sum(val1, val2); }
-         else {
-            res.Add(key, val1); } }
-      return res;
+   public static Vector<τ,α>? operator + (Vector<τ,α> vec1, Vector<τ,α> vec2) =>
+      SumTop(vec1, vec2);
+   public static Vector<τ,α>? SumTop(Vector<τ,α> vec1, Vector<τ,α> vec2) {
+      Assume.True(vec1.Dim == vec2.Dim, () => "The dimensions of vectors do not match on addition.");
+      Vector<τ,α>? newVec = TopVector<τ,α>(vec1.Dim, vec1.Count);
+      newVec = SumInto(newVec, vec1);                               // We copy from vec1 to newVec.
+      return SumInto(newVec!, vec2);                               // newVec is not null here
    }
-   /// <summary>Subtract two vectors. Does not check substructure match.</summary>
+   /// <summary>Subtract two vectors. Returns new top vector as result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
    /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
-   public static Vector<τ,α> operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) {
-      //var newStruc = vec1.CopySubstructure();
-      var res = new Vector<τ,α>(vec1, in CopySpecs.S320_04);
-      res.AssignStructFromSubStruct(vec1);
-      foreach(var int_val2 in vec2.Scals) {
-         int key = int_val2.Key;
-         var val2 = int_val2.Value;
-         if(vec1.Scals.TryGetValue(key, out var val1)) {
-            res[key] = O<τ,α>.A.Sub(val1, val2); }
-         else {
-            res.Add(key, O<τ,α>.A.Neg(val2)); } }
-      return res;
+   public static Vector<τ,α>? operator - (Vector<τ,α> vec1, Vector<τ,α> vec2) =>
+      SubTop(vec1, vec2);
+
+   public static Vector<τ,α>? SubTop(Vector<τ,α> vec1, Vector<τ,α> vec2) {
+      Assume.True(vec1.Dim == vec2.Dim, () => "The dimensions of vectors do not match on addition.");
+      Vector<τ,α>? newVec = TopVector<τ,α>(vec1.Dim, vec1.Count);
+      newVec = SumInto(newVec, vec1);                               // We copy from vec1 to newVec.
+      return SubInto(newVec!, vec2);                               // newVec is not null here
    }
    /// <summary>Modifies this vector by negating each element.</summary>
    public override void Negate() {
@@ -156,26 +154,30 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Negate operator. Creates a new vector with its own substructure.</summary>
    /// <param name="vec">Vector to negate.</param>
    public static Vector<τ,α> operator - (Vector<τ,α> vec) {
-      var newStruc = vec.CopySubstructure();
-      var res = new Vector<τ,α>(newStruc, Voids<τ,α>.Vec, vec.Count);
-      foreach(var int_val in vec.Scals)
-         res.Scals.Add(int_val.Key, O<τ,α>.A.Neg(int_val.Value));
-      return res;
+      Vector<τ,α> newVec = TopVector<τ,α>(vec.Dim, vec.Count);
+      return SubInto(newVec, vec)!;                               // Return cannot be null if vec is not null.
    }
    /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
-   public static Vector<τ,α> operator * (τ scal, Vector<τ,α> vec) {
-      var newStrc = vec.CopySubstructure();
-      var res = new Vector<τ,α>(newStrc, Voids<τ,α>.Vec, vec.Count);
-      foreach(var int_val in vec.Scals)
-         res.Scals.Add(int_val.Key, O<τ,α>.A.Mul(scal, vec[int_val.Key]));
-      return res;
+   public static Vector<τ,α>? operator * (τ scal, Vector<τ,α> vec) =>
+      MulTop(scal, vec);
+   /// <summary>Multiplies a scalar with a vector and returns a new vector. Safe version: accepts a nullable vector and checks it for null, also checks if the scalar is zero.</summary>
+   /// <param name="scal">Scalar.</param>
+   /// <param name="vec">Vector.</param>
+   public static Vector<τ,α>? MulTop(τ scal, Vector<τ,α>? vec) {
+      if(!scal.Equals(O<τ,α>.A.Zero()) && vec != null) {
+         return MulTopUnsafe(scal, vec); }
+      else return null;
    }
-
-   public static Vector<τ,α> ScalVecMulTop(τ scal, Vector<τ,α> vec) {
-      var res = TopVector<τ,α>(vec.Dim, vec.Count);
-      foreach(var inx_scl in vec.Scals)
-         res.Scals.Add(inx_scl.Key, O<τ,α>.A.Mul(scal, vec[inx_scl.Key]));
-      return res;
+   /// <summary>Multiplies a scalar with a vector and returns a new vector. Unsafe version: accepts a non-nullable vector and does not check whether the scalar is zero.</summary>
+   /// <param name="scal"></param>
+   /// <param name="vec"></param>
+   internal static Vector<τ,α> MulTopUnsafe(τ scal, Vector<τ,α> vec) {
+      Vector<τ,α> newVec = TopVector<τ,α>(vec.Dim, vec.Count);
+      foreach(var inx_scal in vec) {
+         int inx = inx_scal.Key;
+         var vScal = inx_scal.Value;
+         newVec.Add(inx, O<τ,α>.A.Mul(scal, vScal)); }
+      return newVec;
    }
 
    public static Tensor<τ,α> ContractPart2(Vector<τ,α> vec1, Tensor<τ,α> tnr2, int truInx2, List<int> struc3, int conDim) {

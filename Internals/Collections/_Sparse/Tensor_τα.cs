@@ -313,7 +313,7 @@ where α : IArithmetic<τ>, new() {
          else {                                                                     // We have a vector.
             var vec1 = (Vector<τ,α>) t1;
             var vec2 = (Vector<τ,α>) t2;
-            Vector<τ,α>.SumM(vec1, vec2);
+            Vector<τ,α>.SumInto(vec1, vec2);
          }
       }
    }
@@ -357,7 +357,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Multiplies caller with a scalar.</summary>
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
-   public virtual void Mul(τ scal) {
+   public virtual void MulInto(τ scal) {
       Recursion(this);
 
       void Recursion(Tensor<τ,α> tnr) {
@@ -368,10 +368,10 @@ where α : IArithmetic<τ>, new() {
          else if(tnr.Rank == 2) {                                 // Subordinates are vectors.
             foreach (var int_subTnrR1 in tnr) {
                var subVec = (Vector<τ,α>) int_subTnrR1.Value;
-               subVec.Mul(scal); } }
+               subVec.MulInto(scal); } }
          else {
             var vec = (Vector<τ,α>) tnr;
-            vec.Mul(scal); }
+            vec.MulInto(scal); }
       }
    }
    /// <summary>Creates a new tensor which is a product of a scalar and a tensor. The tensor is created as top rank, given its own substructure and no superstructure.</summary>

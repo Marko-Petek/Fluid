@@ -788,7 +788,7 @@ public class Tensors {
    [Theory] public void VectorMul(params int[] data) {
       var num = data[4];
       var vec = TopVecFromSpan<int,IA>(data.AsSpan<int>(0,4));
-      vec.Mul(num);
+      vec.MulInto(num);
       var expRes = TopVecFromSpan<int,IA>(data.AsSpan<int>(5,4));
       Assert.True(vec.Equals(expRes));
    }
@@ -828,7 +828,7 @@ public class Tensors {
       var slc2 = new Span<int>(data, 10, 9);
       var tnr = TopTnrFromSpan<int,IA>(slc1, 3,3);
       var num = data[9];
-      tnr.Mul(num);
+      tnr.MulInto(num);
       var expRes = TopTnrFromSpan<int,IA>(slc2,3,3);
       Assert.True(tnr.Equals(expRes));
    }
