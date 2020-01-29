@@ -74,11 +74,31 @@ where α : IArithmetic<τ>, new() {
       }
       else return null;
    }
-   /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2.</summary>
+   /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2. If vec1 is null, it creates a copy of vec1.</summary>
    /// <param name="vec1">Sumand 1 is modified. Use return as result.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
-   public static Vector<τ,α>? SumInto(Vector<τ,α> vec1, Vector<τ,α> vec2) {
+   public static Vector<τ,α>? SumInto(Vector<τ,α>? vec1, Vector<τ,α>? vec2) {
+      if(vec1 == null) {
+         return vec2;
+      }
+      else if
+      foreach(var int_subVal2 in vec2.Scals) {
+         int subKey = int_subVal2.Key;
+         var subVal2 = int_subVal2.Value;
+         var subVal1 = vec1[subKey];
+         var sum = O<τ,α>.A.Sum(subVal1, subVal2);
+         vec1[subKey] = sum; }
+      if(vec1.Count != 0)
+         return vec1;
+      else
+         return null;
+   }
+   /// <summary>Sums vec2 to vec1, both assumed to be non-null. Modifies vec1, does not destroy vec2.</summary>
+   /// <param name="vec1">Sumand 1 is modified. Use return as result.</param>
+   /// <param name="vec2">Sumand 2. Is not destroyed.</param>
+   /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
+   public static Vector<τ,α>? SumIntoUnsafe(Vector<τ,α> vec1, Vector<τ,α> vec2) {
       foreach(var int_subVal2 in vec2.Scals) {
          int subKey = int_subVal2.Key;
          var subVal2 = int_subVal2.Value;
