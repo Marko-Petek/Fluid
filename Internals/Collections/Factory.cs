@@ -15,6 +15,14 @@ public static class Factory {
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() =>
       new Vector<τ,α>(dim, cap);
+   /// <summary>Creates a top vector (null superior) with dimension and capacity inferred from a specified vector.</summary>
+   /// <param name="vec">New vector will take on same dimension and capacity as this one.</param>
+   /// <typeparam name="τ">Numeric type.</typeparam>
+   /// <typeparam name="α">Arithmetic type.</typeparam>
+   public static Vector<τ,α> TopVector<τ,α>(Vector<τ,α> vec)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() =>
+      new Vector<τ,α>(vec.Dim, vec.Count);
    
    /// <summary>Creates a non-top vector (non-null superior) with specified initial capacity. Adds it to its specified superior at the specified index. Dimension is inferred from superior's structure.</summary>
    /// <param name="sup">Direct superior.</param>
@@ -127,7 +135,7 @@ public static class Factory {
    /// <param name="extraCap">Extra capacity of copied vector (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vector<τ,α> CopyAsTopVec<τ,α>(Vector<τ,α> src, int extraCap = 0)
+   public static Vector<τ,α> CopyAsTopVec<τ,α>(this Vector<τ,α> src, int extraCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       var vec = TopVector<τ,α>(src.Dim, src.Count + extraCap);
