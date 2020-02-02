@@ -36,23 +36,33 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
    /// <param name="tnr">Tensor to add.</param>
-   internal void AddPlus(int inx, Tensor<τ,α> tnr) {
+   internal void AddSubTnr(int inx, Tensor<τ,α> tnr) {
       tnr.Superior = this;
       tnr.Structure = Structure;
       base.Add(inx, tnr);
    }
-   /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr or check if the added tensor is empty.</summary>
-   /// <param name="key">Index.</param>
-   /// <param name="tnr">Tensor.</param>
-   new internal void Add(int key, Tensor<τ,α> tnr) =>
-      base.Add(key, tnr);
+   
+   // /// <summary>Adds tnr to caller. Does not assign the caller's superstructure to tnr or check if the added tensor is empty.</summary>
+   // /// <param name="key">Index.</param>
+   // /// <param name="tnr">Tensor.</param>
+   // new internal void Add(int key, Tensor<τ,α> tnr) =>
+   //    base.Add(key, tnr);
 
-   /// <summary>Adds tnr to caller only if it is not empty. Assigns the caller's superstructure to tnr.</summary>
-   /// <param name="key">Index.</param>
-   /// <param name="tnr">Tensor.</param>
-   internal void AddPlusIfNotEmpty(int key, Tensor<τ,α> tnr) {
-      if(tnr.Count != 0)
-         AddPlus(key, tnr);
+   // /// <summary>Adds tnr to caller only if it is not empty. Assigns the caller's superstructure to tnr.</summary>
+   // /// <param name="key">Index.</param>
+   // /// <param name="tnr">Tensor.</param>
+   // internal void AddPlusIfNotEmpty(int key, Tensor<τ,α> tnr) {
+   //    if(tnr.Count != 0)
+   //       AddSubTnr(key, tnr);
+   // }
+
+   internal void SetSubTnr(int inx, Tensor<τ,α>? tnr) {
+      if(tnr != null) {
+         base[inx] = tnr;
+         tnr.Superior = this;
+         tnr.Structure = Structure; }
+      else
+         Remove(inx);
    }
    
    /// <summary>A substructure as unevaluated instructions ready for enumeration.</summary>

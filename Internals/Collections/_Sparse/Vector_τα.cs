@@ -52,7 +52,7 @@ where α : IArithmetic<τ>, new() {
          foreach(var int_subVal in Scals) {
             int subKey = int_subVal.Key;
             var subVal = int_subVal.Value;
-            res.AddPlus(subKey, subVal*tnr2); }                   // TODO: Check multiply for top/sub.
+            res.AddSubTnr(subKey, subVal*tnr2); }                   // TODO: Check multiply for top/sub.
          return res; }
       else {
          var vec2 = (Vector<τ,α>) tnr2;
