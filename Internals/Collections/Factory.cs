@@ -154,12 +154,20 @@ public static class Factory {
    int inx, int xCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
+      Assume.True(src.Dim == newSup.Dim - 1, () => "The dimension as specified by the superior does not equal the original vector's dimension.");
+      return src.CopyAsSubVecIntern(newSup, inx, xCap);
+   }
+
+   internal static Vector<τ,α> CopyAsSubVecIntern<τ,α>(this Vector<τ,α> src, Tensor<τ,α> newSup,
+   int inx, int xCap = 0)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
       var vec = SubVector<τ,α>(newSup, inx, src.Count + xCap);
-      Assume.True(src.Dim == vec.Dim, () => "The dimension as specified by the superior does not equal the original vector's dimension.");
       foreach(var sInx_sVal in src.Scals)
          vec.Add(sInx_sVal.Key, sInx_sVal.Value);
       return vec;
    }
+
    /// <summary>Creates a deep copy of a tensor as a top tensor (null superior).</summary>
    /// <param name="src">Copy source.</param>
    /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
@@ -186,28 +194,32 @@ public static class Factory {
    /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tensor<τ,α> CopyAsSubTnr<τ,α>(this Tensor<τ,α> src, Tensor<τ,α> newSup, int inx, int xCap)
+   public static Tensor<τ,α> CopyAsSubTnr<τ,α>(this Tensor<τ,α> src, Tensor<τ,α> newSup,
+   int inx, int xCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       if (src is Vector<τ,α> vec) {
          return CopyAsSubVec<τ,α>(vec, newSup, inx, xCap); }
       else {
-         return Recursion(src, newSup, inx); }
-
-      Tensor<τ,α> Recursion(Tensor<τ,α> srcR, Tensor<τ,α> newSupR, int inxR) {
-         var tgtR = SubTensor<τ,α>(newSupR, inxR, srcR.Count + xCap);               // TODO: Check that count is not 0 anywhere.
-         if(srcR.Rank > 2) {                                                        // Subordinates are tensors.
-            foreach (var inxR_sSrcR in srcR) {
-               int sInxR = inxR_sSrcR.Key;
-               var sSrcR = inxR_sSrcR.Value;
-               Recursion(sSrcR, tgtR, sInxR); } }
-         else {                                                                     // Subordinates are vectors.
-            foreach(var inxR_sSrcR in srcR) {
-               int sInxR = inxR_sSrcR.Key;
-               var sSrcR = (Vector<τ,α>) inxR_sSrcR.Value;
-               CopyAsSubVec<τ,α>(sSrcR, tgtR, sInxR, xCap); } }
-         return tgtR; }
+         return CopyAsSubTnrIntern(src, newSup, inx, xCap); }
    }
+
+   internal static Tensor<τ,α> CopyAsSubTnrIntern<τ,α>(this Tensor<τ,α> src,
+   Tensor<τ,α> newSup, int inx, int xCap = 0)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      var tgtR = SubTensor<τ,α>(newSup, inx, src.Count + xCap);               // TODO: Check that count is not 0 anywhere.
+      if(src.Rank > 2) {                                                        // Subordinates are tensors.
+         foreach (var inxR_sSrcR in src) {
+            int sInxR = inxR_sSrcR.Key;
+            var sSrcR = inxR_sSrcR.Value;
+            CopyAsSubTnrIntern(sSrcR, tgtR, sInxR, xCap); } }
+      else {                                                                     // Subordinates are vectors.
+         foreach(var inxR_sSrcR in src) {
+            int sInxR = inxR_sSrcR.Key;
+            var sSrcR = (Vector<τ,α>) inxR_sSrcR.Value;
+            CopyAsSubVec<τ,α>(sSrcR, tgtR, sInxR, xCap); } }
+      return tgtR; }
 }
 
 }

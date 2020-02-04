@@ -197,172 +197,36 @@ where α : IArithmetic<τ>, new() {
             vec = (Vector<τ,α>) tnr;
             vec.Scals.Remove(inx[n]); } }
    }
-   /// <summary>Modifies this tensor by negating each element.</summary>
-   public virtual void Negate() {
-      Recursion(this);
-
-      void Recursion(Tensor<τ,α> t1) {
-      if(t1.Rank > 1) {
-         foreach(var int_subT in t1)
-            Recursion(int_subT.Value); }
-      else {                                 // We are at the vector level.
-         var vec = (Vector<τ,α>) t1;
-         vec.Negate(); } }
-   }
    
    /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
-   /// <param name="tnr1">Operand.</param>
+   /// <param name="t">Operand.</param>
    /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
-   public static Tensor<τ,α> operator -(Tensor<τ,α> tnr1) {                      // FIXME: Unary Negate.
-      throw new NotImplementedException();
-   }
+   public static Tensor<τ,α>? operator -(Tensor<τ,α>? t) =>
+      t.NegateTop();
+
    /// <summary>Creates a new tensor which is a sum of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
-   /// <param name="tnr1">Left operand.</param>
-   /// <param name="tnr2">Right operand.</param>
+   /// <param name="t1">Left operand.</param>
+   /// <param name="t2">Right operand.</param>
    /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
-   public static Tensor<τ,α> operator + (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
-         () => "Tensor substructures do not match on addition.");
-      //var newStructure = tnr1.CopySubstructure();
-      var res = new Tensor<τ,α>(tnr2, CopySpecs.S320_04);          // Create a copy of second tensor.
-      res.AssignStructFromSubStruct(tnr2);                               // Assign to it a new structure.
-      // SimultaneousRecurse(tnr1, res, 2,
-      //    onNoEquivalent: (key, subTnr1, supTnr2) => {    // Simply copy and add.
-      //       var subTnr2 = new Tensor<τ,α>(subTnr1, in CopySpecs.S322_04);
-      //       supTnr2.Add(key, subTnr2); },
-      //    onStopRank: (tnr1R2, tnr2R2) => {                    // stopTnrs are rank 2.
-      //       foreach(var int_tnr1R1 in tnr1R2) {
-      //          int vecKey = int_tnr1R1.Key;
-      //          var vec1 = (Vector<τ,α>) int_tnr1R1.Value;
-      //          if(tnr2R2.TryGetValue(vecKey, out var tnr2R1)) {         // Same subtensor exists in target. Sum them and overwrite the one on target.
-      //             var vec2 = (Vector<τ,α>) tnr2R1;
-      //             var sumVec = vec1 + vec2;
-      //             tnr2R2[Vector<τ,α>.Ex, vecKey] = sumVec; }
-      //          else {                                                               // Same subtensor does not exist on target. Copy branch from source.
-      //             var sumVec = new Vector<τ,α>(vec1, in CopySpecs.S322_04);
-      //             tnr2R2.Add(vecKey, sumVec); } } } );
-      return res;
-   }
+   public static Tensor<τ,α>? operator + (Tensor<τ,α>? t1, Tensor<τ,α>? t2) =>
+      t1.SumTop(t2);
+
    /// <summary>Creates a new tensor which is a difference of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
-   /// <param name="tnr1">Left operand.</param>
-   /// <param name="tnr2">Right operand.</param>
+   /// <param name="t1">Left operand.</param>
+   /// <param name="t2">Right operand.</param>
    /// <remarks>First, we create our result tensor as a copy of tnr1. Then we take tnr2 as recursion dictator (yielding subtensors subTnr2) and we look for equivalent subtensors on tnr1 (call them subTnr1). If no equivalent is found, we negate subTnr2 and add it to a proper place in the result tensor, otherwise we subtract subTnr2 from subTnr1 and add that to result. Such a subtraction can yield a zero tensor (without entries) in which case we make sure we remove it (the empty tensor) from the result.
    /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
-   public static Tensor<τ,α> operator - (Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {      // FIXME: Minus for tensors.
-      Assume.True(DoSubstructuresMatch(tnr1, tnr2),
-         () => "Tensor substructures do not match on subtraction.");
-      var res = new Tensor<τ,α>(tnr1, CopySpecs.S320_04);                           // Result tnr starts as a copy of tnr1.
-      res.AssignStructFromSubStruct(tnr1);
-      // SimultaneousRecurse<(bool,int,Tensor<τ,α>,int,Tensor<τ,α>)>(tnr2, res, 2,                         // tnr2 = recursion dictator, res = recursion peer       (bool,Tnr,Tnr) = (isNowEmpty, highTnr, lowTnr)
-      //    onEmptySrc: () => (true, 0, null, 0, null),
-      //    onResurface: ( tup ) => {
-      //       if(!tup.Item1)                                                          // subTnr not empty, subTnr present as item4 with index item3.
-      //          tup.Item2[Tensor<τ,α>.Ex, tup.Item3] = tup.Item4;
-      //    },
-      //    onNoEquivalent: (key, subTnr2, supRes) => {    // Simply copy, negate and add. Could be done more optimally. BUt I'll leave it like that for now, because it's simpler.
-      //       var subTnr2Copy = new Tensor<τ,α>(subTnr2, in CopySpecs.S322_04);
-      //          subTnr2Copy.Negate();
-      //          supRes.Add(key, subTnr2Copy);
-      //    },
-      //    onStopRank: (tnr2R2, res1R2) => {                    // stopTnrs are rank 2.
-      //       foreach(var int_tnr2R1 in tnr2R2) {
-      //          if(res1R2.TryGetValue(int_tnr2R1.Key, out var res1R1)) {         // Same subtensor exists in target. Sum them and overwrite the one on target.
-      //             int subKey = int_tnr2R1.Key;
-      //             var subVec2 = (Vector<τ,α>) int_tnr2R1.Value;
-      //             var difVec = (Vector<τ,α>) res1R1 - subVec2;
-      //             res1R2[Vector<τ,α>.Ex, subKey] = difVec; }                     // FIXME: This can be zero. What then?
-      //          else {                                                               // Same subtensor does not exist on target. Copy branch from source and negate it.
-      //             var srcCopy = new Vector<τ,α>((Vector<τ,α>) int_tnr2R1.Value,
-      //                in CopySpecs.S322_04);
-      //             srcCopy.Negate();
-      //             res1R2.Add(int_tnr2R1.Key, srcCopy); } }
-      //    } );
-      return res;
-   }
+   public static Tensor<τ,α>? operator - (Tensor<τ,α>? t1, Tensor<τ,α>? t2) =>
+      t1.SubTop(t2);
+
    
-   /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
-   /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
-   /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
-   public void Sub(Tensor<τ,α> aTnr2) {
-      Tensor<τ,α> aTnr1 = this;
-      Assume.True(DoSubstructuresMatch(aTnr1, aTnr2),
-         () => "Tensor substructures do not match on Sub.");
-      Recursion(aTnr1, aTnr2);
-
-      void Recursion(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-         if(tnr2.Rank > 2) {
-            foreach(var int_subTnr2 in tnr2) {
-               int subKey = int_subTnr2.Key;
-               var subTnr2 = int_subTnr2.Value;
-               if(tnr1.TryGetValue(subKey, out var subTnr1))            // Equivalent subtensor exists in T1.
-                  Recursion(subTnr1, subTnr2);
-               else                                                      // Equivalent subtensor does not exist in T1. Negate the subtensor from T2 and add it.
-                  tnr1.AddSubTnr(subKey,-subTnr2); } }
-         else if(tnr2.Rank == 2) {
-            foreach(var int_subTnr2 in tnr2) {
-               int subKey = int_subTnr2.Key;
-               var subVec2 = (Vector<τ,α>) int_subTnr2.Value;
-               if(tnr1.TryGetValue(subKey, out var subTnr1)) {      // Entry exists in t1, we must sum.
-                  var subVec1 = (Vector<τ,α>) subTnr1;
-                  subVec1.Sub(subVec2);
-                  if(subVec1.Count == 0)
-                     tnr1.Remove(subKey); }                         // Crucial to remove if subvector has been anihilated.
-               else {
-                  tnr1.AddSubTnr(subKey, -subVec2); } } }          // Entry does not exist in t2, simply Add.
-         else {                                                            // We have a vector.
-            var vec1 = (Vector<τ,α>) tnr1;
-            var vec2 = (Vector<τ,α>) tnr2;
-            vec1.Sum(vec2);
-         }
-      }
-   }
-
-   /// <summary>Multiplies caller with a scalar.</summary>
-   /// <param name="scal">Scalar.</param>
-   /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
-   public virtual void MulInto(τ scal) {
-      Recursion(this);
-
-      void Recursion(Tensor<τ,α> tnr) {
-         if(tnr.Rank > 2) {                                       // Subordinates are tensors.
-            foreach (var int_subTnr in tnr) {
-               var subTnr = int_subTnr.Value;
-               Recursion(subTnr); } }
-         else if(tnr.Rank == 2) {                                 // Subordinates are vectors.
-            foreach (var int_subTnrR1 in tnr) {
-               var subVec = (Vector<τ,α>) int_subTnrR1.Value;
-               subVec.MulInto(scal); } }
-         else {
-            var vec = (Vector<τ,α>) tnr;
-            vec.MulInto(scal); }
-      }
-   }
    /// <summary>Creates a new tensor which is a product of a scalar and a tensor. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="scal">Scalar.</param>
    /// <param name="aTnr">Tensor.</param>
    /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
-   public static Tensor<τ,α> operator * (τ scal, Tensor<τ,α> aTnr) {
-      var newStructure = aTnr.CopySubstructure();                                              // New substructure.
-      return Recursion(aTnr);
-
-      Tensor<τ,α> Recursion(in Tensor<τ,α> tnr) {
-         var res = new Tensor<τ,α>(newStructure, aTnr.Count);        //new Tensor<τ,α>(newStructure, aTnr.Rank, Voids<τ,α>.Vec, aTnr.Count);
-         if(tnr.Rank > 2) {                                       // Subordinates are tensors.
-            foreach (var int_subTnr in tnr) {
-               int subKey = int_subTnr.Key;
-               var subTnr = int_subTnr.Value;
-               var subRes = Recursion(subTnr);
-               res.AddSubTnr(subKey, subRes); } }
-         else if(tnr.Rank == 2) {                                 // Subordinates are vectors.
-            foreach (var int_subTnr in tnr) {
-               int subKey = int_subTnr.Key;
-               var subVec = (Vector<τ,α>) int_subTnr.Value;
-               res.AddSubTnr(subKey, scal*subVec); } }
-         else
-            return scal*((Vector<τ,α>) tnr);
-         return res;
-      }
-   }
+   public static Tensor<τ,α>? operator * (τ scal, Tensor<τ,α>? aTnr) =>
+      aTnr.MulTop(scal);
+      
    /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
    /// <param name="aTnr2">Right-hand operand.</param>
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
@@ -671,27 +535,6 @@ where α : IArithmetic<τ>, new() {
             return (tnr.Count > 0 ? true : false); }
    }
 
-   /// <summary>Compares substructures of two equal rank tensors and throws an exception if they mismatch.</summary>
-   /// <param name="tnr1">First tensor.</param>
-   /// <param name="tnr2">Second tensor.</param>
-   public static void ThrowOnSubstructureMismatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      Assume.True(tnr1.Rank == tnr2.Rank, () => "Tensor ranks do not match.");                                    // First, ranks must match.
-      int topRank1 = tnr1.Structure.Count;                                      // We have to check that all dimensions below current ranks match.
-      int topRank2 = tnr2.Structure.Count;
-      var structInx1 = topRank1 - tnr1.Rank;                         // Index in structure array.
-      var structInx2 = topRank2 - tnr2.Rank;
-      for(int i = structInx1, j = structInx2; i < topRank1; ++i, ++j) {
-         if(tnr1.Structure[i] != tnr2.Structure[j])
-            throw new InvalidOperationException("Tensor addition: structures do not match."); }
-   }
-
-   /// <summary>Compares substructures of two equal rank tensors.</summary>
-   /// <param name="tnr1">First tensor.</param>
-   /// <param name="tnr2">Second tensor.</param>
-   public static bool DoSubstructuresMatch(Tensor<τ,α> tnr1, Tensor<τ,α> tnr2) {
-      Assume.True(tnr1.Rank == tnr2.Rank, () => "Tensor ranks do not match.");                                    // First, ranks must match.
-      return tnr1.SubStructure.SequenceEqual(tnr2.SubStructure);
-   }
 
    /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
    public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
