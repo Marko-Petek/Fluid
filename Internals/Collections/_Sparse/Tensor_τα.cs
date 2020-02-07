@@ -227,39 +227,7 @@ where α : IArithmetic<τ>, new() {
    public static Tensor<τ,α>? operator * (τ scal, Tensor<τ,α>? aTnr) =>
       aTnr.MulTop(scal);
       
-   /// <summary>Calculates tensor product of this tensor (left-hand operand) with another tensor (right-hand operand).</summary>
-   /// <param name="aTnr2">Right-hand operand.</param>
-   /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public virtual Tensor<τ,α> TnrProductTop(Tensor<τ,α> aTnr2) {
-      // Overriden on vector when first operand is a vector.
-      // 1) Descend to rank 1 through a recursion and then delete that vector.
-      // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
-      int newRank = Rank + aTnr2.Rank;
-      var struct1 = CopySubstructure();
-      var struct2 = aTnr2.CopySubstructure();
-      var newStructure = struct1.Concat(struct2).ToList();
-      return Recursion(this, newRank);
-
-      Tensor<τ,α> Recursion(Tensor<τ,α> tnr1, int resRank) {
-         var res = new Tensor<τ,α>(newStructure, resRank, tnr1.Superior, tnr1.Count);
-         if(tnr1.Rank > 2) {                                                    // Only copy. Adjust ranks.
-            foreach(var int_subTnr1 in tnr1) {
-               int subKey = int_subTnr1.Key;
-               var subTnr1 = int_subTnr1.Value;
-               res.AddSubTnr(subKey, Recursion(subTnr1, resRank - 1)); } }
-         else {                                                            // We are now at tensor which contains vectors.
-            foreach(var int_subTnr1R1 in tnr1) {                           // Substitute each vector with a new tensor.
-               int subKeyR1 = int_subTnr1R1.Key;
-               var subVec1 = (Vector<τ,α>) int_subTnr1R1.Value;
-               var newSubTnr = new Tensor<τ,α>(newStructure, resRank - 1, tnr1, subVec1.Count);
-               foreach(var int_subVal1 in subVec1.Scals) {
-                  int subKeyR0 = int_subVal1.Key;
-                  var subVal1 = int_subVal1.Value;
-                  newSubTnr.AddSubTnr(subKeyR0, subVal1*aTnr2); }
-               res.AddSubTnr(subKeyR1, newSubTnr); } }
-         return res;
-      }
-   }
+   
    /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
    /// <param name="r"> Rank index (zero-based) of the rank to eliminate.</param>
    /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>

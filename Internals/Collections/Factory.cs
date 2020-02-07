@@ -34,10 +34,17 @@ public static class Factory {
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
+      return SubVectorIntern(sup, inx, cap);
+   }
+
+   internal static Vector<τ,α> SubVectorIntern<τ,α>(this Tensor<τ,α> sup, int inx, int cap = 6)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
       var vec = new Vector<τ,α>(sup, cap);
       sup[Vector<τ,α>.V, inx] = vec;
       return vec;
    }
+
    /// <summary>Creates a top vector from an array span.</summary>
    /// <param name="span">Array span of values.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
@@ -93,12 +100,22 @@ public static class Factory {
    public static Tensor<τ,α> SubTensor<τ,α>(this Tensor<τ,α> sup, int inx, int cap = 6)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      Assume.True(sup.Rank > 2, () =>
-         "Superior's rank too low. For creating tensors of rank 1 use Factory.SubVector.");
-      var tnr = new Tensor<τ,α>(sup, cap);
-      sup[Tensor<τ,α>.T, inx] = tnr;
-      return tnr;
+      Assume.True(sup.Rank > 1, () =>
+         "Superior's rank too low. Cannot create a subtensor on a vector.");
+      return SubTensorIntern(sup, inx, cap);
    }
+
+   internal static Tensor<τ,α> SubTensorIntern<τ,α>(this Tensor<τ,α> sup, int inx, int cap = 6)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() {
+      if(sup.Rank > 2) {
+         var tnr = new Tensor<τ,α>(sup, cap);
+         sup[Tensor<τ,α>.T, inx] = tnr;
+         return tnr; }
+      else
+         return SubVectorIntern(sup, inx, cap);
+   }
+
    /// <summary>Creates a top tensor from an array span.</summary>
    /// <param name="span">Array span of values.</param>
    /// <param name="strc">Structure.</param>
@@ -138,10 +155,10 @@ public static class Factory {
    public static Vector<τ,α> CopyAsTopVec<τ,α>(this Vector<τ,α> src, int extraCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = TopVector<τ,α>(src.Dim, src.Count + extraCap);
-      foreach(var int_val in src.Scals)
-         vec.Add(int_val.Key, int_val.Value);
-      return vec;
+      var copy = TopVector<τ,α>(src.Dim, src.Count + extraCap);
+      foreach(var (i, s) in src.Scals)
+         copy.Add(i, s);
+      return copy;
    }
    /// <summary>Creates a deep copy of a vector as a non-top vector (non-null superior).</summary>
    /// <param name="src">Copy source.</param>
@@ -162,10 +179,10 @@ public static class Factory {
    int inx, int xCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var vec = SubVector<τ,α>(newSup, inx, src.Count + xCap);
-      foreach(var sInx_sVal in src.Scals)
-         vec.Add(sInx_sVal.Key, sInx_sVal.Value);
-      return vec;
+      var copy = SubVector<τ,α>(newSup, inx, src.Count + xCap);
+      foreach(var (i, s) in src.Scals)
+         copy.Add(i, s);
+      return copy;
    }
 
    /// <summary>Creates a deep copy of a tensor as a top tensor (null superior).</summary>
@@ -180,12 +197,10 @@ public static class Factory {
          return CopyAsTopVec<τ,α>(vec, xCap); }
       else {
          var newStrc = new List<int>(src.Structure);
-         var tgt = TopTensor<τ,α>(newStrc, src.Count + xCap);
-         foreach(var sInx_sSrc in src) {
-            int sInx = sInx_sSrc.Key;
-            var sSrc = sInx_sSrc.Value;
-            CopyAsSubTnr<τ,α>(sSrc, tgt, sInx, xCap); }
-         return tgt; }
+         var copy = TopTensor<τ,α>(newStrc, src.Count + xCap);
+         foreach(var (i, t) in src)
+            CopyAsSubTnr<τ,α>(t, copy, i, xCap);
+         return copy; }
    }
    /// <summary>Creates a deep copy of a tensor as a non-top tensor (non-null superior).</summary>
    /// <param name="src">Copy source.</param>
@@ -208,18 +223,15 @@ public static class Factory {
    Tensor<τ,α> newSup, int inx, int xCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
-      var tgtR = SubTensor<τ,α>(newSup, inx, src.Count + xCap);               // TODO: Check that count is not 0 anywhere.
+      var copy = SubTensor<τ,α>(newSup, inx, src.Count + xCap);               // TODO: Check that count is not 0 anywhere.
       if(src.Rank > 2) {                                                        // Subordinates are tensors.
-         foreach (var inxR_sSrcR in src) {
-            int sInxR = inxR_sSrcR.Key;
-            var sSrcR = inxR_sSrcR.Value;
-            CopyAsSubTnrIntern(sSrcR, tgtR, sInxR, xCap); } }
+         foreach (var (i, t) in src)
+            CopyAsSubTnrIntern(t, copy, i, xCap); }
       else {                                                                     // Subordinates are vectors.
-         foreach(var inxR_sSrcR in src) {
-            int sInxR = inxR_sSrcR.Key;
-            var sSrcR = (Vector<τ,α>) inxR_sSrcR.Value;
-            CopyAsSubVec<τ,α>(sSrcR, tgtR, sInxR, xCap); } }
-      return tgtR; }
+         foreach(var (i, t) in src) {
+            var v = (Vector<τ,α>) t;
+            CopyAsSubVec<τ,α>(v, copy, i, xCap); } }
+      return copy; }
 }
 
 }

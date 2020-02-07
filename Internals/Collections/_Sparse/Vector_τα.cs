@@ -38,42 +38,7 @@ where α : IArithmetic<τ>, new() {
             Scals.Remove(i); }
    }
 
-   /// <summary>Tensor product of a vector with another tensor. Returns top tensor (null superior) as result.</summary>
-   /// <param name="tnr2">Right hand operand.</param>
-   /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public override Tensor<τ,α> TnrProductTop(Tensor<τ,α> tnr2) {
-      if(tnr2.Rank > 1) {
-         int newRank = Rank + tnr2.Rank;
-         var struct1 = CopySubstructure();
-         var struct2 = tnr2.CopySubstructure();
-         var newStructure = struct1.Concat(struct2).ToList();
-         // We must substitute this vector with a tensor whose elements are multiples of tnr2.
-         var res = TopTensor<τ,α>(newStructure, Scals.Count);
-         foreach(var int_subVal in Scals) {
-            int subKey = int_subVal.Key;
-            var subVal = int_subVal.Value;
-            res.AddSubTnr(subKey, subVal*tnr2); }                   // TODO: Check multiply for top/sub.
-         return res; }
-      else {
-         var vec2 = (Vector<τ,α>) tnr2;
-         return TnrProductTop(vec2); }
-   }
-   /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
-   public Tensor<τ,α>? TnrProductTop(Vector<τ,α>? vec2) {
-      if(vec2 != null) {
-         int dim1 = Structure.Last();
-         int dim2 = vec2.Structure.Last();
-         var newStructure = new List<int> {dim1, dim2};
-         var res = TopTensor<τ,α>(newStructure, Scals.Count);
-         foreach(var int_subVal1 in Scals) {
-            int subKey = int_subVal1.Key;
-            var subVal1 = int_subVal1.Value;
-            var newVec = subVal1*vec2;
-            res.AddPlusIfNotEmpty(subKey, newVec); }
-         return res;
-      }
-      else return null;
-   }
+   
    
 
 
