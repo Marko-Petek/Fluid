@@ -407,73 +407,7 @@ where α : IArithmetic<τ>, new() {
       (List<int> struc3, int rank1, int rank2, int conDim) = ContractPart1(tnr1, tnr2, slotInx1, slotInx2);
       return ContractPart2(tnr1, tnr2, rank1, rank2, struc3, conDim);
    }
-   /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
-   /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
-   public τ SelfContractR2() {
-      Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
-      Assume.True(Structure[0] == Structure[1], () =>
-         "Corresponding dimensions have to be equal.");
-      τ result = O<τ,α>.A.Zero();
-      foreach(var int_vec in this) {
-         var vec = (Vector<τ,α>) int_vec.Value;
-         if(vec.Scals.TryGetValue(int_vec.Key, out τ val))
-            result = O<τ,α>.A.Sum(result, val); }
-      return result;
-   }
-
-   public Vector<τ,α> SelfContractR3(int slot1, int slot2) {
-      Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
-      Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
-         "Corresponding dimensions have to be equal.");
-      Vector<τ,α> res = new Vector<τ,α>(new List<int> {Structure[2]}, Voids<τ,α>.Vec, 4);
-      int rank1 = ChangeRankNotation(this, slot1);
-      int rank2 = ChangeRankNotation(this, slot2);
-      if(slot1 == 1) {
-         if(slot2 == 2) {
-            foreach(var int_tnr in this) {
-               if(int_tnr.Value.TryGetValue(int_tnr.Key, out var subTnr)) {
-                  var vec = (Vector<τ,α>) subTnr;
-                  res.Sum(vec); } } }
-         if(slot2 == 3) {
-            foreach(var int_tnr in this) {
-               foreach(var int_subTnr in int_tnr.Value) {
-                  var subVec = (Vector<τ,α>) int_subTnr.Value;
-                  if(subVec.Scals.TryGetValue(int_tnr.Key, out τ val))
-                     res.Scals[int_subTnr.Key] = O<τ,α>.A.Sum(res[int_subTnr.Key], val); } } } }
-      else if(slot1 == 2) {                   // natInx2 == 3
-         foreach(var int_tnr in this) {
-            foreach(var int_subTnr in int_tnr.Value) {
-               var subVec = (Vector<τ,α>) int_subTnr.Value;
-               if(subVec.Scals.TryGetValue(int_subTnr.Key, out τ val))
-                  res.Scals[int_tnr.Key] = O<τ,α>.A.Sum(res[int_tnr.Key], val); } } }
-      return res;
-   }
-   /// <summary>Contracts across two slot indices on a single tensor of at least rank 3.</summary>
-   /// <param name="slot1">Slot index 1.</param>
-   /// <param name="slot2">Slot index 2.</param>
-   /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
-   public Tensor<τ,α> SelfContract(int slot1, int slot2) {
-      Assume.True(Rank > 2, () =>
-         "This method is not applicable to rank 2 tensors.");
-      Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
-         "Dimensions of contracted slots have to be equal.");
-      if(Rank > 3) {
-         var newStruct1 = Structure.Take(slot1 - 1);
-         var newStruct2 = Structure.Take(slot2 - 1).Skip(slot1);
-         var newStruct3 = Structure.Skip(slot2);
-         var newStruct = newStruct1.Concat(newStruct2).Concat(newStruct3).ToList();
-         var res = new Tensor<τ,α>(newStruct, Rank - 2, Voids<τ,α>.Vec, Count);
-         int rank1 = ChangeRankNotation(this, slot1);
-         int rank2 = ChangeRankNotation(this, slot2);
-         int dimRank = Structure[slot1 - 1];                // Dimension of contracted rank.
-         for(int i = 0; i < dimRank; ++i) {                    // Over each element inside contracted ranks.
-            var step1Tnr = ReduceRank(rank2, i);
-            var sumand = step1Tnr.ReduceRank(rank1 - 1, i);
-            res.Sum(sumand); }
-         return res; }
-      else
-         return SelfContractR3(slot1, slot2);
-   }
+   
 
    /// <summary>Checks whether all subordinates down the line have at least one value down their line. Returns a sequence of indices that lead to the problem if there is one, otherwise returns null.</summary>
    public List<int>? CheckIntegrity() {                           // TODO: Test CheckIntegrity.

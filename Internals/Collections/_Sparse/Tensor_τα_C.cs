@@ -98,12 +98,6 @@ where α : IArithmetic<τ>, new() {
    static int ChangeRankNotation(int topRankInx, int slotOrRankInx) =>
       topRankInx - slotOrRankInx;
 
-   /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
-   /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
-   /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
-   static int ChangeRankNotation(Tensor<τ,α> topTnr, int slotOrRankInx) =>
-      topTnr.Rank - slotOrRankInx;
-
 
 }
 }

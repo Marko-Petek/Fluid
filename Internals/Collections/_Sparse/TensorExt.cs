@@ -225,7 +225,7 @@ public static class TensorExt {
 
    
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public static Tensor<τ,α> TnrProdTop<τ,α>(Tensor<τ,α> t1, Tensor<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static Tensor<τ,α> TnrProdTop<τ,α>(this Tensor<τ,α> t1, Tensor<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // 1) Descend to rank 1 through a recursion and then delete that vector.
       // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
       var strc1 = t1.GetSubstructure();
@@ -246,5 +246,82 @@ public static class TensorExt {
                t2.MulSubIntern(s1, prod, i); }
          return prod; }
    }
+
+
+   /// <summary>Contracts across two slot indices on a single tensor of at least rank 3.</summary>
+   /// <param name="slot1">Slot index 1.</param>
+   /// <param name="slot2">Slot index 2.</param>
+   /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
+   internal static Tensor<τ,α> SelfContractTop<τ,α>(this Tensor<τ,α> top, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      // Assume.True(Rank > 2, () =>
+      //    "This method is not applicable to rank 2 tensors.");
+      // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
+      //    "Dimensions of contracted slots have to be equal.");
+      if(top.Rank > 3) {
+         var strc1 = top.Structure.Take(slot1 - 1);
+         var strc2 = top.Structure.Take(slot2 - 1).Skip(slot1);
+         var strc3 = top.Structure.Skip(slot2);
+         var strc = strc1.Concat(strc2).Concat(strc3).ToList();
+         //var res = new Tensor<τ,α>(newStruct, Rank - 2, Voids<τ,α>.Vec, Count);
+         var t = TopTensor<τ,α>(strc, top.Count);
+         int rank1 = ChangeRankNotation(top, slot1);
+         int rank2 = ChangeRankNotation(top, slot2);
+         int dimRank = Structure[slot1 - 1];                // Dimension of contracted rank.
+         for(int i = 0; i < dimRank; ++i) {                    // Over each element inside contracted ranks.
+            var step1Tnr = ReduceRank(rank2, i);
+            var sumand = step1Tnr.ReduceRank(rank1 - 1, i);
+            res.Sum(sumand); }
+         return res; }
+      else
+         return SelfContractR3(slot1, slot2);
+   }
+
+   internal static Vector<τ,α> SelfContractR3TopIntern<τ,α>(this Tensor<τ,α> top, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      // Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
+      // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
+      //    "Corresponding dimensions have to be equal.");
+      var v = TopVector<τ,α>(top.Structure[2], 4);
+      if(slot1 == 1) {
+         if(slot2 == 2) {
+            foreach(var (i, t) in top) {
+               if(t.TryGetValue(i, out var st)) {
+                  var sv = (Vector<τ,α>) st;
+                  v.SumIntoIntern(sv); } } }
+         if(slot2 == 3) {
+            foreach(var (i, t) in top) {
+               foreach(var (j, st) in t) {
+                  var sv = (Vector<τ,α>) st;
+                  if(sv.Scals.TryGetValue(i, out τ s))
+                     v.Scals[j] = O<τ,α>.A.Sum(v[j], s); } } } }
+      else if(slot1 == 2) {                   // natInx2 == 3
+         foreach(var (i, t) in top) {
+            foreach(var (j, st) in t) {
+               var subVec = (Vector<τ,α>) st;
+               if(subVec.Scals.TryGetValue(j, out τ val))
+                  v.Scals[i] = O<τ,α>.A.Sum(v[i], val); } } }
+      return v;
+   }
+
+   /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
+   /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
+   internal static τ SelfContractR2TopIntern<τ,α>(this Tensor<τ,α> top)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      // Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
+      // Assume.True(Structure[0] == Structure[1], () =>
+      //    "Corresponding dimensions have to be equal.");
+      τ result = O<τ,α>.A.Zero();
+      foreach(var (i, st) in top) {
+         var sv = (Vector<τ,α>) st;
+         if(sv.Scals.TryGetValue(i, out τ s))
+            result = O<τ,α>.A.Sum(result, s); }
+      return result;
+   }
+
+
+
+   /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
+   /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
+   /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
+   static int ChangeRankNotation<τ,α>(this Tensor<τ,α> topTnr, int slotOrRankInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
+      topTnr.Rank - slotOrRankInx;
 }
 }
