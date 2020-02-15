@@ -187,13 +187,13 @@ public static class VectorExt {
    internal static Tensor<τ,α> TnrProdTopIntern<τ,α>(this Vector<τ,α> v1, Tensor<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t2.Rank > 1) {
          int newRank = v1.Rank + t2.Rank;
-         var strc1 = v1.GetSubstructure();
-         var strc2 = t2.GetSubstructure();
+         var strc1 = v1.EnumSubstrc();
+         var strc2 = t2.EnumSubstrc();
          var newStrc = strc1.Concat(strc2).ToList();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
          var prod = TopTensor<τ,α>(newStrc, v1.Scals.Count);
          foreach(var (i, s1) in v1.Scals)
-            t2.MulSubIntern(s1, prod, i);
+            t2.MulSubß(s1, prod, i);
          return prod; }
       else {
          var v2 = (Vector<τ,α>) t2;

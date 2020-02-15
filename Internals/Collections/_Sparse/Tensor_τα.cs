@@ -69,25 +69,27 @@ where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    
    
-   /// <summary>Hierarchy's dimensional structure. First element specifies host's (tensor highest in hierarchy) rank, while last element specifies the rank of values. E.g.: {3,2,6,5} specifies structure of a tensor of 4th rank with first rank dimension equal to 5 and fourth rank dimension to 3. Setter works properly on non-top tensors. It must change the reference.</summary>
+   /// <summary>Dimensions of tensor's ranks as a list. E.g.: {3,2,6,5} is read as: {{rank 4, dim 3}, {rank 3, dim 2}, {rank 2, dim 6}, {rank 1, dim 5}}.</summary>
    public List<int> Structure { get; internal set; }
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level. Rank notation: [0, N-1] where the value corresponds to the rank of tensors held by that slot.</summary>
    public int Rank { get; internal set; }
+   /// <summary>Rank of the top tensor. Highest rank in the hierarchy.</summary>
+   public int TopRank => Structure.Count;
    /// <summary>Slot notation: [1, N] which is how mathematicians would assign ordering to tensor's slots.</summary>
    public int Slot =>
-      ChangeRankNotation(Structure.Count, Rank);
+      ChangeRankNotation(TopRank, Rank);
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
    public Tensor<τ,α>? Superior { get; internal set; }
    /// <summary>Number of entries (non-zeros) in Tensor. Works even if the reference points to a Vector.</summary>
    public new int Count => CountInternal;
    /// <summary>Virtual Count override so that it works also on Vectors when looking at them as Tensors.</summary>
    protected virtual int CountInternal => base.Count;
-   /// <summary>The number of available spots one rank lower.</summary>
-   public int Dim => Structure[Slot];
-   /// <summary>Index of Structure list where substructure begins (the structure a non-top tensor would have if it was top).</summary>
-   public int SubStrcInx => Structure.Count - Rank;
-   /// <summary>Substructure (the structure a non-top tensor would have if it was top) as a traversal rule.</summary>
-   public IEnumerable<int> SubStructure => Structure.Skip(SubStrcInx);
+   /// <summary>Tensor dimension. The number of (potential) subtensors.</summary>
+   public int Dim => Structure[StrcInx];
+   /// <summary>Index in Structure where substructure begins (structure a non-top tensor would have if it was top).</summary>
+   public int StrcInx => Slot - 1;
+   /// <summary>Substructure (the structure a non-top tensor would have if it was top).</summary>
+   public List<int> Substrc => EnumSubstrc().ToList();
 
 
    /// <summary>Tensor getting/setting indexer.</summary>
@@ -276,27 +278,7 @@ where α : IArithmetic<τ>, new() {
             throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
    }
 
-   // static void TnrElimination(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx) {        // src is 2 ranks above elimRank and at least rank 3.
-   //     }
-
-   /// <summary>Can only be used to eliminate rank 3 or higher. Provided target has to be initiated one rank lower than source.</summary>
-   /// <param name="src">Source tensor whose rank we are eliminating.</param>
-   /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
-   /// <param name="emtInx">Element index in favor of which we are eliminating.</param>
-   /// <param name="elimRank"></param>
-   static void RecursiveCopyAndElim(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx, int elimRank) {      // Recursively copies tensors.
-      if(src.Rank > elimRank + 2) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
-         foreach(var int_tnr in src) {
-            var subTnr = new Tensor<τ,α>(tgt, src.Count);
-            RecursiveCopyAndElim(int_tnr.Value, subTnr, emtInx, elimRank);
-            if(subTnr.Count != 0)
-               tgt.AddSubTnr(int_tnr.Key, subTnr); } }
-      else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
-         foreach(var int_tnr in src) {
-            if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
-               var subTnrCopy = subTnr.Copy(in CopySpecs.S320_04);
-               tgt.Add(int_tnr.Key, subTnrCopy); } } }
-   }
+   
 
    /// <summary>Eliminates rank 0 on a rank 2 tensor, resulting in a rank 1 tensor (vector),</summary>
    /// <param name="src">Rank 2 tensor.</param>
@@ -310,7 +292,7 @@ where α : IArithmetic<τ>, new() {
          if(subVec.Scals.TryGetValue(emtInx, out var val))
             tgt.Add(int_tnrR1.Key, val); }
    }
-   /// <summary>Eliminate rank 0 on a rank 3 or higher tensor.</summary>
+   /// <summary>Eliminate rank 0 on a rank 3 or higher tensor resulting in a one rank lower tensor.</summary>
    /// <param name="src">Rank 3 or higher tensor.</param>
    /// <param name="tgt">Tensor one rank lower than source.</param>
    /// <param name="emtInx">Element index in favor of which to eliminate.</param>

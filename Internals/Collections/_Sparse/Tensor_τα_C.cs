@@ -66,17 +66,17 @@ where α : IArithmetic<τ>, new() {
    }
    
    /// <summary>A substructure as unevaluated instructions ready for enumeration.</summary>
-   internal IEnumerable<int> GetSubstructure() =>
-      Structure.Skip(SubStrcInx);
+   internal IEnumerable<int> EnumSubstrc() =>
+      Structure.Skip(StrcInx);
    /// <summary>Packs substructure into a new structure. Use for new top tensors.</summary>
-   internal List<int> CopySubstructure() =>
-      GetSubstructure().ToList();
+   internal List<int> CopySubstrc() =>
+      EnumSubstrc().ToList();
       
    /// <summary>Copies substructure from specified tensor directly into Structure.</summary>
    /// <param name="tnr">Source.</param>
    protected void AssignStructFromSubStruct(Tensor<τ,α> tnr) {          // FIXME: Remove this after the copy specs fixes.
       Structure.Clear();
-      var subStruct = tnr.Structure.Skip(tnr.SubStrcInx);
+      var subStruct = tnr.Structure.Skip(tnr.StrcInx);
       foreach(var emt in subStruct) {
          Structure.Add(emt); }
    }
