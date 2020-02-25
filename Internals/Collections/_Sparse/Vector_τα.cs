@@ -39,7 +39,8 @@ where α : IArithmetic<τ>, new() {
    }
 
    
-   
+   // public bool TryGetValue(int inx, out τ scal) =>
+   //    Scals.TryGetValue(inx, out scal);
 
 
    
@@ -66,56 +67,14 @@ where α : IArithmetic<τ>, new() {
       vec.Negate();
    /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
    public static Vector<τ,α>? operator * (τ scal, Vector<τ,α> vec) =>
-      MulTop(scal, vec);
+      vec.MulTop(scal);
    
 
-   public static Tensor<τ,α> ContractPart2(Vector<τ,α> vec1, Tensor<τ,α> tnr2, int truInx2, List<int> struc3, int conDim) {
-      if(tnr2.Rank > 2) {                                                  // Result is tensor.
-         Tensor<τ,α> elimTnr2, sumand, sum;
-         sum = new Tensor<τ,α>(struc3);                                    // Set sum to a zero tensor.
-         for(int i = 0; i < conDim; ++i) {
-            elimTnr2 = tnr2.ReduceRank(truInx2, i);
-            if(vec1.Scals.TryGetValue(i, out var val) && elimTnr2 != Voids<τ,α>.Vec) {
-               sumand = val*elimTnr2;
-               sum.Sum(sumand); } }
-         if(sum.Count != 0)
-            return sum;
-         else
-            return Voids<τ,α>.Vec; }
-      else if(tnr2.Rank == 2) {
-         Tensor<τ,α> elimTnr2;
-         Vector<τ,α> elimVec2, sumand, sum;
-         sum = new Vector<τ,α>(struc3, Voids<τ,α>.Vec, 4);
-         for(int i = 0; i < conDim; ++i) {
-            elimTnr2 = tnr2.ReduceRank(truInx2, i);
-            if(elimTnr2 != Voids<τ,α>.Vec) {
-               elimVec2 = (Vector<τ,α>) tnr2.ReduceRank(truInx2, i);
-               if(vec1.Scals.TryGetValue(i, out var val)) {
-                  sumand = val*elimVec2;
-                  sum.Sum(sumand); } } }
-         if(sum.Scals.Count != 0)
-            return sum;
-         else
-            return Voids<τ,α>.Vec; }
-      else {                                                               // Result is scalar.
-         throw new ArgumentException("Explicitly cast tnr2 to vector before using contract."); }
-   }
-
-   public static Tensor<τ,α> Contract(Vector<τ,α> vec1, Tensor<τ,α> tnr2, int natInx2) {
-      (List<int> struc3, _, int truInx2, int conDim) = Tensor<τ,α>.ContractPart1(vec1, tnr2, 1, natInx2);
-      return ContractPart2(vec1, tnr2, truInx2, struc3, conDim);
-   }
-   public static τ Contract(Vector<τ,α> vec1, Vector<τ,α> vec2) {
-      τ res = O<τ,α>.A.Zero();
-      foreach(var int_val1 in vec1.Scals) {
-         if(vec2.Scals.TryGetValue(int_val1.Key, out var val2))
-            res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
-      return res;
-   }
+   
    /// <summary>Dot (scalar) product.</summary>
    /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
-   public static τ operator *(Vector<τ,α> vec1, Vector<τ,α> vec2) =>
-      Contract(vec1, vec2);
+   public static τ operator *(Vector<τ,α> v1, Vector<τ,α> v2) =>
+      v1.Contract(v2);
 
    
 

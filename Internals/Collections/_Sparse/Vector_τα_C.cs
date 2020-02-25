@@ -27,7 +27,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Creates a non-top vector with specified superior and initial capacity. Does not add the new vector to its superior or check whether the superior is rank 2.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Structure, sup, cap) { }
+   internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Strc, sup, cap) { }
    
    /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
    /// <param name="dim">Dimension. Number of spots available for values.</param>
@@ -40,8 +40,8 @@ where α : IArithmetic<τ>, new() {
    internal void Add(int key, τ val) =>
       Scals.Add(key, val);
 
-   internal bool TryGetValue(int key, out τ val) =>
-      Scals.TryGetValue(key, out val);
+   internal bool TryGetValue(int inx, out τ scal) =>
+      Scals.TryGetValue(inx, out scal);
 }
 
 }

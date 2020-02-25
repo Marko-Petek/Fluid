@@ -19,7 +19,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
    protected Tensor(List<int> strc, int rank, Tensor<τ,α>? sup, int cap) : base(cap) {
-      Structure = strc;
+      Strc = strc;
       Rank = rank;
       Superior = sup;
    }
@@ -30,7 +30,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Structure,
+   internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Strc,
    sup.Rank - 1, sup, cap) { }
 
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
@@ -38,7 +38,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="tnr">Tensor to add.</param>
    internal void AddSubTnr(int inx, Tensor<τ,α> tnr) {
       tnr.Superior = this;
-      tnr.Structure = Structure;
+      tnr.Strc = Strc;
       base.Add(inx, tnr);
    }
    
@@ -60,14 +60,14 @@ where α : IArithmetic<τ>, new() {
       if(tnr != null) {
          base[inx] = tnr;
          tnr.Superior = this;
-         tnr.Structure = Structure; }
+         tnr.Strc = Strc; }
       else
          Remove(inx);
    }
    
    /// <summary>A substructure as unevaluated instructions ready for enumeration.</summary>
    internal IEnumerable<int> EnumSubstrc() =>
-      Structure.Skip(StrcInx);
+      Strc.Skip(StrcInx);
    /// <summary>Packs substructure into a new structure. Use for new top tensors.</summary>
    internal List<int> CopySubstrc() =>
       EnumSubstrc().ToList();
@@ -75,10 +75,10 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Copies substructure from specified tensor directly into Structure.</summary>
    /// <param name="tnr">Source.</param>
    protected void AssignStructFromSubStruct(Tensor<τ,α> tnr) {          // FIXME: Remove this after the copy specs fixes.
-      Structure.Clear();
-      var subStruct = tnr.Structure.Skip(tnr.StrcInx);
+      Strc.Clear();
+      var subStruct = tnr.Strc.Skip(tnr.StrcInx);
       foreach(var emt in subStruct) {
-         Structure.Add(emt); }
+         Strc.Add(emt); }
    }
 
    // /// <summary>Transforms from slot index (in the order written by hand, e.g. A^ijk ==> 1,2,3) to rank index (as situated in the hierarchy, e.g. A^ijk ==> 2,1,0).</summary>

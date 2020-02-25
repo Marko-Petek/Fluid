@@ -41,7 +41,7 @@ public class ConjGradsSolver {
       while (true) {
          r[i] = (Vec) b - (Vec) Tnr.Contract(A, x[i], 2, 1);
          d[i] = d[j];
-         for (int k = 0; k < b.Structure[0]; ++k) {
+         for (int k = 0; k < b.Strc[0]; ++k) {
             ++iteration;
             rr[i] = r[i] * r[i];
             if (rr[i] < maxResSqr)
@@ -82,7 +82,7 @@ public class ConjGradsSolver {
       while (true) {
          r[i] = b - Tnr.Contract(A, x[i], 3, 1).SelfContract(3, 4);
          d[i] = d[j];
-         for (int k = 0; k < b.Structure[0]*b.Structure[1]; ++k) {
+         for (int k = 0; k < b.Strc[0]*b.Strc[1]; ++k) {
             ++iteration;
             rr[i] = Tnr.Contract(r[i], r[i], 1, 1).SelfContractR2();         // Scalar.
             if (rr[i] < maxResSqr)

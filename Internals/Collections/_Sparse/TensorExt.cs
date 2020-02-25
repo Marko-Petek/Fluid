@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Collections.Factory;
+using Lst = System.Collections.Generic.List<int>;
 
 namespace Fluid.Internals.Collections {
 public static class TensorExt {
@@ -50,15 +52,15 @@ public static class TensorExt {
             var sv2 = (Vector<τ,α>) st2;
             if(t1.TryGetValue(i, out var st1)) {                        // Entry exists in t1, we must sum.
                var sv1 = (Vector<τ,α>) st1;
-               var res = sv1.SumIntoIntern(sv2);
+               var res = sv1.SumIntoß(sv2);
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecIntern(t1, i); } } }                                // Entry does not exist in t1, copy as SubVec.
+               sv2.CopyAsSubVecß(t1, i); } } }                                // Entry does not exist in t1, copy as SubVec.
       else {                                                                     // We have a vector.
          var v1 = (Vector<τ,α>) t1;
          var v2 = (Vector<τ,α>) t2;
-         return v1.SumIntoIntern(v2); }
+         return v1.SumIntoß(v2); }
       if(t1.Count != 0)
          return t1;
       else
@@ -110,15 +112,15 @@ public static class TensorExt {
             var sv2 = (Vector<τ,α>) st2;
             if(t1.TryGetValue(i, out var st1)) {                        // Entry exists in t1, we must sum.
                var sv1 = (Vector<τ,α>) st1;
-               var res = sv1.SumIntoIntern(sv2);
+               var res = sv1.SumIntoß(sv2);
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecIntern(t1, i); } } }                                // Entry does not exist in t1, copy as subvector.
+               sv2.CopyAsSubVecß(t1, i); } } }                                // Entry does not exist in t1, copy as subvector.
       else {                                                                     // We have a vector.
          var v1 = (Vector<τ,α>) t1;
          var v2 = (Vector<τ,α>) t2;
-         return v1.SubIntoIntern(v2); }
+         return v1.SubIntoß(v2); }
       if(t1.Count != 0)
          return t1;
       else
@@ -153,10 +155,10 @@ public static class TensorExt {
       else if(t.Rank == 2) {
          foreach(var i_st in t) {
             var sv = (Vector<τ,α>) i_st.Value;
-            sv.NegateIntoIntern(); } }
+            sv.NegateIntoß(); } }
       else {
          var v = (Vector<τ,α>) t;
-         v.NegateIntoIntern(); }
+         v.NegateIntoß(); }
       return t;
    }
 
@@ -220,7 +222,7 @@ public static class TensorExt {
    /// <param name="scal"></param>
    /// <param name="vec"></param>
    internal static Tensor<τ,α> MulSubß<τ,α>(this Tensor<τ,α> t, τ scal, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      t.CopyAsSubTnrIntern(sup, inx).MulIntoß(scal);
+      t.CopyAsSubTnrß(sup, inx).MulIntoß(scal);
 
 
    
@@ -238,7 +240,7 @@ public static class TensorExt {
       Tensor<τ,α> Recursion(Tensor<τ,α> prod, Tensor<τ,α> t1) {
          if(t1.Rank > 1) {                                       // Only reconstruction going on.
             foreach(var (i, st1) in t1) {
-               var sProd = prod.SubTensorIntern(i, st1.Count);         // Reconstructed st1 on prod. Creates vector appropriately
+               var sProd = prod.SubTensorß(i, st1.Count);         // Reconstructed st1 on prod. Creates vector appropriately
                Recursion(sProd, st1); } }                        // Re-enter.
          else {                                                   // Reached rank 1 on t1.
             var v1 = (Vector<τ,α>) t1;
@@ -247,63 +249,154 @@ public static class TensorExt {
          return prod; }
    }
 
+   internal static (List<int> strc, int rank1, int rank2, int conDim) ContractTopPart1<τ,α>(
+   this Tensor<τ,α> t1, Tensor<τ,α> t2, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      // 1) First eliminate, creating new tensors. Then add them together using tensor product.
+      var strc1 = t1.Substrc;
+      var strc2 = t2.Substrc;
+      // int rank1 = struc1.Count,
+      //       rank2 = struc2.Count;
+      // Assume.True(rank1 == t1.Rank && rank2 == t2.Rank,
+      //    () => "One of the tensors is not top rank.");
+      Assume.AreEqual(strc1[slot1 - 1], strc2[slot2 - 1],              // Check that the dimensions of contracted ranks are equal.
+         "Rank dimensions at specified indices must be equal.");
+      int   conDim = strc1[slot1 - 1],                                // Dimension of rank we're contracting.
+            rankInx1 = ChangeRankNotation<τ,α>(t1.Rank, slot1),
+            rankInx2 = ChangeRankNotation<τ,α>(t2.Rank, slot2);
+      var strc_1 = strc1.Where((emt, i) => i != (slot1 - 1));
+      var strc_2 = strc2.Where((emt, i) => i != (slot2 - 1));
+      var strc = strc_1.Concat(strc_2).ToList();                 // New structure.
+      return (strc, rankInx1, rankInx2, conDim);
+   }
+   
+   internal static Tensor<τ,α>? ContractTopPart2<τ,α>(this Tensor<τ,α> t1, Tensor<τ,α> t2,
+   int rankInx1, int rankInx2, List<int> strc, int conDim)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      // 1) First eliminate, creating new tensors. Then combine them together using tensor product.
+      if(t1.Rank > 1) {
+         if(t2.Rank > 1) {                                // First tensor is rank 2 or more.
+            Tensor<τ,α>? elimTnr1, elimTnr2;
+            var sum = TopTensor<τ,α>(strc);                                    // Set sum to a zero tensor.
+            for(int i = 0; i < conDim; ++i) {
+               elimTnr1 = t1.ReduceRankTop(rankInx1, i);
+               elimTnr2 = t2.ReduceRankTop(rankInx2, i);
+               if(elimTnr1 != null && elimTnr2 != null) {
+                  var sumand = elimTnr1.TnrProdTop(elimTnr2);
+                  sum.SumIntoß(sumand); } }
+            if(sum.Count != 0)
+               return sum;
+            else
+               return null; }
+         else {                                                // Second tensor is rank 1 (a vector).
+            Vector<τ,α> v2 = (Vector<τ,α>) t2;
+            if(t1.Rank == 2) {                                    // Result will be vector.
+               Vector<τ,α>? elimVec, sumand;
+               var sum = TopVector<τ,α>(strc[0]);
+               for(int i = 0; i < conDim; ++i) {
+                  elimVec = (Vector<τ,α>?) t1.ReduceRankTop(rankInx1, i);
+                  if(elimVec != null && v2.Scals.TryGetValue(i, out var s)) {
+                     sumand = elimVec.MulTopß(s);
+                     sum.SumIntoß(sumand); } }
+               if(sum.Count != 0)
+                  return sum;
+               else
+                  return null; }
+            else {                                             // Result will be tensor.
+               Tensor<τ,α>? elimTnr1, sumand;
+               var sum = TopTensor<τ,α>(strc);
+               for(int i = 0; i < conDim; ++i) {
+                  elimTnr1 = t1.ReduceRankTop(rankInx1, i);
+                  if(elimTnr1 != null && v2.Scals.TryGetValue(i, out var s)) {
+                     sumand = elimTnr1.MulTopß(s);
+                     sum.SumIntoß(sumand); } }
+               if(sum.Count != 0)
+                  return sum;
+               else
+                  return null; } } }
+      else {                                                   // First tensor is rank 1 (a vector).
+         var v1 = (Vector<τ,α>) t1;
+         return v1.ContractTopPart2(t2, rankInx2, strc, conDim);}
+   }
+
+   /// <summary>Contracts two tensors over specified natural rank indices. Example: Contraction writen as A^(ijkl)B^(mnip) is specified as a (0,2) contraction of A and B, not a (3,1) contraction. Tensor contraction is a generalization of trace, which can further be viewed as a generalization of dot product.</summary>
+   /// <param name="t2">Tensor 2.</param>
+   /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
+   /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
+   /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
+   public static Tensor<τ,α>? Contract<τ,α>(this Tensor<τ,α> t1, Tensor<τ,α> t2, int slotInx1, int slotInx2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
+      return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
+   }
+
 
    /// <summary>Contracts across two slot indices on a single tensor of at least rank 3. Tensors that are subtensors of another are handled correctly.</summary>
-   /// <param name="tnr">Tensor to self-contract.</param>
+   /// <param name="t">Tensor to self-contract.</param>
    /// <param name="slot1">Slot index 1. Provide as if contracted tensor was top.</param>
    /// <param name="slot2">Slot index 2, greater than slot index 1. Provide as if contracted tensor was top.</param>
    /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
-   internal static Tensor<τ,α> SelfContractTop<τ,α>(this Tensor<τ,α> tnr, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   internal static Tensor<τ,α>? SelfContractTop<τ,α>(this Tensor<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // Assume.True(Rank > 2, () =>
       //    "This method is not applicable to rank 2 tensors.");
       // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
       //    "Dimensions of contracted slots have to be equal.");
-      if(tnr.Rank > 3) {
-         var substrc = tnr.EnumSubstrc();                                                 // Substructure of contracted tensor.
-         int slotDif = tnr.Structure.Count - substrc.Count();                             // Difference in number of slots between structure and substructure.
+      if(t.Rank > 3) {
+         var substrc = t.Substrc;                                                 // Substructure of contracted tensor.
+         int slotDif = t.Strc.Count - substrc.Count;                             // Difference in number of slots between structure and substructure.
          var strc = substrc.Where( (x,i) => i != slot1 - 1 && i != slot2 - 1 ).ToList();  // Structure of contracted tensor.
-         var t = tnr.CopyAsTopTnr() //TopTensor<τ,α>(strc, tnr.Count);
-         int rank1 = ChangeRankNotation<τ,α>(tnr.TopRank, slot1 + slotDif);               // Ranks for rank reduction are specified with regards to original tensor.
-         int rank2 = ChangeRankNotation<τ,α>(tnr.TopRank, slot2 + slotDif);
+         var nt = TopTensor<τ,α>(strc, t.Count);
+         int rank1 = ChangeRankNotation<τ,α>(t.TopRank, slot1 + slotDif);               // Ranks for rank reduction are specified with regards to original tensor.
+         int rank2 = ChangeRankNotation<τ,α>(t.TopRank, slot2 + slotDif);
          int dim = strc[slot1 - 1];                // Dimension of contracted ranks.
          for(int i = 0; i < dim; ++i) {                    // Over each element inside contracted ranks.
-            var step1Tnr = ReduceRank(rank2, i);
-            var sumand = step1Tnr.ReduceRank(rank1 - 1, i);
-            res.Sum(sumand); }
-         return res; }
+            var step1Tnr = t.ReduceRankTop(rank2, i);
+            if(step1Tnr != null) {
+               var sumand = step1Tnr.ReduceRankTop(rank1 - 1, i);
+               if(sumand != null)
+                  nt.SumIntoß(sumand); } }
+         if(nt.Count != 0)
+            return nt;
+         else
+            return null; }
       else
-         return SelfContractR3(slot1, slot2);
+         return t.SelfContractR3Topß(slot1, slot2);
    }
 
-   internal static Vector<τ,α> SelfContractR3Topß<τ,α>(this Tensor<τ,α> top, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   internal static Vector<τ,α> SelfContractR3Topß<τ,α>(this Tensor<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
       // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
       //    "Corresponding dimensions have to be equal.");
-      var v = TopVector<τ,α>(top.Structure[2], 4);
+      var substrc = t.Substrc;
+      int dim;
+      Vector<τ,α> nv;
       if(slot1 == 1) {
          if(slot2 == 2) {
-            foreach(var (i, t) in top) {
-               if(t.TryGetValue(i, out var st)) {
-                  var sv = (Vector<τ,α>) st;
-                  v.SumIntoIntern(sv); } } }
-         if(slot2 == 3) {
-            foreach(var (i, t) in top) {
-               foreach(var (j, st) in t) {
-                  var sv = (Vector<τ,α>) st;
-                  if(sv.Scals.TryGetValue(i, out τ s))
-                     v.Scals[j] = O<τ,α>.A.Sum(v[j], s); } } } }
-      else if(slot1 == 2) {                   // natInx2 == 3
-         foreach(var (i, t) in top) {
-            foreach(var (j, st) in t) {
-               var subVec = (Vector<τ,α>) st;
-               if(subVec.Scals.TryGetValue(j, out τ val))
-                  v.Scals[i] = O<τ,α>.A.Sum(v[i], val); } } }
-      return v;
+            dim = substrc[2];
+            nv = TopVector<τ,α>(dim);
+            foreach(var (i, st) in t) {
+               if(st.TryGetValue(i, out var sst)) {
+                  var ssv = (Vector<τ,α>) sst;
+                  nv.SumIntoß(ssv); } } }
+         else {                                            // Implies slot2 == 3
+            dim = substrc[1];
+            nv = TopVector<τ,α>(dim);
+            foreach(var (i, st) in t) {
+               foreach(var (j, sst) in st) {
+                  var ssv = (Vector<τ,α>) sst;
+                  if(ssv.Scals.TryGetValue(i, out τ s))
+                     nv.Scals[j] = O<τ,α>.A.Sum(nv[j], s); } } } }
+      else {                                                         // Implies  slot1 == 2, slot2 == 3
+         dim = substrc[0];
+         nv = TopVector<τ,α>(dim);
+         foreach(var (i, st) in t) {
+            foreach(var (j, sst) in st) {
+               var ssv = (Vector<τ,α>) sst;
+               if(ssv.Scals.TryGetValue(j, out τ s))
+                  nv.Scals[i] = O<τ,α>.A.Sum(nv[i], s); } } }
+      return nv;
    }
 
    /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
    /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
-   internal static τ SelfContractR2Topß<τ,α>(this Tensor<τ,α> top)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   internal static τ SelfContractR2ß<τ,α>(this Tensor<τ,α> top)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
       // Assume.True(Structure[0] == Structure[1], () =>
       //    "Corresponding dimensions have to be equal.");
@@ -315,29 +408,229 @@ public static class TensorExt {
       return result;
    }
 
-   /// <summary>Can only be used to eliminate rank 3 or higher. Provided target has to be initiated one rank lower than source.</summary>
-   /// <param name="src">Source tensor whose rank we are eliminating.</param>
-   /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
-   /// <param name="emtInx">Element index in favor of which we are eliminating.</param>
-   /// <param name="elimRank"></param>
-   static void RecursiveCopyAndElim<τ,α>(Tensor<τ,α> src, Tensor<τ,α> tgt, int emtInx, int elimRank) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {      // Recursively copies tensors.
-      if(src.Rank > elimRank + 2) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
-         foreach(var int_tnr in src) {
-            var subTnr = new Tensor<τ,α>(tgt, src.Count);
-            RecursiveCopyAndElim(int_tnr.Value, subTnr, emtInx, elimRank);
-            if(subTnr.Count != 0)
-               tgt.AddSubTnr(int_tnr.Key, subTnr); } }
-      else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
-         foreach(var int_tnr in src) {
-            if(int_tnr.Value.TryGetValue(emtInx, out var subTnr)) {
-               var subTnrCopy = subTnr.Copy(in CopySpecs.S320_04);
-               tgt.Add(int_tnr.Key, subTnrCopy); } } }
-   }
-
    /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
    /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
    /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
    static int ChangeRankNotation<τ,α>(int topRank, int slotOrRankInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
       topRank - slotOrRankInx;
+
+   /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
+   /// <param name="r"> Rank index (zero-based) of the rank to eliminate.</param>
+   /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
+   /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
+   public static Tensor<τ,α>? ReduceRankTop<τ,α>(this Tensor<τ,α> t, int r, int e)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {                                    // FIXME: Method must properly reassign superiors.
+      Assume.True(r < t.Rank && r > -1, () =>
+         "You can only eliminate a rank in range [0, TopRank)." );
+      var subStrc = t.Substrc;                                          // t can be a non-top tensor.
+      var strcL = subStrc.Take(r);
+      var strcR = subStrc.Skip(r + 1);
+      var strc = strcL.Concat(strcR).ToList();
+      if(r == t.Rank - 1) {                                                           // Only one rank exists above rank r. Pick one tensor from rank r and return it.
+         if(t.Rank > 1) {                                                             // Tensor to be reduced is at least rank two.
+            if(t.TryGetValue(e, out var st))                                    // Element exists.
+               return st.CopyAsTopTnr();
+            else
+               return null; }
+         else                                                                       // Rank <= 1: impossible.
+            throw new ArgumentException(
+               "Cannot eliminate rank 1 or lower on rank 1 tensor."); }
+      else if(r > 0) {                                                       // At least two ranks exist above r & r is at least 1. Obviously applicable only to Rank 3 or higher tensors.
+         if(t.Rank > 2)                                                              // No special treatment due to Vector needed.
+            return t.ElimR1hOnR3hTopß(e, r);
+         else
+            throw new ArgumentException("Cannot eliminate rank 1h on rank 2l tensor with this branch."); }
+      else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
+         if(t.Rank > 2)                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
+            return t.ElimR0onR3hTopß(e);
+         else if(t.Rank == 2)
+            return t.ElimR0onR2Topß(e);
+         else
+            throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
+   }
+
+   public static Tensor<τ,α>? ReduceRankSub<τ,α>(this Tensor<τ,α> t, int r, int e, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {                                    // FIXME: Method must properly reassign superiors.
+      Assume.True(r < t.Rank && r > -1, () =>
+         "You can only eliminate a rank in range [0, TopRank)." );
+      var subStrc = t.Substrc;                                          // t can be a non-top tensor.
+      var strcL = subStrc.Take(r);
+      var strcR = subStrc.Skip(r + 1);
+      var strc = strcL.Concat(strcR).ToList();
+      Assume.True(sup.Substrc.SequenceEqual(strc), () =>
+         "Specified superior has non-matching substructure.");
+      if(r == t.Rank - 1) {                                                           // Only one rank exists above rank r. Pick one tensor from rank r and return it.
+         if(t.Rank > 1) {                                                             // Tensor to be reduced is at least rank two.
+            if(t.TryGetValue(e, out var st))                                    // Element exists.
+               return st.CopyAsSubTnrß(sup, inx);
+            else
+               return null; }
+         else                                                                       // Rank <= 1: impossible.
+            throw new ArgumentException(
+               "Cannot eliminate rank 1 or lower on rank 1 tensor."); }
+      else if(r > 0) {                                                       // At least two ranks exist above r & r is at least 1. Obviously applicable only to Rank 3 or higher tensors.
+         if(t.Rank > 2)                                                              // No special treatment due to Vector needed.
+            return t.ElimR1hOnR3hSubß(e, r, sup, inx);
+         else
+            throw new ArgumentException("Cannot eliminate rank 1h on rank 2l tensor with this branch."); }
+      else {                                          // At least two ranks exist above elimRank & elimRank is 0. Obviously applicable only to rank 2 or higher tensors.
+         if(t.Rank > 2)                               // Result is tensor. Choose one value from each vector in subordinate rank 2 tensors, build a new vector and add those values to it. Then add that vector to superior rank 3 tensor.
+            return t.ElimR0onR3hSubß(e, sup, inx);
+         else if(t.Rank == 2)
+            return t.ElimR0onR2Subß(e, sup, inx);
+         else
+            throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
+   }
+
+   /// <summary>Eliminates rank 0 on a rank 2 tensor, resulting in a rank 1 tensor (vector),</summary>
+   /// <param name="src">Rank 2 tensor.</param>
+   /// <param name="tgt">Initialized result vector.</param>
+   /// <param name="emtInx">Element index in favor of which the elimination will proceed.</param>
+   public static Vector<τ,α>? ElimR0onR2Top<τ,α>(this Tensor<τ,α> t, int emtInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank == 2, () =>
+         "This method is intended for rank 2 tensors only.");
+      return t.ElimR0onR2Topß(emtInx);
+   }
+
+   internal static Vector<τ,α>? ElimR0onR2Topß<τ,α>(this Tensor<τ,α> t, int emtInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      var v = TopVector<τ,α>(t.Dim);
+      foreach(var (i,st) in t) {
+         var sv = (Vector<τ,α>) st;
+         if(sv.TryGetValue(emtInx, out var s))
+            v.Add(i,s); }
+      if(v.Count != 0)
+         return v;
+      else
+         return null;
+   }
+
+   public static Vector<τ,α>? ElimR0onR2Sub<τ,α>(this Tensor<τ,α> t, int elimInx, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank == 2, () =>
+         "This method is intended for rank 2 tensors only.");
+      var strc = t.Substrc.SkipLast(1).ToList();
+      Assume.True(sup.Substrc.SequenceEqual(strc), () =>
+         "Specified superior has non-matching substructure.");
+      return t.ElimR0onR2Subß(elimInx, sup, inx);
+   }
+
+   internal static Vector<τ,α>? ElimR0onR2Subß<τ,α>(this Tensor<τ,α> t, int elimInx, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      var v = sup.SubVector<τ,α>(inx);
+      foreach(var (i,st) in t) {
+         var sv = (Vector<τ,α>) st;
+         if(sv.TryGetValue(elimInx, out var s))
+            v.Add(i,s); }
+      if(v.Count != 0)
+         return v;
+      else {
+         sup.Remove(inx);
+         return null; }
+   }
+
+   /// <summary>Eliminate rank 0 on a rank 3 or higher tensor resulting in a one rank lower tensor.</summary>
+   /// <param name="t">Rank 3 or higher tensor.</param>
+   /// <param name="tgt">Tensor one rank lower than source.</param>
+   /// <param name="emtInx">Element index in favor of which to eliminate.</param>
+   public static Tensor<τ,α>? ElimR0onR3hTop<τ,α>(this Tensor<τ,α> t, int elimInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank > 2, () =>
+         "This method is applicable to rank 3 and higher tensors.");
+      return t.ElimR0onR3hTopß(elimInx);
+   }
+
+   internal static Tensor<τ,α>? ElimR0onR3hTopß<τ,α>(this Tensor<τ,α> t, int elimInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      var strc = t.Substrc.SkipLast(1).ToList();
+      var nt = TopTensor<τ,α>(strc);
+      if(t.Rank > 3) {
+         foreach(var (i,st) in t) {
+            st.ElimR0onR3hSubß(elimInx, nt, i); } }
+      else {                                                                  // src.Rank == 3.
+         foreach(var (i,st) in t) {
+            st.ElimR0onR2Subß(elimInx, nt, i); } }
+      if(nt.Count != 0)
+         return nt;
+      else
+         return null;
+   }
+
+   public static Tensor<τ,α>? ElimR0onR3hSub<τ,α>(this Tensor<τ,α> t, int elimInx, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank > 2, () =>
+         "This method is intended for rank 3 tensors or higher.");
+      var strc = t.Substrc.SkipLast(1).ToList();
+      Assume.True(sup.Substrc.SequenceEqual(strc), () =>
+         "Specified superior has non-matching substructure.");
+      return t.ElimR0onR3hSubß(elimInx, sup, inx);
+   }
+
+   internal static Tensor<τ,α>? ElimR0onR3hSubß<τ,α>(this Tensor<τ,α> t, int elimInx, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      var nt = sup.SubTensorß<τ,α>(inx, t.Count);
+      if(t.Rank > 3) {
+         foreach(var (i,st) in t)
+            st.ElimR0onR3hSubß(elimInx, nt, i); }
+      else {                                                                  // src.Rank == 3.
+         foreach(var (i,st) in t)
+            st.ElimR0onR2Subß(elimInx, nt, i); }
+      if(nt.Count != 0)
+         return nt;
+      else {
+         sup.Remove(inx);
+         return null; }
+   }
+
+   public static Tensor<τ,α>? ElimR1hOnR3hTop<τ,α>(this Tensor<τ,α> t, int e, int r)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank > 3, () =>
+         "This method is applicable to rank 3 and higher tensors.");
+      return t.ElimR1hOnR3hTopß(e,r);
+   }
+
+   internal static Tensor<τ,α>? ElimR1hOnR3hTopß<τ,α>(this Tensor<τ,α> t, int e, int r) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {      // Recursively copies tensors.
+      var subStrc = t.Substrc;                                          // t can be a non-top tensor.
+      var strcL = subStrc.Take(r);
+      var strcR = subStrc.Skip(r + 1);
+      var strc = strcL.Concat(strcR).ToList();
+      var nt = TopTensor<τ,α>(strc);
+      
+      if(t.Rank > r + 2) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
+         foreach(var (i,st) in t)
+            st.ElimR1hOnR3hSubß(e, r, nt, i); }
+      else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
+         foreach(var (i,st) in t) {
+            if(st.TryGetValue(e, out var sst))
+               sst.CopyAsSubTnrß(nt, i); } }
+      if(nt.Count != 0)
+         return nt;
+      else
+         return null;
+   }
+
+   public static Tensor<τ,α>? ElimR1hOnR3hSub<τ,α>(this Tensor<τ,α> t, int e, int r, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      Assume.True(t.Rank > 2, () =>
+         "This method is intended for rank 3 tensors or higher.");
+      var subStrc = t.Substrc;                                          // t can be a non-top tensor.
+      var strcL = subStrc.Take(r);
+      var strcR = subStrc.Skip(r + 1);
+      var strc = strcL.Concat(strcR).ToList();
+      Assume.True(sup.Substrc.SequenceEqual(strc), () =>
+         "Specified superior has non-matching substructure.");
+      return t.ElimR1hOnR3hSubß(e, r, sup, inx);
+   }
+
+   /// <summary>Can only be used to eliminate rank 3 or higher. Provided target has to be initiated one rank lower than source.</summary>
+   /// <param name="t">Source tensor whose rank we are eliminating.</param>
+   /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
+   /// <param name="e">Element index in favor of which we are eliminating.</param>
+   /// <param name="r"></param>
+   internal static Tensor<τ,α>? ElimR1hOnR3hSubß<τ,α>(this Tensor<τ,α> t, int e, int r, Tensor<τ,α> sup, int inx) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {      // Recursively copies tensors.
+      var nt = sup.SubTensorß<τ,α>(inx, t.Count);
+      
+      if(t.Rank > r + 2) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
+         foreach(var (i,st) in t)
+            st.ElimR1hOnR3hSubß(e, r, nt, i); }
+      else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
+         foreach(var (i,st) in t) {
+            if(st.TryGetValue(e, out var sst))
+               sst.CopyAsSubTnrß(nt, i); } }
+      if(nt.Count != 0)
+         return nt;
+      else {
+         sup.Remove(inx);
+         return null; }
+   }
 }
 }
