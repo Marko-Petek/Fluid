@@ -14,9 +14,39 @@ using static Factory;
 /// <summary>A vector with specified dimension which holds values of type τ. Those can use arithmetic defined inside type α.</summary>
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
-public partial class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
+public class Vector<τ,α> : Tensor<τ,α>, IEquatable<Vector<τ,α>>
 where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
+
+   /// <summary>Void vector.</summary>
+   public static readonly Vector<τ,α> V = Factory.TopVector<τ,α>(0,0);
+   /// <summary>Constructor with redundancy, used internally.</summary>
+   /// <param name="strc">Structure (absorbed).</param>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   internal Vector(List<int> strc, Tensor<τ,α>? sup, int cap) :
+   base(strc, 1, sup, 0) {                                                     // Zero capacity for dictionary holding tensors.
+      Scals = new Dictionary<int, τ>(cap);
+   }
+   /// <summary>Creates a non-top vector with specified superior and initial capacity. Does not add the new vector to its superior or check whether the superior is rank 2.</summary>
+   /// <param name="sup">Direct superior.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   internal Vector(Tensor<τ,α> sup, int cap) : this(sup.Strc, sup, cap) { }
+   
+   /// <summary>Creates a top vector (null superior) with specified dimension and initial capacity.</summary>
+   /// <param name="dim">Dimension. Number of spots available for values.</param>
+   /// <param name="cap">Capacity of internal dictionary.</param>
+   internal Vector(int dim, int cap) : this(new List<int> {dim}, null, cap) { }
+
+   /// <summary>Adds entry to internal dictionary without checking if it is equal to zero.</summary>
+   /// <param name="key">Index.</param>
+   /// <param name="val">Value.</param>
+   internal void Add(int key, τ val) =>
+      Scals.Add(key, val);
+
+   internal bool TryGetValue(int inx, out τ scal) =>
+      Scals.TryGetValue(inx, out scal);
+
    public new int Count => CountInternal;
    protected override int CountInternal => Scals.Count;
    /// <summary>Scalars. An extra wrapped Dictionary which holds vector elements.</summary>
@@ -74,29 +104,21 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Dot (scalar) product.</summary>
    /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
    public static τ operator *(Vector<τ,α> v1, Vector<τ,α> v2) =>
-      v1.Contract(v2);
+      v1.ContractTopß(v2);
 
    
 
-   public bool Equals(Vector<τ,α> vec2) {
-      if(!Scals.Keys.OrderBy(key => key).SequenceEqual(vec2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
+   public bool Equals(Vector<τ,α> v2) {
+      if(!Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
-      foreach(var int_val in Scals) {
-         τ val2 = vec2[int_val.Key];
-         if(!int_val.Value.Equals(val2))        // Fetch did not suceed or values are not equal.
+      foreach(var (i,s1) in Scals) {
+         τ s2 = v2[i];
+         if(!s1.Equals(s2))        // Fetch did not suceed or values are not equal.
             return false; }
       return true;
    }
 
-   public bool Equals(Vector<τ,α> vec2, τ eps) {
-      if(!Scals.Keys.OrderBy(key => key).SequenceEqual(vec2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
-         return false;
-      foreach(var int_val1 in Scals) {
-         τ val2 = vec2[int_val1.Key];
-         if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(int_val1.Value, val2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
-            return false; }
-      return true;                                                              // All values agree within tolerance.
-   }
+   
    /// <summary>So that foreach statements work properly.</summary>
    new public IEnumerator<KeyValuePair<int,τ>> GetEnumerator() {
       foreach(var kv in Scals)

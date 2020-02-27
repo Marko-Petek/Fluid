@@ -122,6 +122,15 @@ where α : IArithmetic<τ>, new() {
                   return; }
             tnr.Superior!.Remove(inxs[inxs.Length - 1]); } }
    }
+
+   public Tensor<τ,α> GetNonNullTnr(params int[] inxs) {
+      Tensor<τ,α>? tnr = this;
+      for(int i = 0; i < inxs.Length; ++i) {
+         if(!tnr.TryGetValue(inxs[i], out tnr))
+            throw new NullReferenceException("Expected a non-null tensor at specified location."); }
+      return tnr;
+   }
+
    /// <summary>Vector getting/setting indexer. Use tnr[1f, 3] = null to remove an entry, should it exist.</summary>
    /// <param name="overloadDummy">Type float of first dummy argument specifies that we know we will be getting/setting a Vector.</param>
    /// <param name="inxs">A set of indices specifiying which Vector we want to set/get. The set length must reach exactly to Vector rank.</param>
@@ -158,6 +167,19 @@ where α : IArithmetic<τ>, new() {
                   return; }
             tnr.Superior!.Remove(inx[n - 1]); } }     // Vector.Superior.Remove
    }
+
+   public Vector<τ,α> GetNonNullVec(params int[] inx) {
+      Tensor<τ,α>? tnr = this;
+      int n = inx.Length - 1;
+      for(int i = 0; i < n; ++i) {
+         if(!tnr.TryGetValue(inx[i], out tnr))
+            throw new NullReferenceException("Expected a non-null tensor at specified location."); }
+      if(tnr.TryGetValue(inx[n], out tnr))
+         return (Vector<τ,α>)tnr;
+      else
+         throw new NullReferenceException("Expected a non-null vector at specified location.");;
+   }
+
    /// <summary>Scalar getting/setting indexer.</summary>
    /// <param name="inxs">A set of indices specifiying which scalar we want to set/get. The set length must reach exactly to scalar rank.</param>
    /// <remarks> <see cref="TestRefs.TensorTauIndexer"/> </remarks>
@@ -281,77 +303,14 @@ where α : IArithmetic<τ>, new() {
                   yield return int_subTnr.Value; } } }
    }
 
-   /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
-   /// <param name="t1">Tensor 1.</param>
-   /// <param name="t2">Tensor 2.</param>
-   public static bool AreEqual(Tensor<τ,α>? t1, Tensor<τ,α>? t2) {
-      if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
-         if(t2 == null)
-            return true;
-         else
-            return false; }
-      else if(t2 == null)
-         return false;
-      if(!t1.CompareSubstrcß(t2))                                         // If substructures mismatch, they are not equal.
-         return false;
-      return TnrRecursion(t1, t2);
-
-      bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {                       // Recursion must be entered with non-null tensors.
-         if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
-            return false;                                                                    // Keys have to match. This is crucial.
-         if(sup1.Rank > 2) {
-            foreach(var inx_sub1 in sup1) {
-               var sub2 = sup2[T, inx_sub1.Key];
-               return TnrRecursion(inx_sub1.Value, sub2); }
-            return true; }                                                                   // Both are empty.
-         else
-            return VecRecursion(sup1, sup2); }
-
-      bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
-         if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
-            return false;                                                                    // Keys have to match. This is crucial.
-         foreach(var inx_sub1R1 in sup1R2) {
-            var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
-            var vec2 = sup2R2[Vector<τ,α>.V, inx_sub1R1.Key];
-            if(!vec1.Equals(vec2))
-               return false; }
-         return true; }
-   }
+   
 
    /// <summary>Check two tensors for equality.</summary>
    /// <param name="tnr2">Other tensor.</param>
    public bool Equals(Tensor<τ,α> tnr2) =>
-      AreEqual(this, tnr2);
+      this.Equals(tnr2);
 
-   /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
-   public bool Equals(Tensor<τ,α> tnr2, τ eps) {
-      Assume.True(this.CompareSubstrcß(tnr2),
-         () => "Tensor substructures do not match on equality comparison.");
-      return TnrRecursion(this, tnr2);
-
-      bool TnrRecursion(Tensor<τ,α> sup1, Tensor<τ,α> sup2) {
-         if(!sup1.Keys.OrderBy(key => key).SequenceEqual(sup2.Keys.OrderBy(key => key)))
-            return false;                                                                    // Keys have to match. This is crucial.
-         if(sup1.Rank > 2) {
-            foreach(var inx_sub1 in sup1) {
-               int inx = inx_sub1.Key;
-               var sub1 = inx_sub1.Value;
-               var sub2 = sup2[Tensor<τ,α>.T, inx];
-               return TnrRecursion(inx_sub1.Value, sub2); }
-            return true; }                                                                   // Both are empty.
-         else
-            return VecRecursion(sup1, sup2); }
-
-      bool VecRecursion(Tensor<τ,α> sup1R2, Tensor<τ,α> sup2R2) {
-         if(!sup1R2.Keys.OrderBy(key => key).SequenceEqual(sup2R2.Keys.OrderBy(key => key)))
-            return false;                                                                    // Keys have to match. This is crucial.
-         foreach(var inx_sub1R1 in sup1R2) {
-            var vec1 = (Vector<τ,α>) inx_sub1R1.Value;
-            var vec2 = sup2R2[Vector<τ,α>.V, inx_sub1R1.Key];
-            if(!vec1.Equals(vec2, eps))
-               return false; }
-         return true; }                                                         // All values agree within tolerance.
-   }
+   
    
    /// <summary>Create a string of all non-zero elements in form {{key1, val1}, {key2, val2}, ..., {keyN,valN}}.</summary>
    public override string ToString() {

@@ -247,16 +247,62 @@ public static class VectorExt {
          throw new ArgumentException("Explicitly cast t2 to vector before using contract."); }
    }
 
-   public static Tensor<τ,α>? Contract<τ,α>(this Vector<τ,α> v1, Tensor<τ,α> t2, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static Tensor<τ,α>? ContractTop<τ,α>(this Vector<τ,α> v1, Tensor<τ,α> t2, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       (List<int> strc, _, int rankInx2, int conDim) = v1.ContractTopPart1(t2, 1, slot2);
       return ContractTopPart2(v1, t2, rankInx2, strc, conDim);
    }
-   public static τ Contract<τ,α>(this Vector<τ,α> vec1, Vector<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+
+   public static τ ContractTop<τ,α>(this Vector<τ,α>? v1, Vector<τ,α>? v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(v1 == null || v2 == null)
+         return O<τ,α>.A.Zero();
+      else
+         return v1.ContractTopß<τ,α>(v2);
+   }
+
+   public static τ ContractTopß<τ,α>(this Vector<τ,α> v1, Vector<τ,α> v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       τ res = O<τ,α>.A.Zero();
-      foreach(var int_val1 in vec1.Scals) {
-         if(vec2.Scals.TryGetValue(int_val1.Key, out var val2))
+      foreach(var int_val1 in v1.Scals) {
+         if(v2.Scals.TryGetValue(int_val1.Key, out var val2))
             res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
       return res;
+   }
+
+   public static bool Equals<τ,α>(this Vector<τ,α>? v1, Vector<τ,α>? v2) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(v1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
+         if(v2 == null)
+            return true;
+         else
+            return false; }
+      else if(v2 == null)
+         return false;
+      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+         return false;
+      if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
+         return false;
+      foreach(var (i,s1) in v1.Scals) {
+         τ s2 = v2[i];
+         if(!s1.Equals(s2))
+            return false; }
+      return true;
+   }
+
+   public static bool Equals<τ,α>(this Vector<τ,α>? v1, Vector<τ,α>? v2, τ eps) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(v1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
+         if(v2 == null)
+            return true;
+         else
+            return false; }
+      else if(v2 == null)
+         return false;
+      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+         return false;
+      if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
+         return false;
+      foreach(var (i,s1) in v1.Scals) {
+         τ s2 = v2[i];
+         if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(s1, s2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
+            return false; }
+      return true;                                                              // All values agree within tolerance.
    }
 }
 }

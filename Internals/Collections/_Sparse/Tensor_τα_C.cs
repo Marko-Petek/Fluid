@@ -13,6 +13,7 @@ where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    /// <summary>Void tensor.</summary>
    public static readonly Tensor<τ,α> T = Factory.TopTensor<τ,α>(new List<int>{0,0}, 0);
+
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>

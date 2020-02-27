@@ -322,9 +322,24 @@ public static class TensorExt {
    /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
    /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
    /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
-   public static Tensor<τ,α>? Contract<τ,α>(this Tensor<τ,α> t1, Tensor<τ,α> t2, int slotInx1, int slotInx2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static Tensor<τ,α>? ContractTopß<τ,α>(this Tensor<τ,α> t1, Tensor<τ,α> t2, int slotInx1, int slotInx2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
       return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
+   }
+
+   public static Tensor<τ,α>? ContractTop<τ,α>(this Tensor<τ,α>? t1, Tensor<τ,α>? t2, int slotInx1, int slotInx2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(t1 == null || t2 == null)
+         return null;
+      (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
+      return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
+   }
+
+   internal static Tensor<τ,α>? SelfContractTop<τ,α>(this Tensor<τ,α>? t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(t == null)
+         return null;
+      Assume.True(t.Rank > 2, () =>
+         "This method is not applicable to rank 2 tensors.");
+      return t.SelfContractTopß<τ,α>(slot1, slot2);
    }
 
 
@@ -333,18 +348,15 @@ public static class TensorExt {
    /// <param name="slot1">Slot index 1. Provide as if contracted tensor was top.</param>
    /// <param name="slot2">Slot index 2, greater than slot index 1. Provide as if contracted tensor was top.</param>
    /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
-   internal static Tensor<τ,α>? SelfContractTop<τ,α>(this Tensor<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      // Assume.True(Rank > 2, () =>
-      //    "This method is not applicable to rank 2 tensors.");
-      // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
-      //    "Dimensions of contracted slots have to be equal.");
+   internal static Tensor<τ,α>? SelfContractTopß<τ,α>(this Tensor<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t.Rank > 3) {
          var substrc = t.Substrc;                                                 // Substructure of contracted tensor.
-         int slotDif = t.Strc.Count - substrc.Count;                             // Difference in number of slots between structure and substructure.
+         Assume.True(substrc[slot1 - 1] == substrc[slot2 - 1], () =>
+            "Dimensions of contracted slots have to be equal.");
          var strc = substrc.Where( (x,i) => i != slot1 - 1 && i != slot2 - 1 ).ToList();  // Structure of contracted tensor.
          var nt = TopTensor<τ,α>(strc, t.Count);
-         int rank1 = ChangeRankNotation<τ,α>(t.TopRank, slot1 + slotDif);               // Ranks for rank reduction are specified with regards to original tensor.
-         int rank2 = ChangeRankNotation<τ,α>(t.TopRank, slot2 + slotDif);
+         int rank1 = ChangeRankNotation<τ,α>(substrc.Count, slot1);               // Ranks for rank reduction are specified with regards to original tensor.
+         int rank2 = ChangeRankNotation<τ,α>(substrc.Count, slot2);
          int dim = strc[slot1 - 1];                // Dimension of contracted ranks.
          for(int i = 0; i < dim; ++i) {                    // Over each element inside contracted ranks.
             var step1Tnr = t.ReduceRankTop(rank2, i);
@@ -362,9 +374,9 @@ public static class TensorExt {
 
    internal static Vector<τ,α> SelfContractR3Topß<τ,α>(this Tensor<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
-      // Assume.True(Structure[slot1 - 1] == Structure[slot2 - 1], () =>
-      //    "Corresponding dimensions have to be equal.");
       var substrc = t.Substrc;
+      Assume.True(substrc[slot1 - 1] == substrc[slot2 - 1], () =>
+         "Corresponding dimensions have to be equal.");
       int dim;
       Vector<τ,α> nv;
       if(slot1 == 1) {
@@ -394,14 +406,21 @@ public static class TensorExt {
       return nv;
    }
 
+   internal static τ SelfContractR2<τ,α>(this Tensor<τ,α>? t)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(t == null)
+         return O<τ,α>.A.Zero();
+      Assume.True(t.Rank == 2, () => "Tensor rank has to be 2 for this method.");
+      return t.SelfContractR2ß<τ,α>();
+   }
+
    /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
    /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
-   internal static τ SelfContractR2ß<τ,α>(this Tensor<τ,α> top)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      // Assume.True(Rank == 2, () => "Tensor rank has to be 2 for this method.");
-      // Assume.True(Structure[0] == Structure[1], () =>
-      //    "Corresponding dimensions have to be equal.");
+   internal static τ SelfContractR2ß<τ,α>(this Tensor<τ,α> t)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      var substrc = t.Substrc;
+      Assume.True(substrc[0] == substrc[1], () =>
+         "Corresponding dimensions have to be equal.");
       τ result = O<τ,α>.A.Zero();
-      foreach(var (i, st) in top) {
+      foreach(var (i, st) in t) {
          var sv = (Vector<τ,α>) st;
          if(sv.Scals.TryGetValue(i, out τ s))
             result = O<τ,α>.A.Sum(result, s); }
@@ -631,6 +650,78 @@ public static class TensorExt {
       else {
          sup.Remove(inx);
          return null; }
+   }
+
+   /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
+   /// <param name="t1">Tensor 1.</param>
+   /// <param name="t2">Tensor 2.</param>
+   public static bool Equals<τ,α>(this Tensor<τ,α>? t1, Tensor<τ,α>? t2) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
+         if(t2 == null)
+            return true;
+         else
+            return false; }
+      else if(t2 == null)
+         return false;
+      if(!t1.CompareSubstrcß(t2))                                         // If substructures mismatch, they are not equal.
+         return false;
+      return TnrRecursion(t1, t2);
+
+      static bool TnrRecursion(Tensor<τ,α> t1, Tensor<τ,α> t2) {                       // Recursion must be entered with non-null tensors.
+         if(!t1.Keys.OrderBy(key => key).SequenceEqual(t2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         if(t1.Rank > 2) {
+            foreach(var (i,st1) in t1) {
+               var st2 = t2.GetNonNullTnr(i);
+               return TnrRecursion(st1, st2); }
+            return true; }                                                                   // Both are empty.
+         else
+            return VecRecursion(t1, t2); }
+
+      static bool VecRecursion(Tensor<τ,α> t1r2, Tensor<τ,α> t2r2) {
+         if(!t1r2.Keys.OrderBy(key => key).SequenceEqual(t2r2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         foreach(var (i,st1) in t1r2) {
+            var v1 = (Vector<τ,α>) st1;
+            var v2 = t2r2.GetNonNullVec(i);
+            if(!v1.Equals(v2))
+               return false; }
+         return true; }
+   }
+
+   /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
+   public static bool Equals<τ,α>(Tensor<τ,α>? t1, Tensor<τ,α>? t2, τ eps) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+      if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
+         if(t2 == null)
+            return true;
+         else
+            return false; }
+      else if(t2 == null)
+         return false;
+      if(!t1.CompareSubstrcß(t2))                                         // If substructures mismatch, they are not equal.
+         return false;
+      return TnrRecursion(t1, t2, eps);
+
+      static bool TnrRecursion(Tensor<τ,α> t1, Tensor<τ,α> t2, τ eps) {                       // Recursion must be entered with non-null tensors.
+         if(!t1.Keys.OrderBy(key => key).SequenceEqual(t2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         if(t1.Rank > 2) {
+            foreach(var (i,st1) in t1) {
+               var st2 = t2.GetNonNullTnr(i);
+               return TnrRecursion(st1, st2, eps); }
+            return true; }                                                                   // Both are empty.
+         else
+            return VecRecursion(t1, t2, eps); }
+
+      static bool VecRecursion(Tensor<τ,α> t1r2, Tensor<τ,α> t2r2, τ eps) {
+         if(!t1r2.Keys.OrderBy(key => key).SequenceEqual(t2r2.Keys.OrderBy(key => key)))
+            return false;                                                                    // Keys have to match. This is crucial.
+         foreach(var (i,st1) in t1r2) {
+            var v1 = (Vector<τ,α>) st1;
+            var v2 = t2r2.GetNonNullVec(i);
+            if(!v1.Equals(v2, eps))
+               return false; }
+         return true; }                                                         // All values agree within tolerance.
    }
 }
 }

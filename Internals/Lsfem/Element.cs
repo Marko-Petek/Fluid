@@ -50,7 +50,7 @@ public class Element {
       var interm = CalcDetJ();
       DetJ = interm.detJ;
       InvJ = CalcInvJ(interm);
-      var tnrFactor = InvJ.Contract(ϕ, 2, 2);                           R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
+      var tnrFactor = InvJ.ContractTopß(ϕ, 2, 2);                           R($"Calculating Quad Overlaps for element {Pos(0).ToString()}");
       Q = CalcQuadOverlaps(tnrFactor);                                        R($"Calculating Triple Overlaps for element {Pos(0).ToString()}");
       T = CalcTripOverlaps(tnrFactor);
       MA = new dbl[2][] {  new dbl[2] {Pos(9).X, Pos(3).X},
@@ -235,9 +235,9 @@ public class Element {
    
    /// <summary>Takes the single unique repeating factor (tensor) in a tensor product, multiplies it with itself four times and multiplies that with the element's determinant. Then it integrates the resulting function over the element.</summary>
    /// <param name="tnrFactor">The 2nd rank repeating factor.</param>
-   internal SymTnr CalcQuadOverlaps(FTnr tnrFactor) =>
+   internal SymTnr CalcQuadOverlaps(FTnr? tnrFactor) =>
       SymTnr.CreateAsQuadProd(tnrFactor, DetJ, Quadrature2D.Integrate);
-   internal SymTnr CalcTripOverlaps(FTnr tnrFactor) =>
+   internal SymTnr CalcTripOverlaps(FTnr? tnrFactor) =>
       SymTnr.CreateAsTripProd(tnrFactor, DetJ, Quadrature2D.Integrate);
 
    /// <summary>Check's whether this Position is inside a simple polygon defined by vertices specified in CCW direction.</summary>
