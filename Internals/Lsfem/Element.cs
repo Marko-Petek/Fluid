@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
-using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
+using F2DA = Fluid.Internals.Numerics.F2DArithmetic;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
@@ -17,8 +17,8 @@ using Lst = List<int>;
 using Tnr = Tensor<dbl,DA>;
 using SymTnr = SymTensor<dbl,DA>;
 using Vec = Vector<dbl,DA>;
-using FTnr = Tensor<F2D,F2DA>;
-using static Fluid.Internals.Numerics.O<F2D,F2DA>;
+using FTnr = RefTnr<F2D,F2DA>;
+using static Fluid.Internals.Numerics.NonNullable<F2D,F2DA>;
 using PE = PseudoElement;
 
 /// <summary>A quadrilateral element.</summary>
@@ -143,7 +143,7 @@ public class Element {
       var J12 = new F2D( (ξ,η) => 0.25*(Δxl*(1-ξ) + Δxr*(1+ξ)) );
       var J21 = new F2D( (ξ,η) => 0.25*(Δyd*(1-η) + Δyu*(1+η)) );
       var J22 = new F2D( (ξ,η) => 0.25*(Δyl*(1-ξ) + Δyr*(1+ξ)) );
-      var detJ = A.Sub(A.Mul(J11,J22), A.Mul(J12,J21));
+      var detJ = O.Sub(O.Mul(J11,J22), O.Mul(J12,J21));
       return (detJ, J11, J12, J21, J22);
    }
    /// <summary>Calculate the center of element's mass.</summary>

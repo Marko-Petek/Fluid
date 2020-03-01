@@ -4,11 +4,11 @@ using dbl = System.Double;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
-using F2DA = Fluid.Internals.Numerics.Func2DArithmetic;
+using F2DA = Fluid.Internals.Numerics.F2DArithmetic;
 
 namespace Fluid.Internals.Collections {
-   using FTnr = Tensor<F2D?,F2DA>;
-   using static Fluid.Internals.Numerics.O<F2D?,F2DA>;
+   using FTnr = RefTnr<F2D?,F2DA>;
+   using static Fluid.Internals.Numerics.NonNullable<F2D,F2DA>;
    // TODO: SymTensor: Reimplement contraction, TnrProduct, addition, subtraction.
    /// <summary>A symmetric tensor that holds in memory only the entries "above diagonal".</summary>
    /// <typeparam name="τ">Type of direct subordinates.</typeparam>
@@ -61,7 +61,7 @@ namespace Fluid.Internals.Collections {
                for(int i3 = i2; i3 < 12; ++i3) { for(int j3 = 0; j3 < 3; ++j3) {
                   for(int i4 = i3; i4 < 12; ++i4) { for(int j4 = 0; j4 < 3; ++j4) {
                      F2D? prod = F2D.QuintProd(tnr[i1,j1], tnr[i2,j2],
-                        tnr[i3,j3], tnr[i4,j4], A.Abs(det));
+                        tnr[i3,j3], tnr[i4,j4], O.Abs(det));
                      prodTnr[3*i1+j1, 3*i2+j2, 3*i3+j3, 3*i4+j4] = integrate(prod);
          }} }} }} }}
          return prodTnr;
@@ -79,7 +79,7 @@ namespace Fluid.Internals.Collections {
             for(int i2 = i1; i2 < 12; ++i2) { for(int j2 = 0; j2 < 3; ++j2) {
                for(int i3 = i2; i3 < 12; ++i3) { for(int j3 = 0; j3 < 3; ++j3) {
                   F2D? prod = F2D.QuadProd(tnr[i1,j1], tnr[i2,j2],
-                     tnr[i3,j3], A.Abs(det));
+                     tnr[i3,j3], O.Abs(det));
                   prodTnr[3*i1+j1, 3*i2+j2, 3*i3+j3] = integrate(prod);
          }} }} }}
          return prodTnr;

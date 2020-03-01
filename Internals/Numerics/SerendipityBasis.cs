@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
 using dA = Fluid.Internals.Numerics.DblArithmetic;
-using f2da = Fluid.Internals.Numerics.Func2DArithmetic;
+using f2da = Fluid.Internals.Numerics.F2DArithmetic;
 using Fluid.Internals.Collections;
 using static Fluid.Internals.Collections.Factory;
 namespace Fluid.Internals.Numerics {

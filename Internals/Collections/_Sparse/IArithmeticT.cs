@@ -1,8 +1,8 @@
 ﻿using System;
 using dbl = System.Double;
-using F2D = System.Func<double,double,double>;
+using Fluid.Internals.Numerics;
 
-namespace Fluid.Internals.Numerics {
+namespace Fluid.Internals.Collections {
    /// <summary>Performs arithmetic on operands of type T.</summary><typeparam name="τ">Operand and result type.</typeparam>
    public interface IArithmetic<τ> {
       τ Sum(τ first, τ second);
@@ -37,7 +37,7 @@ namespace Fluid.Internals.Numerics {
       public double Zero()  => 0.0;
    }
 
-   public struct Func2DArithmetic : IArithmetic<F2D?> {
+   public struct F2DArithmetic : IArithmetic<F2D?> {
       public F2D? Sum(F2D? f1, F2D? f2) {
          if(f1 == null) {
             if(f2 == null)
@@ -48,7 +48,6 @@ namespace Fluid.Internals.Numerics {
             return f1;
          return new F2D( (x,y) => f1.F(x,y) + f2.F(x,y) );
       }
-         
       public F2D? Sub(F2D? f1, F2D? f2) {
          if(f1 == null) {
             if(f2 == null)
@@ -59,13 +58,11 @@ namespace Fluid.Internals.Numerics {
             return f1; }
          return new F2D( (x,y) => f1.F(x,y) - f2.F(x,y) );
       }
-         
       public F2D? Mul(F2D? f1, F2D? f2) {
          if(f1 == null || f2 == null)
             return null;
          return new F2D( (x,y) => f1.F(x,y) * f2.F(x,y) );
       }
-         
       public F2D? Div(F2D? f1, F2D? f2) {
          if(f1 == null) {
             if(f2 == null)
@@ -76,19 +73,16 @@ namespace Fluid.Internals.Numerics {
             throw new DivideByZeroException("Second argument of division cannot be null.");
          return new F2D( (x,y) => f1.F(x,y) / f2.F(x,y) );
       }
-         
       public F2D? Abs(F2D? f) {
          if(f == null)
             return null;
          return new F2D( (x,y) => Math.Abs(f.F(x,y)) );
       }
-         
       public F2D? Neg(F2D? f) {
          if(f == null)
             return null;
          return new F2D( (x,y) => -f.F(x,y) );
       }
-         
       public F2D Unit() =>
          F2D.One;
       public F2D? Zero() =>
@@ -106,7 +100,13 @@ namespace Fluid.Internals.Numerics {
       public int Zero() => throw new NotImplementedException("You are not supposed to use arithmetic.");
    }
 
-   public static class O<τ,α> where α : IArithmetic<τ>, new() {
-      public static α A { get; } = new α();
+   public static class NonNullable<τ,α> where α : IArithmetic<τ>, new() {
+      public static α O { get; } = new α();
+   }
+
+   public static class Nullable<τ,α> 
+   where τ : class
+   where α : IArithmetic<τ?>, new() {
+      public static α O { get; } = new α();
    }
 }

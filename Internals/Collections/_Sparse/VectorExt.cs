@@ -25,7 +25,7 @@ public static class VectorExt {
    internal static Vector<τ,α>? SumIntoß<τ,α>(this Vector<τ,α> vec1, Vector<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
       foreach(var (i, s2) in vec2.Scals) {
          var s1 = vec1[i];
-         var sum = O<τ,α>.A.Sum(s1, s2);
+         var sum = NonNullable<τ,α>.O.Sum(s1, s2);
          vec1[i] = sum; }
       if(vec1.Count != 0)
          return vec1;
@@ -51,7 +51,7 @@ public static class VectorExt {
    internal static Vector<τ,α>? SubIntoß<τ,α>(this Vector<τ,α> vec1, Vector<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
       foreach(var (i, s2) in vec2.Scals) {
          var subVal1 = vec1[i];
-         var dif = O<τ,α>.A.Sub(subVal1, s2);
+         var dif = NonNullable<τ,α>.O.Sub(subVal1, s2);
          vec1[i] = dif; }
       if(vec1.Count != 0)
          return vec1;
@@ -99,7 +99,7 @@ public static class VectorExt {
    internal static Vector<τ,α> NegateIntoß<τ,α>(this Vector<τ,α> vec)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var keys = vec.Scals.Keys.ToArray();                    // We have to do this (access via indexer), because we can't change collection during enumeration.
       for(int i = 0; i < keys.Length; ++i)
-         vec.Scals[keys[i]] = O<τ,α>.A.Neg(vec.Scals[keys[i]]);
+         vec.Scals[keys[i]] = NonNullable<τ,α>.O.Neg(vec.Scals[keys[i]]);
       return vec;
    }
    public static Vector<τ,α>? Negate<τ,α>(this Vector<τ,α>? vec)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
@@ -115,7 +115,7 @@ public static class VectorExt {
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
    public static Vector<τ,α>? MulInto<τ,α>(this Vector<τ,α>? vec, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      if(vec == null || scal.Equals(O<τ,α>.A.Zero()))
+      if(vec == null || scal.Equals(NonNullable<τ,α>.O.Zero()))
          return null;
       else
          return MulIntoß(vec, scal);
@@ -124,14 +124,14 @@ public static class VectorExt {
    internal static Vector<τ,α> MulIntoß<τ,α>(this Vector<τ,α> vec, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var inxs = vec.Scals.Keys.ToArray();                       // To avoid "collection was modified during enumeration".
       foreach(var inx in inxs)
-         vec.Scals[inx] = O<τ,α>.A.Mul(scal, vec.Scals[inx]);
+         vec.Scals[inx] = NonNullable<τ,α>.O.Mul(scal, vec.Scals[inx]);
       return vec;
    }
    /// <summary>Multiplies a scalar with a vector and returns a new vector. Safe version: accepts a nullable vector and checks it for null, also checks if the scalar is zero.</summary>
    /// <param name="scal">Scalar.</param>
    /// <param name="vec">Vector.</param>
    public static Vector<τ,α>? MulTop<τ,α>(this Vector<τ,α>? vec, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      if(vec == null || scal.Equals(O<τ,α>.A.Zero()))
+      if(vec == null || scal.Equals(NonNullable<τ,α>.O.Zero()))
          return null;
       else
          return vec.MulTopß(scal);
@@ -142,12 +142,12 @@ public static class VectorExt {
    internal static Vector<τ,α> MulTopß<τ,α>(this Vector<τ,α> vec, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var newVec = TopVector<τ,α>(vec);
       foreach(var (i, s) in vec) {
-         newVec.Add(i, O<τ,α>.A.Mul(scal, s)); }
+         newVec.Add(i, NonNullable<τ,α>.O.Mul(scal, s)); }
       return newVec;
    }
 
    public static Vector<τ,α>? MulSub<τ,α>(this Vector<τ,α>? vec, τ scal, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      if(vec == null || scal.Equals(O<τ,α>.A.Zero()))
+      if(vec == null || scal.Equals(NonNullable<τ,α>.O.Zero()))
          return null;
       else
          return vec.MulSubß(scal, sup, inx);
@@ -156,21 +156,21 @@ public static class VectorExt {
    internal static Vector<τ,α> MulSubß<τ,α>(this Vector<τ,α> vec, τ scal, Tensor<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var newVec = Factory.SubVector<τ,α>(sup, inx);
       foreach(var (i, s) in vec)
-         newVec.Add(i, O<τ,α>.A.Mul(scal, s));
+         newVec.Add(i, NonNullable<τ,α>.O.Mul(scal, s));
       return newVec;
    }
    /// <summary>Calculates Euclidean norm squared of a vector.</summary>
    public static τ NormSqr<τ,α>(this Vector<τ,α>? vec)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(vec == null)
-         return O<τ,α>.A.Zero();
+         return NonNullable<τ,α>.O.Zero();
       else
          return vec.NormSqrß();
    }
 
    internal static τ NormSqrß<τ,α>(this Vector<τ,α> vec)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      τ res = O<τ,α>.A.Zero();
+      τ res = NonNullable<τ,α>.O.Zero();
       foreach(var kv in vec.Scals)
-         res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(kv.Value, kv.Value));
+         res = NonNullable<τ,α>.O.Sum(res, NonNullable<τ,α>.O.Mul(kv.Value, kv.Value));
       return res;
    }
 
@@ -254,16 +254,16 @@ public static class VectorExt {
 
    public static τ ContractTop<τ,α>(this Vector<τ,α>? v1, Vector<τ,α>? v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(v1 == null || v2 == null)
-         return O<τ,α>.A.Zero();
+         return NonNullable<τ,α>.O.Zero();
       else
          return v1.ContractTopß<τ,α>(v2);
    }
 
    public static τ ContractTopß<τ,α>(this Vector<τ,α> v1, Vector<τ,α> v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      τ res = O<τ,α>.A.Zero();
+      τ res = NonNullable<τ,α>.O.Zero();
       foreach(var int_val1 in v1.Scals) {
          if(v2.Scals.TryGetValue(int_val1.Key, out var val2))
-            res = O<τ,α>.A.Sum(res, O<τ,α>.A.Mul(int_val1.Value, val2)); }
+            res = NonNullable<τ,α>.O.Sum(res, NonNullable<τ,α>.O.Mul(int_val1.Value, val2)); }
       return res;
    }
 
@@ -300,7 +300,7 @@ public static class VectorExt {
          return false;
       foreach(var (i,s1) in v1.Scals) {
          τ s2 = v2[i];
-         if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(s1, s2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
+         if(NonNullable<τ,α>.O.Abs(NonNullable<τ,α>.O.Sub(s1, s2)).CompareTo(eps) > 0 ) // Values do not agree within tolerance.
             return false; }
       return true;                                                              // All values agree within tolerance.
    }
