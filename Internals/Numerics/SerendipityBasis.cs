@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using static System.Math;
-using dbl = System.Double;
-using dA = Fluid.Internals.Numerics.DblArithmetic;
-using f2da = Fluid.Internals.Numerics.F2DArithmetic;
+using F2DA = Fluid.Internals.Collections.F2DArithmetic;
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Collections.Factory;
 namespace Fluid.Internals.Numerics {
 
-using FTnr = Tensor<F2D,f2da>;
-using FVec = Vector<F2D,f2da>;
+using FTnr = RefTnr<F2D,F2DA>;
+using FVec = RefVec<F2D,F2DA>;
 public static class SerendipityBasis {
    static SerendipityBasis() {
       

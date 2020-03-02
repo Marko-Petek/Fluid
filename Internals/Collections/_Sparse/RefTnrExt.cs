@@ -10,7 +10,7 @@ public static class RefTnrExt {
    /// <summary>Compares substructures of two non-null tensors.</summary>
    /// <param name="tnr1">First tensor.</param>
    /// <param name="tnr2">Second tensor.</param>
-   internal static bool CompareSubstrcß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static bool CompareSubstrcß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t1.Substrc.SequenceEqual(t2.Substrc);
 
    /// <summary>Sums t2 to t1, both assumed to be non-null. Modifies t1, does not destroy t2.</summary>
@@ -19,7 +19,7 @@ public static class RefTnrExt {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
-   public static RefTnr<τ,α>? SumInto<τ,α>(RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SumInto<τ,α>(RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -38,7 +38,7 @@ public static class RefTnrExt {
    /// <param name="t2">Tensor that will provide sumands.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   internal static RefTnr<τ,α>? SumIntoß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α>? SumIntoß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t2.Rank > 2) {
          foreach(var (i, st2) in t2) {
             if(t1.TryGetValue(i, out var st1)) {                        // Equivalent subtensor exists in T1.
@@ -67,7 +67,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   public static RefTnr<τ,α>? SumTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SumTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -78,13 +78,13 @@ public static class RefTnrExt {
       return t1.SumTopß(t2);
    }
 
-   internal static RefTnr<τ,α>? SumTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static RefTnr<τ,α>? SumTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t1.CopyAsTopTnr().SumIntoß(t2);
 
    /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
    /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
    /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
-   public static RefTnr<τ,α>? SubInto<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SubInto<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -98,7 +98,7 @@ public static class RefTnrExt {
       return SubIntoß(t1, t2);
    }
 
-   public static RefTnr<τ,α>? SubIntoß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SubIntoß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t2.Rank > 2) {
          foreach(var (i, st2) in t2) {
             if(t1.TryGetValue(i, out var st1)) {                        // Equivalent subtensor exists in T1.
@@ -127,7 +127,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   public static RefTnr<τ,α>? SubTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SubTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -138,17 +138,17 @@ public static class RefTnrExt {
       return t1.SubTopß(t2);
    }
 
-   internal static RefTnr<τ,α>? SubTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static RefTnr<τ,α>? SubTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t1.CopyAsTopTnr().SubIntoß(t2);
 
    /// <summary>Modifies this tensor by negating each element.</summary>
-   public static RefTnr<τ,α>? NegateInto<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? NegateInto<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null)
          return null;
       return t.NegateIntoß();
    }
 
-   internal static RefTnr<τ,α> NegateIntoß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α> NegateIntoß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t.Rank > 2) {
          foreach(var (i, st) in t)
             t.NegateIntoß(); }
@@ -162,18 +162,18 @@ public static class RefTnrExt {
       return t;
    }
 
-   public static RefTnr<τ,α>? NegateTop<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? NegateTop<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null)
          return null;
       else
          return t.CopyAsTopTnr().NegateIntoß();
    }
 
-   internal static RefTnr<τ,α>? NegateTopß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static RefTnr<τ,α>? NegateTopß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t.CopyAsTopTnr().NegateIntoß();
 
-   public static RefTnr<τ,α>? MulInto<τ,α>(this RefTnr<τ,α>? t, τ scal)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
-      if(t == null || scal.Equals(Nullable<τ,α>.O.Zero()))
+   public static RefTnr<τ,α>? MulInto<τ,α>(this RefTnr<τ,α>? t, τ? scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
+      if(t == null || scal == null)
          return null;
       else
          return MulIntoß(t, scal);
@@ -182,7 +182,7 @@ public static class RefTnrExt {
    /// <summary>Multiplies caller with a scalar.</summary>
    /// <param name="scal">Scalar.</param>
    /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
-   internal static RefTnr<τ,α> MulIntoß<τ,α>(this RefTnr<τ,α> t, τ scal)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α> MulIntoß<τ,α>(this RefTnr<τ,α> t, τ scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t.Rank > 2) {                                       // Subordinates are tensors.
          foreach (var (i, st) in t) {
             MulIntoß(st, scal); } }
@@ -199,7 +199,7 @@ public static class RefTnrExt {
    /// <summary>Multiplies a scalar with a vector and returns a new vector. Safe version: accepts a nullable vector and checks it for null, also checks if the scalar is zero.</summary>
    /// <param name="scal">Scalar.</param>
    /// <param name="t">Vector.</param>
-   public static RefTnr<τ,α>? MulTop<τ,α>(this RefTnr<τ,α>? t, τ scal)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? MulTop<τ,α>(this RefTnr<τ,α>? t, τ scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null || scal.Equals(Nullable<τ,α>.O.Zero()))
          return null;
       else
@@ -208,11 +208,11 @@ public static class RefTnrExt {
    /// <summary>Multiplies a scalar with a vector and returns a new vector. Unsafe version: accepts a non-nullable vector and does not check whether the scalar is zero.</summary>
    /// <param name="scal"></param>
    /// <param name="vec"></param>
-   internal static RefTnr<τ,α> MulTopß<τ,α>(this RefTnr<τ,α> t, τ scal)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static RefTnr<τ,α> MulTopß<τ,α>(this RefTnr<τ,α> t, τ scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t.CopyAsTopTnr().MulIntoß(scal);
 
-   public static RefTnr<τ,α>? MulSub<τ,α>(this RefTnr<τ,α> t, τ scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
-      if(t == null || scal.Equals(Nullable<τ,α>.O.Zero()))
+   public static RefTnr<τ,α>? MulSub<τ,α>(this RefTnr<τ,α>? t, τ? scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
+      if(t == null || scal == null)
          return null;
       else
          return t.MulSubß(scal, sup, inx);
@@ -221,13 +221,13 @@ public static class RefTnrExt {
    /// <summary>Multiplies a scalar with a vector and returns a new vector. Unsafe version: accepts a non-nullable vector and does not check whether the scalar is zero.</summary>
    /// <param name="scal"></param>
    /// <param name="vec"></param>
-   internal static RefTnr<τ,α> MulSubß<τ,α>(this RefTnr<τ,α> t, τ scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   internal static RefTnr<τ,α> MulSubß<τ,α>(this RefTnr<τ,α> t, τ scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       t.CopyAsSubTnrß(sup, inx).MulIntoß(scal);
 
 
    
    /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
-   public static RefTnr<τ,α> TnrProdTop<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α> TnrProdTop<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       // 1) Descend to rank 1 through a recursion and then delete that vector.
       // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
       var strc1 = t1.EnumSubstrc();
@@ -250,7 +250,7 @@ public static class RefTnrExt {
    }
 
    internal static (List<int> strc, int rank1, int rank2, int conDim) ContractTopPart1<τ,α>(
-   this RefTnr<τ,α> t1, RefTnr<τ,α> t2, int slot1, int slot2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   this RefTnr<τ,α> t1, RefTnr<τ,α> t2, int slot1, int slot2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       // 1) First eliminate, creating new tensors. Then add them together using tensor product.
       var strc1 = t1.Substrc;
       var strc2 = t2.Substrc;
@@ -270,7 +270,7 @@ public static class RefTnrExt {
    }
    
    internal static RefTnr<τ,α>? ContractTopPart2<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2,
-   int rankInx1, int rankInx2, List<int> strc, int conDim)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   int rankInx1, int rankInx2, List<int> strc, int conDim)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       // 1) First eliminate, creating new tensors. Then combine them together using tensor product.
       if(t1.Rank > 1) {
          if(t2.Rank > 1) {                                // First tensor is rank 2 or more.
@@ -322,19 +322,19 @@ public static class RefTnrExt {
    /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
    /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
    /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
-   public static RefTnr<τ,α>? ContractTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2, int slotInx1, int slotInx2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ContractTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2, int slotInx1, int slotInx2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
       return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
    }
 
-   public static RefTnr<τ,α>? ContractTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2, int slotInx1, int slotInx2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ContractTop<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2, int slotInx1, int slotInx2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null || t2 == null)
          return null;
       (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
       return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
    }
 
-   internal static RefTnr<τ,α>? SelfContractTop<τ,α>(this RefTnr<τ,α>? t, int slot1, int slot2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α>? SelfContractTop<τ,α>(this RefTnr<τ,α>? t, int slot1, int slot2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null)
          return null;
       Assume.True(t.Rank > 2, () =>
@@ -348,7 +348,7 @@ public static class RefTnrExt {
    /// <param name="slot1">Slot index 1. Provide as if contracted tensor was top.</param>
    /// <param name="slot2">Slot index 2, greater than slot index 1. Provide as if contracted tensor was top.</param>
    /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
-   internal static RefTnr<τ,α>? SelfContractTopß<τ,α>(this RefTnr<τ,α> t, int slot1, int slot2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α>? SelfContractTopß<τ,α>(this RefTnr<τ,α> t, int slot1, int slot2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t.Rank > 3) {
          var substrc = t.Substrc;                                                 // Substructure of contracted tensor.
          Assume.True(substrc[slot1 - 1] == substrc[slot2 - 1], () =>
@@ -372,7 +372,7 @@ public static class RefTnrExt {
          return t.SelfContractR3Topß(slot1, slot2);
    }
 
-   internal static RefVec<τ,α>? SelfContractR3Topß<τ,α>(this RefTnr<τ,α> t, int slot1, int slot2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefVec<τ,α>? SelfContractR3Topß<τ,α>(this RefTnr<τ,α> t, int slot1, int slot2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       // Assume.True(Rank == 3, () => "Tensor rank has to be 3 for this method.");
       var substrc = t.Substrc;
       Assume.True(substrc[slot1 - 1] == substrc[slot2 - 1], () =>
@@ -409,7 +409,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   internal static τ? SelfContractR2<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static τ? SelfContractR2<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null)
          return Nullable<τ,α>.O.Zero();
       Assume.True(t.Rank == 2, () => "Tensor rank has to be 2 for this method.");
@@ -418,7 +418,7 @@ public static class RefTnrExt {
 
    /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
    /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
-   internal static τ? SelfContractR2ß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static τ? SelfContractR2ß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var substrc = t.Substrc;
       Assume.True(substrc[0] == substrc[1], () =>
          "Corresponding dimensions have to be equal.");
@@ -433,14 +433,14 @@ public static class RefTnrExt {
    /// <summary>A method that transorms between slot index and rank index (works both ways).</summary>
    /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
    /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
-   static int ChangeRankNotation<τ,α>(int topRank, int slotOrRankInx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() =>
+   static int ChangeRankNotation<τ,α>(int topRank, int slotOrRankInx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
       topRank - slotOrRankInx;
 
    /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
    /// <param name="r"> Rank index (zero-based) of the rank to eliminate.</param>
    /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
    /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
-   public static RefTnr<τ,α>? ReduceRankTop<τ,α>(this RefTnr<τ,α> t, int r, int e)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {                                    // FIXME: Method must properly reassign superiors.
+   public static RefTnr<τ,α>? ReduceRankTop<τ,α>(this RefTnr<τ,α> t, int r, int e)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {                                    // FIXME: Method must properly reassign superiors.
       Assume.True(r < t.Rank && r > -1, () =>
          "You can only eliminate a rank in range [0, TopRank)." );
       var subStrc = t.Substrc;                                          // t can be a non-top tensor.
@@ -470,7 +470,7 @@ public static class RefTnrExt {
             throw new ArgumentException("Cannot eliminate rank 0 on rank 1 tensor with this branch."); }
    }
 
-   public static RefTnr<τ,α>? ReduceRankSub<τ,α>(this RefTnr<τ,α> t, int r, int e, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {                                    // FIXME: Method must properly reassign superiors.
+   public static RefTnr<τ,α>? ReduceRankSub<τ,α>(this RefTnr<τ,α> t, int r, int e, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {                                    // FIXME: Method must properly reassign superiors.
       Assume.True(r < t.Rank && r > -1, () =>
          "You can only eliminate a rank in range [0, TopRank)." );
       var subStrc = t.Substrc;                                          // t can be a non-top tensor.
@@ -506,13 +506,13 @@ public static class RefTnrExt {
    /// <param name="src">Rank 2 tensor.</param>
    /// <param name="tgt">Initialized result vector.</param>
    /// <param name="emtInx">Element index in favor of which the elimination will proceed.</param>
-   public static RefVec<τ,α>? ElimR0onR2Top<τ,α>(this RefTnr<τ,α> t, int emtInx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefVec<τ,α>? ElimR0onR2Top<τ,α>(this RefTnr<τ,α> t, int emtInx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank == 2, () =>
          "This method is intended for rank 2 tensors only.");
       return t.ElimR0onR2Topß(emtInx);
    }
 
-   internal static RefVec<τ,α>? ElimR0onR2Topß<τ,α>(this RefTnr<τ,α> t, int emtInx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefVec<τ,α>? ElimR0onR2Topß<τ,α>(this RefTnr<τ,α> t, int emtInx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var nv = TopRefVec<τ,α>(t.Dim);
       foreach(var (i,st) in t) {
          var sv = (RefVec<τ,α>) st;
@@ -525,7 +525,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   public static RefVec<τ,α>? ElimR0onR2Sub<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefVec<τ,α>? ElimR0onR2Sub<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank == 2, () =>
          "This method is intended for rank 2 tensors only.");
       var strc = t.Substrc.SkipLast(1).ToList();
@@ -534,7 +534,7 @@ public static class RefTnrExt {
       return t.ElimR0onR2Subß(elimInx, sup, inx);
    }
 
-   internal static RefVec<τ,α>? ElimR0onR2Subß<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefVec<τ,α>? ElimR0onR2Subß<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var nv = sup.SubRefVec<τ,α>(inx);
       foreach(var (i,st) in t) {
          var sv = (RefVec<τ,α>) st;
@@ -552,13 +552,13 @@ public static class RefTnrExt {
    /// <param name="t">Rank 3 or higher tensor.</param>
    /// <param name="tgt">Tensor one rank lower than source.</param>
    /// <param name="emtInx">Element index in favor of which to eliminate.</param>
-   public static RefTnr<τ,α>? ElimR0onR3hTop<τ,α>(this RefTnr<τ,α> t, int elimInx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ElimR0onR3hTop<τ,α>(this RefTnr<τ,α> t, int elimInx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank > 2, () =>
          "This method is applicable to rank 3 and higher tensors.");
       return t.ElimR0onR3hTopß(elimInx);
    }
 
-   internal static RefTnr<τ,α>? ElimR0onR3hTopß<τ,α>(this RefTnr<τ,α> t, int elimInx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α>? ElimR0onR3hTopß<τ,α>(this RefTnr<τ,α> t, int elimInx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var strc = t.Substrc.SkipLast(1).ToList();
       var nt = TopRefTnr<τ,α>(strc);
       if(t.Rank > 3) {
@@ -573,7 +573,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   public static RefTnr<τ,α>? ElimR0onR3hSub<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ElimR0onR3hSub<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank > 2, () =>
          "This method is intended for rank 3 tensors or higher.");
       var strc = t.Substrc.SkipLast(1).ToList();
@@ -582,7 +582,7 @@ public static class RefTnrExt {
       return t.ElimR0onR3hSubß(elimInx, sup, inx);
    }
 
-   internal static RefTnr<τ,α>? ElimR0onR3hSubß<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   internal static RefTnr<τ,α>? ElimR0onR3hSubß<τ,α>(this RefTnr<τ,α> t, int elimInx, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var nt = sup.SubRefTnrß<τ,α>(inx, t.Count);
       if(t.Rank > 3) {
          foreach(var (i,st) in t)
@@ -597,13 +597,13 @@ public static class RefTnrExt {
          return null; }
    }
 
-   public static RefTnr<τ,α>? ElimR1hOnR3hTop<τ,α>(this RefTnr<τ,α> t, int e, int r)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ElimR1hOnR3hTop<τ,α>(this RefTnr<τ,α> t, int e, int r)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank > 3, () =>
          "This method is applicable to rank 3 and higher tensors.");
       return t.ElimR1hOnR3hTopß(e,r);
    }
 
-   internal static RefTnr<τ,α>? ElimR1hOnR3hTopß<τ,α>(this RefTnr<τ,α> t, int e, int r)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {      // Recursively copies tensors.
+   internal static RefTnr<τ,α>? ElimR1hOnR3hTopß<τ,α>(this RefTnr<τ,α> t, int e, int r)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {      // Recursively copies tensors.
       var subStrc = t.Substrc;                                          // t can be a non-top tensor.
       var strcL = subStrc.Take(r);
       var strcR = subStrc.Skip(r + 1);
@@ -623,7 +623,7 @@ public static class RefTnrExt {
          return null;
    }
 
-   public static RefTnr<τ,α>? ElimR1hOnR3hSub<τ,α>(this RefTnr<τ,α> t, int e, int r, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? ElimR1hOnR3hSub<τ,α>(this RefTnr<τ,α> t, int e, int r, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       Assume.True(t.Rank > 2, () =>
          "This method is intended for rank 3 tensors or higher.");
       var subStrc = t.Substrc;                                          // t can be a non-top tensor.
@@ -640,7 +640,7 @@ public static class RefTnrExt {
    /// <param name="tgt">Target tensor. Has to be one rank lower than source.</param>
    /// <param name="e">Element index in favor of which we are eliminating.</param>
    /// <param name="r"></param>
-   internal static RefTnr<τ,α>? ElimR1hOnR3hSubß<τ,α>(this RefTnr<τ,α> t, int e, int r, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {      // Recursively copies tensors.
+   internal static RefTnr<τ,α>? ElimR1hOnR3hSubß<τ,α>(this RefTnr<τ,α> t, int e, int r, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {      // Recursively copies tensors.
       var nt = sup.SubRefTnrß<τ,α>(inx, t.Count);
       
       if(t.Rank > r + 2) {                                    // We have not yet reached rank directly above rank scheduled for elimination: copy rank.
@@ -660,7 +660,7 @@ public static class RefTnrExt {
    /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
    /// <param name="t1">Tensor 1.</param>
    /// <param name="t2">Tensor 2.</param>
-   public static bool Equals<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static bool Equals<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
          if(t2 == null)
             return true;
@@ -695,7 +695,7 @@ public static class RefTnrExt {
    }
 
    /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
-   public static bool Equals<τ,α>(RefTnr<τ,α>? t1, RefTnr<τ,α>? t2, τ eps)  where τ : class, IEquatable<τ?>, IComparable<τ?>  where α : IArithmetic<τ?>, new() {
+   public static bool Equals<τ,α>(RefTnr<τ,α>? t1, RefTnr<τ,α>? t2, τ eps)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
          if(t2 == null)
             return true;

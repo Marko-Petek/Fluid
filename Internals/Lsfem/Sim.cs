@@ -8,12 +8,13 @@ using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
-using DA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
+using static Fluid.Internals.Collections.TnrFactory;
 using Supercluster.KDTree;
 namespace Fluid.Internals.Lsfem {
 
-using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
-using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
@@ -50,8 +51,8 @@ public abstract class Sim {
    /// <summary>Fetches a vector of variables</summary>
    /// <param name="dummy"></param>
    /// <param name="inx"></param>
-   public Vec U(Vec dummy, int inx) {
-      Vec u = UF[dummy, inx];
+   public Vec? U(Vec dummy, int inx) {
+      Vec? u = UF[dummy, inx];
       if(u != null)
          return u;
       else return UC[dummy, inx];
@@ -154,41 +155,97 @@ public abstract class Sim {
    /// <summary>Takes updated secondary (dynamics and forcing) tensors and constrained node variables and creates primary tensors which are ready to be passed to the Solver. This process iterates over all Elements (surfaces) and adds their contribution to corresponding nodes (points).</summary>
    /// <param name="emts">A collection of Elements, each element containing overlap integrals of node functions and a mapping from eNodes to gNodes.</param>
    (Tnr K, Tnr F) AssemblePrimaries(IEnumerable<Element> emts) {
-      var tnrK = new Tnr(new Lst{NPos,NVar,NPos,NVar}, NfPos);                    // Create a 4th rank result tensor.
-      var tnrF = new Tnr(new Lst{NPos,NVar}, NfPos);                            // Create a 2nd rank result tensor.
+      var tK_cjdk = TopTensor<dbl,DA>(new Lst{NPos,NVar,NPos,NVar}, NfPos);                    // Create a 4th rank result tensor.
+      var tF_cj = TopTensor<dbl,DA>(new Lst{NPos,NVar}, NfPos);                            // Create a 2nd rank result tensor.
       Lst allJs = Enumerable.Range(0,NVar).ToList();
       foreach(var emt in emts) {
-      for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {
-         Vec vecF_j = tnrF[Vec.V, c];
-         var jfs = allJs.Where( j => !Cnstr[c,j] ).ToArray();                      // Determine which variables (c,j) are free.
-         for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
-         for(int p = 0; p < 3; ++p) {
-         for(int r = 0; r < 3; ++r) {
-            Tnr a_ij = A[Tnr.T, a,p,r];                                            // Precursor for all terms.
-            for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {
-               Tnr f_si = Fs[Tnr.T, b];
-               for(int s = 0; s < 3; ++s) {                                         // Index for A*Fs_j
-                  Vec fs_i = f_si[Vec.V, s];
-                  Vec afs_j = (Vec) Tnr.Contract(a_ij, fs_i, 1, 1);                 // Prepare for first term of primary forcing.
-                  foreach(var j in allJs)
-                     vecF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * afs_j[j];
-                  for(int q = 0; q < 3; ++q) {
-                     Tnr a_ik = A[Tnr.T, b,q,s];                                   // For second term in primary forcing.
-                     Tnr aa_jk = Tnr.Contract(a_ij, a_ik, 1, 1);                    // Precursor for first term in PD and second term in PF.
-                     for(int δ = 0, d = emt.P[δ]; δ < 12; ++δ, d = emt.P[δ]) {
-                        var grpsK = allJs.GroupBy( j => Cnstr[c,j] ).ToArray();
-                        var kfs = grpsK.Where( grp => grp.Key == false ).
-                           Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
-                        var kcs = grpsK.Where( grp => grp.Key == true ).
-                           Single().ToArray();
-                        dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
-                        foreach(var jf in jfs) {
-                           Vec aa_k = aa_jk[Vec.V,jf];
-                           foreach(int k in kfs)
-                              tnrK[c,jf,d,k] += coefQ * aa_k[k];
-                           foreach(int l in kcs)
-                              vecF_j[jf] -= coefQ * aa_k[l] * UC[d,l];
-         } } } } } } } } } }
+      
+
+      //Vec vF_j = tnrF.SubVecß(c);                                           // Add empty subvector.
+      
+      for(int α = 0, a = emt.P[α];  α < 12;  ++α, a = emt.P[α]) {
+         Tnr? tA_prij = A.GetT(a);                                                              // Try to acquire R4 subtensor A_prij at (emt, α).
+         if(tA_prij != null) {                                                                  // If it does not exist, continue (advance α).
+            for(int p = 0; p < 3; ++p) {
+               Tnr? tA_rij = tA_prij.GetT(p);                                                   // Try to acquire R3 subtensor A_rij at (emt, α), part p.
+               if(tA_rij != null) {                                                             // If it does not exist, continue (advance p).
+                  for(int r = 0; r < 3; ++r) {
+                     Tnr? tA_ij = tA_rij.GetT(r);                                               // Try to acquire R2 subtensor A_ij at (emt, α), part (p,r).
+                     if(tA_ij != null) {                                                        // If it does not exist, continue (advance r).
+                        for(int β = 0, b = emt.P[β];  β < 12;  ++β, b = emt.P[β]) {             // At this point development of the K term and second F term forks off from development of first F term.
+                           // Development of K term and second F term:
+                           Tnr? tA_qsik = A.GetT(b);                                            // Try to acquire R4 subtensor A_qsik at (emt, β).
+                           if(tA_qsik != null) {                                                // If it does not exist, continue (advance β). Here continues the development of K term and second F term.
+                              for(int q = 0; q < 3; ++q) {
+                                 Tnr? tA_sik = tA_qsik.GetT(q);                                 // Try to acquire R3 subtensor A_sik at (emt, β), part q.
+                                 if(tA_sik != null) {                                           // If it does not exist, continue (advance q).
+                                    for(int s = 0; s < 3; ++s) {
+                                       Tnr? tA_ik = tA_sik.GetT(s);                             // Try to acquire R2 subtensor A_ik at (emt, β), part (q,s).
+                                       if(tA_ik != null) {                                      // If it does not exist, continue (advance s).
+                                          Tnr? tAA_jk = tA_ij.ContractTopß(tA_ik, 1, 1);        // Perform contraction of A_ij and A_ik across index i, resulting in a new R2 tensor. This one is equivalent to tAA_jl in second F term.
+                                          if(tAA_jk != null) {                                  // Now we only need to move across non-constrained (emt, γ) and non-constrained (emt, δ) to finish building up K.
+                                             for(int γ = 0, c = emt.P[γ];  γ < 12;  ++γ, c = emt.P[γ]) {                   // Here splits the development of K term from second F term.
+                                                // Development of K term:
+                                                for(int δ = 0, d = emt.P[δ]; δ < 12; ++δ, d = emt.P[δ]) { 
+                                                   dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*δ+q];
+                                                   if(coefQ != 0.0) {                                                      // Don't bother if Q is 0.
+                                                      var jfs = allJs.Where( j => !Cnstr[c,j] ).ToArray();                 // Determine which variables (c,j) are free.
+                                                      var kfs = allJs.Where( k => !Cnstr[d,k] ).ToArray();                 // Determine which variables (d,k) are free.
+                                                      foreach(var j in jfs) {
+                                                         Vec? vAA_k = tAA_jk.GetV(j);
+                                                         if(vAA_k != null) {
+                                                            foreach(int k in kfs) {
+                                                               tK_cjdk[c,j,d,k] += coefQ * vAA_k[k]; } } } } }             // Development of K term finished.
+                                                // Development of second F term:
+                                                for(int ε = 0, e = emt.P[ε]; ε < 12; ++ε, e = emt.P[ε]) {
+                                                   dbl coefQ = emt.Q[3*α+r, 3*β+s, 3*γ+p, 3*ε+q];
+                                                   if(coefQ != 0.0) {                                                      // Don't bother if Q is 0.
+                                                      var jfs = allJs.Where( j => !Cnstr[c,j] ).ToArray();                 // Determine which variables (c,j) are free.
+                                                      var lcs = allJs.Where( l => Cnstr[e,l] ).ToArray();                  // Determine which variables (e,l) are constrained.
+                                                      foreach(int j in jfs) {
+                                                         foreach(var l in lcs)
+                                                            tF_cj[c,j] -= coefQ * tAA_jk[j,l] * UC[e,l]; } } } } } } } } } }   // Development of second F term finished.
+                           // Development of first F term.               
+                           Tnr? tF_si = Fs.GetT(b);                                             // Try to acquire R2 subtensor F_si at (emt, β).
+                           if(tF_si != null) {                                                  // If it does not exist, continue (advance β).
+                              Vec? vT_s = emt.T[3*α+r, 3*γ+p, 3*β+s] }
+                           } 
+                              
+                              
+                           
+                           
+                               }
+
+                        
+                        
+
+                           
+                           
+                           
+                           
+                                                                    // Index for A*Fs_j
+                              Vec vFs_i = tF_si.GetV(s) ?? tF_si.SubVecß(s);
+                              Vec? vAFs_j = (Vec?) tA_ij.ContractTopß(vFs_i, 1, 1);                 // Prepare for first term of primary forcing.
+                              if(vAFs_j != null) {
+                                 foreach(var j in allJs)
+                                    vF_j[j] += emt.T[3*α+r, 3*γ+p, 3*β+s] * vAFs_j[j]; }
+                              
+                                 Tnr a_ik = tA_qsik //A[Tnr.T, b,q,s];                                   // For second term in primary forcing.
+                                 
+                                 
+                                    var grpsK = allJs.GroupBy( j => Cnstr[c,j] ).ToArray();
+                                    // var kfs = grpsK.Where( grp => grp.Key == false ).
+                                    //    Single().ToArray();                                      // Determine which variables (c,j) are free and which constrained.
+                                    var kcs = grpsK.Where( grp => grp.Key == true ).
+                                       Single().ToArray();
+                                    
+                                    foreach(var jf in jfs) {
+                                       Vec aa_k = aa_jk[Vec.V,jf];
+                                       foreach(int k in kfs)
+                                          tK_cjdk[c,jf,d,k] += coefQ * aa_k[k];
+                                       foreach(int l in kcs)
+                                          vF_j[jf] -= coefQ * aa_k[l] * UC[d,l];
+         } } } } } } } } } } }  
       return (tnrK, tnrF);
    }
    /// <summary>Update secondary tensors (dynamics A and forcing Fs) from the current state of the variable field U. These secondaries will be used in the assembly process of primary tensors. This code is case-dependent (on the system of PDE) and has to be provided by library user. See NavStokesSim.cs for an example.</summary>

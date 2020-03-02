@@ -12,7 +12,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> TopRefVec<τ,α>(int dim, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() =>
       new RefVec<τ,α>(dim, cap);
    /// <summary>Creates a top vector (null superior) with dimension and capacity inferred from a specified vector.</summary>
@@ -20,7 +20,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> TopRefVec<τ,α>(RefVec<τ,α> vec)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() =>
       new RefVec<τ,α>(vec.Dim, vec.Count);
    
@@ -31,14 +31,14 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> SubRefVec<τ,α>(this RefTnr<τ,α> sup, int inx, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
       return SubRefVecß(sup, inx, cap);
    }
 
    internal static RefVec<τ,α> SubRefVecß<τ,α>(this RefTnr<τ,α> sup, int inx, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       var vec = new RefVec<τ,α>(sup, cap);
       sup[RefVec<τ,α>.V, inx] = vec;
@@ -50,7 +50,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> TopRefVecFromSpan<τ,α>(Span<τ> span)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       var vec = new RefVec<τ,α>(span.Length, span.Length);
       for(int i = 0; i < span.Length; ++i) {
@@ -65,7 +65,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α>? SubVecFromSpan<τ,α>(Span<τ> span, RefTnr<τ,α> sup, int inx)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       Assume.True(sup.Rank == 2, () => "Vector's superior rank not 2. You can only create a subvector with a rank 2 superior.");
       var vec = new RefVec<τ,α>(sup, span.Length);
@@ -84,7 +84,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefTnr<τ,α> TopRefTnr<τ,α>(List<int> strc, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       Assume.True(strc.Count > 1, () =>
          "For creating tensors of rank 1 use Vector's constructor.");
@@ -98,7 +98,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefTnr<τ,α> SubTensor<τ,α>(this RefTnr<τ,α> sup, int inx, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       Assume.True(sup.Rank > 1, () =>
          "Superior's rank too low. Cannot create a subtensor on a vector.");
@@ -106,7 +106,7 @@ public static class RefTnrFactory {
    }
 
    internal static RefTnr<τ,α> SubRefTnrß<τ,α>(this RefTnr<τ,α> sup, int inx, int cap = 6)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       if(sup.Rank > 2) {
          var tnr = new RefTnr<τ,α>(sup, cap);
@@ -122,7 +122,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefTnr<τ,α> TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       int rank = strc.Length;
       if(rank == 1)
@@ -153,7 +153,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> CopyAsTopVec<τ,α>(this RefVec<τ,α> src, int extraCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       var copy = TopRefVec<τ,α>(src.Dim, src.Count + extraCap);
       foreach(var (i, s) in src.Scals)
@@ -169,7 +169,7 @@ public static class RefTnrFactory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefVec<τ,α> CopyAsSubVec<τ,α>(this RefVec<τ,α> src, RefTnr<τ,α> newSup,
    int inx, int xCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       Assume.True(src.Dim == newSup.Dim - 1, () => "The dimension as specified by the superior does not equal the original vector's dimension.");
       return src.CopyAsSubVecß(newSup, inx, xCap);
@@ -177,7 +177,7 @@ public static class RefTnrFactory {
 
    internal static RefVec<τ,α> CopyAsSubVecß<τ,α>(this RefVec<τ,α> src, RefTnr<τ,α> newSup,
    int inx, int xCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       var copy = SubRefVec<τ,α>(newSup, inx, src.Count + xCap);
       foreach(var (i, s) in src.Scals)
@@ -191,7 +191,7 @@ public static class RefTnrFactory {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefTnr<τ,α> CopyAsTopTnr<τ,α>(this RefTnr<τ,α> src, int xCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       if (src is RefVec<τ,α> vec) {
          return CopyAsTopVec<τ,α>(vec, xCap); }
@@ -211,7 +211,7 @@ public static class RefTnrFactory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    public static RefTnr<τ,α> CopyAsSubTnr<τ,α>(this RefTnr<τ,α> src, RefTnr<τ,α> newSup,
    int inx, int xCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       if (src is RefVec<τ,α> vec) {
          return CopyAsSubVec<τ,α>(vec, newSup, inx, xCap); }
@@ -221,7 +221,7 @@ public static class RefTnrFactory {
 
    internal static RefTnr<τ,α> CopyAsSubTnrß<τ,α>(this RefTnr<τ,α> src,
    RefTnr<τ,α> newSup, int inx, int xCap = 0)
-   where τ : class, IEquatable<τ?>, IComparable<τ?>
+   where τ : class, IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ?>, new() {
       var copy = SubTensor<τ,α>(newSup, inx, src.Count + xCap);               // TODO: Check that count is not 0 anywhere.
       if(src.Rank > 2) {                                                        // Subordinates are tensors.

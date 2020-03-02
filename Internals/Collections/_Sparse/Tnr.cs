@@ -59,13 +59,13 @@ using Fluid.Internals.Numerics;
 using Fluid.Internals.Text;
 using Fluid.TestRef;
 namespace Fluid.Internals.Collections {
-using static TensorExt;
+using static TnrExt;
 
 
 /// <summary>A tensor with specified rank and specified dimension which holds direct subordinates of type τ.</summary>
 /// <typeparam name="τ">Type of direct subordinates.</typeparam>
 /// <typeparam name="α">Type of arithmetic.</typeparam>
-public class Tensor<τ,α> : TensorBase<Tensor<τ,α>>, IEquatable<Tensor<τ,α>>
+public class Tnr<τ,α> : TnrBase<Tnr<τ,α>>, IEquatable<Tnr<τ,α>>
 where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    
@@ -80,7 +80,7 @@ where α : IArithmetic<τ>, new() {
    public int Slot =>
       ChangeRankNotation(TopRank, Rank);
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
-   public Tensor<τ,α>? Superior { get; internal set; }
+   public Tnr<τ,α>? Superior { get; internal set; }
    /// <summary>Number of entries (non-zeros) in Tensor. Works even if the reference points to a Vector.</summary>
    public new int Count => CountInternal;
    /// <summary>Virtual Count override so that it works also on Vectors when looking at them as Tensors.</summary>
@@ -94,14 +94,14 @@ where α : IArithmetic<τ>, new() {
 
 
    /// <summary>Void tensor.</summary>
-   public static readonly Tensor<τ,α> T = Factory.TopTensor<τ,α>(new List<int>{0,0}, 0);
+   public static readonly Tnr<τ,α> T = TnrFactory.TopTensor<τ,α>(new List<int>{0,0}, 0);
 
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="rank">Rank.</param>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   protected Tensor(List<int> strc, int rank, Tensor<τ,α>? sup, int cap) : base(cap) {
+   protected Tnr(List<int> strc, int rank, Tnr<τ,α>? sup, int cap) : base(cap) {
       Strc = strc;
       Rank = rank;
       Superior = sup;
@@ -109,23 +109,23 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Constructor for a top tensor (null superior). For creating tensors of rank 1 use Vector's constructor.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) { }
+   internal Tnr(List<int> strc, int cap = 6) : this(strc, strc.Count, null, cap) { }
    /// <summary>Constructor for a non-top tensor (non-null superior). Assumes superior's structure is initialized.</summary>
    /// <param name="sup">Direct superior.</param>
    /// <param name="cap">Capacity of internal dictionary.</param>
-   internal Tensor(Tensor<τ,α> sup, int cap = 6) : this(sup.Strc,
+   internal Tnr(Tnr<τ,α> sup, int cap = 6) : this(sup.Strc,
    sup.Rank - 1, sup, cap) { }
 
    /// <summary>Adds specified tensor as subordinate and appropriatelly sets its Superior and Structure.</summary>
    /// <param name="inx">Index at which the tensor will be added.</param>
    /// <param name="tnr">Tensor to add.</param>
-   internal void AddSubTnr(int inx, Tensor<τ,α> tnr) {
+   internal void AddSubTnr(int inx, Tnr<τ,α> tnr) {
       tnr.Superior = this;
       tnr.Strc = Strc;
       base.Add(inx, tnr);
    }
 
-   internal void SetSubTnr(int inx, Tensor<τ,α>? tnr) {
+   internal void SetSubTnr(int inx, Tnr<τ,α>? tnr) {
       if(tnr != null) {
          base[inx] = tnr;
          tnr.Superior = this;
@@ -143,7 +143,7 @@ where α : IArithmetic<τ>, new() {
       
    /// <summary>Copies substructure from specified tensor directly into Structure.</summary>
    /// <param name="tnr">Source.</param>
-   protected void AssignStructFromSubStruct(Tensor<τ,α> tnr) {          // FIXME: Remove this after the copy specs fixes.
+   protected void AssignStructFromSubStruct(Tnr<τ,α> tnr) {          // FIXME: Remove this after the copy specs fixes.
       Strc.Clear();
       var subStruct = tnr.Strc.Skip(tnr.StrcInx);
       foreach(var emt in subStruct) {
@@ -161,22 +161,22 @@ where α : IArithmetic<τ>, new() {
    /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
    /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
    /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
-   public Tensor<τ,α>? this[Tensor<τ,α> overloadDummy, params int[] inxs] {
+   public Tnr<τ,α>? this[Tnr<τ,α> overloadDummy, params int[] inxs] {
       get {
-         Tensor<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr = this;
          for(int i = 0; i < inxs.Length; ++i) {
             if(!tnr.TryGetValue(inxs[i], out tnr))
                return null; }
          return tnr; }                                // No problem with tnr being null. We return above.
       set {
-         Tensor<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr = this;
          if(value != null) {       
             int n = inxs.Length - 1;
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created
-                  tnr = new Tensor<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
+                  tnr = new Tnr<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
                   tnr.Superior!.AddSubTnr(inxs[i], tnr); } }
-            var dict = (TensorBase<Tensor<τ,α>>) tnr;                            // tnr is now the proper subtensor.
+            var dict = (TnrBase<Tnr<τ,α>>) tnr;                            // tnr is now the proper subtensor.
             value.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
             value.Strc = Strc;
             dict[inxs[n]] = value; }
@@ -187,8 +187,35 @@ where α : IArithmetic<τ>, new() {
             tnr.Superior!.Remove(inxs[inxs.Length - 1]); } }
    }
 
-   public Tensor<τ,α> GetNonNullTnr(params int[] inxs) {
-      Tensor<τ,α>? tnr = this;
+   public Tnr<τ,α>? GetT(params int[] inxs) {
+      Tnr<τ,α>? tnr = this;
+      for(int i = 0; i < inxs.Length; ++i) {
+         if(!tnr.TryGetValue(inxs[i], out tnr))
+            return null; }
+      return tnr;
+   }
+
+   public void SetT(Tnr<τ,α>? t, params int[] inxs) {
+      Tnr<τ,α>? tnr = this;
+      if(t != null) {       
+         int n = inxs.Length - 1;
+         for(int i = 0; i < n; ++i) {
+            if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created.
+               tnr = new Tnr<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
+               tnr.Superior!.AddSubTnr(inxs[i], tnr); } }
+         var dict = (TnrBase<Tnr<τ,α>>) tnr;                            // tnr is now the proper subtensor.
+         t.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
+         t.Strc = Strc;
+         dict[inxs[n]] = t; }
+      else {
+         for(int i = 0; i < inxs.Length; ++i) {
+            if(!tnr.TryGetValue(inxs[i], out tnr))                   // t is null and the corresponding substructure does not exist. Leave as is.
+               return; }
+         tnr.Superior!.Remove(inxs[inxs.Length - 1]); }              // Corresponding tensor exists. Remove.
+   }
+
+   public Tnr<τ,α> GetNonNullTnr(params int[] inxs) {
+      Tnr<τ,α>? tnr = this;
       for(int i = 0; i < inxs.Length; ++i) {
          if(!tnr.TryGetValue(inxs[i], out tnr))
             throw new NullReferenceException("Expected a non-null tensor at specified location."); }
@@ -199,28 +226,28 @@ where α : IArithmetic<τ>, new() {
    /// <param name="overloadDummy">Type float of first dummy argument specifies that we know we will be getting/setting a Vector.</param>
    /// <param name="inxs">A set of indices specifiying which Vector we want to set/get. The set length must reach exactly to Vector rank.</param>
    /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
-   public Vector<τ,α>? this[Vector<τ,α> overloadDummy, params int[] inx] {
+   public Vec<τ,α>? this[Vec<τ,α> overloadDummy, params int[] inx] {
       get {
-         Tensor<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr = this;
          int n = inx.Length - 1;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
                return null; }
          if(tnr.TryGetValue(inx[n], out tnr))                                 // No problem with null.
-            return (Vector<τ,α>)tnr;                                          // Same.
+            return (Vec<τ,α>)tnr;                                          // Same.
          else
             return null; }
       set {
-         Tensor<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr = this;
          if(value != null) {
             int n = inx.Length - 1;                                           // Entry one before last chooses tensor, last chooses vector.
             for(int i = 0; i < n; ++i) {
-               if(tnr.TryGetValue(inx[i], out Tensor<τ,α>? tnr2)) {
+               if(tnr.TryGetValue(inx[i], out Tnr<τ,α>? tnr2)) {
                   tnr = tnr2; }
                else {                                                         // Tensor does not exist in an intermediate rank.
-                  tnr = new Tensor<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
+                  tnr = new Tnr<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
                   tnr.Superior!.Add(inx[i], tnr); } }
-            var dict = (TensorBase<Tensor<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
+            var dict = (TnrBase<Tnr<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
             value.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
             value.Strc = Strc;
             dict[inx[n]] = value; }                                           // We do not check that the value is a vector beforehand. It is assumed that the user used indexer correctly.
@@ -232,14 +259,48 @@ where α : IArithmetic<τ>, new() {
             tnr.Superior!.Remove(inx[n - 1]); } }     // Vector.Superior.Remove
    }
 
-   public Vector<τ,α> GetNonNullVec(params int[] inx) {
-      Tensor<τ,α>? tnr = this;
+   public Vec<τ,α>? GetV(params int[] inx) {
+      Tnr<τ,α>? tnr = this;
+      int n = inx.Length - 1;
+      for(int i = 0; i < n; ++i) {
+         if(!tnr.TryGetValue(inx[i], out tnr))
+            return null; }
+      if(tnr.TryGetValue(inx[n], out tnr))                                 // No problem with null.
+         return (Vec<τ,α>)tnr;                                          // Same.
+      else
+         return null;
+   }
+
+   public void SetV(Vec<τ,α>? v, params int[] inx) {
+      Tnr<τ,α>? tnr = this;
+      if(v != null) {
+         int n = inx.Length - 1;                                           // Entry one before last chooses tensor, last chooses vector.
+         for(int i = 0; i < n; ++i) {
+            if(tnr.TryGetValue(inx[i], out Tnr<τ,α>? tnr2)) {
+               tnr = tnr2; }
+            else {                                                         // Tensor does not exist in an intermediate rank.
+               tnr = new Tnr<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
+               tnr.Superior!.Add(inx[i], tnr); } }
+         var dict = (TnrBase<Tnr<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
+         v.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
+         v.Strc = Strc;
+         dict[inx[n]] = v; }                                           // We do not check that the value is a vector beforehand. It is assumed that the user used indexer correctly.
+      else {
+         int n = inx.Length;                                               // Last entry chooses vector.
+         for(int i = 0; i < n; ++i) {
+            if(!tnr.TryGetValue(inx[i], out tnr))
+               return; }
+         tnr.Superior!.Remove(inx[n - 1]); }
+   }
+
+   public Vec<τ,α> GetNonNullVec(params int[] inx) {
+      Tnr<τ,α>? tnr = this;
       int n = inx.Length - 1;
       for(int i = 0; i < n; ++i) {
          if(!tnr.TryGetValue(inx[i], out tnr))
             throw new NullReferenceException("Expected a non-null tensor at specified location."); }
       if(tnr.TryGetValue(inx[n], out tnr))
-         return (Vector<τ,α>)tnr;
+         return (Vec<τ,α>)tnr;
       else
          throw new NullReferenceException("Expected a non-null vector at specified location.");;
    }
@@ -249,20 +310,20 @@ where α : IArithmetic<τ>, new() {
    /// <remarks> <see cref="TestRefs.TensorTauIndexer"/> </remarks>
    public virtual τ this[params int[] inx] {
       get {
-         Tensor<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr = this;
          int n = inx.Length - 2;
          for(int i = 0; i < n; ++i) {
             if(!tnr.TryGetValue(inx[i], out tnr))
                return NonNullable<τ,α>.O.Zero(); }
          if(tnr.TryGetValue(inx[n], out tnr)) {                                  // No probelm with null.
-            var vec = (Vector<τ,α>)tnr;                                          // Same.
+            var vec = (Vec<τ,α>)tnr;                                          // Same.
             if(vec.Scals.TryGetValue(inx[n + 1], out τ val))
                return val; }
          return NonNullable<τ,α>.O.Zero(); }
       set {
-         Tensor<τ,α>? tnr = this;
-         Tensor<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
-         Vector<τ,α> vec;
+         Tnr<τ,α>? tnr = this;
+         Tnr<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
+         Vec<τ,α> vec;
          if(!value.Equals(default(τ))) {
             if(inx.Length > 1) {                                                 // At least a 2nd rank tensor.
                int n = inx.Length - 2;
@@ -270,12 +331,12 @@ where α : IArithmetic<τ>, new() {
                   if(tnr.TryGetValue(inx[i], out tnr2)) {
                      tnr = tnr2; }
                   else {
-                     tnr = new Tensor<τ,α>(tnr, 6);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
+                     tnr = new Tnr<τ,α>(tnr, 6);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 6);
                      tnr.Superior!.Add(inx[i], tnr); }}
                if(tnr.TryGetValue(inx[n], out tnr2)) {                           // Does vector exist?
-                  vec = (Vector<τ,α>) tnr2; }
+                  vec = (Vec<τ,α>) tnr2; }
                else {
-                  vec = new Vector<τ,α>(Strc, tnr, 4); 
+                  vec = new Vec<τ,α>(Strc, tnr, 4); 
                   tnr.Add(inx[n], vec); }
                vec.Scals[inx[n + 1]] = value; } }
          else {
@@ -283,21 +344,21 @@ where α : IArithmetic<τ>, new() {
             for(int i = 0; i < n; ++i) {
                if(!tnr.TryGetValue(inx[i], out tnr))
                   return; }
-            vec = (Vector<τ,α>) tnr;
+            vec = (Vec<τ,α>) tnr;
             vec.Scals.Remove(inx[n]); } }
    }
    
    /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="t">Operand.</param>
    /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
-   public static Tensor<τ,α>? operator -(Tensor<τ,α>? t) =>
+   public static Tnr<τ,α>? operator -(Tnr<τ,α>? t) =>
       t.NegateTop();
 
    /// <summary>Creates a new tensor which is a sum of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="t1">Left operand.</param>
    /// <param name="t2">Right operand.</param>
    /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
-   public static Tensor<τ,α>? operator + (Tensor<τ,α>? t1, Tensor<τ,α>? t2) =>
+   public static Tnr<τ,α>? operator + (Tnr<τ,α>? t1, Tnr<τ,α>? t2) =>
       t1.SumTop(t2);
 
    /// <summary>Creates a new tensor which is a difference of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
@@ -305,7 +366,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="t2">Right operand.</param>
    /// <remarks>First, we create our result tensor as a copy of tnr1. Then we take tnr2 as recursion dictator (yielding subtensors subTnr2) and we look for equivalent subtensors on tnr1 (call them subTnr1). If no equivalent is found, we negate subTnr2 and add it to a proper place in the result tensor, otherwise we subtract subTnr2 from subTnr1 and add that to result. Such a subtraction can yield a zero tensor (without entries) in which case we make sure we remove it (the empty tensor) from the result.
    /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
-   public static Tensor<τ,α>? operator - (Tensor<τ,α>? t1, Tensor<τ,α>? t2) =>
+   public static Tnr<τ,α>? operator - (Tnr<τ,α>? t1, Tnr<τ,α>? t2) =>
       t1.SubTop(t2);
 
    
@@ -313,7 +374,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="scal">Scalar.</param>
    /// <param name="aTnr">Tensor.</param>
    /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
-   public static Tensor<τ,α>? operator * (τ scal, Tensor<τ,α>? aTnr) =>
+   public static Tnr<τ,α>? operator * (τ scal, Tnr<τ,α>? aTnr) =>
       aTnr.MulTop(scal);
    
 
@@ -325,7 +386,7 @@ where α : IArithmetic<τ>, new() {
       else
          return errLog;
 
-      bool Recursion(Tensor<τ,α> tnr) {
+      bool Recursion(Tnr<τ,α> tnr) {
          if(tnr.Rank > 1) {
             if(tnr.Count > 0) {
                errLog.Add(-1);
@@ -347,7 +408,7 @@ where α : IArithmetic<τ>, new() {
 
 
    /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
-   public IEnumerable<Tensor<τ,α>> EnumerateRank(int rankInx) {
+   public IEnumerable<Tnr<τ,α>> EnumerateRank(int rankInx) {
       Assume.True(rankInx > 1, () =>
          "This method applies only to ranks that hold pure tensors.");
       if(Rank > rankInx + 1) {
@@ -357,7 +418,7 @@ where α : IArithmetic<τ>, new() {
          foreach(var int_subTnr in this)
             yield return int_subTnr.Value; }
 
-      IEnumerable<Tensor<τ,α>> Recursion(Tensor<τ,α> src) {
+      IEnumerable<Tnr<τ,α>> Recursion(Tnr<τ,α> src) {
          foreach(var int_tnr in src) {
             if(int_tnr.Value.Rank > rankInx + 1) {
                foreach(var subTnr in Recursion(int_tnr.Value))
@@ -371,7 +432,7 @@ where α : IArithmetic<τ>, new() {
 
    /// <summary>Check two tensors for equality.</summary>
    /// <param name="tnr2">Other tensor.</param>
-   public bool Equals(Tensor<τ,α> tnr2) =>
+   public bool Equals(Tnr<τ,α> tnr2) =>
       this.Equals(tnr2);
 
    

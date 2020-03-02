@@ -1,16 +1,16 @@
 using dbl = System.Double;
 using System;
 using Fluid.Internals.Numerics;
-using DA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
 namespace Fluid.Internals.Lsfem {
-using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
+using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 
 /// <summary>Factory that manages the Sim.</summary>
 public abstract class SimManager {
    #nullable disable
    public static SimManager SM { get; }                              // These two are never going to be null while in use due to the design.
    static Func<ISimInit, SimManager> Factory { get; set; }
-   #nullable enable
+   #nullable restore
    /// <summary>Associated simulation.</summary>
    abstract public Sim Sim { get; }
    /// <summary>Solver that solves the linear system using Conjugate Gradients.</summary>
@@ -38,7 +38,7 @@ public abstract class SimManager {
    abstract protected SimManager FactoryMethod(ISimInit si);
    /// <summary></summary>
    /// <param name="u0"></param>
-   public Tnr AdvanceDynamics(Tnr u0) =>
+   public Tnr? AdvanceDynamics(Tnr? u0) =>
       Solver.Solve(u0, Epsilon);
 
    /// <summary>Export data of the current solution frame for plotting with Mathematica.</summary>

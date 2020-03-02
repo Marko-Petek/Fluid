@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using static System.Math;
 using dbl = System.Double;
-using DA = Fluid.Internals.Numerics.DblArithmetic;
-using F2DA = Fluid.Internals.Numerics.F2DArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
+using F2DA = Fluid.Internals.Collections.F2DArithmetic;
 
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
@@ -14,11 +14,11 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
 using Lst = List<int>;
-using Tnr = Tensor<dbl,DA>;
-using SymTnr = SymTensor<dbl,DA>;
-using Vec = Vector<dbl,DA>;
+using Tnr = Tnr<dbl,DA>;
+using SymTnr = SymTnr<dbl,DA>;
+using Vec = Vec<dbl,DA>;
 using FTnr = RefTnr<F2D,F2DA>;
-using static Fluid.Internals.Numerics.NonNullable<F2D,F2DA>;
+using static Fluid.Internals.Collections.Nullable<F2D,F2DA>;
 using PE = PseudoElement;
 
 /// <summary>A quadrilateral element.</summary>
@@ -129,8 +129,7 @@ public class Element {
       invJ[2,2] = new F2D( (x,y) => J11.F(x,y) / detJ.F(x,y) );
       return invJ;
    }
-   protected (F2D detJ, F2D J11, F2D J12, F2D J21, F2D J22)
-   CalcDetJ() {
+   protected (F2D detJ, F2D J11, F2D J12, F2D J21, F2D J22) CalcDetJ() {
       dbl Δxd = Pos(3).X - Pos(0).X;
       dbl Δxu = Pos(6).X - Pos(9).X;
       dbl Δxl = Pos(9).X - Pos(0).X;
@@ -143,7 +142,7 @@ public class Element {
       var J12 = new F2D( (ξ,η) => 0.25*(Δxl*(1-ξ) + Δxr*(1+ξ)) );
       var J21 = new F2D( (ξ,η) => 0.25*(Δyd*(1-η) + Δyu*(1+η)) );
       var J22 = new F2D( (ξ,η) => 0.25*(Δyl*(1-ξ) + Δyr*(1+ξ)) );
-      var detJ = O.Sub(O.Mul(J11,J22), O.Mul(J12,J21));
+      var detJ = O.Sub(O.Mul(J11,J22), O.Mul(J12,J21))!;                   // The determinant shoud never come out zero.
       return (detJ, J11, J12, J21, J22);
    }
    /// <summary>Calculate the center of element's mass.</summary>
@@ -230,13 +229,17 @@ public class Element {
    //       for(int node = 0; node < 12; ++node)
    //          vals[i] += Vals(node)[varInx] * ϕ[0][node](pos.X, pos.Y); }
    //    return vals;
-   /// <returns></returns>
    // }
    
    /// <summary>Takes the single unique repeating factor (tensor) in a tensor product, multiplies it with itself four times and multiplies that with the element's determinant. Then it integrates the resulting function over the element.</summary>
    /// <param name="tnrFactor">The 2nd rank repeating factor.</param>
    internal SymTnr CalcQuadOverlaps(FTnr? tnrFactor) =>
       SymTnr.CreateAsQuadProd(tnrFactor, DetJ, Quadrature2D.Integrate);
+
+   internal SymTnr CalcQuadOverlapsß(FTnr tnrFactor) =>
+      SymTnr.CreateAsQuadProdß(tnrFactor, DetJ, Quadrature2D.Integrate);
+
+
    internal SymTnr CalcTripOverlaps(FTnr? tnrFactor) =>
       SymTnr.CreateAsTripProd(tnrFactor, DetJ, Quadrature2D.Integrate);
 

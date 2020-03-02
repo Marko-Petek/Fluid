@@ -9,13 +9,13 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Toolbox;
 using Fluid.TestRef;
 namespace Fluid.Internals.Collections {
-using static Factory;
+using static TnrFactory;
    
 /// <summary>A vector with specified dimension which holds values of type τ. Those can use arithmetic defined inside type α.</summary>
 /// <typeparam name="τ">Type of values.</typeparam>
 /// <typeparam name="α">Type defining arithmetic between values.</typeparam>
-public class RefVec<τ,α> : RefTnr<τ,α>, IEquatable<RefVec<τ,α>?>
-where τ : class, IEquatable<τ?>, IComparable<τ?>
+public class RefVec<τ,α> : RefTnr<τ,α>, IEquatable<RefVec<τ,α>>
+where τ : class, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ?>, new() {
 
    /// <summary>Void vector.</summary>
@@ -110,9 +110,7 @@ where α : IArithmetic<τ?>, new() {
 
    
 
-   public bool Equals(RefVec<τ,α>? v2) {
-      if(v2 == null)
-         return false;
+   public bool Equals(RefVec<τ,α> v2) {
       if(!Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
       foreach(var (i,s1) in Scals) {

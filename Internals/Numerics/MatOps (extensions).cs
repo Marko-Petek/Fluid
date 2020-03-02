@@ -1,7 +1,8 @@
 ﻿using System;
 using static System.Math;
+using Fluid.Internals.Collections;
 using dbl = System.Double;
-using dA = Fluid.Internals.Numerics.DblArithmetic;
+using dA = Fluid.Internals.Collections.DblArithmetic;
 
 namespace Fluid.Internals.Numerics {
    public static class MatOps {

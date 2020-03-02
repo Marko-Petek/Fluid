@@ -6,7 +6,7 @@ using static System.Math;
 
 using Fluid.Internals;
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Collections.Factory;
+using static Fluid.Internals.Collections.TnrFactory;
 using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
 using da = Fluid.Internals.Numerics.DblArithmetic;
@@ -16,10 +16,10 @@ using static Fluid.Internals.Toolbox;
 using Supercluster.KDTree;
 namespace Fluid.Tests {
 using dbl = Double;
-using Tensor = Tensor<double,DblArithmetic>;
-using Vector = Vector<double,DblArithmetic>;
-using TensorInt = Tensor<int,IntArithmetic>;
-using VectorInt = Vector<int,IntArithmetic>;
+using Tensor = Tnr<double,DblArithmetic>;
+using Vector = Vec<double,DblArithmetic>;
+using TensorInt = Tnr<int,IntArithmetic>;
+using VectorInt = Vec<int,IntArithmetic>;
 using Emt = Element;
 
 public class Numerics {

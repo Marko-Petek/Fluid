@@ -1,11 +1,10 @@
 using System;
 using static System.Math;
 using dbl = System.Double;
-using f2da = Fluid.Internals.Numerics.F2DArithmetic;
 
 namespace Fluid.Internals.Numerics {
    /// <summary>A custom function of 2 arguments on the domain [-1,1]x[-1,1]. Note: always use One as 1 and Zero as 0 because the equality checks for those inside operations rely on reference comparisons.</summary>
-   public class F2D : IEquatable<F2D?>, IComparable<F2D?> {
+   public class F2D : IEquatable<F2D>, IComparable<F2D> {
       public static F2D One { get; } = new F2D((x,y) => 1.0);
       /// <summary>A 3rd order Gauss quadrature integrator.</summary>
       public static Quadrature2D Integrator { get; } = new Quadrature2D(3, One);

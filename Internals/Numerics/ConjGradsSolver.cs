@@ -3,10 +3,10 @@ using Fluid.Internals;
 using Fluid.Internals.Collections;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
-using DA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
 namespace Fluid.Internals.Numerics {
-using Tnr = Tensor<dbl,DA>;
-using Vec = Vector<dbl,DA>;
+using Tnr = Tnr<dbl,DA>;
+using Vec = Vec<dbl,DA>;
 
 /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
 public class ConjGradsSolver {

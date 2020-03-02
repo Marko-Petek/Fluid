@@ -6,8 +6,8 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Collections {
 
-public class RefTnr<τ,α> : TensorBase<RefTnr<τ,α>>, IEquatable<RefTnr<τ,α>>
-where τ : class, IEquatable<τ?>, IComparable<τ?>
+public class RefTnr<τ,α> : TnrBase<RefTnr<τ,α>>, IEquatable<RefTnr<τ,α>>
+where τ : class, IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ?>, new() {
    /// <summary>Dimensions of tensor's ranks as a list. E.g.: {3,2,6,5} is read as: {{rank 4, dim 3}, {rank 3, dim 2}, {rank 2, dim 6}, {rank 1, dim 5}}.</summary>
    public List<int> Strc { get; internal set; }
@@ -115,7 +115,7 @@ where α : IArithmetic<τ?>, new() {
                if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created
                   tnr = new RefTnr<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
                   tnr.Superior!.AddSubTnr(inxs[i], tnr); } }
-            var dict = (TensorBase<RefTnr<τ,α>>) tnr;                            // tnr is now the proper subtensor.
+            var dict = (TnrBase<RefTnr<τ,α>>) tnr;                            // tnr is now the proper subtensor.
             value.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
             value.Strc = Strc;
             dict[inxs[n]] = value; }
@@ -124,6 +124,33 @@ where α : IArithmetic<τ?>, new() {
                if(!tnr.TryGetValue(inxs[i], out tnr))
                   return; }
             tnr.Superior!.Remove(inxs[inxs.Length - 1]); } }
+   }
+
+   public RefTnr<τ,α>? GetT(params int[] inxs) {
+      RefTnr<τ,α>? tnr = this;
+      for(int i = 0; i < inxs.Length; ++i) {
+         if(!tnr.TryGetValue(inxs[i], out tnr))
+            return null; }
+      return tnr;
+   }
+
+   public void SetT(RefTnr<τ,α>? t, params int[] inxs) {
+      RefTnr<τ,α>? tnr = this;
+      if(t != null) {       
+         int n = inxs.Length - 1;
+         for(int i = 0; i < n; ++i) {
+            if(!tnr.TryGetValue(inxs[i], out tnr)) {                         // Crucial line: out tnr becomes the subtensor if found, if not it is created.
+               tnr = new RefTnr<τ,α>(tnr!, 6); //new Tensor<τ,α>(Structure, tnr!.Rank - 1, tnr, 6);
+               tnr.Superior!.AddSubTnr(inxs[i], tnr); } }
+         var dict = (TnrBase<RefTnr<τ,α>>) tnr;                            // tnr is now the proper subtensor.
+         t.Superior = tnr;                                             // Crucial: to make the added tensor truly a part of this tensor, we must set proper superior and structure.
+         t.Strc = Strc;
+         dict[inxs[n]] = t; }
+      else {
+         for(int i = 0; i < inxs.Length; ++i) {
+            if(!tnr.TryGetValue(inxs[i], out tnr))                   // t is null and the corresponding substructure does not exist. Leave as is.
+               return; }
+         tnr.Superior!.Remove(inxs[inxs.Length - 1]); }              // Corresponding tensor exists. Remove.
    }
 
    public RefTnr<τ,α> GetNonNullTnr(params int[] inxs) {
@@ -159,7 +186,7 @@ where α : IArithmetic<τ?>, new() {
                else {                                                         // Tensor does not exist in an intermediate rank.
                   tnr = new RefTnr<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
                   tnr.Superior!.Add(inx[i], tnr); } }
-            var dict = (TensorBase<RefTnr<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
+            var dict = (TnrBase<RefTnr<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
             value.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
             value.Strc = Strc;
             dict[inx[n]] = value; }                                           // We do not check that the value is a vector beforehand. It is assumed that the user used indexer correctly.
@@ -169,6 +196,40 @@ where α : IArithmetic<τ?>, new() {
                if(!tnr.TryGetValue(inx[i], out tnr))
                   return; }
             tnr.Superior!.Remove(inx[n - 1]); } }     // Vector.Superior.Remove
+   }
+
+   public RefVec<τ,α>? GetV(params int[] inx) {
+      RefTnr<τ,α>? tnr = this;
+      int n = inx.Length - 1;
+      for(int i = 0; i < n; ++i) {
+         if(!tnr.TryGetValue(inx[i], out tnr))
+            return null; }
+      if(tnr.TryGetValue(inx[n], out tnr))                                 // No problem with null.
+         return (RefVec<τ,α>)tnr;                                          // Same.
+      else
+         return null;
+   }
+
+   public void SetV(RefVec<τ,α>? v, params int[] inx) {
+      RefTnr<τ,α>? tnr = this;
+      if(v != null) {
+         int n = inx.Length - 1;                                           // Entry one before last chooses tensor, last chooses vector.
+         for(int i = 0; i < n; ++i) {
+            if(tnr.TryGetValue(inx[i], out RefTnr<τ,α>? tnr2)) {
+               tnr = tnr2; }
+            else {                                                         // Tensor does not exist in an intermediate rank.
+               tnr = new RefTnr<τ,α>(tnr, 4);                              //new Tensor<τ,α>(Structure, tnr.Rank - 1, tnr, 4);
+               tnr.Superior!.Add(inx[i], tnr); } }
+         var dict = (TnrBase<RefTnr<τ,α>>) tnr;                         // Tnr now refers to either a prexisting R2 tensor or a freshly created one.
+         v.Superior = tnr;                                             // Crucial: to make the added vector truly a part of this tensor, we must set proper superior and structure.
+         v.Strc = Strc;
+         dict[inx[n]] = v; }                                           // We do not check that the value is a vector beforehand. It is assumed that the user used indexer correctly.
+      else {
+         int n = inx.Length;                                               // Last entry chooses vector.
+         for(int i = 0; i < n; ++i) {
+            if(!tnr.TryGetValue(inx[i], out tnr))
+               return; }
+         tnr.Superior!.Remove(inx[n - 1]); }
    }
 
    public RefVec<τ,α> GetNonNullVec(params int[] inx) {

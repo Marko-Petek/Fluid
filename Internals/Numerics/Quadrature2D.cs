@@ -46,13 +46,13 @@ public class Quadrature2D {
    /// <summary>Dimension of hypercube that defines the integration domain. 1 = line, 2 = square, 3 = cube, etc.</summary>
    public int Dim { get; set; } = 2;
    /// <summary>Function to integrate.</summary>
-   public F2D F { get; set; }
+   public F2D? F { get; set; }
 
 
-   public Quadrature2D(F2D f2d) {
+   public Quadrature2D(F2D? f2d) {
       F = f2d;
    }
-   public Quadrature2D(int order, F2D f2d) : this(f2d) {
+   public Quadrature2D(int order, F2D? f2d) : this(f2d) {
       Order = order;
    }
 
@@ -60,6 +60,8 @@ public class Quadrature2D {
    /// <remarks><see cref="TestRefs.GaussQuadrature"/>
    ///          <see cref="TestRefs.GaussQuadrature2D"/></remarks>
    public double Integrate() {
+      if(F == null)
+         return 0.0;
       double result = 0.0;
       dbl x = 0.0;
       dbl y = 0.0;
@@ -72,9 +74,16 @@ public class Quadrature2D {
             result += newWgh*WA[Order - 2][i][0]*F[x,y]; } }
       return result;
    }
+
    /// <summary>Order 7 Gaussian Quadrature in 2D.</summary>
    /// <param name="f">Function to integrate over reference square.</param>
-   public static double Integrate(F2D f) {
+   public static double Integrate(F2D? f) {
+      if(f == null)
+         return 0.0;
+      return Integrateß(f);
+   }
+
+   internal static double Integrateß(F2D f) {
       double result = 0.0;
       dbl x = 0.0;
       dbl y = 0.0;

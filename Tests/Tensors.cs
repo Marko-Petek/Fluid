@@ -3,7 +3,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Collections.Factory;
+using static Fluid.Internals.Collections.TnrFactory;
 using Fluid.Internals.Numerics;
 using Fluid.Internals;
 using System.Collections.Generic;
@@ -14,11 +14,11 @@ using dbl = System.Double;
 using IA = Fluid.Internals.Numerics.IntArithmetic;
 using DA = Fluid.Internals.Numerics.DblArithmetic;
 namespace Fluid.Tests {
-using Tnr = Tensor<double,DblArithmetic>;
-using Vec = Vector<double,DblArithmetic>;
+using Tnr = Tnr<double,DblArithmetic>;
+using Vec = Vec<double,DblArithmetic>;
 
-using TnrInt = Tensor<int,IntArithmetic>;
-using VecInt = Vector<int,IntArithmetic>;
+using TnrInt = Tnr<int,IntArithmetic>;
+using VecInt = Vec<int,IntArithmetic>;
 
 public class Tensors {
 

@@ -6,14 +6,14 @@ using Fluid.Internals.Collections;
 using My = Fluid.Internals.Collections.Custom;
 using static Fluid.Internals.Toolbox;
 using dbl = System.Double;
-using DA = Fluid.Internals.Numerics.DblArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
 using System.IO;
 using static System.Math;
 
 namespace Fluid.Internals.Lsfem.CavityFlow {
 using static Fluid.Internals.Lsfem.SimManager;
-using Vec = Fluid.Internals.Collections.Vector<dbl,DA>;
-using Tnr = Fluid.Internals.Collections.Tensor<dbl, DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
 using PE = PseudoElement;
