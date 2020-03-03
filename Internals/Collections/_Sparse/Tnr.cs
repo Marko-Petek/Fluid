@@ -5,20 +5,21 @@
  ██╔══██╗██╔══██║██║╚██╗██║██╔═██╗     ██║██║╚██╗██║██║  ██║██║██║     ██╔══╝  ╚════██║
  ██║  ██║██║  ██║██║ ╚████║██║  ██╗    ██║██║ ╚████║██████╔╝██║╚██████╗███████╗███████║
  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝    ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝ ╚═════╝╚══════╝╚══════╝
-   We have two notations for rank indices. Let N be the tensor's top rank:
+   We have two notations for rank indices. Let N be the tensor's top rank, therefore there are N slots:
    - Slot notation:
       [1, N] which is how mathematicians would assign ordering to tensor's slots.
    - Rank notation:
-      [0, N-1] where the value corresponds to the rank of tensors held by that slot.
-   
-   Relation between notations:
-   Slot 1 holds tensors of rank N-1.
-   Slot 2 holds tensors of rank N-2.
-   ...
-   Slot N-1 holds tensors of rank 1.
-   Slot N holds tensors of rank 0.
+      [N, 1] where the value corresponds to the rank of the tensor, that is:
 
-   Relation is therefore: R = N - S  or  S = N - R.
+         Slot 1 belongs to a tensor of rank N    (gives access to subtensors of rank N-1).
+         Slot 2 belongs to a tensor of rank N-1. (gives access to subtensors of rank N-2).
+         Slot 3 belongs to a tensor of rank N-2. (gives access to subtensors of rank N-3).
+         ...
+         Slot N-2 belongs to a tensor of rank 3. (gives access to subtensors of rank 2).
+         Slot N-1 belongs to a tensor of rank 2. (gives access to subvectors of rank 1).
+         Slot N belongs to a tensor of rank 1    (gives access to values of rank 0).
+
+   Relation is therefore: R = N - S + 1  or  S = N - R + 1.
 
     
  ██████╗  █████╗ ███╗   ██╗██╗  ██╗    ██████╗ ███████╗██████╗ ██╗   ██╗ ██████╗████████╗██╗ ██████╗ ███╗   ██╗
@@ -69,7 +70,6 @@ public class Tnr<τ,α> : TnrBase<Tnr<τ,α>>, IEquatable<Tnr<τ,α>>
 where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
    
-   
    /// <summary>Dimensions of tensor's ranks as a list. E.g.: {3,2,6,5} is read as: {{rank 4, dim 3}, {rank 3, dim 2}, {rank 2, dim 6}, {rank 1, dim 5}}.</summary>
    public List<int> Strc { get; internal set; }
    /// <summary>Rank specifies the height (level) in the hierarchy on which the tensor sits. It equals the number of levels that exist below it. It tells us how many indices we must specify before we reach the value level. Rank notation: [0, N-1] where the value corresponds to the rank of tensors held by that slot.</summary>
@@ -82,9 +82,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
    public Tnr<τ,α>? Superior { get; internal set; }
    /// <summary>Number of entries (non-zeros) in Tensor. Works even if the reference points to a Vector.</summary>
-   public new int Count => CountInternal;
-   /// <summary>Virtual Count override so that it works also on Vectors when looking at them as Tensors.</summary>
-   protected virtual int CountInternal => base.Count;
+   public new virtual int Count => base.Count;
    /// <summary>Tensor dimension. The number of (potential) subtensors.</summary>
    public int Dim => Strc[StrcInx];
    /// <summary>Index in Structure where substructure begins (structure a non-top tensor would have if it was top).</summary>
@@ -154,7 +152,7 @@ where α : IArithmetic<τ>, new() {
    /// <param name="topRankInx">Rank of the top-most tensor in the hierarchy.</param>
    /// <param name="slotOrRankInx">Slot (e.g. A^ijk ==> 1,2,3) or rank (e.g. A^ijk ==> 2,1,0) index.</param>
    static int ChangeRankNotation(int topRankInx, int slotOrRankInx) =>
-      topRankInx - slotOrRankInx;
+      topRankInx - slotOrRankInx + 1;
 
 
    /// <summary>Tensor getting/setting indexer.</summary>
@@ -324,7 +322,7 @@ where α : IArithmetic<τ>, new() {
          Tnr<τ,α>? tnr = this;
          Tnr<τ,α>? tnr2;                                                       // Temporary to avoid null problem below.
          Vec<τ,α> vec;
-         if(!value.Equals(default(τ))) {
+         if(!value.Equals(NonNullable<τ,α>.O.Zero())) {
             if(inx.Length > 1) {                                                 // At least a 2nd rank tensor.
                int n = inx.Length - 2;
                for(int i = 0; i < n; ++i) {                                      // This loop is entered only for a 3rd rank tensor or above.
@@ -430,10 +428,10 @@ where α : IArithmetic<τ>, new() {
 
    
 
-   /// <summary>Check two tensors for equality.</summary>
-   /// <param name="tnr2">Other tensor.</param>
+   /// <summary>Compares substructures and values.</summary>
+   /// <param name="tnr2">Tensor to compare to.</param>
    public bool Equals(Tnr<τ,α> tnr2) =>
-      this.Equals(tnr2);
+      this.Equals<τ,α>(tnr2);
 
    
    

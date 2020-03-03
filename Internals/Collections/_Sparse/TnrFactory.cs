@@ -55,14 +55,14 @@ public static class TnrFactory {
    /// <param name="span">Array span of values.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vec<τ,α> TopVecFromSpan<τ,α>(Span<τ> span)
+   public static Vec<τ,α>? TopVecFromSpan<τ,α>(Span<τ> span)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       var vec = new Vec<τ,α>(span.Length, span.Length);
       for(int i = 0; i < span.Length; ++i) {
          if(!span[i].Equals(NonNullable<τ,α>.O.Zero()))
             vec.Add(i, span[i]); }
-      return vec;
+      return vec.Count != 0 ? vec : null;
    }
    /// <summary>Creates a non-top vector from an array span. Adds it to its specified superior at the specified index.</summary>
    /// <param name="span">Array span of values.</param>
@@ -134,7 +134,7 @@ public static class TnrFactory {
    /// <param name="strc">Structure.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tnr<τ,α> TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
+   public static Tnr<τ,α>? TopTnrFromSpan<τ,α>(Span<τ> span, params int[] strc)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       int rank = strc.Length;
@@ -143,7 +143,7 @@ public static class TnrFactory {
       else {
          var res = new Tnr<τ,α>(strc.ToList(), strc[0]);                         // Empty tensor that enters recursion.
          Recursion(span, 0, res);
-         return res; }
+         return res.Count != 0 ? res : null; }
 
       void Recursion(Span<τ> spn, int slot, Tnr<τ,α> tgt) {                      // Span and natural slot index to which it belongs.
          int nIter = strc[slot];                                                    // As many iterations as slot dimension.
@@ -165,7 +165,11 @@ public static class TnrFactory {
    /// <param name="extraCap">Extra capacity of copied vector (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Vec<τ,α> CopyAsTopVec<τ,α>(this Vec<τ,α> src, int extraCap = 0)
+   public static Vec<τ,α>? CopyAsTopVec<τ,α>(this Vec<τ,α>? src, int extraCap = 0)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() =>
+      src != null ? src.CopyAsTopVecß(extraCap) : null;
+   internal static Vec<τ,α> CopyAsTopVecß<τ,α>(this Vec<τ,α> src, int extraCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       var copy = TopVector<τ,α>(src.Dim, src.Count + extraCap);
@@ -203,16 +207,21 @@ public static class TnrFactory {
    /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
-   public static Tnr<τ,α> CopyAsTopTnr<τ,α>(this Tnr<τ,α> src, int xCap = 0)
+   public static Tnr<τ,α>? CopyAsTopTnr<τ,α>(this Tnr<τ,α>? src, int xCap = 0)
+   where τ : IEquatable<τ>, IComparable<τ>
+   where α : IArithmetic<τ>, new() =>
+      src != null ? src.CopyAsTopTnrß(xCap) : null;
+      
+   internal static Tnr<τ,α> CopyAsTopTnrß<τ,α>(this Tnr<τ,α> src, int xCap = 0)
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       if (src is Vec<τ,α> vec) {
-         return CopyAsTopVec<τ,α>(vec, xCap); }
+         return CopyAsTopVecß<τ,α>(vec, xCap); }
       else {
          var newStrc = new List<int>(src.Strc);
          var copy = TopTensor<τ,α>(newStrc, src.Count + xCap);
          foreach(var (i, t) in src)
-            CopyAsSubTnr<τ,α>(t, copy, i, xCap);
+            t.CopyAsSubTnr<τ,α>(copy, i, xCap);
          return copy; }
    }
    /// <summary>Creates a deep copy of a tensor as a non-top tensor (non-null superior).</summary>
@@ -227,9 +236,9 @@ public static class TnrFactory {
    where τ : IEquatable<τ>, IComparable<τ>
    where α : IArithmetic<τ>, new() {
       if (src is Vec<τ,α> vec) {
-         return CopyAsSubVec<τ,α>(vec, newSup, inx, xCap); }
+         return CopyAsSubVecß<τ,α>(vec, newSup, inx, xCap); }
       else {
-         return CopyAsSubTnrß(src, newSup, inx, xCap); }
+         return src.CopyAsSubTnrß(newSup, inx, xCap); }
    }
 
    internal static Tnr<τ,α> CopyAsSubTnrß<τ,α>(this Tnr<τ,α> src,
@@ -243,7 +252,7 @@ public static class TnrFactory {
       else {                                                                     // Subordinates are vectors.
          foreach(var (i, t) in src) {
             var v = (Vec<τ,α>) t;
-            CopyAsSubVec<τ,α>(v, copy, i, xCap); } }
+            CopyAsSubVecß<τ,α>(v, copy, i, xCap); } }
       return copy; }
 }
 

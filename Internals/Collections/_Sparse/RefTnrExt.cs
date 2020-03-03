@@ -24,7 +24,7 @@ public static class RefTnrExt {
          if(t2 == null)
             return null;
          else
-            return t2.CopyAsTopTnr(); }
+            return t2.CopyAsTopRefTnr(); }
       else if(t2 == null)
          return t1;
 
@@ -72,14 +72,14 @@ public static class RefTnrExt {
          if(t2 == null)
             return null;
          else
-            return t2.CopyAsTopTnr(); }
+            return t2.CopyAsTopRefTnr(); }
       else if(t2 == null)
-         return t1.CopyAsTopTnr();
+         return t1.CopyAsTopRefTnr();
       return t1.SumTopß(t2);
    }
 
    internal static RefTnr<τ,α>? SumTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
-      t1.CopyAsTopTnr().SumIntoß(t2);
+      t1.CopyAsTopRefTnrß().SumIntoß(t2);
 
    /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
    /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
@@ -89,7 +89,7 @@ public static class RefTnrExt {
          if(t2 == null)
             return null;
          else
-            return t2.CopyAsTopTnr().NegateIntoß(); }
+            return t2.CopyAsTopRefTnrß().NegateIntoß(); }
       else if(t2 == null)
          return t1;
 
@@ -134,12 +134,12 @@ public static class RefTnrExt {
          else
             return t2.NegateTopß(); }
       else if(t2 == null)
-         return t1.CopyAsTopTnr();
+         return t1.CopyAsTopRefTnr();
       return t1.SubTopß(t2);
    }
 
    internal static RefTnr<τ,α>? SubTopß<τ,α>(this RefTnr<τ,α> t1, RefTnr<τ,α> t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
-      t1.CopyAsTopTnr().SubIntoß(t2);
+      t1.CopyAsTopRefTnrß().SubIntoß(t2);
 
    /// <summary>Modifies this tensor by negating each element.</summary>
    public static RefTnr<τ,α>? NegateInto<τ,α>(this RefTnr<τ,α>? t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
@@ -166,11 +166,11 @@ public static class RefTnrExt {
       if(t == null)
          return null;
       else
-         return t.CopyAsTopTnr().NegateIntoß();
+         return t.CopyAsTopRefTnrß().NegateIntoß();
    }
 
    internal static RefTnr<τ,α>? NegateTopß<τ,α>(this RefTnr<τ,α> t)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
-      t.CopyAsTopTnr().NegateIntoß();
+      t.CopyAsTopRefTnrß().NegateIntoß();
 
    public static RefTnr<τ,α>? MulInto<τ,α>(this RefTnr<τ,α>? t, τ? scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null || scal == null)
@@ -209,7 +209,7 @@ public static class RefTnrExt {
    /// <param name="scal"></param>
    /// <param name="vec"></param>
    internal static RefTnr<τ,α> MulTopß<τ,α>(this RefTnr<τ,α> t, τ scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
-      t.CopyAsTopTnr().MulIntoß(scal);
+      t.CopyAsTopRefTnrß().MulIntoß(scal);
 
    public static RefTnr<τ,α>? MulSub<τ,α>(this RefTnr<τ,α>? t, τ? scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t == null || scal == null)
@@ -450,7 +450,7 @@ public static class RefTnrExt {
       if(r == t.Rank - 1) {                                                           // Only one rank exists above rank r. Pick one tensor from rank r and return it.
          if(t.Rank > 1) {                                                             // Tensor to be reduced is at least rank two.
             if(t.TryGetValue(e, out var st))                                    // Element exists.
-               return st.CopyAsTopTnr();
+               return st.CopyAsTopRefTnr();
             else
                return null; }
          else                                                                       // Rank <= 1: impossible.

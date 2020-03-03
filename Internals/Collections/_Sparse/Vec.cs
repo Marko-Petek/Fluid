@@ -47,8 +47,8 @@ where α : IArithmetic<τ>, new() {
    internal bool TryGetValue(int inx, out τ scal) =>
       Scals.TryGetValue(inx, out scal);
 
-   public new int Count => CountInternal;
-   protected override int CountInternal => Scals.Count;
+   public override int Count => Scals.Count;
+   
    /// <summary>Scalars. An extra wrapped Dictionary which holds vector elements.</summary>
    public Dictionary<int,τ> Scals { get; internal set; }
 
@@ -62,7 +62,7 @@ where α : IArithmetic<τ>, new() {
          Scals.TryGetValue(i, out τ val);
          return val; }
       set {
-         if(!value.Equals(default(τ))) {
+         if(!value.Equals(NonNullable<τ,α>.O.Zero())) {
             Scals[i] = value; }
          else
             Scals.Remove(i); }
@@ -75,7 +75,7 @@ where α : IArithmetic<τ>, new() {
 
    
    
-   /// <summary>Sum two vectors, return new vector as a result.</summary>
+   /// <summary>Sum two vectors, return new top vector as a result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
    /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>

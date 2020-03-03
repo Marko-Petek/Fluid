@@ -79,7 +79,7 @@ public static class TnrExt {
    }
 
    internal static Tnr<τ,α>? SumTopß<τ,α>(this Tnr<τ,α> t1, Tnr<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      t1.CopyAsTopTnr().SumIntoß(t2);
+      t1.CopyAsTopTnrß().SumIntoß(t2);
 
    /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
    /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
@@ -89,7 +89,7 @@ public static class TnrExt {
          if(t2 == null)
             return null;
          else
-            return t2.CopyAsTopTnr().NegateIntoß(); }
+            return t2.CopyAsTopTnrß().NegateIntoß(); }
       else if(t2 == null)
          return t1;
 
@@ -139,7 +139,7 @@ public static class TnrExt {
    }
 
    internal static Tnr<τ,α>? SubTopß<τ,α>(this Tnr<τ,α> t1, Tnr<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      t1.CopyAsTopTnr().SubIntoß(t2);
+      t1.CopyAsTopTnrß().SubIntoß(t2);
 
    /// <summary>Modifies this tensor by negating each element.</summary>
    public static Tnr<τ,α>? NegateInto<τ,α>(this Tnr<τ,α>? t)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
@@ -166,11 +166,11 @@ public static class TnrExt {
       if(t == null)
          return null;
       else
-         return t.CopyAsTopTnr().NegateIntoß();
+         return t.CopyAsTopTnrß().NegateIntoß();
    }
 
    internal static Tnr<τ,α>? NegateTopß<τ,α>(this Tnr<τ,α> t)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      t.CopyAsTopTnr().NegateIntoß();
+      t.CopyAsTopTnrß().NegateIntoß();
 
    public static Tnr<τ,α>? MulInto<τ,α>(this Tnr<τ,α>? t, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t == null || scal.Equals(NonNullable<τ,α>.O.Zero()))
@@ -209,7 +209,7 @@ public static class TnrExt {
    /// <param name="scal"></param>
    /// <param name="vec"></param>
    internal static Tnr<τ,α> MulTopß<τ,α>(this Tnr<τ,α> t, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      t.CopyAsTopTnr().MulIntoß(scal);
+      t.CopyAsTopTnrß().MulIntoß(scal);
 
    public static Tnr<τ,α>? MulSub<τ,α>(this Tnr<τ,α> t, τ scal, Tnr<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t == null || scal.Equals(NonNullable<τ,α>.O.Zero()))
@@ -652,7 +652,7 @@ public static class TnrExt {
          return null; }
    }
 
-   /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
+   /// <summary>Compares substructures and values. Static implementation allows for null comparison. If two tensors are null they are equal.</summary>
    /// <param name="t1">Tensor 1.</param>
    /// <param name="t2">Tensor 2.</param>
    public static bool Equals<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {

@@ -47,8 +47,8 @@ where α : IArithmetic<τ?>, new() {
    internal bool TryGetValue(int inx, out τ? scal) =>
       Scals.TryGetValue(inx, out scal);
 
-   public new int Count => CountInternal;
-   protected override int CountInternal => Scals.Count;
+   public override int Count => Scals.Count;
+   
    /// <summary>Scalars. An extra wrapped Dictionary which holds vector elements.</summary>
    public Dictionary<int,τ> Scals { get; internal set; }
 

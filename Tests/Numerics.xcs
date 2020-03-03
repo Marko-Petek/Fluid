@@ -1,6 +1,7 @@
 using Xunit;
 using Xunit.Abstractions;
 using System;
+using dbl = System.Double;
 using System.Linq;
 using static System.Math;
 
@@ -9,18 +10,17 @@ using Fluid.Internals.Collections;
 using static Fluid.Internals.Collections.TnrFactory;
 using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
-using da = Fluid.Internals.Numerics.DblArithmetic;
-using ia = Fluid.Internals.Numerics.IntArithmetic;
+using DA = Fluid.Internals.Collections.DblArithmetic;
+using IA = Fluid.Internals.Collections.IntArithmetic;
 using Fluid.TestRef;
 using static Fluid.Internals.Toolbox;
 using Supercluster.KDTree;
 namespace Fluid.Tests {
-using dbl = Double;
-using Tensor = Tnr<double,DblArithmetic>;
-using Vector = Vec<double,DblArithmetic>;
-using TensorInt = Tnr<int,IntArithmetic>;
-using VectorInt = Vec<int,IntArithmetic>;
-using Emt = Element;
+
+using Tensor = Tnr<dbl,DA>;
+using Vector = Vec<dbl,DA>;
+using TensorInt = Tnr<int,IA>;
+using VectorInt = Vec<int,IA>;
 
 public class Numerics {
 
@@ -34,10 +34,10 @@ public class Numerics {
       8.0, 12.0, 9.0 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
    [Theory] public void ConjGrads3By3(params double[] input) {
-      var A = TopTnrFromSpan<dbl,da>(input.AsSpan<double>(0,9), 3,3);
-      var b = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(9,3));
-      var expSol = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(15,3));
-      var initPoint = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(12,3));
+      var A = TopTnrFromSpan<dbl,DA>(input.AsSpan<double>(0,9), 3,3);
+      var b = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(9,3));
+      var expSol = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(15,3));
+      var initPoint = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(12,3));
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
       Assert.True(sol.Equals(expSol, 0.01));
@@ -54,10 +54,10 @@ public class Numerics {
       1.197, -1.365, 0.638, 0.309 )]   // Solution vector.
    /// <remarks><see cref="TestRefs.ConjGrads4By4"/></remarks>
    [Theory] public void ConjGrads4By4(params double[] input) {
-      var A = TopTnrFromSpan<dbl,da>(input.AsSpan<dbl>(0,16), 4,4);
-      var b = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(16,4));
-      var initPoint = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(20,4));
-      var expSol = TopVecFromSpan<dbl,da>(input.AsSpan<dbl>(24,4));
+      var A = TopTnrFromSpan<dbl,DA>(input.AsSpan<dbl>(0,16), 4,4);
+      var b = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(16,4));
+      var initPoint = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(20,4));
+      var expSol = TopVecFromSpan<dbl,DA>(input.AsSpan<dbl>(24,4));
       var solver = new ConjGradsSolver(A, b);
       var sol = solver.Solve(initPoint, 0.001);
       Assert.True(sol.Equals(expSol, 0.01));
@@ -88,15 +88,15 @@ public class Numerics {
       int nElmsInK = strucK.Aggregate(1, (int total, int val) => total*val);
       int nElmsInU = strucU.Aggregate(1, (int total, int val) => total*val);
       int nElmsInF = strucF.Aggregate(1, (int total, int val) => total*val);
-      var spanK = data.Skip(arrPos).Take(nElmsInK).Select(a => (double) a).ToArray().AsSpan();
-      var K = TopTnrFromSpan<dbl,da>(spanK, strucK);
+      var spanK = data.Skip(arrPos).Take(nElmsInK).Select(a => (dbl) a).ToArray().AsSpan();
+      var K = TopTnrFromSpan<dbl,DA>(spanK, strucK);
       arrPos += nElmsInK;
-      var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (double) a).ToArray().AsSpan();
-      var F = TopTnrFromSpan<dbl,da>(spanF, strucF);
+      var spanF = data.Skip(arrPos).Take(nElmsInF).Select(a => (dbl) a).ToArray().AsSpan();
+      var F = TopTnrFromSpan<dbl,DA>(spanF, strucF);
       var spanX0 = Enumerable.Repeat(0.0, nElmsInF).ToArray().AsSpan();
       var solver = new ConjGradsSolver(K, F);
       DebugTag = "x0Creation";
-      var x0 = TopTnrFromSpan<dbl,da>(spanX0, strucF);
+      var x0 = TopTnrFromSpan<dbl,DA>(spanX0, strucF);
       var solution = solver.Solve(x0, 0.001);
       Assert.True(true);
    }

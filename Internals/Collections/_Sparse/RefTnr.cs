@@ -21,9 +21,7 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Superior: a tensor directly above in the hierarchy. VoidTnr if this is the highest rank tensor.</summary>
    public RefTnr<τ,α>? Superior { get; internal set; }
    /// <summary>Number of entries (non-zeros) in Tensor. Works even if the reference points to a Vector.</summary>
-   public new int Count => CountInternal;
-   /// <summary>Virtual Count override so that it works also on Vectors when looking at them as Tensors.</summary>
-   protected virtual int CountInternal => base.Count;
+   public new virtual int Count => base.Count;
    /// <summary>Tensor dimension. The number of (potential) subtensors.</summary>
    public int Dim => Strc[StrcInx];
    /// <summary>Index in Structure where substructure begins (structure a non-top tensor would have if it was top).</summary>
