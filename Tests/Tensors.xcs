@@ -25,17 +25,7 @@ public class Tensors {
 
    
    
-   [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
-   [InlineData(1, 0, 2,   2, 3, 1,  -1,-3, 1)]
-   [InlineData(1, 3, 2,   1, 3, 2,   0, 0, 0)]
-   /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
-   [Theory] public void Op_VectorSubtraction(params int[] data) {
-      var vec1 = TopVecFromSpan<int,IA>(data.AsSpan<int>(0,3));
-      var vec2 = TopVecFromSpan<int,IA>(data.AsSpan<int>(3,3));
-      var res = vec1 - vec2;
-      var expRes = TopVecFromSpan<int,IA>(data.AsSpan<int>(6,3));
-      Assert.True(res.Equals(expRes));
-   }
+   
    
    [InlineData(
       5,3,2,
@@ -845,37 +835,7 @@ public class Tensors {
       Assert.True(tnr1.Equals(tnr2, 0.02));
    }
 
-   [InlineData(
-      4,    5,0,2,1,             // vec
-      2,    0,5,                 // read1
-      2,    1,0,                 // read2
-      2,    2,2,                 // read3
-      2,    3,1,                  // read4
-      2,    2,6,                 // wrt1
-      2,    1,3,                 // wrt2
-      2,    3,0                  // wrt3
-   )]
-   /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
-   [Theory] public void VectorIndexer(params int[] data) {                          var (pos, read) = Read(data);
-      var vec = TopVecFromSpan<int,IA>(data.AsSpan(pos, read));                     (pos, read) = Read(data, pos, read);
-      var read1 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
-      var read2 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
-      var read3 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
-      var read4 = new Span<int>(data, pos, read).ToArray();                         (pos, read) = Read(data, pos, read);
-      var wrt1 = new Span<int>(data, pos, read).ToArray();                          (pos, read) = Read(data, pos, read);
-      var wrt2 = new Span<int>(data, pos, read).ToArray();                          (pos, read) = Read(data, pos, read);
-      var wrt3 = new Span<int>(data, pos, read).ToArray();
-      Assert.True(vec[read1[0]].Equals(read1[1]));
-      Assert.True(vec[read2[0]].Equals(read2[1]));
-      Assert.True(vec[read3[0]].Equals(read3[1]));
-      Assert.True(vec[read4[0]].Equals(read4[1]));
-      vec[wrt1[0]] = wrt1[1];
-      Assert.True(vec[wrt1[0]].Equals(wrt1[1]));
-      vec[wrt2[0]] = wrt2[1];
-      Assert.True(vec[wrt2[0]].Equals(wrt2[1]));
-      vec[wrt3[0]] = wrt3[1];
-      Assert.True(vec[wrt3[0]].Equals(wrt3[1]));
-   }
+   
 
    [InlineData(
       4,    2,2,2,2,                                              // tnrStruc

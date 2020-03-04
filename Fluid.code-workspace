@@ -10,7 +10,7 @@
 		"editor.minimap.enabled": true,
 		"editor.detectIndentation": false,
 		"editor.fontFamily": "DejaVu Sans Mono",
-		"editor.fontSize": 13,
+      "editor.fontSize": 13,
 		"editor.snippetSuggestions": "none",
 		"editor.tabSize": 3,
 		"git.enableSmartCommit": true,

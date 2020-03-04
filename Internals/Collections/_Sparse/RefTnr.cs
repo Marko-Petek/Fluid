@@ -311,7 +311,7 @@ where α : IArithmetic<τ?>, new() {
    /// <param name="scal">Scalar.</param>
    /// <param name="aTnr">Tensor.</param>
    /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
-   public static RefTnr<τ,α>? operator * (τ scal, RefTnr<τ,α>? aTnr) =>
+   public static RefTnr<τ,α>? operator * (τ? scal, RefTnr<τ,α>? aTnr) =>
       aTnr.MulTop(scal);
    
 

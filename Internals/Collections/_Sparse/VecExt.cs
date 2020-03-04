@@ -45,16 +45,16 @@ public static class VecExt {
       return SubIntoß(vec1, vec2);
    }
    /// <summary>Subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
-   /// <param name="vec1">Minuend. Is modified, use return as result.</param>
-   /// <param name="vec2">Subtrahend. Is not destroyed.</param>
+   /// <param name="v1">Minuend. Is modified, use return as result.</param>
+   /// <param name="v2">Subtrahend. Is not destroyed.</param>
    /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
-   internal static Vec<τ,α>? SubIntoß<τ,α>(this Vec<τ,α> vec1, Vec<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
-      foreach(var (i, s2) in vec2.Scals) {
-         var subVal1 = vec1[i];
+   internal static Vec<τ,α>? SubIntoß<τ,α>(this Vec<τ,α> v1, Vec<τ,α> v2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
+      foreach(var (i, s2) in v2) {
+         var subVal1 = v1[i];
          var dif = NonNullable<τ,α>.O.Sub(subVal1, s2);
-         vec1[i] = dif; }
-      if(vec1.Count != 0)
-         return vec1;
+         v1[i] = dif; }
+      if(v1.Count != 0)
+         return v1;
       else
          return null;
    }
@@ -75,20 +75,20 @@ public static class VecExt {
    internal static Vec<τ,α>? SumTopß<τ,α>(this Vec<τ,α> vec1, Vec<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() =>
       TopVector<τ,α>(vec1).SumIntoß(vec1)!.SumIntoß(vec2);
 
-   public static Vec<τ,α>? SubTop<τ,α>(this Vec<τ,α>? vec1, Vec<τ,α>? vec2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
-      if(vec1 == null) {
-         if(vec2 == null)
+   public static Vec<τ,α>? SubTop<τ,α>(this Vec<τ,α>? v1, Vec<τ,α>? v2)  where τ : IEquatable<τ>, IComparable<τ>   where α : IArithmetic<τ>, new() {
+      if(v1 == null) {
+         if(v2 == null)
             return null;
          else
-            return TopVector<τ,α>(vec2).SubIntoß(vec2); }
-      else if(vec2 == null) {
-         return TopVector<τ,α>(vec1).SumIntoß(vec1); }
-      Assume.True(vec1.Dim == vec2.Dim, () => "The dimensions of vectors do not match on addition.");
-      return SumTopß(vec1, vec2);
+            return TopVector<τ,α>(v2).SubIntoß(v2); }
+      else if(v2 == null) {
+         return TopVector<τ,α>(v1).SumIntoß(v1); }
+      Assume.True(v1.Dim == v2.Dim, () => "The dimensions of vectors do not match on subtraction.");
+      return SubTopß(v1, v2);
    }
 
-   internal static Vec<τ,α>? SubTopß<τ,α>(this Vec<τ,α> vec1, Vec<τ,α> vec2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
-      TopVector<τ,α>(vec1).SumIntoß(vec1)!.SubIntoß(vec2);
+   internal static Vec<τ,α>? SubTopß<τ,α>(this Vec<τ,α> v1, Vec<τ,α> v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() =>
+      TopVector<τ,α>(v1).SumIntoß(v1)!.SubIntoß(v2);
    
    /// <summary>Modifies this vector by negating each element.</summary>
    public static Vec<τ,α>? NegateInto<τ,α>(this Vec<τ,α>? vec)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {

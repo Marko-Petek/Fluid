@@ -199,8 +199,8 @@ public static class RefTnrExt {
    /// <summary>Multiplies a scalar with a vector and returns a new vector. Safe version: accepts a nullable vector and checks it for null, also checks if the scalar is zero.</summary>
    /// <param name="scal">Scalar.</param>
    /// <param name="t">Vector.</param>
-   public static RefTnr<τ,α>? MulTop<τ,α>(this RefTnr<τ,α>? t, τ scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
-      if(t == null || scal.Equals(Nullable<τ,α>.O.Zero()))
+   public static RefTnr<τ,α>? MulTop<τ,α>(this RefTnr<τ,α>? t, τ? scal)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
+      if(t == null || scal == null)
          return null;
       else
          return t.MulTopß(scal);

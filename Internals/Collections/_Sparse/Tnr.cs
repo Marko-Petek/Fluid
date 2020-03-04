@@ -439,8 +439,8 @@ where α : IArithmetic<τ>, new() {
    public override string ToString() {
       StringBuilder sb = new StringBuilder(72);
       sb.Append("{");
-      foreach(var elm in this.OrderBy( kvPair => kvPair.Key ))
-         sb.Append($"{{{elm.Key.ToString()}, {elm.Value.ToString()}}}, ");
+      foreach(var (i,st) in this.OrderBy( kvPair => kvPair.Key ))
+         sb.Append($"{{{i},{st}}}, ");
       int length = sb.Length;
       sb.Remove(length - 2, 2);
       sb.Append("}");

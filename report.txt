@@ -320,3 +320,6 @@
 15:49  Discovering...                                                0         /Tests/Entry.cs                   Point                 22    
        Running 125 of 125 tests...                                   0,181     /Tests/Entry.cs                   OnDiscoveryComplete   36    
        Starting KDTreeTrial.                                         0,34      /Tests/Numerics.cs                KDTreeTrial           134   
+22:25  Discovering...                                            0         /Tests/Entry.cs                Point                 22    
+       Running 125 of 125 tests...                               0,187     /Tests/Entry.cs                OnDiscoveryComplete   36    
+       Starting KDTreeTrial.                                     0,582     /Tests/Numerics.cs             KDTreeTrial           134   

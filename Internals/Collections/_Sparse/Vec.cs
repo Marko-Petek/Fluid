@@ -128,8 +128,8 @@ where α : IArithmetic<τ>, new() {
    public override string ToString() {
       var sb = new StringBuilder(2*Count);
       sb.Append("{");
-      foreach(var emt in Scals) {
-         sb.Append($"{emt.ToString()}, ");
+      foreach(var (i,s) in Scals.OrderBy( kvPair => kvPair.Key )) {
+         sb.Append($"{{{i},{s}}}, ");
       }
       sb.Remove(sb.Length - 2, 2);
       sb.Append("}");
@@ -138,8 +138,8 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Converts a sparse Vector to a regular array.</summary>
    public τ[] ToArray() {
       var arr = new τ[Dim];
-      foreach(var int_val in Scals)
-         arr[int_val.Key] = int_val.Value;
+      foreach(var (i,s) in Scals)
+         arr[i] = s;
       return arr;
    }
 }

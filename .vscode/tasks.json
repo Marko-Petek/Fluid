@@ -5,7 +5,7 @@
    "label": "Rebuild (Debug, REPORT)",
    "command": "dotnet",
    "type": "process",
-   "args": ["msbuild", "-p:Configuration=Debug", "-p:DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
+   "args": ["msbuild", "-p:Configuration=Debug", "-p:Platform=x64", "-p:DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
