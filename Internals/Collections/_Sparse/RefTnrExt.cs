@@ -19,7 +19,7 @@ public static class RefTnrExt {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
-   public static RefTnr<τ,α>? SumInto<τ,α>(RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
+   public static RefTnr<τ,α>? SumInto<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -112,11 +112,11 @@ public static class RefTnrExt {
             var sv2 = (RefVec<τ,α>) st2;
             if(t1.TryGetValue(i, out var st1)) {                        // Entry exists in t1, we must sum.
                var sv1 = (RefVec<τ,α>) st1;
-               var res = sv1.SumIntoß(sv2);
+               var res = sv1.SubIntoß(sv2);
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecß(t1, i); } } }                                // Entry does not exist in t1, copy as subvector.
+               sv2.CopyAsSubVecß(t1, i).NegateIntoß(); } } }                                // Entry does not exist in t1, copy as subvector.
       else {                                                                     // We have a vector.
          var v1 = (RefVec<τ,α>) t1;
          var v2 = (RefVec<τ,α>) t2;
@@ -660,7 +660,7 @@ public static class RefTnrExt {
    /// <summary>Static implementation to allow for null comparison. If two tensors are null they are equal.</summary>
    /// <param name="t1">Tensor 1.</param>
    /// <param name="t2">Tensor 2.</param>
-   public static bool Equals<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
+   public static bool EqualS<τ,α>(this RefTnr<τ,α>? t1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
          if(t2 == null)
             return true;

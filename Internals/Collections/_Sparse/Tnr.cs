@@ -431,7 +431,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Compares substructures and values.</summary>
    /// <param name="tnr2">Tensor to compare to.</param>
    public bool Equals(Tnr<τ,α> tnr2) =>
-      this.Equals<τ,α>(tnr2);
+      this.EqualS<τ,α>(tnr2);
 
    
    

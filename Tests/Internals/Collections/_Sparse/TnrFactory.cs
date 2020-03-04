@@ -31,7 +31,7 @@ public class TnrFactory {
       var slc = new Span<int>(o, 1 + topRank, count);
       var tnr = TopTnrFromSpan<int,IA>(slc, struc);
       var tnrCpy = tnr.CopyAsTopTnr();
-      Assert.True(tnr.Equals<int,IA>(tnrCpy));
+      Assert.True(tnr.EqualS<int,IA>(tnrCpy));
    }
 
 }

@@ -19,7 +19,7 @@ public static class TnrExt {
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
    /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
-   public static Tnr<τ,α>? SumInto<τ,α>(Tnr<τ,α>? t1, Tnr<τ,α>? t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static Tnr<τ,α>? SumInto<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t1 == null) {
          if(t2 == null)
             return null;
@@ -112,11 +112,11 @@ public static class TnrExt {
             var sv2 = (Vec<τ,α>) st2;
             if(t1.TryGetValue(i, out var st1)) {                        // Entry exists in t1, we must sum.
                var sv1 = (Vec<τ,α>) st1;
-               var res = sv1.SumIntoß(sv2);
+               var res = sv1.SubIntoß(sv2);
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecß(t1, i); } } }                                // Entry does not exist in t1, copy as subvector.
+               sv2.CopyAsSubVecß(t1, i).NegateIntoß(); } } }                                // Entry does not exist in t1, copy as subvector.
       else {                                                                     // We have a vector.
          var v1 = (Vec<τ,α>) t1;
          var v2 = (Vec<τ,α>) t2;
@@ -655,7 +655,7 @@ public static class TnrExt {
    /// <summary>Compares substructures and values. Static implementation allows for null comparison. If two tensors are null they are equal.</summary>
    /// <param name="t1">Tensor 1.</param>
    /// <param name="t2">Tensor 2.</param>
-   public static bool Equals<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static bool EqualS<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
          if(t2 == null)
             return true;
@@ -690,7 +690,7 @@ public static class TnrExt {
    }
 
    /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
-   public static bool Equals<τ,α>(Tnr<τ,α>? t1, Tnr<τ,α>? t2, τ eps) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
+   public static bool EqualS<τ,α>(Tnr<τ,α>? t1, Tnr<τ,α>? t2, τ eps) where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t1 == null) {                                                            // If both are null, return true. If only one of them is null, return false.
          if(t2 == null)
             return true;
