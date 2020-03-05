@@ -14,7 +14,7 @@ public static class RefVecExt {
       if(vec2 == null)
          return vec1;
       if(vec1 == null)
-         return vec2.CopyAsTopVec();
+         return vec2.CopyAsTopRefVec();
       Assume.True(vec1.Dim == vec2.Dim, () => "The dimensions of vectors do not match on addition.");
       return SumIntoß(vec1, vec2);
    }

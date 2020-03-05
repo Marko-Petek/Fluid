@@ -106,7 +106,7 @@ public static class TnrExt {
                if(sub == null)
                   t1.Remove(i); }
             else                                                                 // Equivalent subtensor does not exist in T1. Copy the subtensor from T2 and negate it.
-               st2.CopyAsSubTnr(t1, i).NegateIntoß(); } }
+               st2.CopyAsSubTnrß(t1, i).NegateIntoß(); } }
       else if(t2.Rank == 2) {
          foreach(var (i, st2) in t2) {
             var sv2 = (Vec<τ,α>) st2;
@@ -290,7 +290,7 @@ public static class TnrExt {
             Vec<τ,α> v2 = (Vec<τ,α>) t2;
             if(t1.Rank == 2) {                                    // Result will be vector.
                Vec<τ,α>? elimVec, sumand;
-               var sum = TopVector<τ,α>(strc[0]);
+               var sum = TopVec<τ,α>(strc[0]);
                for(int i = 0; i < conDim; ++i) {
                   elimVec = (Vec<τ,α>?) t1.ReduceRankTop(rankInx1, i);
                   if(elimVec != null && v2.Scals.TryGetValue(i, out var s)) {
@@ -382,14 +382,14 @@ public static class TnrExt {
       if(slot1 == 1) {
          if(slot2 == 2) {
             dim = substrc[2];
-            nv = TopVector<τ,α>(dim);
+            nv = TopVec<τ,α>(dim);
             foreach(var (i, st) in t) {
                if(st.TryGetValue(i, out var sst)) {
                   var ssv = (Vec<τ,α>) sst;
                   nv.SumIntoß(ssv); } } }
          else {                                            // Implies slot2 == 3
             dim = substrc[1];
-            nv = TopVector<τ,α>(dim);
+            nv = TopVec<τ,α>(dim);
             foreach(var (i, st) in t) {
                foreach(var (j, sst) in st) {
                   var ssv = (Vec<τ,α>) sst;
@@ -397,7 +397,7 @@ public static class TnrExt {
                      nv.Scals[j] = NonNullable<τ,α>.O.Sum(nv[j], s); } } } }
       else {                                                         // Implies  slot1 == 2, slot2 == 3
          dim = substrc[0];
-         nv = TopVector<τ,α>(dim);
+         nv = TopVec<τ,α>(dim);
          foreach(var (i, st) in t) {
             foreach(var (j, sst) in st) {
                var ssv = (Vec<τ,α>) sst;
@@ -510,7 +510,7 @@ public static class TnrExt {
    }
 
    internal static Vec<τ,α>? ElimR0onR2Topß<τ,α>(this Tnr<τ,α> t, int emtInx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      var v = TopVector<τ,α>(t.Dim);
+      var v = TopVec<τ,α>(t.Dim);
       foreach(var (i,st) in t) {
          var sv = (Vec<τ,α>) st;
          if(sv.TryGetValue(emtInx, out var s))
@@ -531,7 +531,7 @@ public static class TnrExt {
    }
 
    internal static Vec<τ,α>? ElimR0onR2Subß<τ,α>(this Tnr<τ,α> t, int elimInx, Tnr<τ,α> sup, int inx)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-      var v = sup.SubVector<τ,α>(inx);
+      var v = sup.SubVec<τ,α>(inx);
       foreach(var (i,st) in t) {
          var sv = (Vec<τ,α>) st;
          if(sv.TryGetValue(elimInx, out var s))

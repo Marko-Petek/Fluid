@@ -19,7 +19,7 @@ where τ : IEquatable<τ>, IComparable<τ>
 where α : IArithmetic<τ>, new() {
 
    /// <summary>Void vector.</summary>
-   public static readonly Vec<τ,α> V = TnrFactory.TopVector<τ,α>(0,0);
+   public static readonly Vec<τ,α> V = TnrFactory.TopVec<τ,α>(0,0);
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
    /// <param name="sup">Direct superior.</param>

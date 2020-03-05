@@ -46,7 +46,7 @@ public static class RefTnrExt {
                if(sum == null)
                   t1.Remove(i); }
             else                                                                 // Equivalent subtensor does not exist in T1. Copy the subtensor from T2 and add it.
-               st2.CopyAsSubTnr(t1, i); } }
+               st2.CopyAsSubRefTnr(t1, i); } }
       else if(t2.Rank == 2) {
          foreach(var (i, st2) in t2) {
             var sv2 = (RefVec<τ,α>) st2;
@@ -56,7 +56,7 @@ public static class RefTnrExt {
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecß(t1, i); } } }                                // Entry does not exist in t1, copy as SubVec.
+               sv2.CopyAsSubRefVecß(t1, i); } } }                                // Entry does not exist in t1, copy as SubVec.
       else {                                                                     // We have a vector.
          var v1 = (RefVec<τ,α>) t1;
          var v2 = (RefVec<τ,α>) t2;
@@ -106,7 +106,7 @@ public static class RefTnrExt {
                if(sub == null)
                   t1.Remove(i); }
             else                                                                 // Equivalent subtensor does not exist in T1. Copy the subtensor from T2 and negate it.
-               st2.CopyAsSubTnr(t1, i).NegateIntoß(); } }
+               st2.CopyAsSubRefTnrß(t1, i).NegateIntoß(); } }
       else if(t2.Rank == 2) {
          foreach(var (i, st2) in t2) {
             var sv2 = (RefVec<τ,α>) st2;
@@ -116,7 +116,7 @@ public static class RefTnrExt {
                if(res == null)
                   t1.Remove(i); }                                           // Crucial to remove if subvector has been anihilated.
             else {
-               sv2.CopyAsSubVecß(t1, i).NegateIntoß(); } } }                                // Entry does not exist in t1, copy as subvector.
+               sv2.CopyAsSubRefVecß(t1, i).NegateIntoß(); } } }                                // Entry does not exist in t1, copy as subvector.
       else {                                                                     // We have a vector.
          var v1 = (RefVec<τ,α>) t1;
          var v2 = (RefVec<τ,α>) t2;
@@ -222,7 +222,7 @@ public static class RefTnrExt {
    /// <param name="scal"></param>
    /// <param name="vec"></param>
    internal static RefTnr<τ,α> MulSubß<τ,α>(this RefTnr<τ,α> t, τ scal, RefTnr<τ,α> sup, int inx)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() =>
-      t.CopyAsSubTnrß(sup, inx).MulIntoß(scal);
+      t.CopyAsSubRefTnrß(sup, inx).MulIntoß(scal);
 
 
    
@@ -482,7 +482,7 @@ public static class RefTnrExt {
       if(r == t.Rank - 1) {                                                           // Only one rank exists above rank r. Pick one tensor from rank r and return it.
          if(t.Rank > 1) {                                                             // Tensor to be reduced is at least rank two.
             if(t.TryGetValue(e, out var st))                                    // Element exists.
-               return st.CopyAsSubTnrß(sup, inx);
+               return st.CopyAsSubRefTnrß(sup, inx);
             else
                return null; }
          else                                                                       // Rank <= 1: impossible.
@@ -616,7 +616,7 @@ public static class RefTnrExt {
       else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
          foreach(var (i,st) in t) {
             if(st.TryGetValue(e, out var sst))
-               sst.CopyAsSubTnrß(nt, i); } }
+               sst.CopyAsSubRefTnrß(nt, i); } }
       if(nt.Count != 0)
          return nt;
       else
@@ -649,7 +649,7 @@ public static class RefTnrExt {
       else {                                                             // We have reached rank directly above rank scheduled for elimination: eliminate.
          foreach(var (i,st) in t) {
             if(st.TryGetValue(e, out var sst))
-               sst.CopyAsSubTnrß(nt, i); } }
+               sst.CopyAsSubRefTnrß(nt, i); } }
       if(nt.Count != 0)
          return nt;
       else {

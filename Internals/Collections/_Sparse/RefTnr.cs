@@ -25,7 +25,7 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Tensor dimension. The number of (potential) subtensors.</summary>
    public int Dim => Strc[StrcInx];
    /// <summary>Index in Structure where substructure begins (structure a non-top tensor would have if it was top).</summary>
-   public int StrcInx => Slot - 1;
+   public int StrcInx => Strc.Count - Rank;
    /// <summary>Substructure (the structure a non-top tensor would have if it was top).</summary>
    public List<int> Substrc => EnumSubstrc().ToList();
 
