@@ -233,8 +233,8 @@ public static class TnrFactory {
          return null;
    }
 
-   // 
-   /// <summary>May use when t is R1. No null checks.</summary>
+   
+   /// <summary>No null checks.</summary>
    /// <param name="t">Source tensor that can be R1.</param>
    /// <param name="newSup">Copy's new superior.</param>
    /// <param name="inx">Copy's index inside new superior.</param>
@@ -243,30 +243,22 @@ public static class TnrFactory {
    /// <typeparam name="α">Arithmetic type.</typeparam>
    internal static Tnr<τ,α> CopyAsSubTnrβ<τ,α>(this Tnr<τ,α> t, Tnr<τ,α> newSup,
    int inx, int xCap = 0)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
-
-   }
-   
-   /// <summary>Only use when t is at least R2. No null checks.</summary>
-   /// <param name="t">Source tensor that is at least R2.</param>
-   /// <param name="newSup">Copy's new superior.</param>
-   /// <param name="inx">Copy's index inside new superior.</param>
-   /// <param name="xCap">Extra capacity of all copied (sub)tensors (beyond existing Count).</param>
-   /// <typeparam name="τ">Numeric type.</typeparam>
-   /// <typeparam name="α">Arithmetic type.</typeparam>
-   internal static Tnr<τ,α> CopyAsSubTnrγ<τ,α>(this Tnr<τ,α> t, Tnr<τ,α> newSup,
-   int inx, int xCap = 0)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       Assume.True(t.Rank > 1, () => "Passed source tensor has to be at least rank 2.");
       Assume.True(t.Dim == newSup.Strc[newSup.StrcInx + 1], () =>
          "Source tensor's dimension does not equal the dimension of slot where copied subtensor will be placed.");
-      var copy = newSup.SubTensor<τ,α>(inx, t.Count + xCap);
-      if(t.Rank > 2) {                                                        // Subordinates are tensors.
-         foreach (var (i, st) in t)
-            st.CopyAsSubTnrγ(copy, i, xCap); }
-      else { // if(src.Rank == 2)                                             // Subordinates are vectors.
-         foreach(var (i, st) in t) {
+      
+      if(t is Vec<τ,α> v)
+         return v.CopyAsSubVecß(newSup, inx, xCap);
+      else {
+         var nst = newSup.SubTensor<τ,α>(inx, t.Count + xCap);
+         if(t.Rank == 2) {
+            foreach(var (i, st) in t) {
             var sv = (Vec<τ,α>) st;
-            sv.CopyAsSubVecß<τ,α>(copy, i, xCap); } }
-      return copy;
+            sv.CopyAsSubVecß<τ,α>(nst, i, xCap); } }
+         else {
+            foreach (var (i, st) in t)
+            st.CopyAsSubTnrβ(nst, i, xCap); }
+         return nst; }
    }
 
 }
