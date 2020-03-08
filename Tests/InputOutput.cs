@@ -8,7 +8,6 @@ using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
-using Fluid.TestRef;
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Tests {
@@ -23,7 +22,6 @@ public class InputOutput {
          Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
    }
 
-   /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
    [Fact] public void HierarchyOutput() {
       var node4 = new RankedNode();
       var node5 = new RankedNode(node4);
@@ -48,7 +46,6 @@ public class InputOutput {
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
    }
 
-   /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
    [Fact] public void HierarchyInput() {
       T.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
       var hierWriteBack = T.FileReader.ReadHierarchy<double>();
@@ -68,7 +65,6 @@ public class InputOutput {
          Assert.True(false, "Could not convert hierarchy to array.");
    }
 
-   /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
    [Fact] public void HierarchyInput2() {
       T.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
       var hierWriteBack = T.FileReader.ReadHierarchy<double>();

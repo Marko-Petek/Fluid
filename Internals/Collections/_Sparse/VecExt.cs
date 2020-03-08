@@ -191,9 +191,9 @@ public static class VecExt {
          var strc2 = t2.EnumSubstrc();
          var newStrc = strc1.Concat(strc2).ToList();
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
-         var prod = TopTensor<τ,α>(newStrc, v1.Scals.Count);
+         var prod = TopTnr<τ,α>(newStrc, v1.Scals.Count);
          foreach(var (i, s1) in v1.Scals)
-            t2.MulSubß(s1, prod, i);
+            t2.MulSubβ(s1, prod, i);
          return prod; }
       else {
          var v2 = (Vec<τ,α>) t2;
@@ -209,7 +209,7 @@ public static class VecExt {
    /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
    internal static Tnr<τ,α> TnrProdTopß<τ,α>(this Vec<τ,α> v1, Vec<τ,α> v2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var newStrc = new List<int> {v1.Dim, v2.Dim};
-      var prod = TopTensor<τ,α>(newStrc, v1.Scals.Count);
+      var prod = TopTnr<τ,α>(newStrc, v1.Scals.Count);
       foreach(var (i, s1) in v1.Scals)
          v2.MulSub(s1, prod, i);
       return prod;
@@ -218,12 +218,12 @@ public static class VecExt {
    public static Tnr<τ,α>? ContractTopPart2<τ,α>(this Vec<τ,α> v1, Tnr<τ,α> t2, int rankInx2, List<int> strc, int conDim)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t2.Rank > 2) {                                                  // Result is tensor.
          Tnr<τ,α>? elimTnr2, sumand;
-         var sum = TopTensor<τ,α>(strc);                                    // Set sum to a zero tensor.
+         var sum = TopTnr<τ,α>(strc);                                    // Set sum to a zero tensor.
          for(int i = 0; i < conDim; ++i) {
             elimTnr2 = t2.ReduceRankTop(rankInx2, i);
             if(v1.Scals.TryGetValue(i, out var s) && elimTnr2 != null) {
-               sumand = elimTnr2.MulTopß(s);
-               sum.SumIntoß(sumand); } }
+               sumand = elimTnr2.MulTopβ(s);
+               sum.SumIntoβ(sumand); } }
          if(sum.Count != 0)
             return sum;
          else
@@ -275,7 +275,7 @@ public static class VecExt {
             return false; }
       else if(v2 == null)
          return false;
-      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+      if(!v1.CompareSubstrcβ(v2))                                         // If substructures mismatch, they are not equal.
          return false;
       if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
@@ -294,7 +294,7 @@ public static class VecExt {
             return false; }
       else if(v2 == null)
          return false;
-      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+      if(!v1.CompareSubstrcβ(v2))                                         // If substructures mismatch, they are not equal.
          return false;
       if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;

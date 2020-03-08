@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using Fluid.TestRef;
 using static Fluid.Internals.Toolbox;
 namespace Fluid.Tests {
 using dbl = Double;
@@ -12,7 +11,6 @@ using IA = IntArithmetic;
 
 public class Matrices {
 
-   /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
    [Fact] public void MatrixInvert1() {
       double[][] matrix = new double[3][] {
          new dbl[3] {6, 0, 0},
@@ -27,7 +25,6 @@ public class Matrices {
       Assert.True(matrix.Equals<dbl,DA>(expectedResult, epsilon));
    }
 
-   /// <remarks><see cref="TestRefs.MatrixInvert"/></remarks>
    [Fact] public void MatrixInvert2() {
       double[][] matrix2 = new double[3][] {
          new dbl[3] {1, 2, 3},

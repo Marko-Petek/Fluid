@@ -51,14 +51,14 @@
    "preLaunchTask": "",
    "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp3.1/Main.dll",
    "args": ["Tests", "${workspaceFolder}/Tests/bin/Debug/netcoreapp3.1/Tests.dll"],       // Project where tests reside.
-   "cwd": "${workspaceFolder}/Tests",
+   "cwd": "${workspaceFolder}",
    "console": "integratedTerminal",
    "stopAtEntry": false,
    "internalConsoleOptions": "openOnSessionStart",
    "justMyCode": false,
    "symbolOptions": {
-      "searchMicrosoftSymbolServer": false,
-      "searchNuGetOrgSymbolServer": false  } }
+      "searchMicrosoftSymbolServer": true,
+      "searchNuGetOrgSymbolServer": true  } }
 
 ]
 }

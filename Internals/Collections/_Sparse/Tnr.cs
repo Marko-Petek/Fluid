@@ -58,7 +58,6 @@ using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Text;
-using Fluid.TestRef;
 namespace Fluid.Internals.Collections {
 using static TnrExt;
 
@@ -92,7 +91,7 @@ where α : IArithmetic<τ>, new() {
 
 
    /// <summary>Void tensor.</summary>
-   public static readonly Tnr<τ,α> T = TnrFactory.TopTensor<τ,α>(new List<int>{0,0}, 0);
+   public static readonly Tnr<τ,α> T = TnrFactory.TopTnr<τ,α>(new List<int>{0,0}, 0);
 
    /// <summary>Constructor with redundancy, used internally.</summary>
    /// <param name="strc">Structure (absorbed).</param>
@@ -431,7 +430,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Compares substructures and values.</summary>
    /// <param name="tnr2">Tensor to compare to.</param>
    public bool Equals(Tnr<τ,α> tnr2) =>
-      this.EqualS<τ,α>(tnr2);
+      this.Equalsβ<τ,α>(tnr2);
 
    
    

@@ -72,7 +72,7 @@
    "command": "dotnet",
    "type": "process",
    "args": [
-      "run", "--project", "${workspaceFolder}/Main/Main.csproj"
+      "run", "--no-build", "-r netcoreapp3.1", "--project",  "${workspaceFolder}/Main/Main.csproj"
    ],
    "options": {
       "cwd": "${workspaceFolder}"

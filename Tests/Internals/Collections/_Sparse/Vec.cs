@@ -13,6 +13,8 @@ namespace Fluid.Tests.Internals.Collections {
    using IntTnr = Tnr<int,IA>;
    using IntVec = Vec<int,IA>;
 public class Vec {
+
+   #region InlindeData
    [InlineData(
       4,    5,0,2,1,             // vec
       2,    0,5,                 // read1
@@ -23,6 +25,7 @@ public class Vec {
       2,    1,3,                 // wrt2
       2,    3,0                  // wrt3
    )]
+   #endregion
    [Theory] public void Indexer(params int[] o) {                        var (pos, read) = Read(o);
       var v = TopVecFromSpan<int,IA>(o.AsSpan(pos, read)) ??
          throw new NullReferenceException("Generated vector was null.");       (pos, read) = Read(o, pos, read);
@@ -45,10 +48,12 @@ public class Vec {
       Assert.True( v[sv3[0]] == sv3[1] );
    }
 
+   #region InlindeData
    [InlineData(1, 3, 2,   2, 3, 1,  3, 6, 3)]
    [InlineData(1, 0, 2,   2, 3, 1,  3, 3, 3)]
    [InlineData(1, 3, 2,   2, 0, 1,  3, 3, 3)]
    [InlineData(1, 3, 2,  -1,-3,-2,  0, 0, 0)]
+   #endregion
    [Theory] public void Op_Addition(params int[] o) {
       var v1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
       var v2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
@@ -57,9 +62,11 @@ public class Vec {
       Assert.True(res.Equals<int,IA>(expRes));
    }
 
+   #region InlindeData
    [InlineData(1, 3, 2,   2, 3, 1,  -1, 0, 1)]
    [InlineData(1, 0, 2,   2, 3, 1,  -1,-3, 1)]
    [InlineData(1, 3, 2,   1, 3, 2,   0, 0, 0)]
+   #endregion
    [Theory] public void Op_Subtraction(params int[] o) {
       var vec1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
       var vec2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
@@ -67,5 +74,6 @@ public class Vec {
       var expRes = TopVecFromSpan<int,IA>(o.AsSpan<int>(6,3));
       Assert.True( res.Equals<int,IA>(expRes) );
    }
+
 }
 }

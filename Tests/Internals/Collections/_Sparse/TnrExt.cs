@@ -43,7 +43,7 @@ public class TnrExt {
       var t2 = TopTnrFromSpan<int,IA>(span2, new int[] {3,3});
       var t3 = TopTnrFromSpan<int,IA>(span3, new int[] {3,3});
       t1 = t1.SumInto(t2);
-      Assert.True(t1.EqualS(t3));
+      Assert.True(t1.Equalsβ(t3));
    }
    #region InlineData
    [InlineData( // Subtract a non-zero tensor from non-zero and get a non-zero result.
@@ -76,7 +76,7 @@ public class TnrExt {
       var t2 = TopTnrFromSpan<int,IA>(span2, new int[] {3,3});
       var t3 = TopTnrFromSpan<int,IA>(span3, new int[] {3,3});
       t1 = t1.SubInto(t2);
-      Assert.True(t1.EqualS(t3));
+      Assert.True(t1.Equalsβ(t3));
    }
 
    #region InlineData
@@ -91,7 +91,7 @@ public class TnrExt {
       var t = TopTnrFromSpan<int,IA>(o.AsSpan<int>(0,9), 3,3);
       var expRes = TopTnrFromSpan<int,IA>(o.AsSpan<int>(9,9), 3,3);
       t = t.NegateInto();
-      Assert.True(t.EqualS(expRes));
+      Assert.True(t.Equalsβ(expRes));
    }
 
    #region InlineData
@@ -197,7 +197,7 @@ public class TnrExt {
       var expRes = TopTnrFromSpan<int,IA>( 
          new Span<int>(o, pos, read), strcExpRes);
       var res = t1.ContractTop(t2, ctrInxs[0], ctrInxs[1]);
-      Assert.True(res.EqualS(expRes));
+      Assert.True(res.Equalsβ(expRes));
    }
 }
 }

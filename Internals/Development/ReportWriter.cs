@@ -1,19 +1,17 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.Reporter;
-using static Fluid.Internals.Algorithms;
 using static Fluid.Internals.Toolbox;
-namespace Fluid.Internals.Development {
+namespace Fluid.Internals.Development
+{
 
-/// <summary>Writes out messages to console or file as an aesthetic output table.</summary>
-internal class ReportWriter : IDisposable {
+  /// <summary>Writes out messages to console or file as an aesthetic output table.</summary>
+  internal class ReportWriter : IDisposable {
    /// <summary>Number of columns (deduced from DefaultColWidths).</summary>
    int NCols { get; }
    /// <summary>Widths of columns</summary>
@@ -82,10 +80,10 @@ internal class ReportWriter : IDisposable {
    /// <summary>Write a message to all outputs. Used by AppReporter.</summary><param name="i">Index of message inside Report.</param>
    public void WriteMessage(int i) {
       var formattedLines = FormatMessage(i);
-      if((AppReporter.Output & OutputSettings.Console) == OutputSettings.Console) {
+      if(AppReporter.Output.HasFlag(OutputSettings.Console)) {
          foreach(var line in formattedLines)
             T.Writer!.WriteLine(line); }
-      if((AppReporter.Output & OutputSettings.File) == OutputSettings.File) {
+      if(AppReporter.Output.HasFlag(OutputSettings.File)) {
          foreach(var line in formattedLines)
             FileWriter.WriteLine(line);
          FileWriter.Flush(); }

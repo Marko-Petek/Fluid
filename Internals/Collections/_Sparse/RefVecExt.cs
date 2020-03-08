@@ -193,7 +193,7 @@ public static class RefVecExt {
          // We must substitute this vector with a tensor whose elements are multiples of tnr2.
          var prod = TopRefTnr<τ,α>(newStrc, v1.Scals.Count);
          foreach(var (i, s1) in v1.Scals)
-            t2.MulSubß(s1, prod, i);
+            t2.MulSubβ(s1, prod, i);
          return prod; }
       else {
          var v2 = (RefVec<τ,α>) t2;
@@ -222,8 +222,8 @@ public static class RefVecExt {
          for(int i = 0; i < conDim; ++i) {
             elimTnr2 = t2.ReduceRankTop(rankInx2, i);
             if(v1.Scals.TryGetValue(i, out var s) && elimTnr2 != null) {
-               sumand = elimTnr2.MulTopß(s);
-               sum.SumIntoß(sumand); } }
+               sumand = elimTnr2.MulTopβ(s);
+               sum.SumIntoβ(sumand); } }
          if(sum.Count != 0)
             return sum;
          else
@@ -275,7 +275,7 @@ public static class RefVecExt {
             return false; }
       else if(v2 == null)
          return false;
-      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+      if(!v1.CompareSubstrcβ(v2))                                         // If substructures mismatch, they are not equal.
          return false;
       if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
@@ -294,7 +294,7 @@ public static class RefVecExt {
             return false; }
       else if(v2 == null)
          return false;
-      if(!v1.CompareSubstrcß(v2))                                         // If substructures mismatch, they are not equal.
+      if(!v1.CompareSubstrcβ(v2))                                         // If substructures mismatch, they are not equal.
          return false;
       if(!v1.Scals.Keys.OrderBy(key => key).SequenceEqual(v2.Scals.Keys.OrderBy(key => key)))    // Keys have to match.
          return false;
