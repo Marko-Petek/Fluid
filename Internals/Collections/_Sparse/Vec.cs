@@ -6,7 +6,7 @@ using dbl = System.Double;
 
 using Fluid.Internals;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 namespace Fluid.Internals.Collections {
 using static TnrFactory;
    

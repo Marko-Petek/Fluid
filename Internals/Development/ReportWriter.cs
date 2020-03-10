@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 using Fluid.Internals.IO;
 using static Fluid.Internals.Development.Reporter;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 namespace Fluid.Internals.Development
 {
 
@@ -20,15 +20,17 @@ namespace Fluid.Internals.Development
    System.DateTime _PrevReportedTime;
    /// <summary>StringBuilder.</summary>
    StringBuilder StrBuilder { get; } = new StringBuilder(500);
+   IO.Console Writer { get; }
    /// <summary>Writes messages to file.</summary><param name="FileInfo("log.txt"">Log file.</param>
    FileWriter FileWriter { get; }
    Reporter AppReporter { get; }
 
    /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
-   public ReportWriter(Reporter appReporter) {
+   public ReportWriter(Reporter appReporter, IO.Console writer) {
+      Writer = writer;
       int buffer;
-      if(T.Writer!.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.
-         buffer = T.Writer.BufferWidth - 6 * 2 - 3;              // spaces, some slack
+      if(writer!.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.
+         buffer = writer.BufferWidth - 6 * 2 - 3;              // spaces, some slack
       else
          buffer = 36 + 60;
       int timeWidth = 5;
@@ -82,7 +84,7 @@ namespace Fluid.Internals.Development
       var formattedLines = FormatMessage(i);
       if(AppReporter.Output.HasFlag(OutputSettings.Console)) {
          foreach(var line in formattedLines)
-            T.Writer!.WriteLine(line); }
+            Writer!.WriteLine(line); }
       if(AppReporter.Output.HasFlag(OutputSettings.File)) {
          foreach(var line in formattedLines)
             FileWriter.WriteLine(line);

@@ -57,8 +57,8 @@
    "internalConsoleOptions": "openOnSessionStart",
    "justMyCode": false,
    "symbolOptions": {
-      "searchMicrosoftSymbolServer": false,
-      "searchNuGetOrgSymbolServer": false  } }
+      "searchMicrosoftSymbolServer": true,
+      "searchNuGetOrgSymbolServer": true  } }
 
 ]
 }

@@ -28,14 +28,14 @@ public class Reporter {
 
 
    /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-   public Reporter(VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = "",
+   public Reporter(IO.Console writer, VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = "",
       [CallerMemberName] string caller = "", [CallerLineNumber] int line = 0) {
          Output = new OutputSettings();
          Output |= (OutputSettings.Console | OutputSettings.File);
          Verbosity = verbosity;
          StartTime = DateTime.Now;
          _Report = new Report(StartTime);
-         ReportWriter = new ReportWriter(this);
+         ReportWriter = new ReportWriter(this, writer);
 
          // var initMessage = new Message(StartTime, initMsg, path, caller, line);            // Write initial message.
          // Report.AddMessage(initMessage);

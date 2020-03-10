@@ -52,7 +52,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 1D array to hard drive.</summary><param name="array1d"> 1D array to write to HD.</param>
    public void Write<T>(T[] array1d) {
       OnSettingsChanged();
-      IO.Write(array1d, Writer);
+      Statics.Write(array1d, Writer);
    }
    /// <summary>Writes a 1D array to hard drive.</summary><param name="array1d"> 1D array to write to HD.</param>
    public void Write<T>(T[] array1d, string fileNameNoExt) {
@@ -62,7 +62,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 2D array to hard drive.</summary><param name="array1d">2D array to write to HD.</param>
    public void Write<T>(T[][] array2d) {
       OnSettingsChanged();
-      IO.Write(array2d, Writer);
+      Statics.Write(array2d, Writer);
    }
    /// <summary>Writes a 2D array to hard drive.</summary><param name="array1d">2D array to write to HD.</param>
    public void Write<T>(T[][] array2d, string fileNameNoExt) {
@@ -72,7 +72,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 3D array to hard drive.</summary><param name="array3d">3D array to write to HD.</param>
    public void Write<T>(T[][][] array3d) {
       OnSettingsChanged();
-      IO.Write(array3d, Writer);
+      Statics.Write(array3d, Writer);
    }
    /// <summary>Writes a 3D array to hard drive.</summary><param name="array3d">3D array to write to HD.</param>
    public void Write<T>(T[][][] array3d, string fileNameNoExt) {
@@ -82,7 +82,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 4D array to hard drive.</summary><param name="array4d">4D array to write to HD.</param>
    public void Write<T>(T[][][][] array4d) {
       OnSettingsChanged();
-      IO.Write(array4d, Writer);
+      Statics.Write(array4d, Writer);
    }
    /// <summary>Writes a 4D array to hard drive.</summary><param name="array4d">4D array to write to HD.</param>
    public void Write<T>(T[][][][] array4d, string fileNameNoExt) {
@@ -92,7 +92,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 5D array to hard drive.</summary><param name="array6d">5D array to write to HD.</param>
    public void Write<T>(T[][][][][] array5d) {
       OnSettingsChanged();
-      IO.Write(array5d, Writer);
+      Statics.Write(array5d, Writer);
    }
    /// <summary>Writes a 5D array to hard drive.</summary><param name="array6d">5D array to write to HD.</param>
    public void Write<T>(T[][][][][] array5d, string fileNameNoExt) {
@@ -102,7 +102,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Writes a 6D array to hard drive.</summary><param name="array6d">6D array to write to HD.</param>
    public void Write<T>(T[][][][][][] array6d) {
       OnSettingsChanged();
-      IO.Write(array6d, Writer);
+      Statics.Write(array6d, Writer);
    }
    /// <summary>Writes a 6D array to hard drive.</summary><param name="array6d">6D array to write to HD.</param>
    public void Write<T>(T[][][][][][] array6d, string fileNameNoExt) {
@@ -112,7 +112,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 1D array to hard drive and append a NewLine.</summary><param name="array1d"> 1D array to write to HD.</param>
    public void WriteLine<T>(T[] array1d) {
       OnSettingsChanged();
-      IO.WriteLine(array1d, Writer);
+      Statics.WriteLine(array1d, Writer);
    }
    /// <summary>Write a 1D array to hard drive and append a NewLine.</summary><param name="array1d"> 1D array to write to HD.</param>
    public void WriteLine<T>(T[] array1d, string fileNameNoExt) {
@@ -122,7 +122,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 2D array to hard drive and append a NewLine.</summary><param name="array2d"> 2D array.</param>
    public void WriteLine<T>(T[][] array2d) {
       OnSettingsChanged();
-      IO.WriteLine(array2d, Writer);
+      Statics.WriteLine(array2d, Writer);
    }
    /// <summary>Write a 2D array to hard drive and append a NewLine.</summary><param name="array2d"> 2D array.</param>
    public void WriteLine<T>(T[][] array2d, string fileNameNoExt) {
@@ -132,7 +132,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 3D array to hard drive and append a NewLine.</summary><param name="array3d"> 3D array.</param>
    public void WriteLine<T>(T[][][] array3d) {
       OnSettingsChanged();
-      IO.WriteLine(array3d, Writer);
+      Statics.WriteLine(array3d, Writer);
    }
    /// <summary>Write a 3D array to hard drive and append a NewLine.</summary><param name="array3d"> 3D array.</param>
    public void WriteLine<T>(T[][][] array3d, string fileNameNoExt) {
@@ -142,7 +142,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 4D array to hard drive and append a NewLine.</summary><param name="array4d"> 4D array.</param>
    public void WriteLine<T>(T[][][][] array4d) {
       OnSettingsChanged();
-      IO.WriteLine(array4d, Writer);
+      Statics.WriteLine(array4d, Writer);
    }
    /// <summary>Write a 4D array to hard drive and append a NewLine.</summary><param name="array4d"> 4D array.</param>
    public void WriteLine<T>(T[][][][] array4d, string fileNameNoExt) {
@@ -152,7 +152,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 5D array to hard drive and append a NewLine.</summary><param name="array5d"> 5D array.</param>
    public void WriteLine<T>(T[][][][][] array5d) {
       OnSettingsChanged();
-      IO.WriteLine(array5d, Writer);
+      Statics.WriteLine(array5d, Writer);
    }
    /// <summary>Write a 5D array to hard drive and append a NewLine.</summary><param name="array5d"> 5D array.</param>
    public void WriteLine<T>(T[][][][][] array5d, string fileNameNoExt) {
@@ -162,7 +162,7 @@ public partial class FileWriter : FileRWBase, IDisposable {
    /// <summary>Write a 6D array to hard drive and append a NewLine.</summary><param name="array6d"> 6D array.</param>
    public void WriteLine<T>(T[][][][][][] array6d) {
       OnSettingsChanged();
-      IO.WriteLine(array6d, Writer);
+      Statics.WriteLine(array6d, Writer);
    }
    /// <summary>Write a 6D array to hard drive and append a NewLine.</summary><param name="array6d"> 6D array.</param>
    public void WriteLine<T>(T[][][][][][] array6d, string fileNameNoExt) {

@@ -9,7 +9,7 @@ using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Lsfem;
 //using Fluid.Tests.Mocks;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 
 namespace Fluid.Tests {
    public class Geometry {

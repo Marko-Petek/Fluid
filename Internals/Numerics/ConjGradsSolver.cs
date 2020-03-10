@@ -1,7 +1,7 @@
 using System;
 using Fluid.Internals;
 using Fluid.Internals.Collections;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 using dbl = System.Double;
 using DA = Fluid.Internals.Collections.DblArithmetic;
 namespace Fluid.Internals.Numerics {

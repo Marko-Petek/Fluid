@@ -11,7 +11,7 @@ namespace Fluid.Runnables.ChannelFlow {
 public static class Entry {
    static int Point() {
       R("Writing solution to file.");
-      T.FileWriter.SetDirAndFile("ChannelFlow/Results", "solution", ".txt");
+      FileWriter.SetDirAndFile("ChannelFlow/Results", "solution", ".txt");
       return 0;
    }
 }

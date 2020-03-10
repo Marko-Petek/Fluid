@@ -2,24 +2,31 @@
 "version": "2.0.0",
 "tasks": [
 {
-   "label": "Rebuild (Debug, REPORT)",
+   "label": "Rebuild, debug, x64, REPORT",
    "command": "dotnet",
    "type": "process",
-   "args": ["msbuild", "-p:Configuration=Debug", "-p:Platform=x64", "-p:DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
+   "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
-   "label": "Rebuild (Release, REPORT)",
+      "label": "Rebuild, debug, x64, noDefines",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=", "-t:Rebuild", "Fluid.sln"],
+      "problemMatcher": "$msCompile",
+      "group": "build" },
+{
+   "label": "Rebuild, release, x64, REPORT",
    "command": "dotnet",
    "type": "process",
-   "args": ["msbuild", "-p:Configuration=Release", "-p:DefineConstants=REPORT", "/t:Rebuild", "Fluid.sln"],
+   "args": ["msbuild", "-p:Configuration=Release;Platform=x64;DefineConstants=REPORT", "/t:Rebuild", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
-   "label": "Build (Debug, REPORT)",
+   "label": "Build, noRestore, debug, x64, REPORT)",
    "command": "dotnet",
    "type": "process",
-   "args": ["msbuild", "-p:Configuration=Debug", "-p:DefineConstants=REPORT", "-restore:False", "Fluid.sln"],
+   "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT", "-restore:False", "Fluid.sln"],
    "problemMatcher": "$msCompile",
    "group": {
       "kind": "build",
@@ -28,10 +35,7 @@
    "label": "ChannelFlow (Run)",
    "command": "dotnet",
    "type": "process",
-   "args": [
-      "run",
-      "--project",
-      "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj" ],
+   "args": ["run", "--project", "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj" ],
    "options": {
       "cwd": "./ChannelFlow" },
    "problemMatcher": "$msCompile",
@@ -42,13 +46,12 @@
    "type": "process",
    "args": [
       "run",
-      "-c Debug",
+      "-p:Configuration=Debug",
       "--no-build",
       "--project",
       "${workspaceFolder}/Demos/CavityFlow/CavityFlow.csproj" ],
    "options": {
-      "cwd": "./Demos/CavityFlow"
-   },
+      "cwd": "./Demos/CavityFlow" },
    "problemMatcher": "$msCompile",
    "group": "none"
 },
@@ -59,11 +62,9 @@
    "args": [
       "run",
       "--project",
-      "${workspaceFolder}/Seminar/NodeCreation/NodeCreation.csproj"
-   ],
+      "${workspaceFolder}/Seminar/NodeCreation/NodeCreation.csproj" ],
    "options": {
-      "cwd": "./Seminar/NodeCreation"
-   },
+      "cwd": "./Seminar/NodeCreation" },
    "problemMatcher": "$msCompile",
    "group": "none"
 },
@@ -72,11 +73,9 @@
    "command": "dotnet",
    "type": "process",
    "args": [
-      "run", "--project", "${workspaceFolder}/Main/Main.csproj"
-   ],
+      "run", "--no-build", "-p", "${workspaceFolder}/Main/Main.csproj", "Tests" ],
    "options": {
-      "cwd": "${workspaceFolder}"
-   },
+      "cwd": "${workspaceFolder}" },
    "problemMatcher": "$msCompile",
    "group": "none"
 }

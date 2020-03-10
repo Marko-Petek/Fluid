@@ -14,12 +14,12 @@ public partial class FileWriter : FileRWBase, IDisposable {
    public void Write<τ>(Hierarchy<τ> hier) 
    where τ : IEquatable<τ>, new() {
       OnSettingsChanged();
-      IO.Write(hier, Writer);
+      Statics.Write(hier, Writer);
    }
    public void WriteLine<τ>(Hierarchy<τ> hier)
    where τ : IEquatable<τ>, new(){
       OnSettingsChanged();
-      IO.WriteLine(hier, Writer);
+      Statics.WriteLine(hier, Writer);
    }
 }
 }

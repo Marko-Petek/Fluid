@@ -17,8 +17,8 @@ class Program {
          var dti = DateTimeFormatInfo.InvariantInfo;                          // Formatting info with which buildDT will be printed.
          Console.WriteLine($"Version: {buildDT.ToString(dti)}");
          // Initialize Fluid APIs.
-         T ??= new Toolbox(new ToolboxInit());
          R("Toolbox initialized.");
+         Console.WriteLine("HERE");
          int result = args[0] switch {
             "Tests" => Tests.Entry.Point(args),
             "CavityFlow" => CavityFlow.Entry.Point(),
@@ -29,7 +29,7 @@ class Program {
          throw exc; }
       finally {
          //R("Exiting application.");
-         T.FileWriter.Flush(); }
+         FileWriter.Flush(); }
    }
 
    private static DateTime GetBuildDate(Assembly assembly) {

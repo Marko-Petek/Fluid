@@ -14,11 +14,11 @@ namespace Fluid.Internals.IO {
 public partial class FileWriter : FileRWBase, IDisposable {
    public void Write<T>(SCG.IEnumerable<T> ienum) {
       OnSettingsChanged();
-      IO.Write(ienum, Writer);
+      Statics.Write(ienum, Writer);
    }
    public void WriteLine<T>(SCG.IEnumerable<T> ienum) {
       OnSettingsChanged();
-      IO.WriteLine(ienum, Writer);
+      Statics.WriteLine(ienum, Writer);
    }
 }
 }

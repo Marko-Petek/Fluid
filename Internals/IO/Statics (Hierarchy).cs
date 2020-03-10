@@ -7,13 +7,13 @@ using System.Globalization;
 using System.Reflection;
 using static System.Char;
 
-using static Fluid.Internals.Toolbox;                  // For Toolbox.
+using static Fluid.Internals.Tools;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
-public static partial class IO {
+public static partial class Statics {
    /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
    public static void Write<τ>(Hierarchy<τ> hier, TextWriter tw)
    where τ : IEquatable<τ>, new() {
