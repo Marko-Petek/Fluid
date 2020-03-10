@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 namespace Fluid.Tests {
 using dbl = Double;
 using DA = DblArithmetic;

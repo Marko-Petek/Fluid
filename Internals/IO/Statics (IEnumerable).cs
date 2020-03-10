@@ -7,13 +7,13 @@ using System.Globalization;
 using static System.Char;
 using SCG = System.Collections.Generic;
 
-using static Fluid.Internals.Toolbox;                  // For Toolbox.
+using static Fluid.Internals.Tools;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
-public static partial class IO {
+public static partial class Statics {
    public static void Write<T>(SCG.IEnumerable<T> ienum, TextWriter tw) {
       tw.Write(ienum.ToString());
    }

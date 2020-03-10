@@ -53,7 +53,7 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using static Fluid.Internals.Toolbox;
+using static Fluid.Internals.Tools;
 using static Fluid.Internals.Numerics.MatOps;
 using Fluid.Internals;
 using Fluid.Internals.Numerics;

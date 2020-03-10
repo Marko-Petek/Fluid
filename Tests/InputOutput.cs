@@ -4,9 +4,8 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-using Fluid.Internals;
+using FIO = Fluid.Internals.IO;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.IO;
 using Fluid.Internals.Collections;
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
@@ -16,8 +15,8 @@ using DA = DblArithmetic;
 
 public class InputOutput {
    [Fact] public void ReadAndParseArray() {
-         T.FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
-         var inputArray = (double[]) T.FileReader.ReadArray<double>();
+         FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
+         var inputArray = (double[]) FileReader.ReadArray<double>();
          var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
          Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
    }
@@ -42,15 +41,15 @@ public class InputOutput {
       // T.FileWriter.WriteLine(hier);
       // T.FileWriter.Flush();
       var strw = new StringWriter();
-      IO.Write(hier, strw);
+      Fluid.Internals.IO.Statics.Write(hier, strw);
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
    }
 
    [Fact] public void HierarchyInput() {
-      T.FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
-      var hierWriteBack = T.FileReader.ReadHierarchy<double>();
+      FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
+      var hierWriteBack = FileReader.ReadHierarchy<double>();
       var strw = new StringWriter();
-      IO.Write(hierWriteBack, strw);
+      FIO.Statics.Write(hierWriteBack, strw);
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
       var array = hierWriteBack.ConvertToArray();
       if(array != null) {
@@ -59,15 +58,14 @@ public class InputOutput {
             new double[] {9,7},
             new double[] {6,3},
             new double[] {5,2} };
-         Assert.True(result.Equals<dbl,DA>(expected, 0.000001));
-      }
+         Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
       else
          Assert.True(false, "Could not convert hierarchy to array.");
    }
 
    [Fact] public void HierarchyInput2() {
-      T.FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
-      var hierWriteBack = T.FileReader.ReadHierarchy<double>();
+      FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
+      var hierWriteBack = FileReader.ReadHierarchy<double>();
       var array = hierWriteBack.ConvertToArray();
       if(array != null) {
          var result = (double[][][]) array;

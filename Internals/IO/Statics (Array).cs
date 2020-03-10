@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using static System.Char;
 
-using static Fluid.Internals.Toolbox;                  // For Toolbox.
+using static Fluid.Internals.Tools;                  // For Toolbox.
 using Fluid.Internals.Collections;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
 
-public static partial class IO {
+public static partial class Statics {
    static CultureInfo _en_US = new CultureInfo("en-US");
    /// <summary>Write a 1D array with specified TextWriter.</summary><param name="array1d">1D array.</param><param name="tw">TextWriter which writes to an underlying stream.</param>
    public static void Write<T>(T[] array1d, TextWriter tw) {
