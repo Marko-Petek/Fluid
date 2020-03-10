@@ -48,10 +48,10 @@
    "name": "Tests (Debug)",                                                              // 
    "type": "coreclr",
    "request": "launch",
-   "preLaunchTask": "",
+   //"preLaunchTask": "",
    "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp3.1/Main.dll",
    "args": ["Tests", "${workspaceFolder}/Tests/bin/Debug/netcoreapp3.1/Tests.dll"],       // Project where tests reside.
-   "cwd": "${workspaceFolder}/Tests",
+   "cwd": "${workspaceFolder}",
    "console": "integratedTerminal",
    "stopAtEntry": false,
    "internalConsoleOptions": "openOnSessionStart",

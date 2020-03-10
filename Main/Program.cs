@@ -12,6 +12,9 @@ class Program {
 
    static void Main(string[] args) {            // args[0] has to be the name of the project without the extension.
       try {
+         // #if DEBUG
+         //    args = new string[] {"Tests", "Tests/bin/Debug/netcoreapp3.1/Tests.dll"};
+         // #endif
          // Print build time info independently from Fluid APIs. Enables us to see if the program recompiled even if Fluid.IO.Toolbox is not working.
          var buildDT = GetBuildDate(Assembly.GetExecutingAssembly());         // Extract build time from assembly.
          var dti = DateTimeFormatInfo.InvariantInfo;                          // Formatting info with which buildDT will be printed.
