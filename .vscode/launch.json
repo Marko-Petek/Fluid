@@ -11,7 +11,7 @@
    "request": "launch",
    //"preLaunchTask": "build",
    // If you have changed target frameworks, make sure to update the program path.
-   "program": "${workspaceFolder}/ChannelFlow/bin/Debug/netcoreapp2.2/ChannelFlow.dll",
+   "program": "${workspaceFolder}/ChannelFlow/bin/Debug/netcoreapp3.1/ChannelFlow.dll",
    "args": [],
    "cwd": "${workspaceFolder}/ChannelFlow",
    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
@@ -25,7 +25,7 @@
    "request": "launch",
    //"preLaunchTask": "build",
    // If you have changed target frameworks, make sure to update the program path.
-   "program": "${workspaceFolder}/Seminar/C#/NodeCreation/bin/Debug/netcoreapp2.2/NodeCreation.dll",
+   "program": "${workspaceFolder}/Seminar/C#/NodeCreation/bin/Debug/netcoreapp3.1/NodeCreation.dll",
    "args": [],
    "cwd": "${workspaceFolder}/Seminar/C#/NodeCreation",
    // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
@@ -38,25 +38,27 @@
    "name": "CavityFlow Debug",
    "type": "coreclr",
    "request": "launch",
-   //"preLaunchTask": "none",
-   // If you have changed target frameworks, make sure to update the program path.
-   "program": "${workspaceFolder}/Demos/CavityFlow/bin/Debug/netcoreapp2.2/CavityFlow.dll",
-   "args": [],
+   "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp3.1/Main.dll",
+   "args": ["CavityFlow"],
    "cwd": "${workspaceFolder}/Demos/CavityFlow",
-   // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+   "console": "integratedTerminal",
+   "stopAtEntry": false,
+   "internalConsoleOptions": "neverOpen" },
+{
+   "name": "Tests (Debug)",                                                              // 
+   "type": "coreclr",
+   "request": "launch",
+   //"preLaunchTask": "",
+   "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp3.1/Main.dll",
+   "args": ["Tests", "${workspaceFolder}/Tests/bin/Debug/netcoreapp3.1/Tests.dll"],       // Project where tests reside.
+   "cwd": "${workspaceFolder}",
    "console": "integratedTerminal",
    "stopAtEntry": false,
    "internalConsoleOptions": "openOnSessionStart",
-   "justMyCode": true },
-{
-   "name": "Tests",
-   "type": "coreclr",
-   "request": "launch",
-   "program": "${workspaceFolder}/Main/bin/Debug/netcoreapp2.2/Main.dll",
-   "args": ["${workspaceFolder}/Tests/bin/Debug/netcoreapp2.2/Tests.dll"],       // Project where tests reside.
-   "console": "integratedTerminal",
-   "stopAtEntry": false,
-   "internalConsoleOptions": "neverOpen" }
+   "justMyCode": false,
+   "symbolOptions": {
+      "searchMicrosoftSymbolServer": true,
+      "searchNuGetOrgSymbolServer": true  } }
 
 ]
 }

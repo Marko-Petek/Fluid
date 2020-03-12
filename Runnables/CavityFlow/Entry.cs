@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Diagnostics;
-
 using static Fluid.Internals.Toolbox;
-
-
 namespace Fluid.Runnables.CavityFlow {
+
    /// <summary>Driven cavity flow problem is a very simple problem with which methods are initially tested.</summary>
 public static class Entry {
-   public static void Point() {
-      var cavFlow = new Sim(0.1, 0.1, 3) ;
+   public static int Point() {
+      //var cavFlow = CavityFlow.Create(0.1, 0.1, 3) ;
+      return 0;
    }
 
 
@@ -51,7 +50,7 @@ public static class Entry {
       FileReader.SetDirAndFile("Seminar/Mathematica", "transNodesCM", ".txt");
       var transNodesCM = (double[][][]) FileReader.ReadArray<double>();
       FileReader.SetFile("nodesC", ".txt");
-      var nodesC = (double[][][]) FileReader.ReadArray<double>();
+      var nodesC = (double[][][])FileReader.ReadArray<double>();
       var transNodesC1 =                                                            // Reassemble the rows (including static nodes).
          transNodesCM.Select( (row, i) =>                                              // Take the newly created array.
             new double[][] {nodesC[i + 1][0]}.Concat(row).Append(nodesC[i + 1][3]).ToArray()       // Attach a static node to the left and a static node to the right of each row.
@@ -113,49 +112,49 @@ public static class Entry {
          ).ToArray();
       FileWriter.WriteLine(transNodesM, nameof(transNodesM));
       FileReader.SetFile("nodes", ".txt");
-      var nodes = (double[][][]) FileReader.ReadArray<double>();
+      var nodes = (double[][][])FileReader.ReadArray<double>();
       var nodes3dF =
          nodes.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dF, nameof(nodes3dF));
+     FileWriter.WriteLine(nodes3dF, nameof(nodes3dF));
       var transNodes3dF =
          transNodes.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dF, nameof(transNodes3dF));
+     FileWriter.WriteLine(transNodes3dF, nameof(transNodes3dF));
       var nodes3dMF =
          nodes.Take(7).Skip(3).Select( row =>
             row.Take(7).Skip(3).Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dMF, nameof(nodes3dMF));
+     FileWriter.WriteLine(nodes3dMF, nameof(nodes3dMF));
       var nodes3dMT =
          nodes.Take(7).Skip(3).Select( row =>
             row.Take(7).Skip(3).Select( col =>
                col.Append(1.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(nodes3dMT, nameof(nodes3dMT));
+     FileWriter.WriteLine(nodes3dMT, nameof(nodes3dMT));
       var transNodes3dMF =
          transNodesM.Select( row =>
             row.Select( col =>
                col.Append(0.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dMF, nameof(transNodes3dMF));
+     FileWriter.WriteLine(transNodes3dMF, nameof(transNodes3dMF));
       var transNodes3dMT =
          transNodesM.Select( row =>
             row.Select( col =>
                col.Append(1.0).ToArray()
             ).ToArray()
          ).ToArray();
-      FileWriter.WriteLine(transNodes3dMT, nameof(transNodes3dMT));
+     FileWriter.WriteLine(transNodes3dMT, nameof(transNodes3dMT));
    }  
    /// <summary>First shape function.</summary>
    static double S1(params double[] refCoords) => 0.25*(1 - refCoords[0])*(1 - refCoords[1]);   // Epsilon, eta.

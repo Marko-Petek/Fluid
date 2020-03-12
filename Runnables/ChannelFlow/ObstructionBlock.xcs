@@ -12,7 +12,7 @@ using Fluid.Internals.Lsfem;
 using static Fluid.ChannelFlow.Program;
 using static Fluid.Internals.Ops;
 using static Fluid.Internals.Numerics.MatOps;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 
 namespace Fluid.ChannelFlow {
    using dbl = Double;
@@ -42,10 +42,10 @@ namespace Fluid.ChannelFlow {
       public static dbl[][][][] ForcingIntegrals => _ForcingIntegrals;
 
       static ObstructionBlock() {
-         TB.FileReader.SetDirAndFile("ChannelFlow/Input", "obstructionStiffnessIntegrals", ".txt");
-         _StiffnessIntegrals = (dbl[][][][][][]) TB.FileReader.ReadArray<dbl>();
-         TB.FileReader.SetFile("obstructionForcingIntegrals", ".txt");
-         _ForcingIntegrals = (dbl[][][][]) TB.FileReader.ReadArray<dbl>();
+         T.FileReader.SetDirAndFile("ChannelFlow/Input", "obstructionStiffnessIntegrals", ".txt");
+         _StiffnessIntegrals = (dbl[][][][][][]) T.FileReader.ReadArray<dbl>();
+         T.FileReader.SetFile("obstructionForcingIntegrals", ".txt");
+         _ForcingIntegrals = (dbl[][][][]) T.FileReader.ReadArray<dbl>();
       }
       public ObstructionBlock() : base() { }
       public ObstructionBlock(ChannelMesh channelMesh, ChannelCylinderSystem channelFlow,
@@ -214,7 +214,7 @@ namespace Fluid.ChannelFlow {
       public override void AddContribsToSfsMatrix(Tensor A, double dt, double ni) {
          for(int row = 0; row < 23; ++row)
             for(int col = 0; col < 20; ++col) {
-               TB.Reporter.Write($"Element ({row},{col}).");
+               T.Reporter.Write($"Element ({row},{col}).");
                AddEmtContribToSfsMatrix(A, row, col, dt, ni); }
       }
       /// <summary>Add contribution from element at specified row and col to global stiffness matrix.</summary><param name="A">Global stiffness matrix.</param><param name="row">Mesh block row where element is situated.</param><param name="col">Mesh block col where element is situated.</param><param name="dt">Time step.</param><param name="ni">Viscosity.</param>
@@ -228,7 +228,7 @@ namespace Fluid.ChannelFlow {
                globalRowBelt = GblInxFromStdInx(row, col, j);
                globalColBelt = GblInxFromStdInx(row, col, k);
                if(this is WestBlock && ((row == 0 && col == 0) || (row == 0 && col == 1)))
-                  TB.Reporter.Write("Writing from element matrix to global matrix.");
+                  T.Reporter.Write("Writing from element matrix to global matrix.");
                for(int subResultRow = 0; subResultRow < 8; ++subResultRow)
                   for(int subResultCol = 0; subResultCol < 8; ++subResultCol) {                                                       // Using symmetry of global stiffness matrix.
                      A[globalRowBelt * 8 + subResultRow, globalColBelt * 8 + subResultCol] +=

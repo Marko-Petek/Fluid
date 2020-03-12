@@ -1,15 +1,15 @@
 using Xunit;
 using Fluid.Tests.Mocks;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using System.Threading;
 
 namespace Fluid.Tests {
    public partial class Thread1 {
       static Thread1() {
-         TB.EntryPointSetup("Starting Thread1 tests.");
+         T.EntryPointSetup("Starting Thread1 tests.");
       }
       /// <summary>Test transformation from standard block indices to compact block indices.</summary>
-      [Fact] public void CmtToStdIndexTransform() {               // Uses TB.FileReader inside ObstructionBlock.
+      [Fact] public void CmtToStdIndexTransform() {               // Uses T.FileReader inside ObstructionBlock.
          var block = new ObstructionBlockMock();
          Assert.True( block.CmtInxFromStdInx(0,0,0) == (0,0,2) );
          Assert.True( block.CmtInxFromStdInx(0,0,1) == (0,0,3) );

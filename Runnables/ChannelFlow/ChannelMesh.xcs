@@ -6,7 +6,7 @@ using static System.Math;
 using Fluid.Internals.Collections;
 using Fluid.Internals.Lsfem;
 using Fluid.Internals.Numerics;
-using TB = Fluid.Internals.Toolbox;
+using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Development.AppReporter.VerbositySettings;
 
 namespace Fluid.ChannelFlow {
@@ -72,27 +72,27 @@ namespace Fluid.ChannelFlow {
                4 * Width, 0.0,
                4 * Width, Width,
                Width, Width );
-            G = new MeshNode[15620];                                            TB.Reporter.Write($"Created global array of nodes of length {G.Length}.", Verbose); TB.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
-            SouthBlock = new SouthBlock(this, channelFlow);                          TB.Reporter.Write("Constructing WestBlock.", Verbose);
-            WestBlock = new WestBlock(this, channelFlow, SouthBlock);                TB.Reporter.Write("Constructing NorthBlock.", Verbose);
-            NorthBlock = new NorthBlock(this, channelFlow, WestBlock);               /* Integral values get imported with static constructor of ObstructionBlock. */  TB.Reporter.Write("Constructing EastBlock.", Verbose);
-            EastBlock = new EastBlock(this, channelFlow, NorthBlock, SouthBlock);    TB.Reporter.Write("Constructing RightBlock.", Verbose);
+            G = new MeshNode[15620];                                            T.Reporter.Write($"Created global array of nodes of length {G.Length}.", Verbose); T.Reporter.Write("Constructing SouthBlock. Passing ChannelMesh and ChannelFlow as arguments.", Verbose);
+            SouthBlock = new SouthBlock(this, channelFlow);                          T.Reporter.Write("Constructing WestBlock.", Verbose);
+            WestBlock = new WestBlock(this, channelFlow, SouthBlock);                T.Reporter.Write("Constructing NorthBlock.", Verbose);
+            NorthBlock = new NorthBlock(this, channelFlow, WestBlock);               /* Integral values get imported with static constructor of ObstructionBlock. */  T.Reporter.Write("Constructing EastBlock.", Verbose);
+            EastBlock = new EastBlock(this, channelFlow, NorthBlock, SouthBlock);    T.Reporter.Write("Constructing RightBlock.", Verbose);
             RightBlock = new RightBlock(this, channelFlow, EastBlock,
                RightRect._LL.X, RightRect._LL.Y,
                RightRect._UR.X, RightRect._UR.Y,
-               20, 60 );                                                             TB.Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
+               20, 60 );                                                             T.Reporter.Write("Writing corner node positions of elements for the purpose of drawing a mesh.", Verbose);
             WriteCornerPositionsOfRectElement();
       }
 
       /// <summary>Assemble global stiffness matrix by going over each element of each block.</summary>
-      public Tensor AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         TB.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
+      public Tensor AssembleSfsMatrix(ChannelCylinderSystem channelFlow) {         T.Reporter.Write("Constructing stiffnes matrix as a sparse matrix.");
          var sfsMatrix = new Tensor(new List<int> {15_620 * 8, 15_620 * 8});
          dbl dt = channelFlow.Dt;
-         dbl viscosity = channelFlow.Viscosity;                          TB.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
-         SouthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
-         WestBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);        TB.Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
-         NorthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       TB.Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
-         EastBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);        TB.Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
+         dbl viscosity = channelFlow.Viscosity;                          T.Reporter.Write("Adding stiffness matrix contributions of SouthBlock.");
+         SouthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       T.Reporter.Write("Adding stiffness matrix contributions of WestBlock.");
+         WestBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);        T.Reporter.Write("Adding stiffness matrix contributions of NorthBlock.");
+         NorthBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);       T.Reporter.Write("Adding stiffness matrix contributions of EastBlock.");
+         EastBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);        T.Reporter.Write("Adding stiffness matrix contributions of RightBlock.");
          RightBlock.AddContribsToSfsMatrix(sfsMatrix, dt, viscosity);
          return sfsMatrix;
       }

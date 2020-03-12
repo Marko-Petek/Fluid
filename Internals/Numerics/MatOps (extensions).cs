@@ -1,7 +1,8 @@
 ﻿using System;
 using static System.Math;
+using Fluid.Internals.Collections;
 using dbl = System.Double;
-using dA = Fluid.Internals.Numerics.DblArithmetic;
+using dA = Fluid.Internals.Collections.DblArithmetic;
 
 namespace Fluid.Internals.Numerics {
    public static class MatOps {
@@ -18,13 +19,13 @@ namespace Fluid.Internals.Numerics {
          int[] colIndices = new int[n];
          int[] rowIndices = new int[n];
          for(int i = 0; i < n; ++i) {
-            biggestElement = default;
+            biggestElement = NonNullable<τ,α>.O.Zero();
             for(int row = 0; row < n; ++row)
                if(pivotIndices[row] != 1)
                   for(int col = 0; col < n; ++col)
                      if(pivotIndices[col] == 0)
-                        if(O<τ,α>.A.Abs(mat[row][col]).CompareTo(biggestElement) >= 0) {
-                           biggestElement = O<τ,α>.A.Abs(mat[row][col]);
+                        if(NonNullable<τ,α>.O.Abs(mat[row][col]).CompareTo(biggestElement) >= 0) {
+                           biggestElement = NonNullable<τ,α>.O.Abs(mat[row][col]);
                            pivotRow = row;
                            pivotCol = col; }
             ++(pivotIndices[pivotCol]);
@@ -35,16 +36,16 @@ namespace Fluid.Internals.Numerics {
             colIndices[i] = pivotCol;
             if(mat[pivotCol][pivotCol].Equals(default))
                throw new ArgumentException("Singular input matrix.");
-            pivotInverse = O<τ,α>.A.Div(O<τ,α>.A.Unit(), mat[pivotCol][pivotCol]);
-            mat[pivotCol][pivotCol] = O<τ,α>.A.Unit();
+            pivotInverse = NonNullable<τ,α>.O.Div(NonNullable<τ,α>.O.Unit(), mat[pivotCol][pivotCol]);
+            mat[pivotCol][pivotCol] = NonNullable<τ,α>.O.Unit();
             for(int col = 0; col < n; ++col)
-               mat[pivotCol][col] = O<τ,α>.A.Mul(mat[pivotCol][col], pivotInverse);
+               mat[pivotCol][col] = NonNullable<τ,α>.O.Mul(mat[pivotCol][col], pivotInverse);
             for(int row = 0; row < n; ++row)
                if(row != pivotCol) {
                   dummy = mat[row][pivotCol];
-                  mat[row][pivotCol] = default;
+                  mat[row][pivotCol] = NonNullable<τ,α>.O.Zero();
                   for(int col = 0; col < n; ++col)
-                     mat[row][col] = O<τ,α>.A.Sub(mat[row][col], O<τ,α>.A.Mul(mat[pivotCol][col], dummy)); }}
+                     mat[row][col] = NonNullable<τ,α>.O.Sub(mat[row][col], NonNullable<τ,α>.O.Mul(mat[pivotCol][col], dummy)); }}
          for(int i = n - 1; i > -1; --i)
             if(rowIndices[i] != colIndices[i])
                for(int row = 0; row < n; ++row)
@@ -59,7 +60,7 @@ namespace Fluid.Internals.Numerics {
             for(int i = 0; i < mat1.Length; ++i) {
                result[i] = new τ[mat1.Length];
                for(int j = 0; j < mat1.Length; ++j)
-                  result[i][j] = O<τ,α>.A.Mul(mat1[i][j], mat2[j][i]); }
+                  result[i][j] = NonNullable<τ,α>.O.Mul(mat1[i][j], mat2[j][i]); }
             return result; }
          throw new ArgumentException("The two arrays multiplied have to have the same dimension.");
       }
@@ -71,7 +72,7 @@ namespace Fluid.Internals.Numerics {
          for(int i = 0; i < mat.Length; ++i) {
             result[i] = new τ[mat[i].Length];
             for(int j = 0; j < mat[i].Length; ++j)
-               result[i][j] = O<τ,α>.A.Mul(dbl, mat[i][j]); }
+               result[i][j] = NonNullable<τ,α>.O.Mul(dbl, mat[i][j]); }
          return result;
       }
       /// <summary>Transpose a square matrix. Result is created on specified matrix.</summary><param name="mat">Square matrix to transpose.</param>
@@ -93,7 +94,7 @@ namespace Fluid.Internals.Numerics {
          for(int i = 0; i < lgh; ++i) {
             result[i] = new τ[lgh];
             for(int j = 0; j < lgh; ++j)
-               result[i][j] = O<τ,α>.A.Sum(mat1[i][j], mat2[i][j]); }
+               result[i][j] = NonNullable<τ,α>.O.Sum(mat1[i][j], mat2[i][j]); }
          return result;
       }
       public static dbl[][] Sum(this dbl[][] mat1, dbl[][] mat2) =>
@@ -105,7 +106,7 @@ namespace Fluid.Internals.Numerics {
          int lgh = mat1.Length;
          for(int i = 0; i < lgh; ++i)
             for(int j = 0; j < lgh; ++j)
-               mat1[i][j] = O<τ,α>.A.Sum(mat1[i][j], mat2[i][j]);
+               mat1[i][j] = NonNullable<τ,α>.O.Sum(mat1[i][j], mat2[i][j]);
       }
       /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
       public static τ[][] Sub<τ,α>(this τ[][] mat1, τ[][] mat2)
@@ -116,7 +117,7 @@ namespace Fluid.Internals.Numerics {
          for(int i = 0; i < lgh; ++i) {
             result[i] = new τ[lgh];
             for(int j = 0; j < lgh; ++j)
-               result[i][j] = O<τ,α>.A.Sub(mat1[i][j], mat2[i][j]); }
+               result[i][j] = NonNullable<τ,α>.O.Sub(mat1[i][j], mat2[i][j]); }
          return result;
       }
       /// <summary>Subtract two square matrices.</summary><param name="mat1">First matrix.</param><param name="mat2">Second matrix.</param>
@@ -126,14 +127,14 @@ namespace Fluid.Internals.Numerics {
       public static τ Det<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         O<τ,α>.A.Sub(O<τ,α>.A.Mul(mat[0][0], mat[1][1]), O<τ,α>.A.Mul(mat[0][1], mat[1][0]));
+         NonNullable<τ,α>.O.Sub(NonNullable<τ,α>.O.Mul(mat[0][0], mat[1][1]), NonNullable<τ,α>.O.Mul(mat[0][1], mat[1][0]));
       public static dbl Det(dbl[][] mat) =>
          Det<dbl,dA>(mat);
       /// <summary>Coumpute trace of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
       public static τ Tr<τ,α>(this τ[][] mat)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         O<τ,α>.A.Sum(mat[0][0], mat[1][1]);
+         NonNullable<τ,α>.O.Sum(mat[0][0], mat[1][1]);
       /// <summary>Coumpute trace of 2x2 matrix.</summary><param name="mat">2x2 matrix.</param>
       public static double Tr(dbl[][] mat) =>
          Tr<dbl,dA>(mat);
@@ -175,7 +176,7 @@ namespace Fluid.Internals.Numerics {
       where τ : IEquatable<τ>, IComparable<τ> {
          if(mat1.Length == mat2.Length) {
             for(int i = 0; i < mat1.Length; ++i)
-               if(O<τ,α>.A.Abs(O<τ,α>.A.Sub(mat1[i], mat2[i])).CompareTo(epsilon) > 0)
+               if(NonNullable<τ,α>.O.Abs(NonNullable<τ,α>.O.Sub(mat1[i], mat2[i])).CompareTo(epsilon) > 0)
                   return false;
             return true; }
          return false;
@@ -183,7 +184,7 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[] mat1, τ[] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, NonNullable<τ,α>.O.Zero());
       public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -197,7 +198,7 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[][] mat1, τ[][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, NonNullable<τ,α>.O.Zero());
       public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2, τ eps)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> {
@@ -211,6 +212,6 @@ namespace Fluid.Internals.Numerics {
       public static bool Equals<τ,α>(this τ[][][] mat1, τ[][][] mat2)
       where α : IArithmetic<τ>, new()
       where τ : IEquatable<τ>, IComparable<τ> =>
-         Equals<τ,α>(mat1, mat2, default);
+         Equals<τ,α>(mat1, mat2, NonNullable<τ,α>.O.Zero());
    }
 }
