@@ -6,6 +6,11 @@
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
+    <StartupObject>Fluid.Main.Program</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;REPORT</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

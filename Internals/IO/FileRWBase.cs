@@ -36,8 +36,8 @@ public abstract class FileRWBase {
             if(parent == null)                                                  // null == when root is reached.
                throw new DirectoryNotFoundException(
                   @"Could not find directory named Fluid above directory containing dll."); }
-         // SettingsChanged += DirChanged;
-         // SettingsChanged += FileChanged;
+         SettingsChanged += DirChanged;
+         SettingsChanged += FileChanged;
    }
    protected void OnSettingsChanged() {
       if(SettingsChanged != null) {

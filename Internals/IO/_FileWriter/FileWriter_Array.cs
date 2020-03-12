@@ -23,8 +23,8 @@ public partial class FileWriter : FileRWBase, IDisposable {
       string fileExt = DefaultExt, bool append = DefaultAppend) :
       base(dirPath, fileNameNoExt, fileExt) {
          Append = append;
-         Writer = new StreamWriter(File.FullName, Append);
-         //OnSettingsChanged();
+         //Writer = new StreamWriter(File.FullName, Append);
+         OnSettingsChanged();
    }
 
    protected override void ResetUnmanagedResource() {

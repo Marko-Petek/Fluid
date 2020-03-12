@@ -24,7 +24,6 @@ public class Tools {
    public Stringer S { get; internal set; }
 
    public Tools() {
-      System.Console.OutputEncoding = Encoding.UTF8;
       Writer = new IO.Console();
       FileReader = new IO.FileReader();
       FileWriter = new IO.FileWriter();
