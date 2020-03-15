@@ -1,24 +1,30 @@
-using System;
 using System.Collections.Generic;
-
 namespace Fluid.Internals.Collections {
-   public abstract class Node<T> where T : Node<T> {
-      public Dictionary<T,int> Peers { get; protected set; } = new Dictionary<T,int>();
-      int RecentIndex { get; set; } = 0;
 
-      public Node() {}
-      public Node(T peer) => Connect(peer);
-      public Node(IEnumerable<T> peers) {
-         Connect(peers);
-      }
+/// <summary>A base for concrete implementation of the same name.</summary>
+/// <typeparam name="τ">Type of peers whose references are stored in the dictionary.</typeparam>
+public abstract class Node<τ> where τ : Node<τ> {
+   /// <summary>
+   /// 
+   /// </summary>
+   /// <typeparam name="τ"></typeparam>
+   public Dictionary<τ,int> Peers { get; protected set; } = new Dictionary<τ,int>();
+   int RecentIndex { get; set; } = 0;
 
-      public void Connect(T peer) {
-         Peers[peer] = RecentIndex++;
-         peer.Peers[(T)this] = peer.RecentIndex;
-      }
-      public void Connect(IEnumerable<T> peers) {
-         foreach(var peer in peers)
-            Connect(peer);
-      }
+   public Node() {}
+   public Node(τ peer) => Connect(peer);
+   public Node(IEnumerable<τ> peers) {
+      Connect(peers);
    }
+
+   public void Connect(τ peer) {
+      Peers[peer] = RecentIndex++;
+      peer.Peers[(τ)this] = peer.RecentIndex;
+   }
+   public void Connect(IEnumerable<τ> peers) {
+      foreach(var peer in peers)
+         Connect(peer);
+   }
+
+}
 }

@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using Fluid.Internals.Connections;
 using static Fluid.Internals.Tools;
-namespace Fluid.Internals.IO2 {
+namespace Fluid.Internals.IO {
 
 /// <summary>Contains methods which write out nicely formatted values to console.</summary>
 public class Console {
