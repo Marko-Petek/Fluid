@@ -28,7 +28,7 @@ public class FileReader : FileRWBase, IDisposable {
    public Hierarchy<τ> ReadHierarchy<τ>()
    where τ : IEquatable<τ>, new() {
       OnSettingsChanged();
-      return Statics.ReadHierarchy<τ>(Reader) switch {
+      return Reader.ReadHierarchy<τ>() switch {
          Hierarchy<τ> hier => hier,
          _ => throw new Exception("Could not read hierarchy from file.") };
    }

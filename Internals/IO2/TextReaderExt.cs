@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Reflection;
 using static System.Char;
 
 using static Fluid.Internals.Tools;                  // For Toolbox.
@@ -13,36 +12,12 @@ using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 
 namespace Fluid.Internals.IO {
-public static partial class Statics {
-   /// <remarks><see cref="TestRefs.HierarchyOutput"/></remarks>
-   public static void Write<τ>(Hierarchy<τ> hier, TextWriter tw)
-   where τ : IEquatable<τ>, new() {
-      if(hier.TopNode is ValueNode<τ> valueNode)           // top node is already a value.
-         tw.Write(valueNode.Value.ToString());
-      else
-         Recursion(hier.TopNode);
 
-      void Recursion(RankedNode startNode) {
-         int i = 0;
-         tw.Write('{');
-         foreach(var node in startNode.Subordinates) {
-            if(node is ValueNode<τ> vNode)                                  // This is a value node.
-               tw.Write(((ValueNode<τ>)node).Value.ToString());            // Write its value.
-            else                                                            // This is not a value node.
-               Recursion(node);                                            // Re-enter recursion.                            
-            if(++i < startNode.Subordinates.Count)                                     // We have more than one node left in this group.
-               tw.Write(", "); }                                            // So add a comma and space.
-         tw.Write('}');
-      }
-   }
-   public static void WriteLine<τ>(this Hierarchy<τ> hier, TextWriter tw)
-   where τ : IEquatable<τ>, new() {
-      Write(hier, tw);
-      tw.WriteLine();
-   }
-   
-   /// <remarks><see cref="TestRefs.HierarchyInput"/></remarks>
-   public static Hierarchy<τ>? ReadHierarchy<τ>(TextReader tr)
+public static class TextReaderExt {
+   /// <summary>Attempts to read a data stream fed by a text reader as a hierarchy. Throws an exception if the data is not convertible to a hierarchy.</summary>
+   /// <param name="tr">Text reader such as FileReader.</param>
+   /// <typeparam name="τ">Type of Hierarchy elements.</typeparam>
+   public static Hierarchy<τ>? ReadHierarchy<τ>(this TextReader tr)
    where τ : IEquatable<τ>, new() {
       var nFI = new NumberFormatInfo();
       nFI.NumberDecimalSeparator = ".";
@@ -90,5 +65,18 @@ public static partial class Statics {
             newMatch = newMatch.NextMatch(); }
       }
    }
+
+   /// <summary>Attempts to read a data stream fed by a text reader as an array. Throws an exception if the data is not convertible to an array.</summary>
+   /// <param name="tr">Text reader such as FileReader.</param>
+   /// <typeparam name="τ">Type of array elements.</typeparam>
+   public static Array Read<τ>(this TextReader tr)
+   where τ : IEquatable<τ>, new() {
+      return ReadHierarchy<τ>(tr) switch {
+         Hierarchy<τ> res => res.ConvertToArray() switch {
+            Array arr => arr,
+            _ => throw new InvalidOperationException("Read data cannot be converted to array.") },
+         _ => throw new IOException("Could not read data from file into a Hierarchy.") };
+   }
+
 }
 }
