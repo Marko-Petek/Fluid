@@ -52,9 +52,6 @@ where α : IArithmetic<τ?>, new() {
    public Dictionary<int,τ> Scals { get; internal set; }
 
 
-   
-
-   /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
    /// <summary>Indexer. Check for empty parent after operation.</summary>
    new public τ? this[int i] {
       get {
@@ -79,14 +76,12 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Sum two vectors, return new vector as a result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
-   /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
    public static RefVec<τ,α>? operator + (RefVec<τ,α>? vec1, RefVec<τ,α>? vec2) =>
       vec1.SumTop(vec2);
    
    /// <summary>Subtract two vectors. Returns new top vector as result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
-   /// <remarks><see cref="TestRefs.Op_VectorSubtraction"/></remarks>
    public static RefVec<τ,α>? operator - (RefVec<τ,α>? vec1, RefVec<τ,α>? vec2) =>
       vec1.SubTop(vec2);
 
@@ -96,14 +91,12 @@ where α : IArithmetic<τ?>, new() {
    /// <param name="vec">Vector to negate.</param>
    public static RefVec<τ,α>? operator - (RefVec<τ,α>? vec) =>
       vec.Negate();
-   /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
    public static RefVec<τ,α>? operator * (τ scal, RefVec<τ,α> vec) =>
       vec.MulTop(scal);
    
 
    
    /// <summary>Dot (scalar) product.</summary>
-   /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
    public static τ? operator *(RefVec<τ,α>? v1, RefVec<τ,α>? v2) =>
       v1.ContractTop(v2);
 
