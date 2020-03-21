@@ -9,6 +9,7 @@ public static class RefVecExt {
    /// <summary>Sums vec2 to vec1. Modifies vec1, does not destroy vec2. If vec1 is null, it creates a copy of vec2.</summary>
    /// <param name="vec1">Sumand 1 is modified. Use return as result.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
+   /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
    public static RefVec<τ,α>? SumInto<τ,α>(this RefVec<τ,α>? vec1, RefVec<τ,α>? vec2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(vec2 == null)
          return vec1;
@@ -20,6 +21,7 @@ public static class RefVecExt {
    /// <summary>Sums vec2 to vec1, both assumed to be non-null. Modifies vec1, does not destroy vec2.</summary>
    /// <param name="vec1">Sumand 1 is modified. Use return as result.</param>
    /// <param name="vec2">Sumand 2. Is not destroyed.</param>
+   /// <remarks><see cref="TestRefs.VectorSum"/></remarks>
    internal static RefVec<τ,α>? SumIntoß<τ,α>(this RefVec<τ,α> vec1, RefVec<τ,α> vec2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       foreach(var (i, s2) in vec2.Scals) {
          var s1 = vec1[i];
@@ -33,6 +35,7 @@ public static class RefVecExt {
    /// <summary>Subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
    /// <param name="v1">Minuend. Is modified, use return as result.</param>
    /// <param name="v2">Subtrahend. Is not destroyed.</param>
+   /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
    public static RefVec<τ,α>? SubInto<τ,α>(this RefVec<τ,α>? v1, RefVec<τ,α>? v2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(v2 == null)
          return v1;
@@ -44,6 +47,7 @@ public static class RefVecExt {
    /// <summary>Subtracts vec2 from vec1. Modifies vec1, does not destroy vec2.</summary>
    /// <param name="vec1">Minuend. Is modified, use return as result.</param>
    /// <param name="vec2">Subtrahend. Is not destroyed.</param>
+   /// <remarks><see cref="TestRefs.VectorSub"/></remarks>
    internal static RefVec<τ,α>? SubIntoß<τ,α>(this RefVec<τ,α> vec1, RefVec<τ,α> vec2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       foreach(var (i, s2) in vec2.Scals) {
          var subVal1 = vec1[i];
@@ -109,6 +113,7 @@ public static class RefVecExt {
       
    /// <summary>Multiplies vector with a scalar. Modifies "this". Use return as result.</summary>
    /// <param name="s">Scalar.</param>
+   /// <remarks> <see cref="TestRefs.VectorMul"/> </remarks>
    public static RefVec<τ,α>? MulInto<τ,α>(this RefVec<τ,α>? v, τ? s)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(v == null || s == null)
          return null;
@@ -172,6 +177,7 @@ public static class RefVecExt {
 
    /// <summary>Tensor product of a vector with another tensor. Returns top tensor (null superior) as result.</summary>
    /// <param name="t2">Right hand operand.</param>
+   /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
    public static RefTnr<τ,α>? TnrProdTop<τ,α>(this RefVec<τ,α>? v1, RefTnr<τ,α>? t2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       if(v1 == null || t2 == null)
          return null;
@@ -200,6 +206,7 @@ public static class RefVecExt {
       return v1.TnrProdTopß(v2);
    }
 
+   /// <remarks> <see cref="TestRefs.VectorTnrProductVector"/> </remarks>
    internal static RefTnr<τ,α> TnrProdTopß<τ,α>(this RefVec<τ,α> v1, RefVec<τ,α> v2)  where τ : class, IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ?>, new() {
       var newStrc = new List<int> {v1.Dim, v2.Dim};
       var prod = TopRefTnr<τ,α>(newStrc, v1.Scals.Count);

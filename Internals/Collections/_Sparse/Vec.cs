@@ -52,7 +52,9 @@ where α : IArithmetic<τ>, new() {
    public Dictionary<int,τ> Scals { get; internal set; }
 
 
+   
 
+   /// <remarks> <see cref="TestRefs.VectorIndexer"/> </remarks>
    /// <summary>Indexer. Check for empty parent after operation.</summary>
    new public τ this[int i] {
       get {
@@ -75,6 +77,7 @@ where α : IArithmetic<τ>, new() {
    /// <summary>Sum two vectors, return new top vector as a result.</summary>
    /// <param name="vec1">Left operand.</param>
    /// <param name="vec2">Right operand.</param>
+   /// <remarks><see cref="TestRefs.Op_VectorAddition"/></remarks>
    public static Vec<τ,α>? operator + (Vec<τ,α>? vec1, Vec<τ,α>? vec2) =>
       vec1.SumTop(vec2);
    
@@ -91,12 +94,14 @@ where α : IArithmetic<τ>, new() {
    /// <param name="vec">Vector to negate.</param>
    public static Vec<τ,α>? operator - (Vec<τ,α>? vec) =>
       vec.Negate();
+   /// <remarks> <see cref="TestRefs.Op_ScalarVectorMultiplication"/> </remarks>
    public static Vec<τ,α>? operator * (τ scal, Vec<τ,α> vec) =>
       vec.MulTop(scal);
    
 
    
    /// <summary>Dot (scalar) product.</summary>
+   /// <remarks> <see cref="TestRefs.Op_VectorDotVector"/> </remarks>
    public static τ operator *(Vec<τ,α> v1, Vec<τ,α> v2) =>
       v1.ContractTopß(v2);
 

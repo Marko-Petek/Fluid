@@ -97,6 +97,7 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Tensor getting/setting indexer.</summary>
    /// <param name="overloadDummy">Type uint of first dummy argument specifies that we know we will be getting/setting a Tensor.</param>
    /// <param name="inxs">A set of indices specifiying which Tensor we want to set/get. The set length must not reach all the way out to scalar rank.</param>
+   /// <remarks> <see cref="TestRefs.TensorTensorIndexer"/> </remarks>
    public RefTnr<τ,α>? this[RefTnr<τ,α> overloadDummy, params int[] inxs] {
       get {
          RefTnr<τ,α>? tnr = this;
@@ -161,6 +162,7 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Vector getting/setting indexer. Use tnr[1f, 3] = null to remove an entry, should it exist.</summary>
    /// <param name="overloadDummy">Type float of first dummy argument specifies that we know we will be getting/setting a Vector.</param>
    /// <param name="inxs">A set of indices specifiying which Vector we want to set/get. The set length must reach exactly to Vector rank.</param>
+   /// <remarks> <see cref="TestRefs.TensorVectorIndexer"/> </remarks>
    public RefVec<τ,α>? this[RefVec<τ,α> overloadDummy, params int[] inx] {
       get {
          RefTnr<τ,α>? tnr = this;
@@ -242,6 +244,7 @@ where α : IArithmetic<τ?>, new() {
 
    /// <summary>Scalar getting/setting indexer.</summary>
    /// <param name="inxs">A set of indices specifiying which scalar we want to set/get. The set length must reach exactly to scalar rank.</param>
+   /// <remarks> <see cref="TestRefs.TensorTauIndexer"/> </remarks>
    public virtual τ? this[params int[] inx] {
       get {
          RefTnr<τ,α>? tnr = this;
@@ -284,12 +287,14 @@ where α : IArithmetic<τ?>, new() {
    
    /// <summary>UNARY NEGATE. Creates a new tensor which is a negation of tnr1. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="t">Operand.</param>
+   /// <remarks><see cref="TestRefs.Op_TensorNegation"/></remarks>
    public static RefTnr<τ,α>? operator -(RefTnr<τ,α>? t) =>
       t.NegateTop();
 
    /// <summary>Creates a new tensor which is a sum of the two operands. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="t1">Left operand.</param>
    /// <param name="t2">Right operand.</param>
+   /// <remarks> <see cref="TestRefs.Op_TensorAddition"/> </remarks>
    public static RefTnr<τ,α>? operator + (RefTnr<τ,α>? t1, RefTnr<τ,α>? t2) =>
       t1.SumTop(t2);
 
@@ -297,6 +302,7 @@ where α : IArithmetic<τ?>, new() {
    /// <param name="t1">Left operand.</param>
    /// <param name="t2">Right operand.</param>
    /// <remarks>First, we create our result tensor as a copy of tnr1. Then we take tnr2 as recursion dictator (yielding subtensors subTnr2) and we look for equivalent subtensors on tnr1 (call them subTnr1). If no equivalent is found, we negate subTnr2 and add it to a proper place in the result tensor, otherwise we subtract subTnr2 from subTnr1 and add that to result. Such a subtraction can yield a zero tensor (without entries) in which case we make sure we remove it (the empty tensor) from the result.
+   /// Tests: <see cref="TestRefs.Op_TensorSubtraction"/> </remarks>
    public static RefTnr<τ,α>? operator - (RefTnr<τ,α>? t1, RefTnr<τ,α>? t2) =>
       t1.SubTop(t2);
 
@@ -304,6 +310,7 @@ where α : IArithmetic<τ?>, new() {
    /// <summary>Creates a new tensor which is a product of a scalar and a tensor. The tensor is created as top rank, given its own substructure and no superstructure.</summary>
    /// <param name="scal">Scalar.</param>
    /// <param name="aTnr">Tensor.</param>
+   /// <remarks> <see cref="TestRefs.Op_ScalarTensorMultiplication"/> </remarks>
    public static RefTnr<τ,α>? operator * (τ? scal, RefTnr<τ,α>? aTnr) =>
       aTnr.MulTop(scal);
    
@@ -337,6 +344,7 @@ where α : IArithmetic<τ?>, new() {
    }
 
 
+   /// <remarks> <see cref="TestRefs.TensorEnumerateRank"/> </remarks>
    public IEnumerable<RefTnr<τ,α>> EnumerateRank(int rankInx) {
       Assume.True(rankInx > 1, () =>
          "This method applies only to ranks that hold pure tensors.");

@@ -18,6 +18,7 @@ public static class TnrExt {
    /// <param name="t2">Tensor that will provide sumands.</param>
    /// <typeparam name="τ">Numeric type.</typeparam>
    /// <typeparam name="α">Arithmetic type.</typeparam>
+   /// <remarks> <see cref="TestRefs.TensorSum"/> </remarks>
    public static Tnr<τ,α>? SumInto<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t1 == null) {
          if(t2 == null)
@@ -82,6 +83,7 @@ public static class TnrExt {
 
    /// <summary>Subtracts tnr2 from the caller. Tnr2 is still usable afterwards.</summary>
    /// <param name="aTnr2">Minuend which will be subtracted from the caller. Minuend is still usable after the operation.</param>
+   /// <remarks><see cref="TestRefs.TensorSub"/></remarks>
    public static Tnr<τ,α>? SubInto<τ,α>(this Tnr<τ,α>? t1, Tnr<τ,α>? t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t1 == null) {
          if(t2 == null)
@@ -179,6 +181,7 @@ public static class TnrExt {
 
    /// <summary>Multiplies caller with a scalar.</summary>
    /// <param name="scal">Scalar.</param>
+   /// <remarks> <see cref="TestRefs.TensorMul"/> </remarks>
    internal static Tnr<τ,α> MulIntoβ<τ,α>(this Tnr<τ,α> t, τ scal)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t.Rank > 2) {                                       // Subordinates are tensors.
          foreach (var (i, st) in t) {
@@ -222,6 +225,8 @@ public static class TnrExt {
       t.CopyAsSubTnrβ(sup, inx).MulIntoβ(scal);
 
 
+   
+   /// <remarks> <see cref="TestRefs.TensorProduct"/> </remarks>
    public static Tnr<τ,α> TnrProdTop<τ,α>(this Tnr<τ,α> t1, Tnr<τ,α> t2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       // 1) Descend to rank 1 through a recursion and then delete that vector.
       // 2) Substitute it with a tensor of rank tnr2.Rank + 1 whose entries are tnr2s multiplied by the corresponding scalar that used to preside there in the old vector.
@@ -316,6 +321,7 @@ public static class TnrExt {
    /// <param name="t2">Tensor 2.</param>
    /// <param name="slotInx1">One-based natural index on this tensor over which to contract.</param>
    /// <param name="slotInx2">One-based natural index on tensor 2 over which to contract (it must hold: dim(rank(inx1)) = dim(rank(inx2)).</param>
+   /// <remarks><see cref="TestRefs.TensorContract"/></remarks>
    public static Tnr<τ,α>? ContractTopβ<τ,α>(this Tnr<τ,α> t1, Tnr<τ,α> t2, int slotInx1, int slotInx2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       (List<int> strc, int rank1, int rank2, int conDim) = ContractTopPart1(t1, t2, slotInx1, slotInx2);
       return ContractTopPart2(t1, t2, rank1, rank2, strc, conDim);
@@ -341,6 +347,7 @@ public static class TnrExt {
    /// <param name="t">Tensor to self-contract.</param>
    /// <param name="slot1">Slot index 1. Provide as if contracted tensor was top.</param>
    /// <param name="slot2">Slot index 2, greater than slot index 1. Provide as if contracted tensor was top.</param>
+   /// <remarks><see cref="TestRefs.TensorSelfContract"/></remarks>
    internal static Tnr<τ,α>? SelfContractTopβ<τ,α>(this Tnr<τ,α> t, int slot1, int slot2)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       if(t.Rank > 3) {
          var substrc = t.Substrc;                                                 // Substructure of contracted tensor.
@@ -407,6 +414,7 @@ public static class TnrExt {
    }
 
    /// <summary>Contracts across the two slot indices on a rank 2 tensor.</summary>
+   /// <remarks> <see cref="TestRefs.TensorSelfContractR2"/> </remarks>
    internal static τ SelfContractR2β<τ,α>(this Tnr<τ,α> t)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {
       var substrc = t.Substrc;
       Assume.True(substrc[0] == substrc[1], () =>
@@ -428,6 +436,7 @@ public static class TnrExt {
    /// <summary>Eliminates a specific rank n by choosing a single tensor at that rank and substituting it in place of its direct superior (thus discarding all other tensors at rank n). The resulting tensor is a new tensor of reduced rank (method is non-destructive).</summary>
    /// <param name="r"> Rank index (zero-based) of the rank to eliminate.</param>
    /// <param name="e">Element index (zero-based) in that rank in favor of which the elimination will take place.</param>
+   /// <remarks>Test: <see cref="TestRefs.TensorReduceRank"/></remarks>
    public static Tnr<τ,α>? ReduceRankTop<τ,α>(this Tnr<τ,α> t, int r, int e)  where τ : IEquatable<τ>, IComparable<τ>  where α : IArithmetic<τ>, new() {                                    // FIXME: Method must properly reassign superiors.
       Assume.True(r < t.Rank && r > -1, () =>
          "You can only eliminate a rank in range [0, TopRank)." );
