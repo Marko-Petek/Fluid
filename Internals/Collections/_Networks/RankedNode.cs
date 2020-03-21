@@ -3,7 +3,7 @@ using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
 namespace Fluid.Internals.Collections {
-   public class RankedNode : Node<RankedNode> {
+   public class RankedNode : ONode<RankedNode> {
       public RankedNode? Leader { get; set;}
       public SubordinateCollection Subordinates { get; }
 
