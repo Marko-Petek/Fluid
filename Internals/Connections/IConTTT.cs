@@ -3,10 +3,8 @@ namespace Fluid.Internals.Connections {
   /// <typeparam name="τ">Node T type.</typeparam>
   /// <typeparam name="υ">Node U type</typeparam>
   /// <typeparam name="φ">Node V type</typeparam>
-  public abstract class ConTTT<τ,υ,φ> : Con<τ,υ,φ>  where τ : class  where υ : class  where φ : class {
-   protected override τ? T { get; }
-   protected override υ? U { get; }
-   protected override φ? V { get; }
+  public interface ConTTT<τ,υ,φ> : IConTT<τ,υ>  where τ : class  where υ : class  where φ : class {
+   protected φ? V { get; }
 
 }
 }

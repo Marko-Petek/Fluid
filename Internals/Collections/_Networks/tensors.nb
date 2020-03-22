@@ -1,0 +1,125 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 11.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3916,        115]
+NotebookOptionsPosition[      3386,         95]
+NotebookOutlinePosition[      3722,        110]
+CellTagsIndexPosition[      3679,        107]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"list", "=", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "1"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "3", ",", "3"}], "}"}], "]"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.7938835223882504`*^9, 3.793883593934183*^9}, {
+  3.793883625218967*^9, 3.793883698400877*^9}, {3.793887869956493*^9, 
+  3.793887885416039*^9}, {3.793888053503895*^9, 3.793888279368957*^9}, {
+  3.793888314151518*^9, 
+  3.7938883338812923`*^9}},ExpressionUUID->"a6c09a76-e315-4a35-8521-\
+175e378f0958"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{"{", 
+   RowBox[{"Red", ",", 
+    RowBox[{"PointSize", "[", "0.05", "]"}], ",", "list"}], "}"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.7938835223882504`*^9, 3.793883593934183*^9}, {
+  3.793883625218967*^9, 3.793883698400877*^9}, {3.793887869956493*^9, 
+  3.793887885416039*^9}, {3.793888053503895*^9, 3.793888279368957*^9}, {
+  3.793888314151518*^9, 
+  3.793888374693584*^9}},ExpressionUUID->"291ef15c-c010-4130-9f3a-\
+b502c0aa6a91"],
+
+Cell[BoxData[
+ Graphics3DBox[
+  {RGBColor[1, 0, 0], PointSize[0.05], Point3DBox[{1, 1, 1}], 
+   Point3DBox[{1, 1, 2}], Point3DBox[{1, 1, 3}], Point3DBox[{1, 2, 2}], 
+   Point3DBox[{1, 2, 3}], Point3DBox[{1, 3, 3}], Point3DBox[{2, 2, 2}], 
+   Point3DBox[{2, 2, 3}], Point3DBox[{2, 3, 3}], Point3DBox[{3, 3, 3}]},
+  ImageSize->{375.0062942755829, 277.53707871009357`},
+  ViewPoint->{0.2221429202883158, -3.063878617485918, -1.4189081507547752`},
+  ViewVertical->{
+   0.8975544381403102, -0.38423284403446584`, -0.21624327073880925`}]], \
+"Output",
+ CellChangeTimes->{
+  3.7938836999946117`*^9, 3.793888155881324*^9, 3.7938882222006893`*^9, 
+   3.7938882641839237`*^9, {3.793888320747136*^9, 3.793888336047998*^9}, {
+   3.79388836913266*^9, 
+   3.793888376743417*^9}},ExpressionUUID->"e9177f90-af39-4b36-a4f1-\
+381ac0b87a47"]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, 282}, {43, Automatic}},
+FrontEndVersion->"11.1 for Linux x86 (64-bit) (April 18, 2017)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 1472, 39, 83, "Input", "ExpressionUUID" -> \
+"a6c09a76-e315-4a35-8521-175e378f0958"],
+Cell[CellGroupData[{
+Cell[2055, 63, 490, 11, 35, "Input", "ExpressionUUID" -> \
+"291ef15c-c010-4130-9f3a-b502c0aa6a91"],
+Cell[2548, 76, 822, 16, 325, "Output", "ExpressionUUID" -> \
+"e9177f90-af39-4b36-a4f1-381ac0b87a47"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
