@@ -5,7 +5,8 @@ using Fluid.Internals.Connections;
 namespace Fluid.Internals.Collections {
 
 /// <summary>A type that can form networks with other Nodes. We split the definitions of ValNode and RefNode to allow intellisense to track nullability.</summary>
-public interface IRefNode<τ> : INode<τ>  where τ : class {
-   τ? Val { get; }
+public interface IClassNode<τ> : INode<τ>  where τ : class {
+   /// <summary>Node weight.</summary>
+   τ? Wght { get; }
 }
 }
