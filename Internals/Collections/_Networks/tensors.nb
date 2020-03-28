@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[      3916,        115]
-NotebookOptionsPosition[      3386,         95]
-NotebookOutlinePosition[      3722,        110]
-CellTagsIndexPosition[      3679,        107]
+NotebookDataLength[     14414,        401]
+NotebookOptionsPosition[     13306,        367]
+NotebookOutlinePosition[     13640,        382]
+CellTagsIndexPosition[     13597,        379]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -81,20 +81,292 @@ Cell[BoxData[
    Point3DBox[{1, 2, 3}], Point3DBox[{1, 3, 3}], Point3DBox[{2, 2, 2}], 
    Point3DBox[{2, 2, 3}], Point3DBox[{2, 3, 3}], Point3DBox[{3, 3, 3}]},
   ImageSize->{375.0062942755829, 277.53707871009357`},
-  ViewPoint->{0.2221429202883158, -3.063878617485918, -1.4189081507547752`},
-  ViewVertical->{
-   0.8975544381403102, -0.38423284403446584`, -0.21624327073880925`}]], \
-"Output",
+  ViewPoint->{0.2667934377064611, -2.3568266908059745`, 2.4133357021146695`},
+  ViewVertical->{0.9023413381863824, -0.33706924148167594`, 
+   0.2686343906631772}]], "Output",
  CellChangeTimes->{
   3.7938836999946117`*^9, 3.793888155881324*^9, 3.7938882222006893`*^9, 
    3.7938882641839237`*^9, {3.793888320747136*^9, 3.793888336047998*^9}, {
    3.79388836913266*^9, 
    3.793888376743417*^9}},ExpressionUUID->"e9177f90-af39-4b36-a4f1-\
 381ac0b87a47"]
+}, Open  ]],
+
+Cell["Number of particles corresponds to a  ", "Text",
+ CellChangeTimes->{{3.794080315396686*^9, 
+  3.7940803504935017`*^9}},ExpressionUUID->"dc3f1351-4207-41b9-882d-\
+081702ccc9bf"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"list2", "=", 
+  RowBox[{"{", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "1"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "1", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "2", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "3", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "2", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"2", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "3", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"3", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"4", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"4", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"4", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+    RowBox[{"Point", "[", 
+     RowBox[{"{", 
+      RowBox[{"5", ",", "5", ",", "5"}], "}"}], "]"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.7939072709389057`*^9, 3.793907344622733*^9}, {
+  3.793907880438945*^9, 3.793908078369903*^9}, {3.793908163285437*^9, 
+  3.793908298808358*^9}, {3.79394287446629*^9, 3.79394289567441*^9}, {
+  3.7939429436156*^9, 3.793943045389873*^9}, {3.793943420490307*^9, 
+  3.79394346853023*^9}, {3.7939439054560957`*^9, 
+  3.793944032363226*^9}},ExpressionUUID->"7a73f2f3-6929-4a6e-b9cc-\
+918e5a00125b"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "1"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "2"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "1", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "2", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "2", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "3", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"1", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "2", ",", "2"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "2", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "2", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "2", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"2", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "3", ",", "3"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "3", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "3", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"3", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"4", ",", "4", ",", "4"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"4", ",", "4", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"4", ",", "5", ",", "5"}], "}"}], "]"}], ",", 
+   RowBox[{"Point", "[", 
+    RowBox[{"{", 
+     RowBox[{"5", ",", "5", ",", "5"}], "}"}], "]"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.7939430494061747`*^9, 3.7939440019288073`*^9, 
+  3.7939440420364103`*^9},ExpressionUUID->"28d54340-f714-4c89-a8d3-\
+2392e58f9aed"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Graphics3D", "[", 
+  RowBox[{"{", 
+   RowBox[{"Red", ",", 
+    RowBox[{"PointSize", "[", "0.05", "]"}], ",", "list2"}], "}"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{
+  3.793943060328108*^9},ExpressionUUID->"1271f2d9-6ad7-43ba-96b0-\
+e5d15f82ac38"],
+
+Cell[BoxData[
+ Graphics3DBox[
+  {RGBColor[1, 0, 0], PointSize[0.05], Point3DBox[{1, 1, 1}], 
+   Point3DBox[{1, 1, 2}], Point3DBox[{1, 1, 3}], Point3DBox[{1, 1, 4}], 
+   Point3DBox[{1, 1, 5}], Point3DBox[{1, 2, 2}], Point3DBox[{1, 2, 3}], 
+   Point3DBox[{1, 2, 4}], Point3DBox[{1, 2, 5}], Point3DBox[{1, 3, 3}], 
+   Point3DBox[{1, 3, 4}], Point3DBox[{1, 3, 5}], Point3DBox[{1, 4, 4}], 
+   Point3DBox[{1, 4, 5}], Point3DBox[{1, 5, 5}], Point3DBox[{2, 2, 2}], 
+   Point3DBox[{2, 2, 3}], Point3DBox[{2, 2, 4}], Point3DBox[{2, 2, 5}], 
+   Point3DBox[{2, 3, 3}], Point3DBox[{2, 3, 4}], Point3DBox[{2, 4, 4}], 
+   Point3DBox[{2, 4, 5}], Point3DBox[{2, 5, 5}], Point3DBox[{3, 3, 3}], 
+   Point3DBox[{3, 3, 4}], Point3DBox[{3, 3, 5}], Point3DBox[{3, 4, 4}], 
+   Point3DBox[{3, 4, 5}], Point3DBox[{3, 5, 5}], Point3DBox[{4, 4, 4}], 
+   Point3DBox[{4, 4, 5}], Point3DBox[{4, 5, 5}], Point3DBox[{5, 5, 5}]},
+  ImageSize->{428.2794937418809, 409.1200068506355},
+  ViewPoint->{1.4046112474417556`, 1.9865597496080687`, 2.3517328940160818`},
+  ViewVertical->{0.9762339504547283, 0.18715566859732496`, 
+   0.10927044289945667`}]], "Output",
+ CellChangeTimes->{3.7939430616345797`*^9, 3.793944004258429*^9, 
+  3.7939440431567*^9},ExpressionUUID->"fa5072e8-4dbb-4ede-8bbe-b942c9de844b"]
 }, Open  ]]
 },
 WindowSize->{808, 911},
-WindowMargins->{{Automatic, 282}, {43, Automatic}},
+WindowMargins->{{0, Automatic}, {Automatic, 37}},
 FrontEndVersion->"11.1 for Linux x86 (64-bit) (April 18, 2017)",
 StyleDefinitions->"Default.nb"
 ]
@@ -109,17 +381,29 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 1472, 39, 83, "Input", "ExpressionUUID" -> \
+Cell[558, 20, 1472, 39, 108, "Input", "ExpressionUUID" -> \
 "a6c09a76-e315-4a35-8521-175e378f0958"],
 Cell[CellGroupData[{
-Cell[2055, 63, 490, 11, 35, "Input", "ExpressionUUID" -> \
+Cell[2055, 63, 490, 11, 75, "Input", "ExpressionUUID" -> \
 "291ef15c-c010-4130-9f3a-b502c0aa6a91"],
-Cell[2548, 76, 822, 16, 325, "Output", "ExpressionUUID" -> \
+Cell[2548, 76, 818, 15, 465, "Output", "ExpressionUUID" -> \
 "e9177f90-af39-4b36-a4f1-381ac0b87a47"]
+}, Open  ]],
+Cell[3381, 94, 182, 3, 76, "Text", "ExpressionUUID" -> \
+"dc3f1351-4207-41b9-882d-081702ccc9bf"],
+Cell[CellGroupData[{
+Cell[3588, 101, 4378, 120, 373, "Input", "ExpressionUUID" -> \
+"7a73f2f3-6929-4a6e-b9cc-918e5a00125b"],
+Cell[7969, 223, 3741, 107, 216, "Output", "ExpressionUUID" -> \
+"28d54340-f714-4c89-a8d3-2392e58f9aed"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11747, 335, 272, 8, 75, "Input", "ExpressionUUID" -> \
+"1271f2d9-6ad7-43ba-96b0-e5d15f82ac38"],
+Cell[12022, 345, 1268, 19, 663, "Output", "ExpressionUUID" -> \
+"fa5072e8-4dbb-4ede-8bbe-b942c9de844b"]
 }, Open  ]]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
