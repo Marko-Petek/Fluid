@@ -1,7 +1,7 @@
 using Xunit;
 using System;
 using System.Threading;
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Tools;
 namespace Fluid.Tests {

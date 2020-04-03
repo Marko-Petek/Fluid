@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using SCG = System.Collections.Generic;
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using static Fluid.Internals.Development.Reporter;
 namespace Fluid.Internals.IO {
 

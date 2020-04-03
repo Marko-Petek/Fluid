@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using static System.Math;
-using F2DA = Fluid.Internals.Collections.F2DArithmetic;
-using Fluid.Internals.Collections;
+using F2DA = Fluid.Internals.Networks.F2DArithmetic;
+using Fluid.Internals.Networks;
 namespace Fluid.Internals.Numerics {
 
 using FTnr = RefTnr<F2D,F2DA>;

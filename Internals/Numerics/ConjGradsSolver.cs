@@ -1,9 +1,9 @@
 using System;
 using Fluid.Internals;
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using static Fluid.Internals.Tools;
 using dbl = System.Double;
-using DA = Fluid.Internals.Collections.DblArithmetic;
+using DA = Fluid.Internals.Networks.DblArithmetic;
 namespace Fluid.Internals.Numerics {
 using Tnr = Tnr<dbl,DA>;
 using Vec = Vec<dbl,DA>;

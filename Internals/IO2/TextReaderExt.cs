@@ -7,7 +7,7 @@ using System.Globalization;
 using static System.Char;
 
 using static Fluid.Internals.Tools;                  // For Toolbox.
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Algorithms;
 

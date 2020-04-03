@@ -3,11 +3,11 @@ using dbl = System.Double;
 using System.Linq;
 using Xunit;
 using Fluid.Internals;
-using Fluid.Internals.Collections;
-using static Fluid.Internals.Collections.TnrFactory;
+using Fluid.Internals.Networks;
+using static Fluid.Internals.Networks.TnrFactory;
 using static Fluid.Tests.Utils;
-using IA = Fluid.Internals.Collections.IntArithmetic;
-using DA = Fluid.Internals.Collections.DblArithmetic;
+using IA = Fluid.Internals.Networks.IntArithmetic;
+using DA = Fluid.Internals.Networks.DblArithmetic;
 
 namespace Fluid.Tests.Internals.Collections {
    using IntTnr = Tnr<int,IA>;

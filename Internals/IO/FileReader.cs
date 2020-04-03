@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using static Fluid.Internals.Development.Reporter;
 namespace Fluid.Internals.IO {
    

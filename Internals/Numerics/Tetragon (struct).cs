@@ -2,7 +2,7 @@ using System;
 using static System.Math;
 using Fluid.Internals.Lsfem;
 using static Fluid.Internals.Numerics.MatOps;
-using DA = Fluid.Internals.Collections.DblArithmetic;
+using DA = Fluid.Internals.Networks.DblArithmetic;
 namespace Fluid.Internals.Numerics {
 using dbl = Double;
 

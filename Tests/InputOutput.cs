@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 using FIO = Fluid.Internals.IO;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Tests {

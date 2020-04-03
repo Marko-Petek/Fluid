@@ -5,7 +5,7 @@ using Xunit;
 using Xunit.Abstractions;
 
 using Fluid.Internals;
-using Fluid.Internals.Collections;
+using Fluid.Internals.Networks;
 using Fluid.Internals.Numerics;
 using Fluid.Internals.Lsfem;
 //using Fluid.Tests.Mocks;
