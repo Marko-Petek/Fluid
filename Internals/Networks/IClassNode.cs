@@ -13,7 +13,9 @@ where τ : class, IEquatable<τ>, IComparable<τ>
 where α : IAlgebra<τ?>, new() {
 
    /// <summary>Peers, that is, neighboring nodes.</summary>
-   new IEnumerable<IClassNode<τ,α>> Peers {get; }
+   new IEnumerable<IClassNode<τ,α>> Peers { get; }
 
+   // Redirection of parent property.
+   IEnumerable<INode<τ,α>> INode<τ,α>.Peers => Peers;
 }
 }

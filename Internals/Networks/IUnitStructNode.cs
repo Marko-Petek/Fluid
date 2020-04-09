@@ -15,6 +15,6 @@ where α : IAlgebra<τ>, new() {
    /// <summary>Peers, that is, neighboring nodes.</summary>
    new IEnumerable<IStructNode<τ,α>> Peers {get; }
 
-   new τ Wght => NonNullable<τ,α>.O.Unit();
+   τ INode<τ,α>.Wght => NonNullable<τ,α>.O.Unit();
 }
 }
