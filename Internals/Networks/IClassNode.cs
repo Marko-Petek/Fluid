@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fluid.Internals.Algebras;
-using Fluid.Internals.Connections;
+using Fluid.Internals.Shapes;
 
 namespace Fluid.Internals.Networks {
 
