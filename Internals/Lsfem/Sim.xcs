@@ -13,7 +13,7 @@ using static Fluid.Internals.Collections.TnrFactory;
 using Supercluster.KDTree;
 namespace Fluid.Internals.Lsfem {
 
-using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DblA>;
 using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;
@@ -155,8 +155,8 @@ public abstract class Sim {
    /// <summary>Takes updated secondary (dynamics and forcing) tensors and constrained node variables and creates primary tensors which are ready to be passed to the Solver. This process iterates over all Elements (surfaces) and adds their contribution to corresponding nodes (points).</summary>
    /// <param name="emts">A collection of Elements, each element containing overlap integrals of node functions and a mapping from eNodes to gNodes.</param>
    (Tnr K, Tnr F) AssemblePrimaries(IEnumerable<Element> emts) {
-      var tK_cjdk = TopTensor<dbl,DA>(new Lst{NPos,NVar,NPos,NVar}, NfPos);                    // Create a 4th rank result tensor.
-      var tF_cj = TopTensor<dbl,DA>(new Lst{NPos,NVar}, NfPos);                            // Create a 2nd rank result tensor.
+      var tK_cjdk = TopTensor<dbl,DblA>(new Lst{NPos,NVar,NPos,NVar}, NfPos);                    // Create a 4th rank result tensor.
+      var tF_cj = TopTensor<dbl,DblA>(new Lst{NPos,NVar}, NfPos);                            // Create a 2nd rank result tensor.
       Lst allJs = Enumerable.Range(0,NVar).ToList();
       foreach(var emt in emts) {
       

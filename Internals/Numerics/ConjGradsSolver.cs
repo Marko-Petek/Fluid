@@ -1,22 +1,23 @@
 using System;
 using Fluid.Internals;
-using Fluid.Internals.Networks;
+using Fluid.Internals.Tensors;
 using static Fluid.Internals.Tools;
 using dbl = System.Double;
-using DA = Fluid.Internals.Networks.DblArithmetic;
+using Fluid.Internals.Algebras;
+
 namespace Fluid.Internals.Numerics {
-using Tnr = Tnr<dbl,DA>;
-using Vec = Vec<dbl,DA>;
+using ValTnr = ValTnr<dbl,DblA>;
+using ValVec = ValVec<dbl,DblA>;
 
 /// <summary>An iterative linear system solver using the method of conjugate gradients. Solves linear systems of form A x = b.</summary>
 public class ConjGradsSolver {
    /// <summary>Left-hand side matrix of A x = b.</summary>
-   Tnr A { get; }
+   ValTnr A { get; }
    /// <summary>Right-hand side vector of A x = b.</summary>
-   Tnr B { get; }
+   ValTnr B { get; }
 
    /// <summary>Create an iterative linear system solver that uses the method of conjugate gradients. Solves linear systems of form A x = b.</summary><param name="tnrA">Left-hand side matrix of A x = b.</param><param name="vecB">Right-hand side vector of A x = b.</param>
-   public ConjGradsSolver(Tnr tnrA, Tnr vecB) {
+   public ConjGradsSolver(ValTnr tnrA, ValTnr vecB) {
       A = tnrA;
       B = vecB;
    }
@@ -24,25 +25,25 @@ public class ConjGradsSolver {
    /// <param name="x0">Initial guess vector.</param>
    /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
    /// <remarks><see cref="TestRefs.ConjGrads3By3"/></remarks>
-   public Vec? Solve(Vec? x0, double maxRes) {
+   public ValVec? Solve(ValVec? x0, double maxRes) {
       int iteration = 0;
       double maxResSqr = maxRes * maxRes;
-      var r = new Vec?[2];
-      var Ax0 = (Vec?) A.ContractTop(x0, 2, 1); //A * x0;
-      var b = (Vec) B;
+      var r = new ValVec?[2];
+      var Ax0 = (ValVec?) A.ContractTop(x0, 2, 1); //A * x0;
+      var b = (ValVec) B;
       var d0 = b.SubTop(Ax0);
-      var d = new Vec?[2] { null, d0 };
-      var x = new Vec?[2] { x0, null };
+      var d = new ValVec?[2] { null, d0 };
+      var x = new ValVec?[2] { x0, null };
       var rr = new double[2];
 
       double alfa;
       double beta;
-      Vec? Ad;
+      ValVec? Ad;
       int i = 0;
       int j = 1;
       while (true) {
-         var Ax = (Vec?) A.ContractTop(x[i], 2, 1);
-         b = (Vec) B;
+         var Ax = (ValVec?) A.ContractTop(x[i], 2, 1);
+         b = (ValVec) B;
          r[i] = b.SubTop(Ax);
          d[i] = d[j];
          for (int k = 0; k < B.Strc[0]; ++k) {
@@ -50,7 +51,7 @@ public class ConjGradsSolver {
             rr[i] = r[i].ContractTop(r[i]);
             if (rr[i] < maxResSqr)
                return x[i];
-            Ad = (Vec?) A.ContractTop(d[i], 2, 1);
+            Ad = (ValVec?) A.ContractTop(d[i], 2, 1);
             alfa = rr[i] / d[i].ContractTop(Ad);
             x[j] = x[i] + d[i].MulTop(alfa);
             r[j] = r[i] - Ad.MulTop(alfa);
@@ -65,21 +66,21 @@ public class ConjGradsSolver {
    /// <summary>Special version with a rank 4 tensor as LH operand and a rank 2 tensor as RH operand.</summary>
    /// <param name="x0">Initial guess.</param>
    /// <param name="maxRes">Maximum residual. Determines when the solution is good enough.</param>
-   public Tnr? Solve(Tnr? x0, double maxRes) {
+   public ValTnr? Solve(ValTnr? x0, double maxRes) {
       int iteration = 0;
       double maxResSqr = maxRes * maxRes;
-      var r = new Tnr?[2];                                   // rank 2
+      var r = new ValTnr?[2];                                   // rank 2
       // T.DebugTag = "BeforeNullContraction";
       // var interRes = A.Contract(x0, 3, 1);
       var Ax0 = A.ContractTop(x0, 3, 1).SelfContractTop(3, 4);       // First contract operates on rank 4 tensor, second self-contract also on rank 4 tensor.
       var d0 = B - Ax0;
-      var d = new Tnr?[2] { null, d0 };                      // rank 2
-      var x = new Tnr?[2] { x0, null };                      // rank 2
+      var d = new ValTnr?[2] { null, d0 };                      // rank 2
+      var x = new ValTnr?[2] { x0, null };                      // rank 2
       var rr = new double[2];
 
       double alfa;
       double beta;
-      Tnr? Ad;
+      ValTnr? Ad;
       int i = 0;
       int j = 1;
       while (true) {

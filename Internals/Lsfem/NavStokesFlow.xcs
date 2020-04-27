@@ -5,7 +5,7 @@ using DA = Fluid.Internals.Collections.DblArithmetic;
 using static Fluid.Internals.Toolbox;
 
 namespace Fluid.Internals.Lsfem {
-using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DblA>;
 using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 

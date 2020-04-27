@@ -14,9 +14,9 @@ using static Fluid.Internals.Numerics.SerendipityBasis;
 
 namespace Fluid.Internals.Lsfem {
 using Lst = List<int>;
-using Tnr = Tnr<dbl,DA>;
-using SymTnr = SymTnr<dbl,DA>;
-using Vec = Vec<dbl,DA>;
+using Tnr = Tnr<dbl,DblA>;
+using SymTnr = SymTnr<dbl,DblA>;
+using Vec = Vec<dbl,DblA>;
 using FTnr = RefTnr<F2D,F2DA>;
 using static Fluid.Internals.Collections.Nullable<F2D,F2DA>;
 using PE = PseudoElement;

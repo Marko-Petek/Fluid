@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
-using Fluid.Internals.Shapes;
+using Fluid.Internals.Networks.Shapes;
 using static Fluid.Internals.Tools;
 namespace Fluid.Internals.IO {
 

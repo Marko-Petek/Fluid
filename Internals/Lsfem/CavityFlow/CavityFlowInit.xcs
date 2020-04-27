@@ -12,7 +12,7 @@ using static System.Math;
 
 namespace Fluid.Internals.Lsfem.CavityFlow {
 using static Fluid.Internals.Lsfem.SimManager;
-using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DblA>;
 using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using VecLst = My.List<Vec2>;

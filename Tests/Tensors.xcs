@@ -14,8 +14,8 @@ using static Fluid.Tests.Utils;
 using IA = Fluid.Internals.Collections.IntArithmetic;
 using DA = Fluid.Internals.Collections.DblArithmetic;
 namespace Fluid.Tests.Internals.Collections {
-using Tnr = Tnr<dbl,DA>;
-using Vec = Vec<dbl,DA>;
+using Tnr = Tnr<dbl,DblA>;
+using Vec = Vec<dbl,DblA>;
 using TnrInt = Tnr<int,IA>;
 using VecInt = Vec<int,IA>;
 
@@ -542,8 +542,8 @@ public class Tensors {
       6.51, 2.22, 7.65 )]
    /// <remarks> <see cref="TestRefs.TensorEquals"/> </remarks>
    [Theory] public void TensorEquals(params double[] data) {
-      var tnr1 = TopTnrFromSpan<dbl,DA>(data.AsSpan<dbl>(0,9), 3,3);
-      var tnr2 = TopTnrFromSpan<dbl,DA>(data.AsSpan<dbl>(9,9), 3,3);
+      var tnr1 = TopTnrFromSpan<dbl,DblA>(data.AsSpan<dbl>(0,9), 3,3);
+      var tnr2 = TopTnrFromSpan<dbl,DblA>(data.AsSpan<dbl>(9,9), 3,3);
       Assert.True(tnr1.Equals(tnr2, 0.02));
    }
 

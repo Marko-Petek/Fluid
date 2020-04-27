@@ -18,7 +18,7 @@ public class InputOutput {
          FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
          var inputArray = (double[]) FileReader.ReadArray<double>();
          var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
-         Assert.True(inputArray.Equals<dbl,DA>(actualArray, 0.000001));
+         Assert.True(inputArray.Equals<dbl,DblA>(actualArray, 0.000001));
    }
 
    [Fact] public void HierarchyOutput() {
@@ -58,7 +58,7 @@ public class InputOutput {
             new double[] {9,7},
             new double[] {6,3},
             new double[] {5,2} };
-         Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
+         Assert.True(result.Equals<dbl,DblA>(expected, 0.000001)); }
       else
          Assert.True(false, "Could not convert hierarchy to array.");
    }
@@ -82,7 +82,7 @@ public class InputOutput {
                new double[] {33,56},
                new double[] {96,28},
                new double[] {28,51} } };
-         Assert.True(result.Equals<dbl,DA>(expected, 0.000001)); }
+         Assert.True(result.Equals<dbl,DblA>(expected, 0.000001)); }
       else
          Assert.True(false, "Could not convert hierarchy to array.");
    }

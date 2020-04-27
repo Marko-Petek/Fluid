@@ -3,7 +3,7 @@ using dbl = System.Double;
 using DA = Fluid.Internals.Collections.DblArithmetic;
 using Fluid.Internals.Numerics;
 namespace Fluid.Internals.Lsfem {
-using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DblA>;
 using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using PE = PseudoElement;

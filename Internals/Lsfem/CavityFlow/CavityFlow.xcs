@@ -12,7 +12,7 @@ using DA = Fluid.Internals.Collections.DblArithmetic;
 
 
 namespace Fluid.Internals.Lsfem.CavityFlow {
-using Vec = Fluid.Internals.Collections.Vec<dbl,DA>;
+using Vec = Fluid.Internals.Collections.Vec<dbl,DblA>;
 using Tnr = Fluid.Internals.Collections.Tnr<dbl, DA>;
 using Lst = List<int>;
 using PE = PseudoElement;

@@ -2,7 +2,7 @@ using System;
 using static System.Math;
 using Fluid.Internals.Lsfem;
 using static Fluid.Internals.Numerics.MatOps;
-using DA = Fluid.Internals.Networks.DblArithmetic;
+using Fluid.Internals.Algebras;
 namespace Fluid.Internals.Numerics {
 using dbl = Double;
 
@@ -78,8 +78,8 @@ public struct Tetragon {
       dbl a = FuncA(in pos);
       dbl b = FuncB(in pos);
       dbl c = FuncC(in pos);
-      dbl detMALessMB = MA.Sub<dbl,DA>(MB).Det<dbl,DA>();     //Sub(MA(), MB()).Det();
-      dbl detNALessNB = NA.Sub<dbl,DA>(NB).Det<dbl,DA>();     //Sub(NA(), NB()).Det();
+      dbl detMALessMB = MA.Sub<dbl,DblA>(MB).Det<dbl,DblA>();     //Sub(MA(), MB()).Det();
+      dbl detNALessNB = NA.Sub<dbl,DblA>(NB).Det<dbl,DblA>();     //Sub(NA(), NB()).Det();
       dbl ksi, eta;
       if(pos.X*pos.Y >= 0) {                                          // Quadrants I and III.
          if(Abs(detMALessMB) > 10E-7)                                    // Opposing sides are not too parallel.
@@ -102,11 +102,11 @@ public struct Tetragon {
       return new Vec2(ksi, eta);
    }
    double FuncA(in Vec2 pos) =>
-      pos.X * MG.Tr<dbl,DA>() - pos.Y * MF.Tr<dbl,DA>() + NA.Det<dbl,DA>() - NB.Det<dbl,DA>();
+      pos.X * MG.Tr<dbl,DblA>() - pos.Y * MF.Tr<dbl,DblA>() + NA.Det<dbl,DblA>() - NB.Det<dbl,DblA>();
    double FuncB(in Vec2 pos) =>
-      pos.X * MG.Tr<dbl,DA>() - pos.Y * MF.Tr<dbl,DA>() + MC.Det<dbl,DA>() + MD.Det<dbl,DA>();
+      pos.X * MG.Tr<dbl,DblA>() - pos.Y * MF.Tr<dbl,DblA>() + MC.Det<dbl,DblA>() + MD.Det<dbl,DblA>();
    double FuncC(in Vec2 pos) =>
-      MA.Sub<dbl,DA>(MB).Det<dbl,DA>()*(2*pos.X*MH.Tr<dbl,DA>() - 2*pos.Y*MJ.Tr<dbl,DA>() + MA.Sum<dbl,DA>(MB).Det<dbl,DA>());
+      MA.Sub<dbl,DblA>(MB).Det<dbl,DblA>()*(2*pos.X*MH.Tr<dbl,DblA>() - 2*pos.Y*MJ.Tr<dbl,DblA>() + MA.Sum<dbl,DblA>(MB).Det<dbl,DblA>());
    /// <summary>Distance of specified point P to a line going thorugh lower edge.</summary><param name="P">Specified point.</param>
    double DistanceToLowerEdge(in Vec2 P) {
       var lowerEdgeVector = new Vec2(in _LL, in _LR);    // Vector from lower left to lower right vertex.

@@ -189,7 +189,7 @@ namespace Fluid.ChannelFlow {
          A[1][2] = NodeOperatorMat2(ni);
          for(int n = 0; n < 5; ++n)
             for(int m = 0; m < 5; ++m)
-               subMat.SumInto<dbl,DA>(GetSfsIntegral(j, k, n, m).Mul<dbl,DA>(A[0][NewN(n)].Dot<dbl,DA>(A[1][NewN(m)])));
+               subMat.SumInto<dbl,DblA>(GetSfsIntegral(j, k, n, m).Mul<dbl,DblA>(A[0][NewN(n)].Dot<dbl,DblA>(A[1][NewN(m)])));
          return subMat;
 
          int NewN(int n) => n < 3 ? n : n - 2;                      // First 3 terms contain: A0, A1, A2; last two terms contain A1 and A2.

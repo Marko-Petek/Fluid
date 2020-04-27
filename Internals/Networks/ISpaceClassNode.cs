@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Fluid.Internals.Algebras;
-using Fluid.Internals.Shapes;
+using Fluid.Internals.Networks.Shapes;
 
 namespace Fluid.Internals.Networks {
 
@@ -10,7 +10,7 @@ namespace Fluid.Internals.Networks {
 /// <typeparam name="ωα">Weight algebra.</typeparam>
 /// <typeparam name="λ">Connection length type. Must be a non-nullable value type.</typeparam>
 /// <typeparam name="λα">Connection length algebra.</typeparam>
-public interface ISpaceClassNode<ω,ωα,λ,λα> : IClassNode<ω,ωα>
+public interface ISpaceClassNode<ω,ωα,λ,λα> : IRefNode<ω,ωα>
 where ω : class, IEquatable<ω>, IComparable<ω>
 where ωα : IAlgebra<ω?>, new()
 where λ : struct, IEquatable<λ>, IComparable<λ>
@@ -21,7 +21,7 @@ where λα : IAlgebra<λ>, new() {
 
 
    // Redirection of parent property.
-   IEnumerable<IClassNode<ω,ωα>> IClassNode<ω,ωα>.Peers => Peers.Keys;
+   IEnumerable<IRefNode<ω,ωα>> IRefNode<ω,ωα>.Peers => Peers.Keys;
    IEnumerable<INode<ω,ωα>> INode<ω,ωα>.Peers => Peers.Keys;
 
 

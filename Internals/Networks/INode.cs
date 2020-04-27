@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Fluid.Internals.Shapes;
+using Fluid.Internals.Networks.Shapes;
 
 namespace Fluid.Internals.Networks {
 
