@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Fluid.Internals.Algebras;
 using Fluid.Internals.Networks.Shapes;
 
-namespace Fluid.Internals.Networks {
+namespace Fluid.Internals.Networks.Nodes {
 
 /// <summary>A type that can form networks with other Nodes that hold reference types. "Unit" prefix means that the value it holds is a unit (simplifies algebra operations).</summary>
 /// <typeparam name="τ">Peer type. Must be a nullable reference type.</typeparam>
