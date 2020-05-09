@@ -97,5 +97,6 @@
     "todo-tree.highlights.defaultHighlight": {
         "foreground": "green",
         "type": "none"
-    }
+   },
+   "cmake.configureOnOpen": false
 }
