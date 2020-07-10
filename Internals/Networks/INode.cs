@@ -6,8 +6,9 @@ namespace Fluid.Internals.Networks {
 
    /// <summary>Can form groups with other Nodes.</summary>
    public interface INode {
-      /// <summary>Connections: viewed either as a shape grouping nodes, or as a node grouping shapes.</summary>
+      /// <summary>A network to which the node belongs.</summary>
       INetwork Network { get; }
-
+      int Id { get; }
+      INode[] Bond { get; }
    }
 }

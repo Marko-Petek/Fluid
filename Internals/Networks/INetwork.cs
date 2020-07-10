@@ -22,19 +22,22 @@ public interface INetwork {
          return node;
       else return null;
    }
-   /// <summary>Set node at specified index. A null set removes an existing node. A node that was either replaced or removed is returned. If no node was replaced or removed, null is returned.</summary>
+   /// <summary>Set node at specified index. A node that was either replaced or removed is returned. If no node was replaced or removed, null is returned. A null set value removes an existing node. </summary>
    /// <param name="inx">Node index.</param>
    /// <param name="node">Node to set.</param>
-   INode? TrySet(int inx, INode node) {
+   INode? TrySet(int inx, INode? node) {
       INode? oldNode = TryGet(inx);
-      Nodes[inx] = node;
+      if(node != null)
+         Nodes[inx] = node;
+      else if(oldNode != null)
+         Nodes.Remove(inx);
       return oldNode;
    }
-   /// <summary>Set node at specified index. A null set removes an existing node.</summary>
+   /// <summary>Assigns a unique identity to a node. Returns its identity.</summary>
+   /// <param name="node">Node to add to network.</param>
+   int Add(INode node);
+   /// <summary>Removes a node at specified index. Returns the removed node, or null if there was no node at the index.</summary>
    /// <param name="inx">Node index.</param>
-   /// <param name="node">Node to set.</param>
-   void Set(int inx, INode node) =>
-      Nodes[inx] = node;
-   void Add
+   INode? Remove(int inx);
 }
 }
