@@ -1,0 +1,32 @@
+% !TeX root = ./Main.tex
+\input{../Tex/DocsPreamble.tex}
+
+\fancyhead[L]{Marko Petek \\[0.3cm] }
+\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
+\fancyhead[R]{Maribor,\\ 12$^\text{th}$\ December\ 2019 \\[0.15cm] }
+\cfoot{\thepage}								      % Footer center = page number.			
+\renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
+\renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in foote
+\lstset{language=[Sharp]C,basicstyle=\small\sffamily}
+
+\begin{document}
+
+\begin{center}
+   \textbf{\LARGE{\textbsf{Fluid.Internals.Collections.Tensor}}}\\[0.25cm]
+\end{center}
+
+\section{Operator +}
+
+\begin{lstlisting}
+   public static Tnr operator +(Tnr tnr1, Tnr tnr2)S
+\end{lstlisting}
+
+Takes two tensors of equal rank and returns a new tensor that is a sum of the two. The resulting tensor has no superior, it must be set manually after the operation. Usage:
+\begin{lstlisting}
+   var tnr1Vals = new int[] {5,4, 9,7,  0,8, 2,1};
+   var tnr1Struc = new int[] {2,2,2};
+   var tnr1 = TnrInt.FromFlatSpec(tnr1Vals, tnr1Struc);
+   var res = tnr1 + tnr2;
+\end{lstlisting}
+
+\end{document}

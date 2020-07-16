@@ -2,8 +2,8 @@ using System;
 using SC = System.Collections;
 using SCG = System.Collections.Generic;
 
-namespace Fluid.Internals.Networks {
-   public class RankedNode : ONode<RankedNode> {
+namespace Fluid.Internals.Networks.Old {
+   public class RankedNode : Node<RankedNode> {
       public RankedNode? Leader { get; set;}
       public SubordinateCollection Subordinates { get; }
 

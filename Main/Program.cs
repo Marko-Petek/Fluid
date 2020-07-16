@@ -5,8 +5,7 @@ using static Fluid.Internals.Toolbox;
 using System.Globalization;
 using System.Reflection;
 
-namespace Fluid.Main
-{
+namespace Fluid.Main {
   /// <summary>For any program of Fluid, execution starts here. This is a perfect point for initialization of utilities inside Toolbox.</summary>
 class Program {
 
@@ -32,7 +31,7 @@ class Program {
          throw exc; }
       finally {
          //R("Exiting application.");
-         FileWriter.Flush(); }
+         FWriter.Flush(); }
    }
 
    private static DateTime GetBuildDate(Assembly assembly) {

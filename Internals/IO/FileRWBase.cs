@@ -41,9 +41,9 @@ public abstract class FileRWBase {
    }
    protected void OnSettingsChanged() {
       if(SettingsChanged != null) {
-            SettingsChanged(this, EventArgs.Empty);
-            SettingsChanged = null;
-            ResetUnmanagedResource(); }
+         SettingsChanged(this, EventArgs.Empty);
+         SettingsChanged = null;
+         ResetUnmanagedResource(); }
    }
    /// <summary>Reset underlying Stream.</summary>
    protected abstract void ResetUnmanagedResource();

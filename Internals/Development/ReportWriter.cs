@@ -20,13 +20,13 @@ namespace Fluid.Internals.Development
    System.DateTime _PrevReportedTime;
    /// <summary>StringBuilder.</summary>
    StringBuilder StrBuilder { get; } = new StringBuilder(500);
-   IO.Console Writer { get; }
+   IO.FConsole Writer { get; }
    /// <summary>Writes messages to file.</summary><param name="FileInfo("log.txt"">Log file.</param>
    FileWriter FileWriter { get; }
    Reporter AppReporter { get; }
 
    /// <summary>Create an object which writes out messages to console or file as an aesthetic output table.</summary>
-   public ReportWriter(Reporter appReporter, IO.Console writer) {
+   public ReportWriter(Reporter appReporter, IO.FConsole writer) {
       Writer = writer;
       int buffer;
       if(writer!.BufferWidth > 6 * 2 - 12 + 36 + 20)            // Wrap each column at buffer width if buffer is wide enough.

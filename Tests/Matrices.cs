@@ -1,13 +1,12 @@
 using Xunit;
 using System;
 using System.Threading;
+using Fluid.Internals.Algebras;
 using Fluid.Internals.Networks;
 using Fluid.Internals.Numerics;
 using static Fluid.Internals.Tools;
 namespace Fluid.Tests {
 using dbl = Double;
-using DA = DblArithmetic;
-using IA = IntArithmetic;
 
 public class Matrices {
 

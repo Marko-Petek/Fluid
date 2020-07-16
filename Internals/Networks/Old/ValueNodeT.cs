@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Fluid.Internals.Networks {
+namespace Fluid.Internals.Networks.Old {
    public class ValueNode<T> : RankedNode {
       T _Value;
       public T Value => _Value;

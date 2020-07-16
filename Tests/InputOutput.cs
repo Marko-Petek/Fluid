@@ -4,19 +4,19 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-using FIO = Fluid.Internals.IO;
+using Fluid.Internals.IO;
+using Fluid.Internals.Algebras;
 using Fluid.Internals.Numerics;
-using Fluid.Internals.Networks;
+using Fluid.Internals.Networks.Old;
 using static Fluid.Internals.Toolbox;
 using static Fluid.Internals.Numerics.MatOps;
 namespace Fluid.Tests {
 using dbl = Double;
-using DA = DblArithmetic;
 
 public class InputOutput {
    [Fact] public void ReadAndParseArray() {
-         FileReader.SetDirAndFile("Tests/", "array1d", ".txt");
-         var inputArray = (double[]) FileReader.ReadArray<double>();
+         FReader.SetDirAndFile("Tests/", "array1d", ".txt");
+         var inputArray = (double[]) FReader.ReadArray<double>();
          var actualArray = new double[] {0, 7, 3, 8, 2, 4, 9, 11, 15};
          Assert.True(inputArray.Equals<dbl,DblA>(actualArray, 0.000001));
    }
@@ -41,15 +41,15 @@ public class InputOutput {
       // T.FileWriter.WriteLine(hier);
       // T.FileWriter.Flush();
       var strw = new StringWriter();
-      Fluid.Internals.IO.Statics.Write(hier, strw);
+      strw.Write<int>(hier);
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
    }
 
    [Fact] public void HierarchyInput() {
-      FileReader.SetDirAndFile("Tests", "hierToRead", ".txt");
-      var hierWriteBack = FileReader.ReadHierarchy<double>();
+      FReader.SetDirAndFile("Tests", "hierToRead", ".txt");
+      var hierWriteBack = FReader.ReadHierarchy<double>();
       var strw = new StringWriter();
-      FIO.Statics.Write(hierWriteBack, strw);
+      strw.Write<dbl>(hierWriteBack);
       Assert.True(strw.ToString() == "{{9, 7}, {6, 3}, {5, 2}}");
       var array = hierWriteBack.ConvertToArray();
       if(array != null) {
@@ -64,8 +64,8 @@ public class InputOutput {
    }
 
    [Fact] public void HierarchyInput2() {
-      FileReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
-      var hierWriteBack = FileReader.ReadHierarchy<double>();
+      FReader.SetDirAndFile("Tests", "hierToRead2", ".txt");
+      var hierWriteBack = FReader.ReadHierarchy<double>();
       var array = hierWriteBack.ConvertToArray();
       if(array != null) {
          var result = (double[][][]) array;

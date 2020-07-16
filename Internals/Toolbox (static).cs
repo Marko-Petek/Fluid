@@ -7,9 +7,9 @@ namespace Fluid.Internals {
 public static class Toolbox {
    public static string DebugTag = "";
    static Tools T { get; } = new Tools();
-   public static IO.Console Writer => T.Writer;
-   public static IO.FileWriter FileWriter => T.FileWriter;
-   public static IO.FileReader FileReader => T.FileReader;
+   public static IO.FConsole Writer => T.Writer;
+   public static IO.FileWriter FWriter => T.FileWriter;
+   public static IO.FileReader FReader => T.FileReader;
    public static RNG Rng => T.Rng;
    public static void A(string str) => T.S.A(str);
    public static string Y(string str) => T.S.Y(str);

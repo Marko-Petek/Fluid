@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using Fluid.Internals;
 
-namespace Fluid.Internals.Networks {
+namespace Fluid.Internals.Networks.Old {
 
 public class Hierarchy<τ>
 where τ : IEquatable<τ>, new() {

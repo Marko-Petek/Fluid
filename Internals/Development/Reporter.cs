@@ -28,7 +28,7 @@ public class Reporter {
 
 
    /// <summary>Initialize AppReporter as set to write to console and file.</summary>
-   public Reporter(IO.Console writer, VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = "",
+   public Reporter(IO.FConsole writer, VerbositySettings verbosity = VerbositySettings.Moderate, [CallerFilePath] string path = "",
       [CallerMemberName] string caller = "", [CallerLineNumber] int line = 0) {
          Output = new OutputSettings();
          Output |= (OutputSettings.Console | OutputSettings.File);

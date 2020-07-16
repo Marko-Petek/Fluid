@@ -13,7 +13,7 @@ public class Tools {
    object _locker = new object();
    public IO.FileReader FileReader { get; set; }
    public IO.FileWriter FileWriter { get; set; }
-   public IO.Console Writer { get; set; }
+   public IO.FConsole Writer { get; set; }
    Reporter _Reporter;
    /// <summary>Reporter. Logs and writes messages to Console.</summary>
    public Reporter Reporter {                     // Reported.Write can only be called from one thread at once.
@@ -24,7 +24,7 @@ public class Tools {
    public Stringer S { get; internal set; }
 
    public Tools() {
-      Writer = new IO.Console();
+      Writer = new IO.FConsole();
       FileReader = new IO.FileReader();
       FileWriter = new IO.FileWriter();
       _Reporter = new Reporter(Writer);
