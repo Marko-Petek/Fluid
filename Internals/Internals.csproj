@@ -5,12 +5,20 @@
       <LangVersion>8.0</LangVersion>
       <Nullable>enable</Nullable>
     </PropertyGroup>
+
+   <ItemGroup>
+     <None Remove="Networks\Network.xcs" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <Compile Include="Networks\Network.xcs" />
+   </ItemGroup>
    
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0"/>
-    <PackageReference Include="xunit" Version="2.4.1"/>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1"/>
-    <PackageReference Include="Supercluster.KDTree" Version="*"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="Supercluster.KDTree" Version="*" />
   </ItemGroup>
 
 </Project>

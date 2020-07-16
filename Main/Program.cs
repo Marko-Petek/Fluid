@@ -19,7 +19,7 @@ class Program {
          var buildDT = GetBuildDate(Assembly.GetExecutingAssembly());         // Extract build time from assembly.
          var dti = DateTimeFormatInfo.InvariantInfo;                          // Formatting info with which buildDT will be printed.
          Console.WriteLine($"Version: {buildDT.ToString(dti)}");
-         // Initialize Fluid APIs.  nm
+         // Initialize Fluid APIs.
          R("Toolbox initialized.");
          Console.WriteLine("HERE");
          int result = args[0] switch {
