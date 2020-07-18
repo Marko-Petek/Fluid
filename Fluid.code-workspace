@@ -13,7 +13,6 @@
       "editor.fontSize": 13,
 		"editor.snippetSuggestions": "none",
       "editor.tabSize": 2,
-      "fold.level": 3,
 		"git.enableSmartCommit": true,
 		//"jupyter.appendResults": true,
       "latex-workshop.view.pdf.viewer": "tab",

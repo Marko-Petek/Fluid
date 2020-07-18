@@ -4,29 +4,29 @@
 {
    "label": "Rebuild, debug, x64, REPORT",
    "command": "dotnet",
-   "type": "process",
-   "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT", "-t:Rebuild", "Fluid.sln"],
+   "type": "shell",
+   "args": ["msbuild", "Fluid.sln", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT ", "-t:Rebuild"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
       "label": "Rebuild, debug, x64, noDefines",
       "command": "dotnet",
-      "type": "process",
-      "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=", "-t:Rebuild", "Fluid.sln"],
+      "type": "shell",
+      "args": ["msbuild", "Fluid.sln", "-p:Configuration=Debug;Platform=x64;DefineConstants= ", "-t:Rebuild"],
       "problemMatcher": "$msCompile",
       "group": "build" },
 {
    "label": "Rebuild, release, x64, REPORT",
    "command": "dotnet",
-   "type": "process",
-   "args": ["msbuild", "-p:Configuration=Release;Platform=x64;DefineConstants=REPORT", "/t:Rebuild", "Fluid.sln"],
+   "type": "shell",
+   "args": ["msbuild", "Fluid.sln", "-p:Configuration=Release;Platform=x64;DefineConstants=REPORT ", "-t:Rebuild"],
    "problemMatcher": "$msCompile",
    "group": "build" },
 {
    "label": "Build, noRestore, debug, x64, REPORT)",
    "command": "dotnet",
-   "type": "process",
-   "args": ["msbuild", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT", "-restore:False", "Fluid.sln"],
+   "type": "shell",
+   "args": ["msbuild", "Fluid.sln", "-p:Configuration=Debug;Platform=x64;DefineConstants=REPORT ", "-restore:False"],
    "problemMatcher": "$msCompile",
    "group": {
       "kind": "build",
@@ -34,7 +34,7 @@
 {
    "label": "ChannelFlow (Run)",
    "command": "dotnet",
-   "type": "process",
+   "type": "shell",
    "args": ["run", "--project", "${workspaceFolder}/ChannelFlow/ChannelFlow.csproj" ],
    "options": {
       "cwd": "./ChannelFlow" },
@@ -43,7 +43,7 @@
 {
    "label": "CavityFlow (Debug)",
    "command": "dotnet",
-   "type": "process",
+   "type": "shell",
    "args": [
       "run",
       "-p:Configuration=Debug",
@@ -58,7 +58,7 @@
 {
    "label": "Run NodeCreation",
    "command": "dotnet",
-   "type": "process",
+   "type": "shell",
    "args": [
       "run",
       "--project",
@@ -71,7 +71,7 @@
 {
    "label": "Run Tests",
    "command": "dotnet",
-   "type": "process",
+   "type": "shell",
    "args": [
       "run", "--no-build", "-p", "${workspaceFolder}/Main/Main.csproj", "Tests" ],
    "options": {
