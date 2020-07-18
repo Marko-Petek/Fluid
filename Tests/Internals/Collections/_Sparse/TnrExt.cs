@@ -3,15 +3,13 @@ using dbl = System.Double;
 using System.Linq;
 using Xunit;
 using Fluid.Internals;
-using Fluid.Internals.Networks;
-using static Fluid.Internals.Networks.TnrFactory;
+using Fluid.Internals.Algebras;
+using static Fluid.Internals.Tensors.TnrFactory;
+using static Fluid.Internals.Tensors.TnrExt;
 using static Fluid.Tests.Utils;
-using IA = Fluid.Internals.Networks.IntArithmetic;
-using DA = Fluid.Internals.Networks.DblArithmetic;
 
 namespace Fluid.Tests.Internals.Collections {
-   using IntTnr = Tnr<int,IA>;
-   using IntVec = Vec<int,IA>;
+
 public class TnrExt {
    #region InlineData
    [InlineData(
@@ -39,9 +37,9 @@ public class TnrExt {
       var span1 = new Span<int>(o, 0, 9);
       var span2 = new Span<int>(o, 9, 9);
       var span3 = new Span<int>(o, 18, 9);
-      var t1 = TopTnrFromSpan<int,IA>(span1, new int[] {3,3});
-      var t2 = TopTnrFromSpan<int,IA>(span2, new int[] {3,3});
-      var t3 = TopTnrFromSpan<int,IA>(span3, new int[] {3,3});
+      var t1 = TopTnrFromSpan<int,IntA>(span1, new int[] {3,3});
+      var t2 = TopTnrFromSpan<int,IntA>(span2, new int[] {3,3});
+      var t3 = TopTnrFromSpan<int,IntA>(span3, new int[] {3,3});
       t1 = t1.SumInto(t2);
       Assert.True(t1.Equalsβ(t3));
    }
@@ -72,9 +70,9 @@ public class TnrExt {
       var span1 = new Span<int>(o, 0, 9);
       var span2 = new Span<int>(o, 9, 9);
       var span3 = new Span<int>(o, 18, 9);
-      var t1 = TopTnrFromSpan<int,IA>(span1, new int[] {3,3});
-      var t2 = TopTnrFromSpan<int,IA>(span2, new int[] {3,3});
-      var t3 = TopTnrFromSpan<int,IA>(span3, new int[] {3,3});
+      var t1 = TopTnrFromSpan<int,IntA>(span1, new int[] {3,3});
+      var t2 = TopTnrFromSpan<int,IntA>(span2, new int[] {3,3});
+      var t3 = TopTnrFromSpan<int,IntA>(span3, new int[] {3,3});
       t1 = t1.SubInto(t2);
       Assert.True(t1.Equalsβ(t3));
    }
@@ -88,8 +86,8 @@ public class TnrExt {
       0,0,0,  0,0,0,  0,0,0 )]
    #endregion
    [Theory] public void NegateInto(params int[] o) {
-      var t = TopTnrFromSpan<int,IA>(o.AsSpan<int>(0,9), 3,3);
-      var expRes = TopTnrFromSpan<int,IA>(o.AsSpan<int>(9,9), 3,3);
+      var t = TopTnrFromSpan<int,IntA>(o.AsSpan<int>(0,9), 3,3);
+      var expRes = TopTnrFromSpan<int,IntA>(o.AsSpan<int>(9,9), 3,3);
       t = t.NegateInto();
       Assert.True(t.Equalsβ(expRes));
    }
@@ -188,13 +186,13 @@ public class TnrExt {
    [Theory] public void ContractTop(params int[] o) {          var (pos, read) = Read(o);
       var ctrInxs = new Span<int>(o, pos, read);               (pos, read) = Read(o, pos, read);
       var strc1 = new Span<int>(o, pos, read).ToArray();       (pos, read) = Read(o, pos, read);
-      var t1 = TopTnrFromSpan<int,IA>(
+      var t1 = TopTnrFromSpan<int,IntA>(
          new Span<int>(o, pos, read), strc1);                  (pos, read) = Read(o, pos, read);
       var strc2 = new Span<int>(o, pos, read).ToArray();       (pos, read) = Read(o, pos, read);
-      var t2 = TopTnrFromSpan<int,IA>(
+      var t2 = TopTnrFromSpan<int,IntA>(
          new Span<int>(o, pos, read), strc2);                  (pos, read) = Read(o, pos, read);
       var strcExpRes = new Span<int>(o, pos, read).ToArray();  (pos, read) = Read(o, pos, read);
-      var expRes = TopTnrFromSpan<int,IA>( 
+      var expRes = TopTnrFromSpan<int,IntA>( 
          new Span<int>(o, pos, read), strcExpRes);
       var res = t1.ContractTop(t2, ctrInxs[0], ctrInxs[1]);
       Assert.True(res.Equalsβ(expRes));

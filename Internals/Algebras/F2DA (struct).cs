@@ -59,8 +59,21 @@ public struct F2DA : IAlgebra<F2D> {
    
    public bool Equals(F2D? f1, F2D? f2) {       // Function equality is more complicated, but we just say for now that the norms should equal.
       if(f1 != null) {
-         if(f2)
-      }
+         if(f2 != null)
+            return f1.Hash == f2.Hash;
+         else
+            return false; }
+      else if(f2 != null)
+         return false;
+      else
+         return true;
+   }
+
+   public bool IsZero(F2D? f1) {
+      if(f1 == null)
+         return true;
+      else
+         return false;
    }
 }
 }

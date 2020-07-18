@@ -3,15 +3,13 @@ using dbl = System.Double;
 using System.Linq;
 using Xunit;
 using Fluid.Internals;
-using Fluid.Internals.Networks;
-using static Fluid.Internals.Networks.TnrFactory;
+using Fluid.Internals.Algebras;
+using static Fluid.Internals.Tensors.TnrFactory;
+using static Fluid.Internals.Tensors.TnrExt;
 using static Fluid.Tests.Utils;
-using IA = Fluid.Internals.Networks.IntArithmetic;
-using DA = Fluid.Internals.Networks.DblArithmetic;
 
 namespace Fluid.Tests.Internals.Collections {
-   using IntTnr = Tnr<int,IA>;
-   using IntVec = Vec<int,IA>;
+
 public class TnrFactory {
 
    #region InlindeData
@@ -31,9 +29,9 @@ public class TnrFactory {
       foreach(int emt in struc)
          count *= emt;
       var slc = new Span<int>(o, 1 + topRank, count);
-      var tnr = TopTnrFromSpan<int,IA>(slc, struc);
+      var tnr = TopTnrFromSpan<int,IntA>(slc, struc);
       var tnrCpy = tnr.CopyAsTopTnr();
-      Assert.True(tnr.Equalsβ<int,IA>(tnrCpy));
+      Assert.True(tnr.Equalsβ<int,IntA>(tnrCpy));
    }
 
 }

@@ -3,15 +3,14 @@ using dbl = System.Double;
 using System.Linq;
 using Xunit;
 using Fluid.Internals;
-using Fluid.Internals.Networks;
-using static Fluid.Internals.Networks.TnrFactory;
+using Fluid.Internals.Tensors;
+using static Fluid.Internals.Tensors.TnrFactory;
 using static Fluid.Tests.Utils;
-using IA = Fluid.Internals.Networks.IntArithmetic;
-using DA = Fluid.Internals.Networks.DblArithmetic;
+using Fluid.Internals.Algebras;
 
 namespace Fluid.Tests.Internals.Collections {
-   using IntTnr = Tnr<int,IA>;
-   using IntVec = Vec<int,IA>;
+   using TnrI = Tnr<int,IntA>;
+   using VecI = Vec<int,IntA>;
 public class VecExt {
    
    #region InlineData
@@ -22,10 +21,10 @@ public class VecExt {
    [InlineData(1, 3, 2,   -1,-3,-2,  0, 0, 0)]
    #endregion
    [Theory] public void SumInto(params int[] o) {
-      var v1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
-      var v2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
+      var v1 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(0,3));
+      var v2 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(3,3));
       v1 = v1.SumInto(v2);
-      var expRes = TopVecFromSpan<int,IA>(o.AsSpan<int>(6,3));
+      var expRes = TopVecFromSpan<int,IntA>(o.AsSpan<int>(6,3));
       Assert.True(v1.Equalsβ(expRes));
    }
 
@@ -36,10 +35,10 @@ public class VecExt {
    [InlineData(1,3,2,  1,3,2,  0,0,0)]
    #endregion
    [Theory] public void SubInto(params int[] o) {
-      var v1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
-      var v2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
+      var v1 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(0,3));
+      var v2 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(3,3));
       v1 = v1.SubInto(v2);
-      var expRes = TopVecFromSpan<int,IA>(o.AsSpan<int>(6,3));
+      var expRes = TopVecFromSpan<int,IntA>(o.AsSpan<int>(6,3));
       Assert.True(v1.Equalsβ(expRes));
    }
 

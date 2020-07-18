@@ -3,15 +3,12 @@ using dbl = System.Double;
 using System.Linq;
 using Xunit;
 using Fluid.Internals;
-using Fluid.Internals.Networks;
-using static Fluid.Internals.Networks.TnrFactory;
+using static Fluid.Internals.Tensors.TnrFactory;
+using static Fluid.Internals.Tensors.VecExt;
 using static Fluid.Tests.Utils;
-using IA = Fluid.Internals.Networks.IntArithmetic;
-using DA = Fluid.Internals.Networks.DblArithmetic;
+using Fluid.Internals.Algebras;
 
 namespace Fluid.Tests.Internals.Collections {
-   using IntTnr = Tnr<int,IA>;
-   using IntVec = Vec<int,IA>;
 public class Vec {
 
    #region InlindeData
@@ -27,7 +24,7 @@ public class Vec {
    )]
    #endregion
    [Theory] public void Indexer(params int[] o) {                        var (pos, read) = Read(o);
-      var v = TopVecFromSpan<int,IA>(o.AsSpan(pos, read)) ??
+      var v = TopVecFromSpan<int,IntA>(o.AsSpan(pos, read)) ??
          throw new NullReferenceException("Generated vector was null.");       (pos, read) = Read(o, pos, read);
       var gv1 = new Span<int>(o, pos, read).ToArray();                         (pos, read) = Read(o, pos, read);
       var gv2 = new Span<int>(o, pos, read).ToArray();                         (pos, read) = Read(o, pos, read);
@@ -55,11 +52,11 @@ public class Vec {
    [InlineData(1, 3, 2,  -1,-3,-2,  0, 0, 0)]
    #endregion
    [Theory] public void Op_Addition(params int[] o) {
-      var v1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
-      var v2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
+      var v1 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(0,3));
+      var v2 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(3,3));
       var res = v1 + v2;
-      var expRes = TopVecFromSpan<int,IA>(o.AsSpan<int>(6,3));
-      Assert.True(res.Equals<int,IA>(expRes));
+      var expRes = TopVecFromSpan<int,IntA>(o.AsSpan<int>(6,3));
+      Assert.True( res.Equals<int,IntA>(expRes) );
    }
 
    #region InlindeData
@@ -68,11 +65,11 @@ public class Vec {
    [InlineData(1, 3, 2,   1, 3, 2,   0, 0, 0)]
    #endregion
    [Theory] public void Op_Subtraction(params int[] o) {
-      var vec1 = TopVecFromSpan<int,IA>(o.AsSpan<int>(0,3));
-      var vec2 = TopVecFromSpan<int,IA>(o.AsSpan<int>(3,3));
+      var vec1 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(0,3));
+      var vec2 = TopVecFromSpan<int,IntA>(o.AsSpan<int>(3,3));
       var res = vec1 - vec2;
-      var expRes = TopVecFromSpan<int,IA>(o.AsSpan<int>(6,3));
-      Assert.True( res.Equals<int,IA>(expRes) );
+      var expRes = TopVecFromSpan<int,IntA>(o.AsSpan<int>(6,3));
+      Assert.True( res.Equals<int,IntA>(expRes) );
    }
 
 }

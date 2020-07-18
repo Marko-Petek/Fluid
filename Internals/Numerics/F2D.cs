@@ -2,6 +2,8 @@ using System;
 using static System.Math;
 using dbl = System.Double;
 
+using Fluid.Internals.Algebras;
+
 namespace Fluid.Internals.Numerics {
    /// <summary>A custom function of 2 arguments on the domain [-1,1]x[-1,1]. Note: always use One as 1 and Zero as 0 because the equality checks for those inside operations rely on reference comparisons.</summary>
    public class F2D : IEquatable<F2D>, IComparable<F2D> {
@@ -16,13 +18,13 @@ namespace Fluid.Internals.Numerics {
                _Norm = CalcNorm();
             return _Norm; }
       }
-      int _Id;
+      int _Hash;
       /// <summary>A (highly-likely) unique ID based on Func return value.</summary>
-      int Id { 
+      public int Hash { 
          get {
             if(_FChanged)
-               _Id = GetHashCode();
-            return _Id; }
+               _Hash = GetHashCode();
+            return _Hash; }
       }
       /// <summary>The Func delegate.</summary>
       public Func<dbl,dbl,dbl> F { get; }
@@ -108,13 +110,12 @@ namespace Fluid.Internals.Numerics {
          dbl div = Pow(10, (int) Log10(Norm));
          return (int) (Norm/div * Pow(2,28));           // To get the maximum possible number of digits.
       }
+
       /// <summary>Compares identities of two functions.</summary>
       /// <param name="f">The other function.</param>
-      public bool Equals(F2D f) {
-         if(Id == f.Id)
-            return true;
-         else
-            return false;
+      public bool Equals(F2D? f) {
+         var alg = new F2DA();
+         return alg.Equals(this, f);
       }
       public int CompareTo(F2D f) {
          if(Norm > f.Norm)

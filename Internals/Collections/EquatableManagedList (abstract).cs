@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Fluid.Internals.Networks.Custom {
 
 public abstract class EquatableManagedList<T> : ManagedList<T>,
@@ -12,7 +14,7 @@ where T : struct, IEquatable<T> {
       public EquatableManagedList(EquatableManagedList<T> sourceList) : base(sourceList) { }
 
       /// <summary>Compare all values inside list and return true if all match.</summary><param name="other">List to compare to.</param>
-      public bool Equals(EquatableManagedList<T> other) {
+      public bool Equals([AllowNull] EquatableManagedList<T> other) {
          if(other != null)
             if(other.Count == Count) {
                for(int i = 0; i < Count; ++i)
