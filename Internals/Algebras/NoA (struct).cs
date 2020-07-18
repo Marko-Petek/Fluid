@@ -11,8 +11,8 @@ public struct NoA : IAlgebra<int> {
    public int Div(int a, int b) => throw new NotImplementedException("You are not supposed to use algebra.");
    public int Abs(int a) => throw new NotImplementedException("You are not supposed to use algebra.");
    public int Neg(int a) => throw new NotImplementedException("You are not supposed to use algebra.");
-   public int Unit() => throw new NotImplementedException("You are not supposed to use algebra.");
-   public int Zero() => throw new NotImplementedException("You are not supposed to use algebra.");
+   public int Unit => throw new NotImplementedException("You are not supposed to use algebra.");
+   public int Zero => throw new NotImplementedException("You are not supposed to use algebra.");
 
 }
 }

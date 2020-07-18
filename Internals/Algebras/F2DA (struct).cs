@@ -4,7 +4,7 @@ using Fluid.Internals.Numerics;
 
 namespace Fluid.Internals.Algebras {
 
-public struct F2DA : IAlgebra<F2D?> {
+public struct F2DA : IAlgebra<F2D> {
    public F2D? Sum(F2D? f1, F2D? f2) {
       if(f1 == null) {
          if(f2 == null)
@@ -50,10 +50,17 @@ public struct F2DA : IAlgebra<F2D?> {
          return null;
       return new F2D( (x,y) => -f.F(x,y) );
    }
-   public F2D Unit() =>
+
+   public F2D Unit =>
       F2D.One;
-   public F2D? Zero() =>
+
+   public F2D? Zero =>
       null;
-      
+   
+   public bool Equals(F2D? f1, F2D? f2) {       // Function equality is more complicated, but we just say for now that the norms should equal.
+      if(f1 != null) {
+         if(f2)
+      }
+   }
 }
 }

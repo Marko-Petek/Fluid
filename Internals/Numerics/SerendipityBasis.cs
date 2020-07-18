@@ -5,8 +5,8 @@ using Fluid.Internals.Algebras;
 using Fluid.Internals.Tensors;
 namespace Fluid.Internals.Numerics {
 
-using FTnr = RefTnr<F2D,F2DA>;
-using FVec = RefVec<F2D,F2DA>;
+using FTnr = Tnr<F2D,F2DA>;
+using FVec = Vec<F2D,F2DA>;
 public static class SerendipityBasis {
    static SerendipityBasis() {
       

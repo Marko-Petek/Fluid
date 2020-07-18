@@ -11,8 +11,8 @@ public struct IntA : IAlgebra<int> {
    public int Div(int first, int second) => first/second;
    public int Abs(int val) => Math.Abs(val);
    public int Neg(int val) => -val;
-   public int Unit() => 1;
-   public int Zero() => 0;
+   public int Unit => 1;
+   public int Zero => 0;
 
 }
 }

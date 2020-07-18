@@ -14,7 +14,7 @@ namespace Fluid.Internals.Tensors {
    /// <summary>A symmetric tensor that holds in memory only the entries "above diagonal".</summary>
    /// <typeparam name="τ">Type of direct subordinates.</typeparam>
    /// <typeparam name="α">Type of arithmetic.</typeparam>
-   public class SymTnr<τ,α> : ValTnr<τ,α>, IEquatable<ValTnr<τ,α>>
+   public class SymTnr<τ,α> : Tnr<τ,α>, IEquatable<Tnr<τ,α>>
    where τ : IEquatable<τ>, IComparable<τ>, new()
    where α : IAlgebra<τ>, new() {
 #nullable disable
@@ -23,7 +23,7 @@ namespace Fluid.Internals.Tensors {
 #nullable enable
       public SymTnr(List<int> structure, (int,int)[] syms, int cap = 6) : base(structure, cap) { }
 
-      public SymTnr(ValTnr<τ,α> sup, (int,int)[] syms, int cap) : base(sup, cap) { }
+      public SymTnr(Tnr<τ,α> sup, (int,int)[] syms, int cap) : base(sup, cap) { }
       
       public override τ this[params int[] inx] {
          get {

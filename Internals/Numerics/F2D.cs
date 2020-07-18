@@ -103,7 +103,7 @@ namespace Fluid.Internals.Numerics {
          Integrator.F = Mulß(this, this);                  // Integrate square.
          return Sqrt(Integrator.Integrate());
       }
-      /// <summary>Generates a (highly-likely) unique ID based on Func return value. The ID is generated as an integral over the domain.</summary>
+      /// <summary>Generates a (highly-likely) unique ID based on function norm.</summary>
       public override int GetHashCode() {
          dbl div = Pow(10, (int) Log10(Norm));
          return (int) (Norm/div * Pow(2,28));           // To get the maximum possible number of digits.
