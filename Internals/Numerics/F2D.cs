@@ -115,15 +115,11 @@ namespace Fluid.Internals.Numerics {
       /// <param name="f">The other function.</param>
       public bool Equals(F2D? f) {
          var alg = new F2DA();
-         return alg.Equals(this, f);
+         return alg.Equal(this, f);
       }
-      public int CompareTo(F2D f) {
-         if(Norm > f.Norm)
-            return 1;
-         if(Norm == f.Norm)
-            return 0;
-         else
-            return -1;
+      public int CompareTo(F2D? f2) {
+         F2DA alg = new F2DA();
+         return alg.Compare(this, f2);
       }
    }
 }

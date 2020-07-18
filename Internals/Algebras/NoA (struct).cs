@@ -14,9 +14,11 @@ public struct NoA : IAlgebra<int> {
    public int Unit => throw new NotImplementedException("You are not supposed to use algebra.");
    public int Zero => throw new NotImplementedException("You are not supposed to use algebra.");
 
-   public bool Equals(int x1, int x2) => throw new NotImplementedException("You are not supposed to use algebra.");
+   public bool Equal(int x1, int x2) => throw new NotImplementedException("You are not supposed to use algebra.");
 
    public bool IsZero(int x) => throw new NotImplementedException("You are not supposed to use algebra.");
+
+   public int Compare(int x1, int x2) => throw new NotImplementedException("You are not supposed to use algebra.");
 
 }
 }

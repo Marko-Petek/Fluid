@@ -57,7 +57,7 @@ public struct F2DA : IAlgebra<F2D> {
    public F2D? Zero =>
       null;
    
-   public bool Equals(F2D? f1, F2D? f2) {       // Function equality is more complicated, but we just say for now that the norms should equal.
+   public bool Equal(F2D? f1, F2D? f2) {       // Function equality is more complicated, but we just say for now that the norms should equal.
       if(f1 != null) {
          if(f2 != null)
             return f1.Hash == f2.Hash;
@@ -74,6 +74,27 @@ public struct F2DA : IAlgebra<F2D> {
          return true;
       else
          return false;
+   }
+
+   public int Compare(F2D? f1, F2D? f2) {
+      if(f1 != null) {
+         if(f2 != null)
+            return Compareβ(f1,f2);
+         else
+            return 1; }                     // We know that Norm is always positive.
+      else if(f2 != null)
+         return -1;
+      else
+         return 0;
+
+      int Compareβ(F2D f1, F2D f2) {
+         if(f1.Norm > f2.Norm)
+            return 1;
+         else if(f1.Norm < f2.Norm)
+            return -1;
+         else
+            return 0;
+      }
    }
 }
 }

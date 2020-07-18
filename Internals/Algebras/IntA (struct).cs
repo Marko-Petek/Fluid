@@ -14,11 +14,20 @@ public struct IntA : IAlgebra<int> {
    public int Unit => 1;
    public int Zero => 0;
 
-   public bool Equals(int x1, int x2) =>
+   public bool Equal(int x1, int x2) =>
       x1 == x2;
 
    public bool IsZero(int x) =>
       x == 0;
+
+   public int Compare(int x1, int x2) {
+      if(x1 > x2)
+         return 1;
+      else if(x1 < x2)
+         return -1;
+      else
+         return 0;
+   }
 
 }
 }

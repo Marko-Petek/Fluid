@@ -33,9 +33,11 @@ namespace Fluid.Internals.Algebras {
       [MaybeNull]                   // Getter may return null (when we are dealing with a reference type).
       τ Zero { get; }
 
-      bool Equals([AllowNull] τ x1, [AllowNull] τ x2);
+      bool Equal([AllowNull] τ x1, [AllowNull] τ x2);
 
       bool IsZero([NotNullWhen(false)] [AllowNull] τ x);          // If the method returns false, x is not null when a ref type.
+   
+      int Compare([AllowNull] τ x1, [AllowNull] τ x2);
    }
 
    
