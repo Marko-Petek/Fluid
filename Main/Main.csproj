@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,10 +7,7 @@
     <Nullable>enable</Nullable>
     <SourceRevisionId>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionId>
     <StartupObject>Fluid.Main.Program</StartupObject>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;REPORT</DefineConstants>
+    <DefineConstants>$(Defines)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,3 +17,5 @@
   </ItemGroup>
 
 </Project>
+
+<!-- Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" --> 

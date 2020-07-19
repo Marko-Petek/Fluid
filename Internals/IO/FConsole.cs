@@ -22,7 +22,8 @@ public class FConsole {
       TW.WriteLine($"(FConsole): Compile-time defines: {defines}.");                    // This has to be relayed without relying on Reporter.
    }
 
-   [Conditional("REPORT")] static void AddReportIfDefined() {
+   [Conditional("REPORT")]
+   static void AddReportIfDefined() {
       DefineConstants.Append(" REPORT ");
    }
 

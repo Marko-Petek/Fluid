@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Main": {
-      "commandName": "Project",
-      "commandLineArgs": "Tests, Tests/bin/Debug/netcoreapp3.1/Tests.dll"
+      "commandName": "Project"
     }
   }
 }
