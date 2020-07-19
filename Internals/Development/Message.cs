@@ -3,6 +3,8 @@ namespace Fluid.Internals.Development {
 
 /// <summary>A report message together with time stamp and call site info.</summary>
 public class Message {
+   /// <summary>Messenger name.</summary>
+   public string Messenger { get; }
    /// <summary>Time passed since application started.</summary>
    DateTime _Time;
    /// <summary>Time passed since application started.</summary>
@@ -17,7 +19,8 @@ public class Message {
    public int Line { get; protected set; }
 
    /// <summary>Create a Report.</summary><param name="dt">Time passed since run start.</param><param name="text">Message.</param><param name="path">Relative path to file.</param><param name="caller">Calling method from which call to Report() was made.</param><param name="line">Line in file from which call to Report() was made.</param>
-   public Message(DateTime time, string text, string path, string caller, int line) {
+   public Message(string messenger, DateTime time, string text, string path, string caller, int line) {
+      Messenger = messenger;
       _Time = time;
       Text = text;
       Path = path;

@@ -48,11 +48,15 @@ public class Reporter {
    [CallerLineNumber] int line = 0) {
       if(verbosity <= Verbosity) {                                                    // Only write if verbosity is below threshold.
          var strippedText = Regex.Replace(text, @"\n", "");                            // Strip out any new lines.
-         var message = new Message(DateTime.Now, strippedText, path, caller, line);          // Construct message.
+         var message = new Message("(Reporter):", DateTime.Now, strippedText, path, caller, line);          // Construct message.
          int newMessageIndex = Report.Messages.Count;                                // New message index will equal count.
          Report.AddMessage(message);
          ReportWriter.WriteMessage(newMessageIndex); }
    }
+
+   /// <summary>Write a string to report outputs, without any special formatting.</summary>
+   /// <param name="s">String to write.</param>
+   public void WriteLine(string s = "") => ReportWriter.WriteLine(s);
 
    [Flags]
    /// <summary>Determines where output is written to.</summary>

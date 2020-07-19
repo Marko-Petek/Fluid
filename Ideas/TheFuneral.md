@@ -18,7 +18,7 @@ at every occasion, oh, one billion day funeral.
 I'm coming up only to show you down for,  
 and coming up only to show you wrong,  
 to the outside the dead leaves laid on the lawn,  
-b'fore they died and had trees to hang there'pon.  
+'fore they died and had trees to hang there 'pon.  
 
 At every occasion I'll be ready for the funeral,  
 at every occasion, once more, it's called the funeral,  

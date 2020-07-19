@@ -1,5 +1,5 @@
 ﻿using System;
-using CavityFlow = Fluid.Runnables.CavityFlow;
+//using CavityFlow = Fluid.Runnables.CavityFlow;
 using Fluid.Internals;
 using static Fluid.Internals.Toolbox;
 using System.Globalization;
@@ -14,23 +14,29 @@ class Program {
          //#if DEBUG
          //args = new string[] { "Tests", "Tests/bin/Debug/netcoreapp3.1/Tests.dll" };
          //#endif
+
          // Print build time info independently from Fluid APIs. Enables us to see if the program recompiled even if Fluid.IO.Toolbox is not working.
          var buildDT = GetBuildDate(Assembly.GetExecutingAssembly());         // Extract build time from assembly.
          var dti = DateTimeFormatInfo.InvariantInfo;                          // Formatting info with which buildDT will be printed.
-         Console.WriteLine($"Version: {buildDT.ToString(dti)}");
+         Console.WriteLine($"\nAssembly version: {buildDT.ToString(dti)}");
          // Initialize Fluid APIs.
          R("Toolbox initialized.");
-         Console.WriteLine("HERE");
-         int result = args[0] switch {
+
+         if(args != null && args.Length > 0) {
+            int res = args[0] switch {
             "Tests" => Tests.Entry.Point(args),
-            "CavityFlow" => CavityFlow.Entry.Point(),
-            _ => throw new ArgumentException("Task/Launch arguments incorrect.") }; }
+            "CavityFlow" => Runnables.CavityFlow.Entry.Point(),
+            "Fiddle" => Runnables.Fiddle.Entry.Point(),
+            _ => throw new ArgumentException("Misspelled input args.") }; }
+         else
+            Runnables.Fiddle.Entry.Point(); }
       catch(Exception exc) {
          Console.WriteLine($"Exception occured: {exc.Message}");
          Console.WriteLine($"Stack trace:{exc.StackTrace}");
          throw exc; }
       finally {
-         //R("Exiting application.");
+         R("Exiting application.");
+         Reporter.WriteLine();
          FWriter.Flush(); }
    }
 

@@ -2,3 +2,82 @@
        d.                            \Toolbox (                              
                                      static).cs                              
 12:43  Toolbox initialized.                                        0         /Internals/Toolbox (static).cs  R                     21    
+06:37  Toolbox initialized.                          0         \Internals\Toolbox (stat  R                     21    
+                                                               ic).cs                                                
+06:48  Toolbox initialized.                          0         \Internals\Toolbox (stat  R                     21    
+                                                               ic).cs                                                
+06:52  Toolbox initialized.                          0         \Internals\Toolbox (stat  R                     21    
+                                                               ic).cs                                                
+       Exiting application.                          9,64      \Internals\Toolbox (stat  R                     21    
+                                                               ic).cs                                                
+06:55  Toolbox initialize  0         \Internals  R                     21    
+       d.                            \Toolbox (                              
+                                     static).cs                              
+       Exiting applicatio  2,49      \Internals  R                     21    
+       n.                            \Toolbox (                              
+                                     static).cs                              
+07:02  Toolbox initialize  0         \Internals  R                     21    
+       d.                            \Toolbox (                              
+                                     static).cs                              
+       Exiting applicatio  1,95      \Internals  R                     21    
+       n.                            \Toolbox (                              
+                                     static).cs                              
+07:02  Toolbox initialize  0         \Internals  R                     21    
+       d.                            \Toolbox (                              
+                                     static).cs                              
+       Exiting applicatio  4,72      \Internals  R                     21    
+       n.                            \Toolbox (                              
+                                     static).cs                              
+07:28  Toolbox initialize  0         \Internals  R                     21    
+       d.                            \Toolbox (                              
+                                     static).cs                              
+       Exiting applicatio  0,0134    \Internals  R                     21    
+       n.                            \Toolbox (                              
+                                     static).cs                              
+07:30  Toolbox initialized.                                                                                                                       0         \Internals\Toolbox (static).cs                                            R                     21    
+       Exiting application.                                                                                                                       0,0223    \Internals\Toolbox (static).cs                                            R                     21    
+07:42  Toolbox initialized.                                                                                                                       0         \Internals\Toolbox (static).cs                                            R                     21    
+       Exiting application.                                                                                                                       0,0124    \Internals\Toolbox (static).cs                                            R                     21    
+(Reporte  10:02  Toolbox initialized.                                                                                                                  0         \Internals\Toolbox (static).cs                                        R                     21    
+r):                                                                                                                                                                                                                                                                
+(Reporte         Exiting application.                                                                                                                  0,0157    \Internals\Toolbox (static).cs                                        R                     21    
+r):                                                                                                                                                                                                                                                                
+(Reporter):  10:03  Toolbox initialized.                                                                                                                0         \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):         Exiting application.                                                                                                                0,0125    \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):  10:40  Toolbox initialized.                                                                                                                0         \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):         Exiting application.                                                                                                                0,0132    \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):                                                                                                                                             0,000941  \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):  10:48  Toolbox initialized.                                                                                                                0         \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):         Exiting application.                                                                                                                0,0126    \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):                                                                                                                                             0,00149   \Internals\Toolbox (static).cs                                       R                     21    
+(Reporter):  10:48  Toolbox initialized.                                                                                  0         \Internals\Toolbox (static).cs                       R                     21    
+(Reporter):         Exiting application.                                                                                  0,0153    \Internals\Toolbox (static).cs                       R                     21    
+(Reporter):                                                                                                               0,000947  \Internals\Toolbox (static).cs                       R                     21    
+(Reporter):  10:49  Toolbox initialized.                                                 0         \Internals\Toolbox (static).cs      R                     21    
+(Reporter):         Exiting application.                                                 0,0135    \Internals\Toolbox (static).cs      R                     21    
+(Reporter):                                                                              0,00172   \Internals\Toolbox (static).cs      R                     21    
+(Reporter):  10:50  Toolbox initialized.                                    0         \Internals\Toolbox (static)  R                     21    
+                                                                                      .cs                                                      
+(Reporter):         Exiting application.                                    0,0175    \Internals\Toolbox (static)  R                     21    
+                                                                                      .cs                                                      
+(Reporter):                                                                 0,00171   \Internals\Toolbox (static)  R                     21    
+                                                                                      .cs                                                      
+(Reporter):  10:53  Toolbox initialized.                               0         \Internals\Toolbox (static).cs    R                     21    
+(Reporter):         Exiting application.                               0,0183    \Internals\Toolbox (static).cs    R                     21    
+(Reporter):                                                            0,00522   \Internals\Toolbox (static).cs    R                     21    
+(Reporter):  12:04  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     21    
+(Reporter):         Exiting application.                     0,0121    \Internals\Toolbox (static).cs    R                     21    
+(Reporter):                                                  0,000571  \Internals\Toolbox (static).cs    R                     21    
+(Reporter):  12:21  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     25    
+(Reporter):         Exiting application.                     0,022     \Internals\Toolbox (static).cs    R                     25    
+
+(Reporter):  12:22  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     25    
+
+
+(Reporter):         Exiting application.                     0,0139    \Internals\Toolbox (static).cs    R                     25    
+
+(Reporter):  12:24  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     25    
+
+
+(Reporter):         Exiting application.                     0,0171    \Internals\Toolbox (static).cs    R                     25    
+
