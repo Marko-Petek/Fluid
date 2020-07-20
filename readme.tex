@@ -1,0 +1,33 @@
+% !TeX root = ./readme.tex
+\input{./Tex/DocsPreamble.tex}
+
+\fancyhead[L]{Marko Petek \\[0.3cm] }
+\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
+\fancyhead[R]{Maribor,\\ 12$^\text{th}$\ July\ 2020 \\[0.15cm] }
+\cfoot{\thepage}								      % Footer center = page number.			
+\renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
+\renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in foote
+\lstset{language=bash,basicstyle=\small\sffamily}
+
+\begin{document}
+
+\begin{center}
+   \textbf{\LARGE{\textbsf{Fluid}}}\\[0.25cm]
+\end{center}
+
+Open the top folder "Fluid" either in Visual Studio or VS Code.
+
+\section{Build}
+You will need PowerShell, see subsections below on how to set it up. When you have it, navigate to the top directory and type
+
+Install PowerShell (PS) from the Snap Store, then install the PowerShell extension for VS Code.
+
+Takes two tensors of equal rank and returns a new tensor that is a sum of the two. The resulting tensor has no superior, it must be set manually after the operation. Usage:
+\begin{lstlisting}
+   var tnr1Vals = new int[] {5,4, 9,7,  0,8, 2,1};
+   var tnr1Struc = new int[] {2,2,2};
+   var tnr1 = TnrInt.FromFlatSpec(tnr1Vals, tnr1Struc);
+   var res = tnr1 + tnr2;
+\end{lstlisting}
+
+\end{document}
