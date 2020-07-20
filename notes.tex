@@ -15,6 +15,21 @@
    \textbf{\LARGE{Notes To Self}}\\[0.5cm]
 \end{center}
 
+\section{Network}
+I will create a unified INode.cs for all types of nodes (val and ref types). Let boxing happen and take care of it. For now thinking of Dictionaries for value types is a complication. Implement later if needed.
+
+Old approach can be found on master branch from before 20.7.2020 in Fluid/Internals/Networks.
+
+\subsection{Node}
+A node has a dictionary whose keys are other nodes. Let's call that dictionary a bond. Each key node inside represents a connection or multiple connections. It does so by resolving to one or more integer values representing sequential positions of that connection inside a bond.
+
+A connection value can be negative. That means that that specific connection's order in the sequence is irrelevant. We call such a connection a C-connection (a combination connection). In contrast, the connection whose connection value is positive is a P-connection (a permutation connection).
+
+Dictionary entries: ($n_1$, \{-1\}), ($n_2$, \{-2\}), ($n_3$, \{-3\}) should be treated by an operation as if their order was not important. That is, they are allowed to be processed in any order.
+Dictionary entries: ($n_1$, \{1\}), ($n_2$, \{2\}), ($n_3$, \{3\}) should be treated in only one specific way. That is, in the order that their values specify they should be treated.
+
+Multiple apearances of a single node (multiple connections to a single node) are allowed by specifying multiple values under that node's key: ($n_1$, \{1,2,3\})
+
 \section{Conditional Compilation}
 
 Conditional compilation is achieved by assigning known phrases to the Defines environment variable in the PowerShell script that compiles the program (e.g. b1.ps1). Conditional compilation with the REPORT keyword enables all the calls to the R(string) method in code. Reporting is responsible for both, outputting the messages to terminal where the program was started and outputting them to a file called report.txt in the Fluid folder.
