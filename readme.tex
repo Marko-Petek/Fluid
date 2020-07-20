@@ -2,8 +2,8 @@
 \input{./Tex/DocsPreamble.tex}
 
 \fancyhead[L]{Marko Petek \\[0.3cm] }
-\fancyhead[C]{\includegraphics[height=1.6cm]{Slike/logo-um-fnm}}
-\fancyhead[R]{Maribor,\\ 12$^\text{th}$\ July\ 2020 \\[0.15cm] }
+\fancyhead[C]{\includegraphics[height=1.6cm]{Tex/Pics/logo-um-fnm}}
+\fancyhead[R]{Maribor,\\ July\ 2020 \\[0.15cm] }
 \cfoot{\thepage}								      % Footer center = page number.			
 \renewcommand{\headrulewidth}{0.0cm}			% Horizontal line in header. 0 = no horizontal line.
 \renewcommand{\footrulewidth}{0.0cm}			% Horizontal line in foote
@@ -12,22 +12,43 @@
 \begin{document}
 
 \begin{center}
-   \textbf{\LARGE{\textbsf{Fluid}}}\\[0.25cm]
+   \textbf{\LARGE{Fluid}}\\[0.5cm]
 \end{center}
 
-Open the top folder "Fluid" either in Visual Studio or VS Code.
+Follow these steps. If you are familiar with VS Code, it will take you 5 minutes or less.
+
+\section{Preferred Setup}
+Install the latest .Net Core Software Development Kit (.Net Core SDK), install the VS Code text editor. Download the whole repository from GitHub and open the top folder (Fluid) in VS Code.
 
 \section{Build}
-You will need PowerShell, see subsections below on how to set it up. When you have it, navigate to the top directory and type
+You will need PowerShell (PS), see subsections below on how to set it up. Navigate PS to the top folder (Fluid) and run the script \emph{b1.ps1}, e.g., as seen on my screen:
 
-Install PowerShell (PS) from the Snap Store, then install the PowerShell extension for VS Code.
-
-Takes two tensors of equal rank and returns a new tensor that is a sum of the two. The resulting tensor has no superior, it must be set manually after the operation. Usage:
 \begin{lstlisting}
-   var tnr1Vals = new int[] {5,4, 9,7,  0,8, 2,1};
-   var tnr1Struc = new int[] {2,2,2};
-   var tnr1 = TnrInt.FromFlatSpec(tnr1Vals, tnr1Struc);
-   var res = tnr1 + tnr2;
+   /home/marko/Fluid> ./b1.ps1
 \end{lstlisting}
+
+\subsection{Set up PS in Ubuntu}
+Install PowerShell (PS) from the Snap Store, then install the PowerShell extension for VS Code from the \emph{Extensions} section. Open integrated terminal and select Powershell from the drop-down menu.
+
+\subsection{Set up PS in Windows}
+Windows comes with PowerShell installed, you only need to install the PowerShell extension for VS Code. Open integrated terminal and select Powershell from the drop-down menu.
+
+\section{Run}
+
+Navigate PS to the top folder (Fluid) and run the script \emph{r1.ps1}, as seen on my screen:
+
+\setlength{\textheight}{26.4cm}
+\pagebreak
+\setlength{\topmargin}{1.6cm}			% Header Top Margin Height
+\setlength{\headheight}{0.0cm}
+\setlength{\headsep}{0.0cm}			% Header Lower Margin Height	 Footer height
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+
+\begin{lstlisting}
+   /home/marko/Fluid> ./r1.ps1
+\end{lstlisting}
+
+After you press enter the program will run.
 
 \end{document}

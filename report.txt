@@ -250,3 +250,19 @@ r):
 
 (Reporter):         Exiting application.                     0,0335    \Internals\Toolbox (static).cs    R                     25    
 
+
+
+
+(Reporter):  07:44  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     25    
+
+
+(Reporter):         Exiting application.                     0,00902   /Internals/Toolbox (static).cs    R                     25    
+
+
+
+
+(Reporter):  22:22  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     25    
+
+
+(Reporter):         Exiting application.                     0,0067    /Internals/Toolbox (static).cs    R                     25    
+

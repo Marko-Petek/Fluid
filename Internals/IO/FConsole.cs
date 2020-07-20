@@ -15,8 +15,8 @@ public class FConsole {
    public FConsole() {
       System.Console.OutputEncoding = Encoding.UTF8;
       TW = System.Console.IsOutputRedirected ? new DebugTextWriter() : System.Console.Out;      // Write either to a DebugTextWriter or to System.Console.Out if former not defined.
-      TW.WriteLine("(FConsole): Checking things before the Toolbox is set up.");
-      TW.WriteLine($"(FConsole): Is System.Console output redirected to the DebugTextWriter? {System.Console.IsOutputRedirected}.");
+      TW.WriteLine("(FConsole): Checks before Toolbox is set up:");
+      TW.WriteLine($"(FConsole): System.Console output redirected to DebugTextWriter: {System.Console.IsOutputRedirected}.");
       AddReportIfDefined();
       string defines = DefineConstants.Length != 0 ? DefineConstants.ToString() : "none";
       TW.WriteLine($"(FConsole): Compile-time defines: {defines}.");                    // This has to be relayed without relying on Reporter.
