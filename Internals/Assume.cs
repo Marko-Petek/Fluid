@@ -42,7 +42,7 @@ public static class Assume {
    /// <summary>Throw ArgumentException if two specified int fields are not equal.</summary><param name="field1">First int field to compare.</param><param name="field2">Second int field to compare.</param><param name="comparer">Arbiter of equality.</param><param name="callerName">Omit, filled by compiler.</param><typeparam name="T">Type of compared fields.</typeparam>
    public static void AreEqual(int field1, int field2,
       [CallerMemberName] string callerName = "") =>
-         AreEqual(field1, field2, Comparers.Int, callerName);
+         AreEqual(field1, field2, SCG.EqualityComparer<int>.Default, callerName);
    public enum MemberKinds {
       Argument, LocalVar, Field, Property, Method, Constructor
    }

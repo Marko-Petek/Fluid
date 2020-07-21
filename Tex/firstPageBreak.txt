@@ -1,0 +1,7 @@
+\setlength{\textheight}{26.4cm}
+\pagebreak
+\setlength{\topmargin}{1.6cm}			% Header Top Margin Height
+\setlength{\headheight}{0.0cm}
+\setlength{\headsep}{0.0cm}			% Header Lower Margin Height	 Footer height
+\fancyhf{}
+\fancyfoot[C]{\thepage}

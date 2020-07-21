@@ -23,12 +23,20 @@ Old approach can be found on master branch from before 20.7.2020 in Fluid/Intern
 \subsection{Node}
 A node has a dictionary whose keys are other nodes. Let's call that dictionary a bond. Each key node inside represents a connection or multiple connections. It does so by resolving to one or more integer values representing sequential positions of that connection inside a bond.
 
-A connection value can be negative. That means that that specific connection's order in the sequence is irrelevant. We call such a connection a C-connection (a combination connection). In contrast, the connection whose connection value is positive is a P-connection (a permutation connection).
+A connection value can be negative. That means that that specific connection's order in the sequence is irrelevant. We call such a connection a C-connection (a combination connection). In contrast, the connection whose connection value is positive is a P-connection (a permutation connection). Dictionary entries: ($n_1$, \{-1\}), ($n_2$, \{-2\}), ($n_3$, \{-3\}) should be treated by an operation as if their order was not important. That is, they are allowed to be processed in any order. That also implies that, symmetrically, a connection should be found on the other node back to the original node.
 
-Dictionary entries: ($n_1$, \{-1\}), ($n_2$, \{-2\}), ($n_3$, \{-3\}) should be treated by an operation as if their order was not important. That is, they are allowed to be processed in any order.
-Dictionary entries: ($n_1$, \{1\}), ($n_2$, \{2\}), ($n_3$, \{3\}) should be treated in only one specific way. That is, in the order that their values specify they should be treated.
+
+Dictionary entries: ($n_1$, \{1\}), ($n_2$, \{2\}), ($n_3$, \{3\}) should be treated in only one specific way. That is, in the order that their values specify they should be treated. An ordered (or numbered) connection should necessarily imply that it is without a counterpart on the other node - that it is not symmetric.
 
 Multiple apearances of a single node (multiple connections to a single node) are allowed by specifying multiple values under that node's key: ($n_1$, \{1,2,3\})
+
+\setlength{\textheight}{26.4cm}
+\pagebreak
+\setlength{\topmargin}{1.6cm}			% Header Top Margin Height
+\setlength{\headheight}{0.0cm}
+\setlength{\headsep}{0.0cm}			% Header Lower Margin Height	 Footer height
+\fancyhf{}
+\fancyfoot[C]{\thepage}
 
 \section{Conditional Compilation}
 
