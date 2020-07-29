@@ -1,16 +1,4 @@
-**/bin
-**/bin/**
-
-**/obj
-**/obj/**
-
-**\bin
-**\bin\**
-
-**\obj
-**\obj\**
-
-*.vs
+#LaTeX
 *.dvi
 *.bbl
 *.aux
@@ -22,8 +10,32 @@
 *.synctex.gz
 *.fls
 *.fdb_latexmk
-*.deps.json
-*.dev.json
-*.runtimeconfig.json
-*.g.props
-*.cache
+
+
+## Visual Studio Code specific files and folder
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.jsons
+
+# Visual Studio 2015/2017 cache/options directory
+.vs/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/

@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,13 +8,23 @@
     <StartupObject>Fluid.Main.Program</StartupObject>
     <DefineConstants>$(Defines)</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
-   <ProjectReference Include="..\Tests\Tests.csproj" />
-   <ProjectReference Include="..\Internals\Internals.csproj" />
-   <ProjectReference Include="..\Runnables\Runnables.csproj" />
+    <ProjectReference Include="..\Tests\Tests.csproj"/>
+    <ProjectReference Include="..\Internals\Internals.csproj"/>
+    <ProjectReference Include="..\Runnables\Runnables.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.11"/>
+    <PackageReference Include="Avalonia" Version="0.9.11"/>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
 </Project>
-
-<!-- Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" --> 
