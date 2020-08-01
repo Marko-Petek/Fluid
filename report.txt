@@ -281,3 +281,30 @@ r):
 
 (Reporter):         Exiting application.                     3         /Internals/Toolbox (static).cs    R                     26    
 
+(Reporter):  16:09  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting application.                     0,00488   /Internals/Toolbox (static).cs    R                     26    
+
+
+
+
+
+
+
+(Reporter):  20:11  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting application.                     8,32      /Internals/Toolbox (static).cs    R                     26    
+
+(Reporter):  20:17  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+
+
+
+(Reporter):  20:42  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+(Reporter):  00:33  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+(Reporter):  00:51  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+

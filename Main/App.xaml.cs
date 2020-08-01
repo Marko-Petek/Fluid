@@ -1,4 +1,3 @@
-using System.Threading;
 using System;
 using System.Reflection;
 using System.Globalization;
@@ -18,7 +17,7 @@ public class App : Application {
       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
          desktop.MainWindow = new MainWindow();
          desktop.Startup += (o, e) => 
-            Task.Factory.StartNew( () => {
+            Task.Factory.StartNew( () => {      // Run a console application the old way, parallel to the window.
                try {
                   //#if DEBUG
                   //args = new string[] { "Tests", "Tests/bin/Debug/netcoreapp3.1/Tests.dll" };
@@ -30,7 +29,6 @@ public class App : Application {
                   Console.WriteLine($"\nAssembly version: {buildDT.ToString(dti)}");
                   // Initialize Fluid APIs.
                   R("Toolbox initialized.");
-
                   if(e.Args != null && e.Args.Length > 0) {
                      int res = e.Args[0] switch {
                      "Tests" => Tests.Entry.Point(e.Args),
@@ -44,7 +42,7 @@ public class App : Application {
                   Console.WriteLine($"Stack trace:{exc.StackTrace}");
                   throw exc; }
                finally {
-                  R("Exiting application.");
+                  R("Exiting parallel console application.");
                   Reporter.WriteLine();
                   FWriter.Flush(); } } ); }
 

@@ -14,8 +14,13 @@ public static class Entry {
       Console.WriteLine("   xxxxx");
       Console.WriteLine("  xxxxxxx");
       Console.WriteLine(" xxxxxxxxx");
+      Console.WriteLine("\nWrite something:");
+      string word = Console.ReadLine();
+      switch (word) {
+         case "ok": Console.WriteLine("Good."); break;
+         case "no": Console.WriteLine("Why not?"); break;
+         default: Console.WriteLine("Bye."); break; }
       Reporter.WriteLine();
-
       return 0;
    }
 

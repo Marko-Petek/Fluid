@@ -13,12 +13,6 @@ class Program {
    static void Main(string[] args) =>
       BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
       
-      
-   //    {            // args[0] has to be the name of the project without the extension.
-   //    
-   // }
-
-   
 
    // Avalonia configuration, don't remove; also used by visual designer.
    public static AppBuilder BuildAvaloniaApp()
