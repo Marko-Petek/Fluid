@@ -4,19 +4,19 @@ using System.Linq;
 
 namespace Fluid.Internals.Networks {
 /// <summary>A node is a collection of references to other nodes.</summary>
-   public interface INode {
+   public interface INode<τ> {
       /// <summary>Is non-existent (set to null) by default.</summary>
-      protected Dictionary<INode,List<int>>? Bond { get; set; }       // (which node it is connected to; sequential connection slot number)
+      protected Dictionary<INode<τ>,List<int>>? Bond { get; set; }       // (which node it is connected to; sequential connection slot number)
 
       /// <summary>Add a connection to node:
       ///   C-connect: never throw exception, connections to the same (negative) integer are treated as a group.
       ///   P-connect: throw an exception if connecting to the same non-negative integer.</summary>
       /// <param name="node">The "connectee". Node being connected to.</param>
       /// <param name="slot">A negative (C-connect) or non-negative (P-connect) integer.</param>
-      void ConnectA(INode node, int slot) {
+      void ConnectA(INode<τ> node, int slot) {
          List<int>? list;
          if(Bond == null) {                                       // Bond dictionary does not exist at all.
-            Bond = new Dictionary<INode, List<int>>(3);           // Make space for 3 entries initially.
+            Bond = new Dictionary<INode<τ>, List<int>>(3);           // Make space for 3 entries initially.
             list = new List<int>(1) {slot};
             Bond.Add(node, list); }
          else if(!Bond.TryGetValue(node, out list)) {                             // Bond dictionary entry for the other node (method's argument) does not even exist = no connections yet leading to the node.
@@ -34,10 +34,10 @@ namespace Fluid.Internals.Networks {
       /// P-connect: throw an exception if connecting to the same non-negative integer.</summary>
       /// <param name="node1">The "connectee". Node being connected to.</param>
       /// <param name="slot">A negative (C-connect) or non-negative (P-connect) integer.</param>
-      void ConnectB(INode node, int slot) {
+      void ConnectB(INode<τ> node, int slot) {
          List<int>? list;
          if(Bond == null) {                                       // Bond dictionary does not exist at all.
-            Bond = new Dictionary<INode, List<int>>(3);           // Make space for 3 entries initially.
+            Bond = new Dictionary<INode<τ>, List<int>>(3);           // Make space for 3 entries initially.
             list = new List<int>(1) {slot};
             Bond.Add(node, list); }
          else if(!Bond.TryGetValue(node, out list)) {                             // Bond dictionary entry for the other node (method's argument) does not even exist = no connections yet leading to the node.
@@ -51,7 +51,7 @@ namespace Fluid.Internals.Networks {
       }
 
       // Disconnect at a specific slot. Treat a non-existing node at the slot as erroneous usage.
-      void DisconnectA(INode node, int slot) {
+      void DisconnectA(INode<τ> node, int slot) {
          List<int>? list;
          if(Bond != null) {
             if(Bond.TryGetValue(node, out list)) {

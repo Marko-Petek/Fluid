@@ -5,5 +5,10 @@ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 x:Class="Fluid.MainWindow"
 Title="Fluid">
-   Welcome to Fluid!
+   <Grid ColumnDefinitions="1*,4*" RowDefinitions="1*">
+      <TextBlock Text="Network" Grid.Row="0" Grid.Column="0" Background="Red" />
+      <Canvas Grid.Row="0" Grid.Column="1">
+         <TextBlock Text="Show" Width="40" Height="15" Canvas.Top="60" Canvas.Left="60" />
+      </Canvas>
+   </Grid>
 </Window>
