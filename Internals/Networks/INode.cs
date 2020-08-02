@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Fluid.Internals.Networks {
-/// <summary>A node is a collection of references to other nodes.</summary>
+/// <summary>A node is a collection of references to other nodes. c</summary>
    public interface INode<τ> {
       /// <summary>Is non-existent (set to null) by default.</summary>
       protected Dictionary<INode<τ>,List<int>>? Bond { get; set; }       // (which node it is connected to; sequential connection slot number)
