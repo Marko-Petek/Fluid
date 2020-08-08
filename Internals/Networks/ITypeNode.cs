@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Fluid.Internals.Networks {
 
-public interface ITypeNode : INode {
+public interface ITypeNode : INode<ITypeNode> {
    
 
 }
