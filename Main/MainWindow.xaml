@@ -5,9 +5,10 @@ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 x:Class="Fluid.MainWindow"
 Title="Fluid">
-   <Grid ColumnDefinitions="1*,4*" RowDefinitions="1*">
+   <Grid ColumnDefinitions="1*,5,1*" RowDefinitions="1*">
       <TextBlock Text="Network" Grid.Row="0" Grid.Column="0" Background="Red" />
-      <Canvas Grid.Row="0" Grid.Column="1">
+      <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+      <Canvas Grid.Row="0" Grid.Column="2">
          <TextBlock Text="Show" Width="40" Height="15" Canvas.Top="60" Canvas.Left="60" />
       </Canvas>
    </Grid>
