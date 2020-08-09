@@ -13,12 +13,11 @@
     <ProjectReference Include="..\Internals\Internals.csproj"/>
     <ProjectReference Include="..\Runnables\Runnables.csproj"/>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="0.9.11"/>
     <PackageReference Include="Avalonia" Version="0.9.11"/>
+    <PackageReference Include="Avalonia.HtmlRenderer" Version="0.6.1"/>
   </ItemGroup>
-  
   <ItemGroup>
     <Compile Update="**\*.xaml.cs">
       <DependentUpon>%(Filename)</DependentUpon>

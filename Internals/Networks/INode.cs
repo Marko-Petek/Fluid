@@ -9,9 +9,9 @@ namespace Fluid.Internals.Networks {
       protected Dictionary<INode<τ>,List<int>>? Bond { get; set; }       // (which node it is connected to; sequential connection slot number)
 
       /// <summary>Add a connection to node:
-      ///   C-connect: never throw exception, connections to the same (negative) integer are treated as a group.
-      ///   P-connect: throw an exception if connecting to the same non-negative integer.</summary>
-      /// <param name="node">The "connectee". Node being connected to.</param>
+      ///   C-connect: never throw exception, connections at the same (negative) integer are treated as a group.
+      ///   P-connect: throw an exception if connecting at the same non-negative integer.</summary>
+      /// <param name="node">The connectee - node being connected to.</param>
       /// <param name="slot">A negative (C-connect) or non-negative (P-connect) integer.</param>
       void ConnectA(INode<τ> node, int slot) {
          List<int>? list;
@@ -32,7 +32,7 @@ namespace Fluid.Internals.Networks {
       /// <summary>Add a connection to node:
       /// C-connect: throw exception when a connection exists at any negative integer.
       /// P-connect: throw an exception if connecting to the same non-negative integer.</summary>
-      /// <param name="node1">The "connectee". Node being connected to.</param>
+      /// <param name="node1">The connectee - node being connected to.</param>
       /// <param name="slot">A negative (C-connect) or non-negative (P-connect) integer.</param>
       void ConnectB(INode<τ> node, int slot) {
          List<int>? list;

@@ -1,1 +1,1 @@
-dotnet run -p "./Main/Main.csproj"
+dotnet run -p "./Main/Main.csproj" -- "Markdig"

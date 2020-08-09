@@ -34,6 +34,7 @@ public class App : Application {
                      "Tests" => Tests.Entry.Point(e.Args),
                      "CavityFlow" => Runnables.CavityFlow.Entry.Point(),
                      "Fiddle" => Runnables.Fiddle.Entry.Point(),
+                     "Markdig" => Runnables.Markdig.Entry.Point(),
                      _ => throw new ArgumentException("Misspelled input args.") }; }
                   else
                      Runnables.Fiddle.Entry.Point(); }
