@@ -8,9 +8,10 @@ Title="Fluid">
    <Grid ColumnDefinitions="1*,5,1*" RowDefinitions="1*">
       <TextBlock Text="Network" Grid.Row="0" Grid.Column="0" Background="Red" />
       <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-      <HtmlControl x:Name="HtmlCon" />
+      <HtmlControl x:Name="HtmlCon" Grid.Column="2" HorizontalAlignment="Stretch" />
       <!-- <Canvas Grid.Row="0" Grid.Column="2">
          <TextBlock Text="Show" Width="40" Height="15" Canvas.Top="60" Canvas.Left="60" />
       </Canvas> -->
    </Grid>
 </Window>
+<!-- xmlns:html="clr-namespace:Avalonia.Controls.Html" -->
