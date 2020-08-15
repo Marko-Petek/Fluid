@@ -351,3 +351,8 @@ r):
 
 (Reporter):         Exiting parallel console application.    0,101     /Internals/Toolbox (static).cs    R                     26    
 
+(Reporter):  22:20  Toolbox initialized.                     0         /Internals/Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting parallel console application.    0,0758    /Internals/Toolbox (static).cs    R                     26    
+
