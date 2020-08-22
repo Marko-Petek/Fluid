@@ -356,3 +356,39 @@ r):
 
 (Reporter):         Exiting parallel console application.    0,0758    /Internals/Toolbox (static).cs    R                     26    
 
+(Reporter):  20:27  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting parallel console application.    0,14      \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  16:10  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting parallel console application.    0,186     \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  20:23  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting parallel console application.    0,149     \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  15:56  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+(Reporter):         Exiting parallel console application.    0,0152    \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  15:58  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+(Reporter):         Exiting parallel console application.    2,6       \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  16:03  Toolbox initialized. Starting pure cons  0         \Internals\Toolbox (static).cs    R                     26    
+                    ole application.                                                                                                 
+(Reporter):         Exiting parallel console application.    1,44      \Internals\Toolbox (static).cs    R                     26    
+
+(Reporter):  17:17  Toolbox initialized.                     0         \Internals\Toolbox (static).cs    R                     26    
+(Reporter):         Starting parallel Console app.           0,006     \Internals\Toolbox (static).cs    R                     26    
+
+
+(Reporter):         Exiting parallel console application.    0,159     \Internals\Toolbox (static).cs    R                     26    
+
+
+
+
+
+

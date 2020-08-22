@@ -1,0 +1,1 @@
+dotnet run -p "./Main/Main.csproj" -- "UI"

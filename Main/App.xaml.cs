@@ -16,7 +16,7 @@ public class App : Application {
    public override void OnFrameworkInitializationCompleted() {
       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
          desktop.MainWindow = new MainWindow();
-         desktop.Startup += (o, e) => 
+         desktop.Startup += (o, e) =>              // args are either "UI [...]" or "".
             Task.Factory.StartNew( () => {      // Run a console application the old way, parallel to the window.
                try {
                   //#if DEBUG
@@ -24,20 +24,24 @@ public class App : Application {
                   //#endif
 
                   // Print build time info independently from Fluid APIs. Enables us to see if the program recompiled even if Fluid.IO.Toolbox is not working.
-                  var buildDT = GetBuildDate(Assembly.GetExecutingAssembly());         // Extract build time from assembly.
-                  var dti = DateTimeFormatInfo.InvariantInfo;                          // Formatting info with which buildDT will be printed.
+                  var buildDT = GetBuildDate(Assembly.GetExecutingAssembly());               // Extract build time from assembly.
+                  var dti = DateTimeFormatInfo.InvariantInfo;                                // Formatting info with which buildDT will be printed.
                   Console.WriteLine($"\nAssembly version: {buildDT.ToString(dti)}");
                   // Initialize Fluid APIs.
                   R("Toolbox initialized.");
-                  if(e.Args != null && e.Args.Length > 0) {
-                     int res = e.Args[0] switch {
-                     "Tests" => Tests.Entry.Point(e.Args),
-                     "CavityFlow" => Runnables.CavityFlow.Entry.Point(),
-                     "Fiddle" => Runnables.Fiddle.Entry.Point(),
-                     "Markdig" => Runnables.Markdig.Entry.Point(),
-                     _ => throw new ArgumentException("Misspelled input args.") }; }
-                  else
-                     Runnables.Fiddle.Entry.Point(); }
+                  if(e.Args != null && e.Args.Length > 1 && e.Args[1] == "Console") {
+                     R("Starting parallel Console app.");
+                     int res = 0;
+                     if(e.Args.Length > 2) {
+                        res = e.Args[2] switch {
+                           "Tests" => Tests.Entry.Point(e.Args),                             // There's a third argument that specifies entry point: "UI Console Tests".
+                           "CavityFlow" => Runnables.CavityFlow.Entry.Point(),
+                           "Fiddle" => Runnables.Fiddle.Entry.Point(),
+                           "Markdig" => Runnables.Markdig.Entry.Point(),
+                           _ => throw new ArgumentException("Misspelled input args.") }; }
+                     else {
+                        res = Runnables.Fiddle.Entry.Point(); } } }                          // No third argument specifying the entry point: "UI Console" Start "Fiddle".
+               // else  ...   No further args means no parallel console app to run.
                catch(Exception exc) {
                   Console.WriteLine($"Exception occured: {exc.Message}");
                   Console.WriteLine($"Stack trace:{exc.StackTrace}");
