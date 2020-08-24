@@ -1,4 +1,4 @@
-# Fluid (not in working order, WIP)
+# Fluid (only a blank window for now, WIP)
 
 Unfinished project. Not in working order. Fluid is written in C# and built upon .Net Core 3.1.
 
@@ -13,13 +13,13 @@ Unfinished project. Not in working order. Fluid is written in C# and built upon 
 
 ## Build
 
-Use PS to build the code. Navigate PS to top folder (Fluid) and run the script **b1.ps1**, as seen on my screen:
+Use PS to build the code. Navigate PS to top folder (Fluid) and run the script **bReport.ps1**, as seen on my screen:
 
-    /home/marko/Fluid> ./b1.ps1
+    /home/marko/Fluid> ./bReport.ps1
 
 ## Run
 
-Navigate PS to top folder (Fluid) and run the script **r1.ps1**, as seen on my screen:
+Navigate PS to top folder (Fluid) and run the script **rUI.ps1**, as seen on my screen:
 
-    /home/marko/Fluid> ./r1.ps1
+    /home/marko/Fluid> ./rUI.ps1
 
